@@ -1,0 +1,27 @@
+# --- Dependencies (NEVER Upload These) ---
+node_modules/
+client/node_modules/
+package-lock.json
+
+# --- Python Caches (Backend Garbage) ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Environment & Secrets ---
+.env
+.venv
+env/
+venv/
+ENV/
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+
+# --- System Specifics ---
+# Ignore student files uploaded during testing
+server/uploads/
+# Ignore the frontend build (we build it fresh in Docker)
+client/build/
