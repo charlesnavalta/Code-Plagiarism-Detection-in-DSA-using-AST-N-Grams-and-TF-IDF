@@ -1,49 +1,62 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-function Home() {
-  return (
-    <div>
-      <h1>🐳 Docker React App</h1>
-      <p>Welcome to your Dockerized React application!</p>
-      <p>This app is running in a Docker container with hot reload enabled.</p>
-    </div>
-  );
-}
+// 1. Core Components
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Navbar from './components/common/Navbar'; 
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
-function About() {
-  return (
-    <div>
-      <h1>About</h1>
-      <p>This is a sample React app containerized with Docker.</p>
-      <p>Features:</p>
-      <ul>
-        <li>React 18</li>
-        <li>React Router</li>
-        <li>Hot reload in development</li>
-        <li>Production-ready builds</li>
-      </ul>
-    </div>
-  );
-}
+// 2. Dashboards
+import StudentDash from './pages/student/StudentDashboard';
+import InstructorDash from './pages/instructor/InstructorDashboard';
+import AdminDash from './pages/admin/AdminDashboard';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <nav className="navbar">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/about" className="nav-link">About</Link>
-        </nav>
+      {/* Navbar stays outside Routes to show on every page (it hides itself in its own logic if no user) */}
+      <Navbar /> 
+      
+      <Routes>
+        {/* LANDING REDIRECT: Send the root URL to Login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
         
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
+        {/* PUBLIC ROUTES */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* PROTECTED ROUTES: Role-Based Workspaces */}
+        <Route path="/student/*" element={
+          <ProtectedRoute allowedRole="student">
+            <StudentDash />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/instructor/*" element={
+          <ProtectedRoute allowedRole="instructor">
+            <InstructorDash />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/admin/*" element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminDash />
+          </ProtectedRoute>
+        } />
+
+        {/* ERROR ROUTES */}
+        <Route path="/unauthorized" element={
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                <h1>403 - Access Denied</h1>
+                <p>You do not have permission to view this page.</p>
+                <a href="/login">Back to Login</a>
+            </div>
+        } />
+        
+        {/* CATCH-ALL: Redirect any unknown URL to Login */}
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
     </Router>
   );
 }

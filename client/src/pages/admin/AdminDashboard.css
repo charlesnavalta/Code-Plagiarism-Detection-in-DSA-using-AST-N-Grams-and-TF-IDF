@@ -1,0 +1,43 @@
+/* src/pages/admin/AdminDashboard.css */
+.admin-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 800px;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin: 50px auto;
+}
+
+.admin-h1 { color: #2c3e50; text-align: center; margin: 0 0 0.5rem 0; font-size: 2rem; }
+.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 2.5rem; }
+
+.upload-box {
+    border: 2px dashed #bdc3c7;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.3s;
+    margin-bottom: 1.5rem;
+}
+
+.upload-label {
+    display: block;
+    padding: 3rem 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-analysis {
+    width: 100%;
+    padding: 1.2rem;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-analysis:disabled { background-color: #95a5a6; }
+
+/* Add the rest of your table and status CSS here... */
