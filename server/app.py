@@ -1,122 +1,68 @@
+from dotenv import load_dotenv
 import os
-import ast
-from flask import Flask, request, jsonify
+
+# Load environment variables before any other logic runs
+load_dotenv()
+
+from flask import Flask
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from database import setup_db, db # Ensure 'db' is imported here
+from models import User # Import your User model for the seeding logic
+from routes.analysis import analysis_bp
+from routes.auth import auth_bp
+from flask_jwt_extended import JWTManager
 
-app = Flask(__name__)
-CORS(app)
 
-# --- CONFIGURATION ---
-UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
 
-# ==============================
-# 1. SMART AST TOKENIZER
-# ==============================
-def get_ast_tokens(content):
-    try:
-        tree = ast.parse(content)
-        tokens = []
-        for node in ast.walk(tree):
-            node_type = type(node).__name__
-            if isinstance(node, ast.Name):
-                tokens.append(f"{node_type}_ID")
-            elif isinstance(node, ast.Constant):
-                tokens.append(f"{node_type}_CONST")
-            elif isinstance(node, ast.FunctionDef):
-                tokens.append(f"{node_type}_FUNC")
-            else:
-                tokens.append(node_type)
-        return tokens
-    except:
-        return []
+    @app.route('/')
+    def home():
+        return {"status": "The System is Running Successfully!"}
 
-# ==============================
-# 2. DOCUMENT BUILDER
-# ==============================
-def code_to_document(code):
-    tokens = get_ast_tokens(code)
-    n = 4
-    if len(tokens) < n:
-        return ""
-    ngrams = [" ".join(tokens[i:i+n]) for i in range(len(tokens)-n+1)]
-    return " ".join(ngrams)
+    # Configuration
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# ==============================
-# 3. TF-IDF SIMILARITY (MATCHING PROTOTYPE)
-# ==============================
-def calculate_similarity(doc1, doc2):
-    if not doc1 or not doc2:
-        return 0.0
-    
-    # --- THIS WAS THE MISSING PART ---
-    vectorizer = TfidfVectorizer(
-        min_df=1,
-        ngram_range=(1,2),
-        sublinear_tf=True  # <--- This fixes the output difference!
-    )
-    
-    try:
-        tfidf_matrix = vectorizer.fit_transform([doc1, doc2])
-        sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-        return sim * 100
-    except:
-        return 0.0
+    app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY') 
+    jwt = JWTManager(app) 
 
-# ==============================
-# 4. THE API ROUTE
-# ==============================
-@app.route('/api/upload', methods=['POST'])
-def upload_files():
-    if 'submissions' not in request.files:
-        return jsonify({"error": "No files uploaded"}), 400
+    # Initialize Database (MySQL Connection)
+    setup_db(app)
 
-    files = request.files.getlist('submissions')
-    saved_paths = []
-
-    # 1. Process Files
-    for file in files:
-        if file.filename == '': continue
-        filename = secure_filename(file.filename)
-        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(path)
+    # --- AUTOMATIC ADMIN SEEDING LOGIC ---
+    # We must use app.app_context() to interact with the database before the server fully starts
+    with app.app_context():
+        db.create_all() # Ensures tables exist
         
-        try:
-            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                doc_str = code_to_document(f.read())
-                saved_paths.append({'name': filename, 'doc': doc_str})
-        except:
-            pass
-
-    results = []
-    
-    # 2. Compare Pairs
-    for i in range(len(saved_paths)):
-        for j in range(i + 1, len(saved_paths)):
-            file_a = saved_paths[i]
-            file_b = saved_paths[j]
-            score = calculate_similarity(file_a['doc'], file_b['doc'])
-            final_score = round(score, 2)
+        # Check if the Master Admin is already in the database
+        admin_user = User.query.filter_by(email='admin@test.com').first()
+        
+        if not admin_user:
+            print("No admin found. Creating default Master Admin...")
+            new_admin = User(
+                username='admin',
+                email='admin@test.com',
+                role='admin',
+                status='active' # Admins are immediately active
+            )
+            new_admin.set_password('admin123') # The requested password
             
-            status = "Low"
-            if final_score > 70: status = "High"
+            db.session.add(new_admin)
+            db.session.commit()
+            print("Master Admin account created successfully!")
+    # --- END SEEDING LOGIC ---
 
-            if final_score > 0:
-                results.append({
-                    "file1": file_a['name'],
-                    "file2": file_b['name'],
-                    "score": final_score,
-                    "status": status
-                })
+    # Register Blueprints (The "Controllers")
+    app.register_blueprint(analysis_bp, url_prefix='/api')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
-    results.sort(key=lambda x: x['score'], reverse=True)
+    return app
 
-    return jsonify(results)
+app = create_app()
 
 if __name__ == '__main__':
+    # host='0.0.0.0' is required for Docker to allow external access
     app.run(debug=True, host='0.0.0.0', port=5000)
