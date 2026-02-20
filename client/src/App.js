@@ -7,15 +7,20 @@ import Navbar from './components/common/Navbar';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
-// 2. Dashboards
+// 2. Layouts (NEW IMPORT)
+import AdminLayout from './layouts/AdminLayout';
+
+// 3. Dashboards
 import StudentDash from './pages/student/StudentDashboard';
 import InstructorDash from './pages/instructor/InstructorDashboard';
 import AdminDash from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement'; // We will uncomment this later!
 
 function App() {
-  return (
+  console.log({ ProtectedRoute, Navbar, Login, Register, AdminLayout, StudentDash, InstructorDash, AdminDash });
+  return (  
     <Router>
-      {/* Navbar stays outside Routes to show on every page (it hides itself in its own logic if no user) */}
+      {/* Note: You might want to hide this global Navbar on Admin pages since your AdminLayout has its own topbar! */}
       <Navbar /> 
       
       <Routes>
@@ -39,9 +44,18 @@ function App() {
           </ProtectedRoute>
         } />
 
+        {/* ADMIN ROUTES WITH LAYOUT */}
         <Route path="/admin/*" element={
           <ProtectedRoute allowedRole="admin">
-            <AdminDash />
+            <AdminLayout>
+              <Routes>
+                {/* The default /admin route shows the Overview */}
+                <Route path="/" element={<AdminDash />} />
+                
+                {/* The /admin/users route will show the User Management table */}
+                <Route path="users" element={<UserManagement />} /> 
+              </Routes>
+            </AdminLayout>
           </ProtectedRoute>
         } />
 

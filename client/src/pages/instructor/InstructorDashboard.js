@@ -1,8 +1,12 @@
-export default function InstructorDashboard() {
+import React from 'react';
+
+const InstructorDashboard = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>Welcome to the Instructor Interface</h1>
-        <p>Role: Professor / Instructor</p>
+            <h1>Welcome to the Instructor Interface</h1>
+            <p>Role: Professor / Instructor</p>
         </div>
     );
-}
+};
+
+export default InstructorDashboard;
