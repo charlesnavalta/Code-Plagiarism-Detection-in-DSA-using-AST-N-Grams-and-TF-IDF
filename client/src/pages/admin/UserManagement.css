@@ -1,0 +1,92 @@
+/* src/pages/admin/UserManagement.css */
+
+.user-management-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.header-section h2 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.header-section p {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+}
+
+/* Table Styles */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table th, .users-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.users-table th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.users-table tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* Status & Role Badges */
+.status-badge, .role-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* Status Colors */
+.status-badge.active {
+    background-color: #e8f8f5;
+    color: #27ae60;
+}
+
+.status-badge.pending {
+    background-color: #fdf2e9;
+    color: #e67e22;
+}
+
+/* Role Colors */
+.role-badge.admin { background-color: #eceff1; color: #455a64; }
+.role-badge.instructor { background-color: #e3f2fd; color: #1976d2; }
+.role-badge.student { background-color: #f3e5f5; color: #7b1fa2; }
+
+/* Action Buttons */
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.approve-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.approve-btn:hover {
+    background-color: #2980b9;
+}
+
+.no-action {
+    color: #bdc3c7;
+}

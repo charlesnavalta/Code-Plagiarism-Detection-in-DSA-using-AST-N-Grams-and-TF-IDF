@@ -1,13 +1,15 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './Navbar.css'; // 1. Import the new CSS file!
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation(); 
     
-    // 1. SAFELY get raw data first
+    // SAFELY get raw data first
     const rawUser = localStorage.getItem('user');
 
-    // 2. ONLY parse if data exists and isn't the literal string "undefined"
+    // ONLY parse if data exists and isn't the literal string "undefined"
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
 
     const handleLogout = () => {
@@ -17,46 +19,23 @@ const Navbar = () => {
         navigate('/login');
     };
 
-    // 3. If no valid user is found, don't show the Navbar
+    // If no valid user is found, don't show the Navbar
     if (!user) return null;
 
+    // Hide this global navbar if we are on an Admin page
+    if (location.pathname.startsWith('/admin')) {
+        return null;
+    }
+
     return (
-        <nav style={styles.nav}>
-            {/* user.role and user.username are now safe to access */}
-            <div style={styles.logo}>THE SYSTEM | {user.role?.toUpperCase()}</div>
-            <div style={styles.links}>
-                <span style={styles.userGreet}>Welcome, {user.username}</span>
-                <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+        <nav className="navbar-container">
+            <div className="navbar-logo">THE SYSTEM | {user.role?.toUpperCase()}</div>
+            <div className="navbar-links">
+                <span className="user-greet">Welcome, {user.username}</span>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
             </div>
         </nav>
     );
-};
-
-const styles = {
-    nav: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 20px',
-        height: '60px',
-        backgroundColor: '#2c3e50',
-        color: '#ecf0f1',
-        // Good for thesis UI: keeps navbar fixed at the top
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000
-    },
-    logo: { fontSize: '1.2rem', fontWeight: 'bold' },
-    userGreet: { marginRight: '20px' },
-    logoutBtn: {
-        backgroundColor: '#e74c3c',
-        color: 'white',
-        border: 'none',
-        padding: '8px 15px',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        transition: '0.3s'
-    }
 };
 
 export default Navbar;
