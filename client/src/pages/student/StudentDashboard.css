@@ -1,0 +1,164 @@
+/* src/pages/student/StudentDashboard.css */
+
+.student-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.dashboard-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Join Class Form */
+.join-class-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+    border-left: 5px solid #3498db;
+}
+
+.join-class-section h3 {
+    margin-top: 0;
+    color: #34495e;
+}
+
+.join-class-form {
+    display: flex;
+    gap: 15px;
+}
+
+.class-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.code-input {
+    font-family: monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.class-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.btn-join {
+    padding: 12px 25px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-join:hover {
+    background-color: #2980b9;
+}
+
+/* Classrooms Grid */
+.classrooms-section h3 {
+    color: #34495e;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.class-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+}
+
+.class-card-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.student-card .class-card-header {
+    background-color: #34495e; /* Slightly different header color for students */
+}
+
+.class-card-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.class-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.instructor-label {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.instructor-name {
+    margin: 5px 0 20px 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.btn-enter-class {
+    width: 100%;
+    padding: 10px;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: auto;
+}
+
+.btn-enter-class:hover {
+    background-color: #bdc3c7;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    color: #7f8c8d;
+    border: 2px dashed #bdc3c7;
+}

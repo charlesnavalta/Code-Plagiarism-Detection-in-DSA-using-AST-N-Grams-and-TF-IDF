@@ -101,3 +101,63 @@ class Assignment(db.Model):
 
     def __repr__(self):
         return f'<Assignment {self.title} | Classroom ID: {self.classroom_id}>'
+
+# ==========================================
+# ENROLLMENT MODEL (Bridge between Student & Classroom)
+# ==========================================
+class Enrollment(db.Model):
+    __tablename__ = 'enrollments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Links to the Student
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Links to the Classroom
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    
+    enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # SQLAlchemy Relationships
+    student = db.relationship('User', backref=db.backref('enrollments', lazy=True))
+    classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True))
+
+    def __init__(self, student_id, classroom_id):
+        self.student_id = student_id
+        self.classroom_id = classroom_id
+
+    def __repr__(self):
+        return f'<Enrollment Student: {self.student_id} | Class: {self.classroom_id}>'
+    
+# ==========================================
+# SUBMISSION MODEL (Stores the .py files)
+# ==========================================
+class Submission(db.Model):
+    __tablename__ = 'submissions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Links to the Assignment
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
+    # Links to the Student
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # Stores the original file name (e.g., 'dijkstra_algo.py')
+    filename = db.Column(db.String(255), nullable=False)
+    
+    # Stores the actual location on the server (e.g., 'uploads/student_1_assign_2_dijkstra.py')
+    file_path = db.Column(db.String(255), nullable=False)
+    
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # SQLAlchemy Relationships
+    assignment = db.relationship('Assignment', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
+    student = db.relationship('User', backref=db.backref('submissions', lazy=True))
+
+    def __init__(self, assignment_id, student_id, filename, file_path):
+        self.assignment_id = assignment_id
+        self.student_id = student_id
+        self.filename = filename
+        self.file_path = file_path
+
+    def __repr__(self):
+        return f'<Submission {self.filename} | Student: {self.student_id} | Assignment: {self.assignment_id}>'
