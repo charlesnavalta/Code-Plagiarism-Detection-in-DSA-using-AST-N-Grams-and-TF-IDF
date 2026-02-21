@@ -12,6 +12,7 @@ import AdminLayout from './layouts/AdminLayout';
 
 // 3. Dashboards & Views
 import StudentDash from './pages/student/StudentDashboard';
+import StudentClassroomView from './pages/student/StudentClassroomView';
 import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
 import AdminDash from './pages/admin/AdminDashboard';
@@ -38,7 +39,10 @@ function App() {
         ========================================== */}
         <Route path="/student/*" element={
           <ProtectedRoute allowedRole="student">
-            <StudentDash />
+            <Routes>
+              <Route path="/" element={<StudentDash />} />
+              <Route path="class/:id" element={<StudentClassroomView />} />
+            </Routes>
           </ProtectedRoute>
         } />
 
