@@ -322,3 +322,30 @@ def submit_assignment(class_id, assignment_id):
         db.session.rollback()
         print(f"Error saving submission: {e}")
         return jsonify({"error": "Database error occurred while saving submission."}), 500
+    
+@classrooms_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions', methods=['GET'])
+@jwt_required()
+def get_assignment_submissions(class_id, assignment_id):
+    """Allows an instructor to see all student submissions for a specific assignment"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Security: Ensure this instructor actually owns the classroom
+    classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+    if not classroom:
+        return jsonify({"error": "Classroom not found or access denied"}), 404
+
+    # Fetch all submissions for this assignment
+    submissions = Submission.query.filter_by(assignment_id=assignment_id).all()
+    
+    submissions_data = [{
+        "id": s.id,
+        "student_name": s.student.username,
+        "filename": s.filename,
+        "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
+    } for s in submissions]
+    
+    return jsonify(submissions_data), 200
