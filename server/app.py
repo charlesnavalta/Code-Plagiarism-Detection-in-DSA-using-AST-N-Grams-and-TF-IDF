@@ -7,10 +7,11 @@ load_dotenv()
 from flask import Flask
 from flask_cors import CORS
 from database import setup_db, db # Ensure 'db' is imported here
-from models import User # Import your User model for the seeding logic
+from models import User, Classroom, Assignment # Import your User model for the seeding logic
 from routes.analysis import analysis_bp
 from routes.auth import auth_bp
 from flask_jwt_extended import JWTManager
+from routes.classrooms import classrooms_bp
 
 
 def create_app():
@@ -58,6 +59,7 @@ def create_app():
     # Register Blueprints (The "Controllers")
     app.register_blueprint(analysis_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(classrooms_bp, url_prefix='/api/classrooms')
 
     return app
 

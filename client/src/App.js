@@ -7,64 +7,81 @@ import Navbar from './components/common/Navbar';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
-// 2. Layouts (NEW IMPORT)
+// 2. Layouts
 import AdminLayout from './layouts/AdminLayout';
 
-// 3. Dashboards
+// 3. Dashboards & Views
 import StudentDash from './pages/student/StudentDashboard';
 import InstructorDash from './pages/instructor/InstructorDashboard';
+import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
 import AdminDash from './pages/admin/AdminDashboard';
-import UserManagement from './pages/admin/UserManagement'; // We will uncomment this later!
+import UserManagement from './pages/admin/UserManagement'; 
 
 function App() {
-  console.log({ ProtectedRoute, Navbar, Login, Register, AdminLayout, StudentDash, InstructorDash, AdminDash });
   return (  
     <Router>
-      {/* Note: You might want to hide this global Navbar on Admin pages since your AdminLayout has its own topbar! */}
+      {/* Global Navbar automatically hides itself on Admin pages via its own internal logic */}
       <Navbar /> 
       
       <Routes>
         {/* LANDING REDIRECT: Send the root URL to Login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
-        {/* PUBLIC ROUTES */}
+        {/* ==========================================
+            PUBLIC ROUTES
+        ========================================== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* PROTECTED ROUTES: Role-Based Workspaces */}
+        {/* ==========================================
+            STUDENT ROUTES
+        ========================================== */}
         <Route path="/student/*" element={
           <ProtectedRoute allowedRole="student">
             <StudentDash />
           </ProtectedRoute>
         } />
 
+        {/* ==========================================
+            INSTRUCTOR ROUTES (Nested Routing)
+        ========================================== */}
         <Route path="/instructor/*" element={
           <ProtectedRoute allowedRole="instructor">
-            <InstructorDash />
+            <Routes>
+              {/* Default route: /instructor/ shows the main dashboard grid */}
+              <Route path="/" element={<InstructorDash />} />
+              
+              {/* Dynamic route: /instructor/class/1 shows a specific classroom's workspace */}
+              <Route path="class/:id" element={<InstructorClassroomView />} />
+            </Routes>
           </ProtectedRoute>
         } />
 
-        {/* ADMIN ROUTES WITH LAYOUT */}
+        {/* ==========================================
+            ADMIN ROUTES WITH CUSTOM LAYOUT
+        ========================================== */}
         <Route path="/admin/*" element={
           <ProtectedRoute allowedRole="admin">
             <AdminLayout>
               <Routes>
-                {/* The default /admin route shows the Overview */}
+                {/* Default route: /admin/ shows the Overview statistics */}
                 <Route path="/" element={<AdminDash />} />
                 
-                {/* The /admin/users route will show the User Management table */}
-                <Route path="users" element={<UserManagement />} /> 
+                {/* Secondary route: /admin/users shows the User Management table */}
+                <Route path="users" element={<UserManagement />} />
               </Routes>
             </AdminLayout>
           </ProtectedRoute>
         } />
 
-        {/* ERROR ROUTES */}
+        {/* ==========================================
+            ERROR & FALLBACK ROUTES
+        ========================================== */}
         <Route path="/unauthorized" element={
             <div style={{ textAlign: 'center', marginTop: '50px' }}>
                 <h1>403 - Access Denied</h1>
                 <p>You do not have permission to view this page.</p>
-                <a href="/login">Back to Login</a>
+                <a href="/login" style={{ color: '#3498db', textDecoration: 'none' }}>Back to Login</a>
             </div>
         } />
         
