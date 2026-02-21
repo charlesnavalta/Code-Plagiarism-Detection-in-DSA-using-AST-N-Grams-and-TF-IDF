@@ -95,7 +95,7 @@
 }
 
 /* =========================================
-   NEW STYLES: Assignments List
+NEW STYLES: Assignments List
 ========================================= */
 .assignments-list {
     display: flex;
@@ -148,7 +148,7 @@
 }
 
 /* =========================================
-   NEW STYLES: Modal Popup Overlay
+NEW STYLES: Modal Popup Overlay
 ========================================= */
 .modal-overlay {
     position: fixed;
@@ -242,3 +242,17 @@
 .btn-save:hover {
     background: #219653;
 }
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-high { background-color: #fde8e8; color: #c81e1e; border: 1px solid #f8b4b4; }
+.status-medium { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.status-low { background-color: #def7ec; color: #03543f; border: 1px solid #84e1bc; }
+
+.code-font { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: #2980b9; }
