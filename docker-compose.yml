@@ -1,8 +1,22 @@
-version: "3.8"
-
 services:
   # ----------------------------
-  # 1. PYTHON BACKEND (Flask)
+  # 1. DATABASE (MySQL)
+  # ----------------------------
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # ----------------------------
+  # 2. PYTHON BACKEND (Flask)
   # ----------------------------
   backend:
     build: ./server
@@ -12,36 +26,35 @@ services:
     volumes:
       - ./server:/app
       - /app/uploads
+    env_file:
+      - .env
+    depends_on:
+      - db
     environment:
       - FLASK_ENV=development
 
   # ----------------------------
-  # 2. REACT FRONTEND (Merged)
+  # 3. REACT FRONTEND
   # ----------------------------
   frontend:
-    # We use the 'build' context because you have a custom Dockerfile in /client
     build:
       context: ./client
       dockerfile: Dockerfile
     container_name: frontend
-    
-    # This command logic comes from your uploaded file
     command: sh -c "npm install && npm start"
-    
     ports:
       - "3000:3000"
-    
     volumes:
       - ./client:/app
       - /app/node_modules
-    
-    # These settings fix hot-reloading on Windows
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - WDS_SOCKET_PORT=0
-    
     stdin_open: true
     tty: true
     depends_on:
       - backend
+
+volumes:
+  db_data:

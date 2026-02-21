@@ -1,49 +1,93 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-function Home() {
-  return (
-    <div>
-      <h1>🐳 Docker React App</h1>
-      <p>Welcome to your Dockerized React application!</p>
-      <p>This app is running in a Docker container with hot reload enabled.</p>
-    </div>
-  );
-}
+// 1. Core Components
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Navbar from './components/common/Navbar'; 
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
-function About() {
-  return (
-    <div>
-      <h1>About</h1>
-      <p>This is a sample React app containerized with Docker.</p>
-      <p>Features:</p>
-      <ul>
-        <li>React 18</li>
-        <li>React Router</li>
-        <li>Hot reload in development</li>
-        <li>Production-ready builds</li>
-      </ul>
-    </div>
-  );
-}
+// 2. Layouts
+import AdminLayout from './layouts/AdminLayout';
+
+// 3. Dashboards & Views
+import StudentDash from './pages/student/StudentDashboard';
+import InstructorDash from './pages/instructor/InstructorDashboard';
+import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
+import AdminDash from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement'; 
 
 function App() {
-  return (
+  return (  
     <Router>
-      <div className="App">
-        <nav className="navbar">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/about" className="nav-link">About</Link>
-        </nav>
+      {/* Global Navbar automatically hides itself on Admin pages via its own internal logic */}
+      <Navbar /> 
+      
+      <Routes>
+        {/* LANDING REDIRECT: Send the root URL to Login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
         
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
+        {/* ==========================================
+            PUBLIC ROUTES
+        ========================================== */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* ==========================================
+            STUDENT ROUTES
+        ========================================== */}
+        <Route path="/student/*" element={
+          <ProtectedRoute allowedRole="student">
+            <StudentDash />
+          </ProtectedRoute>
+        } />
+
+        {/* ==========================================
+            INSTRUCTOR ROUTES (Nested Routing)
+        ========================================== */}
+        <Route path="/instructor/*" element={
+          <ProtectedRoute allowedRole="instructor">
+            <Routes>
+              {/* Default route: /instructor/ shows the main dashboard grid */}
+              <Route path="/" element={<InstructorDash />} />
+              
+              {/* Dynamic route: /instructor/class/1 shows a specific classroom's workspace */}
+              <Route path="class/:id" element={<InstructorClassroomView />} />
+            </Routes>
+          </ProtectedRoute>
+        } />
+
+        {/* ==========================================
+            ADMIN ROUTES WITH CUSTOM LAYOUT
+        ========================================== */}
+        <Route path="/admin/*" element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminLayout>
+              <Routes>
+                {/* Default route: /admin/ shows the Overview statistics */}
+                <Route path="/" element={<AdminDash />} />
+                
+                {/* Secondary route: /admin/users shows the User Management table */}
+                <Route path="users" element={<UserManagement />} />
+              </Routes>
+            </AdminLayout>
+          </ProtectedRoute>
+        } />
+
+        {/* ==========================================
+            ERROR & FALLBACK ROUTES
+        ========================================== */}
+        <Route path="/unauthorized" element={
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                <h1>403 - Access Denied</h1>
+                <p>You do not have permission to view this page.</p>
+                <a href="/login" style={{ color: '#3498db', textDecoration: 'none' }}>Back to Login</a>
+            </div>
+        } />
+        
+        {/* CATCH-ALL: Redirect any unknown URL to Login */}
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
     </Router>
   );
 }
