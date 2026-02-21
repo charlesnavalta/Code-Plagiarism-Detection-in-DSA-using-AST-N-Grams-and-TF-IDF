@@ -1,44 +1,43 @@
 import os
-from flask import Blueprint, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-from utils.plagiarism import code_to_document, calculate_similarity
+from flask import Blueprint, jsonify, current_app
+from flask_jwt_extended import jwt_required
+from models import Submission, Assignment
+from utils.plagiarism import code_to_document, compare_all_files
 
-# We use a Blueprint to organize routes
 analysis_bp = Blueprint('analysis', __name__)
 
-@analysis_bp.route('/upload', methods=['POST'])
-def upload_files():
-    if 'submissions' not in request.files:
-        return jsonify({"error": "No files uploaded"}), 400
+@analysis_bp.route('/analyze/<int:assignment_id>', methods=['POST'])
+@jwt_required()
+def analyze_assignment(assignment_id):
+    """
+    Endpoint: Fetches all student submissions for a specific assignment 
+    from the server disk and runs the LogicGuard AST-Ngram engine.
+    """
+    # 1. Fetch records from DB
+    submissions = Submission.query.filter_by(assignment_id=assignment_id).all()
+    
+    if len(submissions) < 2:
+        return jsonify({"error": "Need at least 2 submissions to run analysis."}), 400
 
-    files = request.files.getlist('submissions')
-    saved_paths = []
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-
-    for file in files:
-        if file.filename == '': continue
-        filename = secure_filename(file.filename)
-        path = os.path.join(upload_folder, filename)
-        file.save(path)
-        
+    # 2. Process physical files into N-gram documents
+    processed_files = []
+    for sub in submissions:
         try:
-            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+            # We use errors='ignore' just in case of non-UTF8 characters in comments
+            with open(sub.file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 doc_str = code_to_document(f.read())
-                saved_paths.append({'name': filename, 'doc': doc_str})
-        except: pass
+                if doc_str:
+                    # Keep student name and filename for the report
+                    label = f"{sub.student.username} ({sub.filename})"
+                    processed_files.append({'name': label, 'doc': doc_str})
+        except Exception as e:
+            print(f"Skipping file {sub.file_path} due to read error: {e}")
 
-    results = []
-    for i in range(len(saved_paths)):
-        for j in range(i + 1, len(saved_paths)):
-            file_a = saved_paths[i]
-            file_b = saved_paths[j]
-            score = calculate_similarity(file_a['doc'], file_b['doc'])
-            final_score = round(score, 2)
-            
-            status = "Low"
-            if final_score > 70: status = "High"
-            if final_score > 0:
-                results.append({"file1": file_a['name'], "file2": file_b['name'], "score": final_score, "status": status})
+    # 3. Trigger the Batch Analysis
+    results = compare_all_files(processed_files)
 
-    results.sort(key=lambda x: x['score'], reverse=True)
-    return jsonify(results)
+    return jsonify({
+        "assignment_id": assignment_id,
+        "matches_found": len(results),
+        "results": results
+    })
