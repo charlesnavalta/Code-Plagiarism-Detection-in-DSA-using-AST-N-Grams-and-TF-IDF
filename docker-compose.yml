@@ -56,5 +56,21 @@ services:
     depends_on:
       - backend
 
+  # ----------------------------
+  # 4. DATABASE UI (phpMyAdmin)
+  # ----------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_ui
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+
+# Make sure 'volumes:' is all the way to the left!
 volumes:
   db_data:
