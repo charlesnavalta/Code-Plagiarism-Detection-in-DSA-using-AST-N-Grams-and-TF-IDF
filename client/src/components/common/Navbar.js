@@ -1,6 +1,6 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import './Navbar.css'; // 1. Import the new CSS file!
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import './Navbar.css'; 
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -13,23 +13,44 @@ const Navbar = () => {
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
 
     const handleLogout = () => {
-        // Clear session data
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         navigate('/login');
     };
 
-    // If no valid user is found, don't show the Navbar
     if (!user) return null;
 
-    // Hide this global navbar if we are on an Admin page
     if (location.pathname.startsWith('/admin')) {
         return null;
     }
 
     return (
         <nav className="navbar-container">
-            <div className="navbar-logo">THE SYSTEM | {user.role?.toUpperCase()}</div>
+            <div className="navbar-logo">
+                <Link to={`/${user.role}`} className="logo-link">
+                    LOGICGUARD | {user.role?.toUpperCase()}
+                </Link>
+            </div>
+
+            {/* THE NEW NAV BUTTONS */}
+            <div className="navbar-nav-items">
+                {user.role === 'instructor' && (
+                    <>
+                        <Link to="/instructor" className="nav-button">My Classes</Link>
+                        <Link to="/instructor/reports" className="nav-button">Plagiarism Reports</Link>
+                        <Link to="/instructor/profile" className="nav-button">Profile</Link>
+                    </>
+                )}
+                
+                {user.role === 'student' && (
+                    <>
+                        <Link to="/student" className="nav-button">My Classes</Link>
+                        <Link to="/student/submissions" className="nav-button">My Submissions</Link>
+                        <Link to="/student/profile" className="nav-button">Profile</Link>
+                    </>
+                )}
+            </div>
+
             <div className="navbar-links">
                 <span className="user-greet">Welcome, {user.username}</span>
                 <button onClick={handleLogout} className="logout-btn">Logout</button>

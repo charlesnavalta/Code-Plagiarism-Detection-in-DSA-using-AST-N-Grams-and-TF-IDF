@@ -138,3 +138,31 @@ def approve_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Database error occurred"}), 500
+
+from flask_jwt_extended import jwt_required, get_jwt_identity
+# Make sure jwt_required and get_jwt_identity are imported at the top!
+
+@auth_bp.route('/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    """Allows a logged-in user to update their password"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    data = request.get_json()
+    new_password = data.get('new_password')
+
+    if not new_password or len(new_password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters long."}), 400
+
+    try:
+        # Uses the set_password method you already wrote in models.py to hash it!
+        user.set_password(new_password)
+        db.session.commit()
+        return jsonify({"message": "Password updated successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
