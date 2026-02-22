@@ -1,40 +1,39 @@
-from dotenv import load_dotenv
 import os
-
-# Load environment variables before any other logic runs
-load_dotenv()
-
 from flask import Flask
 from flask_cors import CORS
-from database import setup_db, db # Ensure 'db' is imported here
-from models import User, Classroom, Assignment # Import your User model for the seeding logic
+from flask_jwt_extended import JWTManager
+
+# Database and Models
+from database import setup_db, db 
+from models import User, Classroom, Assignment 
+
+# Blueprints (Controllers)
 from routes.analysis import analysis_bp
 from routes.auth import auth_bp
-from flask_jwt_extended import JWTManager
 from routes.classrooms import classrooms_bp
-
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    @app.route('/')
-    def home():
-        return {"status": "The System is Running Successfully!"}
+    # 1. Load all configurations from config.py
+    app.config.from_object('config.Config')
 
-    # Configuration
-    app.config['UPLOAD_FOLDER'] = 'uploads'
+    # 2. Ensure Upload Folder Exists before anything runs
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
 
-    app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY') 
+    # 3. Initialize Extensions
     jwt = JWTManager(app) 
-
-    # Initialize Database (MySQL Connection)
     setup_db(app)
 
-    # --- AUTOMATIC ADMIN SEEDING LOGIC ---
-    # We must use app.app_context() to interact with the database before the server fully starts
+    # 4. Base Route
+    @app.route('/')
+    def home():
+        return {"status": "The LogicGuard System is Running Successfully!"}
+
+    # 5. --- AUTOMATIC ADMIN SEEDING LOGIC ---
+    # We use app.app_context() to interact with the database before the server fully starts
     with app.app_context():
         db.create_all() # Ensures tables exist
         
@@ -49,20 +48,21 @@ def create_app():
                 role='admin',
                 status='active' # Admins are immediately active
             )
-            new_admin.set_password('admin123') # The requested password
+            new_admin.set_password('admin123') 
             
             db.session.add(new_admin)
             db.session.commit()
             print("Master Admin account created successfully!")
     # --- END SEEDING LOGIC ---
 
-    # Register Blueprints (The "Controllers")
+    # 6. Register Blueprints (The "Controllers")
     app.register_blueprint(analysis_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(classrooms_bp, url_prefix='/api/classrooms')
 
     return app
 
+# Initialize the application
 app = create_app()
 
 if __name__ == '__main__':
