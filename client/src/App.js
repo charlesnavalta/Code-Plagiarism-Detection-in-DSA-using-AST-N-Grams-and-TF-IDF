@@ -1,47 +1,69 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// 1. Core Components
+// ==========================================
+// 1. CORE COMPONENTS & COMMON UI
+// ==========================================
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Navbar from './components/common/Navbar'; 
+import Navbar from './components/common/Navbar';
+import Profile from './pages/common/Profile';
+
+// ==========================================
+// 2. AUTHENTICATION PAGES
+// ==========================================
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
-// 2. Layouts
+// ==========================================
+// 3. LAYOUTS
+// ==========================================
 import AdminLayout from './layouts/AdminLayout';
 
-// 3. Dashboards & Views
+// ==========================================
+// 4. ROLE-SPECIFIC DASHBOARDS & VIEWS
+// ==========================================
+// Student Views
 import StudentDash from './pages/student/StudentDashboard';
 import StudentClassroomView from './pages/student/StudentClassroomView';
+
+// Instructor Views
 import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
+
+// Admin Views
 import AdminDash from './pages/admin/AdminDashboard';
-import UserManagement from './pages/admin/UserManagement'; 
+import UserManagement from './pages/admin/UserManagement';
 
 function App() {
   return (  
     <Router>
-      {/* Global Navbar automatically hides itself on Admin pages via its own internal logic */}
+      {/* Global Navbar: Automatically hides itself on Admin pages via its internal logic */}
       <Navbar /> 
       
       <Routes>
-        {/* LANDING REDIRECT: Send the root URL to Login */}
+        {/* LANDING REDIRECT: Automatically send the root URL to Login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
         {/* ==========================================
-            PUBLIC ROUTES
+            PUBLIC ROUTES (No authentication required)
         ========================================== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* ==========================================
-            STUDENT ROUTES
+            STUDENT ROUTES (Nested Routing)
         ========================================== */}
         <Route path="/student/*" element={
           <ProtectedRoute allowedRole="student">
             <Routes>
+              {/* Default route: /student/ shows the enrolled classes dashboard */}
               <Route path="/" element={<StudentDash />} />
+              
+              {/* Dynamic route: /student/class/:id shows a specific classroom's workspace */}
               <Route path="class/:id" element={<StudentClassroomView />} />
+              
+              {/* Shared route: /student/profile for account management */}
+              <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>
         } />
@@ -55,8 +77,11 @@ function App() {
               {/* Default route: /instructor/ shows the main dashboard grid */}
               <Route path="/" element={<InstructorDash />} />
               
-              {/* Dynamic route: /instructor/class/1 shows a specific classroom's workspace */}
+              {/* Dynamic route: /instructor/class/:id shows a specific classroom's workspace */}
               <Route path="class/:id" element={<InstructorClassroomView />} />
+              
+              {/* Shared route: /instructor/profile for account management */}
+              <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>
         } />
