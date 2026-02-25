@@ -46,7 +46,7 @@ const AdminDashboard = () => {
     return (
         <div className="admin-container">
             <h1>Admin Overview</h1>
-            <p className="subtitle">Welcome to the LogicGuard System Administration panel.</p>
+            <p className="subtitle">Welcome to the Salingan System Administration panel.</p>
 
             <div className="stats-grid">
                 <div className="stat-card">

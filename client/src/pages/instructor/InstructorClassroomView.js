@@ -193,7 +193,7 @@ const InstructorClassroomView = () => {
                         {/* NEW: DISPLAY PLAGIARISM RESULTS */}
                         {analysisResults && (
                             <div className="analysis-results-section" style={{ marginTop: '30px' }}>
-                                <h3 style={{ borderTop: '2px solid #ecf0f1', paddingTop: '20px' }}>LogicGuard Analysis Results</h3>
+                                <h3 style={{ borderTop: '2px solid #ecf0f1', paddingTop: '20px' }}>Salingan Analysis Results</h3>
                                 <table className="user-table" style={{ borderLeft: '5px solid #e74c3c' }}>
                                     <thead style={{ backgroundColor: '#fdf2f2' }}>
                                         <tr>

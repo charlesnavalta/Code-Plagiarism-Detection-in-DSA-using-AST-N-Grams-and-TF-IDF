@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Import the new CSS file
+import { useNavigate, Link } from 'react-router-dom';
+import './Login.css';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -39,43 +39,96 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
+        <div className="login-page-wrapper">
             <div className="login-card">
-                <h2 className="login-title">LogicGuard Login</h2>
+                
+                {/* Top Gradient Icon */}
+                <div className="header-icon-container">
+                    <div className="header-icon-bg">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <h2 className="login-title">Welcome Back</h2>
+                <p className="login-subtitle">Enter your credentials to access your account</p>
+
                 <form onSubmit={handleLogin}>
+                    
+                    {/* Email Input */}
                     <div className="input-group">
                         <label>Email or Username</label>
-                        <input 
-                            type="text" 
-                            placeholder="Enter your email" 
-                            className="input-field"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)} 
-                            required 
-                        />
+                        <div className="input-wrapper">
+                            <svg className="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <input 
+                                type="text" 
+                                placeholder="you@example.com" 
+                                className="styled-input"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)} 
+                                required 
+                            />
+                        </div>
                     </div>
+
+                    {/* Password Input */}
                     <div className="input-group">
                         <label>Password</label>
-                        <input 
-                            type="password" 
-                            placeholder="Enter your password" 
-                            className="input-field"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)} 
-                            required 
-                        />
+                        <div className="input-wrapper">
+                            <svg className="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input 
+                                type="password" 
+                                placeholder="••••••••" 
+                                className="styled-input"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)} 
+                                required 
+                            />
+                        </div>
                     </div>
+
+                    {/* Options Row */}
+                    <div className="options-row">
+                        <label className="checkbox-container">
+                            <input type="checkbox" />
+                            <span className="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="/forgot-password" className="forgot-link">Forgot password?</a>
+                    </div>
+
+                    {/* Submit Button */}
                     <button 
                         type="submit" 
                         className="login-button"
                         disabled={loading}
                     >
-                        {loading ? "Authenticating..." : "Login"}
+                        {loading ? "Authenticating..." : "Sign In"}
                     </button>
                 </form>
+
+                {/* Divider */}
+                <div className="divider">
+                    <span>Or</span>
+                </div>
+
+                {/* Footer Link */}
                 <p className="login-footer">
-                    Don't have an account? <a href="/register" className="login-link">Register here</a>
+                    Don't have an account? <Link to="/register" className="register-link">Register here</Link>
                 </p>
+            </div>
+
+            {/* Absolute Footer */}
+            <div className="page-footer">
+                © 2024 Salingan. All rights reserved.
             </div>
         </div>
     );

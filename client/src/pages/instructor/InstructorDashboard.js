@@ -53,7 +53,7 @@ const InstructorDashboard = () => {
         <div className="instructor-container">
             <div className="dashboard-header">
                 <h1>Instructor Dashboard</h1>
-                <p>Manage your classes, assignments, and run LogicGuard plagiarism checks.</p>
+                <p>Manage your classes, assignments, and run Salingan plagiarism checks.</p>
             </div>
 
             {/* Create Class Section */}

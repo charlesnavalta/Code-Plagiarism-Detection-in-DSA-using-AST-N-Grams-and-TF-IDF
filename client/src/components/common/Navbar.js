@@ -28,7 +28,7 @@ const Navbar = () => {
         <nav className="navbar-container">
             <div className="navbar-logo">
                 <Link to={`/${user.role}`} className="logo-link">
-                    LOGICGUARD | {user.role?.toUpperCase()}
+                    Salingan | {user.role?.toUpperCase()}
                 </Link>
             </div>
 

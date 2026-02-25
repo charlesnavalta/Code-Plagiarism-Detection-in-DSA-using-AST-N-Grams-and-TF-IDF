@@ -1,63 +1,210 @@
 /* src/pages/auth/Login.css */
 
-.login-container {
+/* Full screen dark background */
+.login-page-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    min-height: 100vh;
+    background-color: #1a202c; /* The dark navy from the image */
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    position: relative;
 }
 
+/* The White Card */
 .login-card {
-    padding: 40px;
-    max-width: 400px;
+    background: #ffffff;
+    padding: 40px 48px;
+    max-width: 420px;
     width: 100%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    background: #fff;
-}
-
-.login-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-field {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
     box-sizing: border-box;
 }
 
+/* Gradient Top Icon */
+.header-icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.header-icon-bg {
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+/* Typography */
+.login-title {
+    text-align: center;
+    margin: 0 0 8px 0;
+    color: #111827;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.login-subtitle {
+    text-align: center;
+    margin: 0 0 32px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Form Groups */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Input Fields with Icons */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+}
+
+.styled-input {
+    width: 100%;
+    padding: 12px 12px 12px 42px; /* Extra left padding for the icon */
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    color: #1f2937;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.styled-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.styled-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Remember Me & Forgot Password */
+.options-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.checkbox-container input {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+}
+
+.forgot-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* Button */
 .login-button {
     width: 100%;
-    padding: 12px;
-    background-color: #2c3e50;
+    padding: 14px;
+    background-color: #2563eb;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.login-button:hover:not(:disabled) {
+    background-color: #1d4ed8;
 }
 
 .login-button:disabled {
-    background-color: #95a5a6;
+    background-color: #93c5fd;
     cursor: not-allowed;
 }
 
-.login-footer {
+/* Divider Line */
+.divider {
+    display: flex;
+    align-items: center;
     text-align: center;
-    margin-top: 20px;
-    font-size: 0.9rem;
+    margin: 24px 0;
+    color: #9ca3af;
+    font-size: 14px;
 }
 
-.login-link {
-    color: #3498db;
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+/* Footer Linking */
+.login-footer {
+    text-align: center;
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.register-link {
+    color: #3b82f6;
     text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+/* Bottom Page Copyright */
+.page-footer {
+    position: absolute;
+    bottom: 24px;
+    color: #9ca3af;
+    font-size: 13px;
 }

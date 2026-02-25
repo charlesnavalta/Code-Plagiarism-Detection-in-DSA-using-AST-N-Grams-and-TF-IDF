@@ -17,7 +17,7 @@ const AdminLayout = ({ children }) => {
             {/* Sidebar Navigation */}
             <aside className="admin-sidebar">
                 <div className="sidebar-header">
-                    <h2>LogicGuard Admin</h2>
+                    <h2>Salingan Admin</h2>
                 </div>
                 <nav className="sidebar-nav">
                     {/* We will build these exact routes in App.js later */}
