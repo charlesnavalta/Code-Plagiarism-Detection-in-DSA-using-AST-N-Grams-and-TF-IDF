@@ -1,164 +1,202 @@
-/* src/pages/student/StudentDashboard.css */
-
-.student-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.student-dashboard-wrapper {
+    background-color: #0b1121;
+    min-height: calc(100vh - 65px);
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
-.dashboard-header {
-    margin-bottom: 30px;
-}
-
-.dashboard-header h1 {
-    color: #2c3e50;
-    margin-bottom: 5px;
-}
-
-.dashboard-header p {
-    color: #7f8c8d;
-    font-size: 1.1rem;
-}
-
-/* Join Class Form */
-.join-class-section {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 40px;
-    border-left: 5px solid #3498db;
-}
-
-.join-class-section h3 {
-    margin-top: 0;
-    color: #34495e;
-}
-
-.join-class-form {
+.student-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
     display: flex;
-    gap: 15px;
+    gap: 30px;
 }
 
-.class-input {
-    flex: 1;
-    padding: 12px 15px;
-    border: 1px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+/* --- Sidebar --- */
+.student-sidebar {
+    width: 280px;
+    flex-shrink: 0;
 }
 
-.code-input {
+.profile-widget {
+    background: #151e32;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.avatar-glow {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.status-tag {
+    color: #10b981;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.mini-stat-card {
+    background: #151e32;
+    border: 1px solid #1f2937;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.stat-label { color: #64748b; font-size: 0.8rem; }
+.stat-num { color: #ffffff; font-size: 1.5rem; font-weight: 700; }
+
+/* --- Main Content --- */
+.student-main { flex-grow: 1; }
+
+.student-welcome-banner {
+    background: linear-gradient(100deg, #1e3a8a 0%, #151e32 100%);
+    border-radius: 12px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    border: 1px solid #1e293b;
+}
+
+.banner-info h1 { font-size: 2.2rem; margin: 0 0 10px 0; color: #fff; }
+.banner-info p { color: #94a3b8; font-size: 1.1rem; }
+
+.glass-join-form {
+    background: rgba(15, 23, 42, 0.6);
+    padding: 10px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.glass-join-form input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    width: 140px;
     font-family: monospace;
-    font-size: 1.2rem;
     letter-spacing: 2px;
-}
-
-.class-input:focus {
     outline: none;
-    border-color: #3498db;
 }
 
-.btn-join {
-    padding: 12px 25px;
-    background-color: #3498db;
+.btn-glow-join {
+    background: #3b82f6;
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
 
-.btn-join:hover {
-    background-color: #2980b9;
-}
+/* --- Grid & Cards --- */
+.section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+.section-heading h2 { font-size: 1.3rem; color: #f8fafc; }
 
-/* Classrooms Grid */
-.classrooms-section h3 {
-    color: #34495e;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 10px;
-}
-
-.class-grid {
+.cyber-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 25px;
 }
 
-.class-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    overflow: hidden;
-    transition: transform 0.2s;
-}
-
-.class-card:hover {
-    transform: translateY(-5px);
-}
-
-.class-card-header {
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px;
-}
-
-.student-card .class-card-header {
-    background-color: #34495e; /* Slightly different header color for students */
-}
-
-.class-card-header h4 {
-    margin: 0;
-    font-size: 1.2rem;
-}
-
-.class-card-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.instructor-label {
-    margin: 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.instructor-name {
-    margin: 5px 0 20px 0;
-    font-size: 1.1rem;
-    color: #2c3e50;
-    font-weight: 600;
-}
-
-.btn-enter-class {
-    width: 100%;
-    padding: 10px;
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
+.cyber-card {
+    position: relative;
+    background: #151e32;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 25px;
     cursor: pointer;
-    transition: 0.3s;
-    margin-top: auto;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-enter-class:hover {
-    background-color: #bdc3c7;
+.cyber-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
 }
 
-.empty-state {
+.card-badge {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.cyber-card h4 { font-size: 1.3rem; margin: 15px 0; color: #fff; }
+
+.instructor-info { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.instructor-avatar-mini {
+    width: 24px; height: 24px;
+    background: #334155;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+.btn-enter-cyber {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.cyber-card:hover .btn-enter-cyber {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
+
+/* --- Empty/Loading --- */
+.student-empty-state {
     text-align: center;
-    padding: 40px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    color: #7f8c8d;
-    border: 2px dashed #bdc3c7;
+    padding: 80px 20px;
+    background: #0f172a;
+    border-radius: 12px;
+    border: 2px dashed #1f2937;
+}
+
+.empty-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.05);
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
 }

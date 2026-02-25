@@ -1,92 +1,187 @@
 /* src/pages/admin/UserManagement.css */
 
-.user-management-container {
-    background-color: white;
+.admin-page-wrapper {
+    background-color: #0b1121; /* Match deep navy background */
+    min-height: calc(100vh - 65px);
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.header-section h2 {
-    margin-top: 0;
-    color: #2c3e50;
+.admin-content-layout {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.header-section p {
-    color: #7f8c8d;
-    margin-bottom: 25px;
+/* --- Welcome Banner (Matching Falsicode Theme) --- */
+.admin-welcome-banner {
+    background: linear-gradient(100deg, #1e3a8a 0%, #151e32 100%);
+    border-radius: 16px;
+    padding: 35px 45px;
+    margin-bottom: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Table Styles */
-.table-wrapper {
-    overflow-x: auto;
+.banner-info h1 {
+    font-size: 2rem;
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    font-weight: 700;
 }
 
-.users-table {
+.banner-info p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.admin-stat-glass-pill {
+    background: rgba(15, 23, 42, 0.6);
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.admin-stat-glass-pill span {
+    display: block;
+    font-size: 0.65rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+}
+
+.admin-stat-glass-pill strong {
+    font-size: 1.6rem;
+    color: #3b82f6; /* Blue glow color */
+}
+
+/* --- Table Styles --- */
+.cyber-table-card {
+    background: #151e32;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.falsicode-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
 }
 
-.users-table th, .users-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
+.falsicode-table th {
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 18px 25px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #334155;
+    font-weight: 700;
 }
 
-.users-table th {
-    background-color: #f8f9fa;
-    color: #2c3e50;
-    font-weight: 600;
+.falsicode-tr {
+    border-bottom: 1px solid #1f2937;
+    transition: background 0.2s;
 }
 
-.users-table tr:hover {
-    background-color: #fcfcfc;
+.falsicode-tr:hover {
+    background: rgba(59, 130, 246, 0.03);
 }
 
-/* Status & Role Badges */
-.status-badge, .role-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
+.falsicode-table td {
+    padding: 15px 25px;
+    vertical-align: middle;
+}
+
+.id-cell {
+    font-family: 'Fira Code', monospace;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* --- User Info --- */
+.user-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mini-avatar-glow {
+    width: 35px; height: 35px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.user-text-meta { display: flex; flex-direction: column; }
+.username-bold { font-weight: 600; color: #f8fafc; font-size: 1rem; }
+.email-dim { font-size: 0.85rem; color: #64748b; }
+
+/* --- Badges & Pills --- */
+.cyber-role-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.cyber-role-badge.instructor { background: rgba(139, 92, 246, 0.1); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.2); }
+.cyber-role-badge.student { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+.cyber-status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 0.85rem;
-    font-weight: bold;
+    font-weight: 600;
     text-transform: capitalize;
 }
 
-/* Status Colors */
-.status-badge.active {
-    background-color: #e8f8f5;
-    color: #27ae60;
-}
+.status-indicator-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-.status-badge.pending {
-    background-color: #fdf2e9;
-    color: #e67e22;
-}
+.cyber-status-pill.active { color: #10b981; }
+.cyber-status-pill.active .status-indicator-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
 
-/* Role Colors */
-.role-badge.admin { background-color: #eceff1; color: #455a64; }
-.role-badge.instructor { background-color: #e3f2fd; color: #1976d2; }
-.role-badge.student { background-color: #f3e5f5; color: #7b1fa2; }
+.cyber-status-pill.pending { color: #f59e0b; }
+.cyber-status-pill.pending .status-indicator-dot { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
 
-/* Action Buttons */
-.action-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.approve-btn {
-    background-color: #3498db;
+/* --- Buttons --- */
+.btn-action-approve {
+    background: #3b82f6;
     color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
 }
 
-.approve-btn:hover {
-    background-color: #2980b9;
+.btn-action-approve:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
 }
 
-.no-action {
-    color: #bdc3c7;
-}
+.action-verified-text { color: #64748b; font-size: 0.85rem; font-style: italic; }
+.text-right { text-align: right; }
+
+/* --- Generic Spinner --- */
+.admin-loading-screen { height: 80vh; display: flex; justify-content: center; align-items: center; }
+.cyber-spinner { width: 40px; height: 40px; border: 3px solid #1e293b; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

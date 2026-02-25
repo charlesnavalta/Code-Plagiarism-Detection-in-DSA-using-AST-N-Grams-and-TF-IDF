@@ -1,67 +1,135 @@
 /* src/pages/admin/AdminDashboard.css */
 
-.admin-container {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 1000px;
-    padding: 2.5rem;
+.admin-dashboard-wrapper {
+    background-color: #0b1121; /* Deep navy background */
+    min-height: calc(100vh - 65px);
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
+}
+
+.admin-layout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- Welcome Banner --- */
+.admin-welcome-banner {
+    background: linear-gradient(100deg, #1e3a8a 0%, #151e32 100%);
+    border-radius: 16px;
+    padding: 45px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -1px;
+    color: #ffffff;
+}
+
+.banner-content p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.banner-badge-glass {
+    text-align: right;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 15px 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin: 20px auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
 }
 
-.admin-container h1 {
-    color: #2c3e50;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+.banner-badge-glass span {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
 }
 
-.subtitle {
-    color: #7f8c8d;
-    margin-bottom: 2.5rem;
+.status-online-glow {
+    color: #10b981;
+    font-size: 1.4rem;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
-/* Grid Layout for the Statistics Cards */
-.stats-grid {
+/* --- Stats Grid Section --- */
+.section-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    color: #f8fafc;
+}
+
+.cyber-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+.stat-cyber-card {
+    background: #151e32; /* Dark slate card background */
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
     gap: 20px;
+    transition: all 0.3s ease;
 }
 
-.stat-card {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid #3498db; /* Blue accent edge */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+.stat-cyber-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
-.stat-card h3 {
-    margin-top: 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
+/* Icon wrappers with specific color glows */
+.stat-icon-wrapper {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blue-glow { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.purple-glow { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.orange-glow { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.green-glow { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+/* Stat Text */
+.stat-data { display: flex; flex-direction: column; }
+.stat-title { color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.stat-value { color: #ffffff; font-size: 2.2rem; font-weight: 800; margin: 5px 0 0 0; }
+
+/* Specific text colors */
+.text-orange { color: #f59e0b !important; }
+.text-green { color: #10b981 !important; }
+
+/* Highlight border for pending items */
+.warning-glow-border {
+    border-color: rgba(245, 158, 11, 0.5) !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.action-hint {
+    color: #f59e0b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 10px 0 0 0;
-}
-
-/* Specific Card Styles to draw the Admin's eye */
-.pending-card {
-    border-left: 5px solid #f39c12; /* Orange for attention */
-    background: #fffdfa;
-}
-
-.pending-card small {
-    color: #e67e22;
-    font-weight: bold;
-}
-
-.status-good {
-    color: #27ae60; /* Green to show the system is healthy */
 }

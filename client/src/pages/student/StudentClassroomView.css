@@ -1,0 +1,217 @@
+/* src/pages/student/StudentClassroomView.css */
+
+.student-workspace-wrapper {
+    background-color: #0b1121; /* Deep navy from image_22ac17.png */
+    min-height: calc(100vh - 65px);
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
+}
+
+.workspace-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* --- Banner Styling (Matches image_21e143.png) --- */
+.workspace-banner {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.btn-back-glow {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 50px;
+    margin-bottom: 25px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    backdrop-filter: blur(10px);
+}
+
+.btn-back-glow:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.banner-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.banner-title-group h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin: 0 0 5px 0;
+    letter-spacing: -1px;
+}
+
+.instructor-tag {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.status-pill-glass {
+    text-align: right;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+}
+
+.status-pill-glass span {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.status-enrolled {
+    color: #10b981;
+    font-size: 1.2rem;
+}
+
+/* --- Assignments Stack --- */
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+    color: #f8fafc;
+}
+
+.assignment-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cyber-assignment-card {
+    background: #151e32;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.cyber-assignment-card:hover {
+    border-color: #3b82f6;
+    transform: translateX(10px);
+}
+
+.assignment-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+    color: #f8fafc;
+}
+
+.assignment-content p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+/* --- Upload Actions --- */
+.assignment-actions {
+    min-width: 300px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hidden-file-input { display: none; }
+
+.btn-select-cyber {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-select-cyber:hover {
+    background: #243049;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.upload-prep-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.selected-file-pill {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.selected-file-pill code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+}
+
+.btn-glow-submit {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: 0.2s;
+}
+
+.btn-glow-submit:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Loading Spinner */
+.student-loading-screen {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cyber-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #1e293b;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

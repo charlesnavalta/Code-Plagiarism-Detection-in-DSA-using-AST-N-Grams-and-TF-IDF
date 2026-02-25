@@ -1,19 +1,19 @@
 /* src/pages/auth/Login.css */
 
-/* Full screen dark background */
-.login-page-wrapper {
+.auth-isolated-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #1a202c; /* The dark navy from the image */
+    background-color: #1a202c; /* The exact dark navy from your image */
     font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
     position: relative;
+    margin: 0;
+    padding: 0;
 }
 
-/* The White Card */
-.login-card {
+.auth-card {
     background: #ffffff;
     padding: 40px 48px;
     max-width: 420px;
@@ -21,17 +21,16 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
     box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
-/* Gradient Top Icon */
-.header-icon-container {
+.auth-header-icon {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
 
-.header-icon-bg {
-    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+.auth-icon-bg {
     border-radius: 12px;
     width: 48px;
     height: 48px;
@@ -39,11 +38,14 @@
     justify-content: center;
     align-items: center;
     color: white;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
-/* Typography */
-.login-title {
+.purple-bg {
+    background: #8b5cf6;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.auth-title {
     text-align: center;
     margin: 0 0 8px 0;
     color: #111827;
@@ -51,19 +53,19 @@
     font-weight: 700;
 }
 
-.login-subtitle {
+.auth-subtitle {
     text-align: center;
     margin: 0 0 32px 0;
     color: #6b7280;
     font-size: 14px;
 }
 
-/* Form Groups */
-.input-group {
+.auth-input-group {
     margin-bottom: 20px;
+    text-align: left;
 }
 
-.input-group label {
+.auth-input-group label {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
@@ -71,42 +73,38 @@
     color: #374151;
 }
 
-/* Input Fields with Icons */
-.input-wrapper {
+.auth-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.input-icon {
+.auth-input-icon {
     position: absolute;
     left: 14px;
     color: #9ca3af;
+    pointer-events: none;
 }
 
-.styled-input {
+.auth-styled-input {
     width: 100%;
-    padding: 12px 12px 12px 42px; /* Extra left padding for the icon */
+    padding: 12px 12px 12px 42px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     font-size: 15px;
     color: #1f2937;
     transition: all 0.2s ease;
     box-sizing: border-box;
+    background-color: #ffffff;
 }
 
-.styled-input:focus {
+.auth-styled-input:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.styled-input::placeholder {
-    color: #9ca3af;
-}
-
-/* Remember Me & Forgot Password */
-.options-row {
+.auth-options-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -114,14 +112,14 @@
     font-size: 14px;
 }
 
-.checkbox-container {
+.auth-checkbox-container {
     display: flex;
     align-items: center;
     color: #6b7280;
     cursor: pointer;
 }
 
-.checkbox-container input {
+.auth-checkbox-container input {
     margin-right: 8px;
     cursor: pointer;
     width: 16px;
@@ -129,18 +127,21 @@
     accent-color: #3b82f6;
 }
 
-.forgot-link {
+.auth-link {
     color: #3b82f6;
     text-decoration: none;
     font-weight: 500;
 }
 
-.forgot-link:hover {
+.auth-link.bold {
+    font-weight: 600;
+}
+
+.auth-link:hover {
     text-decoration: underline;
 }
 
-/* Button */
-.login-button {
+.auth-submit-btn {
     width: 100%;
     padding: 14px;
     background-color: #2563eb;
@@ -153,17 +154,11 @@
     transition: background-color 0.2s ease;
 }
 
-.login-button:hover:not(:disabled) {
+.auth-submit-btn:hover:not(:disabled) {
     background-color: #1d4ed8;
 }
 
-.login-button:disabled {
-    background-color: #93c5fd;
-    cursor: not-allowed;
-}
-
-/* Divider Line */
-.divider {
+.auth-divider {
     display: flex;
     align-items: center;
     text-align: center;
@@ -172,37 +167,25 @@
     font-size: 14px;
 }
 
-.divider::before,
-.divider::after {
+.auth-divider::before,
+.auth-divider::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.divider span {
+.auth-divider span {
     padding: 0 10px;
 }
 
-/* Footer Linking */
-.login-footer {
+.auth-footer-text {
     text-align: center;
     margin: 0;
     font-size: 14px;
     color: #6b7280;
 }
 
-.register-link {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.register-link:hover {
-    text-decoration: underline;
-}
-
-/* Bottom Page Copyright */
-.page-footer {
+.auth-page-footer {
     position: absolute;
     bottom: 24px;
     color: #9ca3af;
