@@ -1,135 +1,213 @@
 /* src/pages/admin/AdminDashboard.css */
 
-.admin-dashboard-wrapper {
-    background-color: #0b1121; /* Deep navy background */
+.falsicode-admin-root {
+    background-color: #0b1121; /* Guaranteed dark background */
     min-height: calc(100vh - 65px);
     color: #e2e8f0;
     font-family: 'Inter', sans-serif;
-    padding: 30px;
+    padding: 40px 30px;
 }
 
-.admin-layout-container {
-    max-width: 1200px;
+.admin-max-width {
+    max-width: 1100px;
     margin: 0 auto;
 }
 
-/* --- Welcome Banner --- */
-.admin-welcome-banner {
-    background: linear-gradient(100deg, #1e3a8a 0%, #151e32 100%);
-    border-radius: 16px;
-    padding: 45px;
-    margin-bottom: 40px;
+/* --- Clean Header --- */
+.admin-clean-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 40px;
 }
 
-.banner-content h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 0 0 10px 0;
-    letter-spacing: -1px;
+.admin-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
     color: #ffffff;
+    letter-spacing: -0.5px;
 }
 
-.banner-content p {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.banner-badge-glass {
-    text-align: right;
-    background: rgba(15, 23, 42, 0.5);
-    padding: 15px 25px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-}
-
-.banner-badge-glass span {
-    display: block;
-    font-size: 0.7rem;
+.admin-subtitle {
     color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 5px;
+    font-size: 0.95rem;
+    margin: 0;
+    letter-spacing: 0.5px;
 }
 
-.status-online-glow {
-    color: #10b981;
-    font-size: 1.4rem;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-}
-
-/* --- Stats Grid Section --- */
-.section-header-title {
+/* Blinking Status Pill */
+.live-status-indicator {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 8px 16px;
+    border-radius: 50px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 25px;
-    color: #f8fafc;
+    gap: 8px;
+    color: #10b981;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
-.cyber-stats-grid {
+.blinking-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+    animation: fadeBlink 2s infinite ease-in-out;
+}
+
+@keyframes fadeBlink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; box-shadow: 0 0 12px #10b981; }
+}
+
+/* --- Bento Box Layout --- */
+.admin-bento-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 }
 
-.stat-cyber-card {
-    background: #151e32; /* Dark slate card background */
-    border: 1px solid #1f2937;
+.bento-card {
+    background: #121826; /* Darker, cleaner slate */
+    border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 16px;
     padding: 30px;
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    justify-content: space-between;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-cyber-card:hover {
-    border-color: #3b82f6;
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+/* Subtle glow on hover instead of big movement */
+.bento-card:hover {
+    background: #161e2f;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* Icon wrappers with specific color glows */
-.stat-icon-wrapper {
-    width: 60px; height: 60px;
-    border-radius: 14px;
+/* Decorative top gradient line for cards */
+.bento-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent);
+}
+
+.bento-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.bento-label {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bento-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.blue-glow { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-.purple-glow { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-.orange-glow { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.green-glow { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.bento-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.bento-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.bento-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 
-/* Stat Text */
-.stat-data { display: flex; flex-direction: column; }
-.stat-title { color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-.stat-value { color: #ffffff; font-size: 2.2rem; font-weight: 800; margin: 5px 0 0 0; }
-
-/* Specific text colors */
-.text-orange { color: #f59e0b !important; }
-.text-green { color: #10b981 !important; }
-
-/* Highlight border for pending items */
-.warning-glow-border {
-    border-color: rgba(245, 158, 11, 0.5) !important;
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+.bento-value-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
-.action-hint {
-    color: #f59e0b;
-    font-size: 0.75rem;
+.bento-value {
+    font-size: 3.5rem;
     font-weight: 700;
-    margin-top: 8px;
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+}
+
+.bento-trend {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Specific Highlights */
+.text-orange { color: #f59e0b !important; }
+.bento-trend.warning { color: #f59e0b; font-weight: 600; }
+.bento-trend.good { color: #10b981; }
+
+.needs-action {
+    border-color: rgba(245, 158, 11, 0.3);
+    background: linear-gradient(180deg, #121826 0%, rgba(245, 158, 11, 0.02) 100%);
+}
+
+.needs-action::before { background: #f59e0b; } /* Orange top line */
+
+/* --- Wide Health Card --- */
+.wide-card {
+    grid-column: span 3;
+    padding: 35px 30px;
+}
+
+.health-percentage {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.health-visualizer {
+    margin-top: 15px;
+}
+
+.health-bar-bg {
+    height: 8px;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.health-bar-fill {
+    width: 99.9%;
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.health-markers {
+    display: flex;
+    justify-content: space-between;
+    color: #64748b;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Responsive Grid */
+@media (max-width: 900px) {
+    .admin-bento-grid { grid-template-columns: 1fr 1fr; }
+    .wide-card { grid-column: span 2; }
+}
+
+@media (max-width: 600px) {
+    .admin-bento-grid { grid-template-columns: 1fr; }
+    .wide-card { grid-column: span 1; }
+    .admin-clean-header { flex-direction: column; align-items: flex-start; gap: 15px; }
 }

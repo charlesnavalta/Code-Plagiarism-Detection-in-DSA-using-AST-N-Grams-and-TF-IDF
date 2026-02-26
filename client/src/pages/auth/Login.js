@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../services/api'; // Swapped standard axios for centralized api service
 import './Login.css';
 
 const Login = () => {
@@ -14,14 +14,17 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { 
+            // No need for full URL; api service uses baseURL
+            const res = await api.post('/auth/login', { 
                 username: email, 
                 password 
             });
             
+            // Store session data
             localStorage.setItem('user', JSON.stringify(res.data.user)); 
             localStorage.setItem('token', res.data.access_token);
 
+            // Role-based navigation
             const role = res.data.user.role;
             if (role === 'admin') navigate('/admin');
             else if (role === 'instructor') navigate('/instructor');
@@ -57,7 +60,7 @@ const Login = () => {
 
                 <form onSubmit={handleLogin}>
                     
-                    {/* Email Input */}
+                    {/* Email/Username Input */}
                     <div className="auth-input-group">
                         <label>Email or Username</label>
                         <div className="auth-input-wrapper">
@@ -95,7 +98,6 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* Options Row */}
                     <div className="auth-options-row">
                         <label className="auth-checkbox-container">
                             <input type="checkbox" />
@@ -105,26 +107,22 @@ const Login = () => {
                         <a href="/forgot-password" className="auth-link">Forgot password?</a>
                     </div>
 
-                    {/* Submit Button */}
                     <button type="submit" className="auth-submit-btn" disabled={loading}>
                         {loading ? "Authenticating..." : "Sign In"}
                     </button>
                 </form>
 
-                {/* Divider */}
                 <div className="auth-divider">
                     <span>Or</span>
                 </div>
 
-                {/* Footer Link */}
                 <p className="auth-footer-text">
                     Don't have an account? <Link to="/register" className="auth-link bold">Register here</Link>
                 </p>
             </div>
 
-            {/* Absolute Footer */}
             <div className="auth-page-footer">
-                © 2024 Salingan. All rights reserved.
+                © 2026 Falsicode. All rights reserved.
             </div>
         </div>
     );

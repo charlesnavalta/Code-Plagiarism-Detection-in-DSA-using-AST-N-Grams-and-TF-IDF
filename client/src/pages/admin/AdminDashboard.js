@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './AdminDashboard.css';
+
+// Import your new centralized API service
+import api from '../../services/api'; 
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
@@ -13,98 +15,114 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/auth/users', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                // Using the 'api' service: 
+                // 1. No need for the full URL (it uses the baseURL from api.js)
+                // 2. No need to manually pass the Token (the interceptor handles it)
+                // 3. If the session expires (401), the interceptor will log you out automatically
+                const res = await api.get('/auth/users');
                 
                 const users = res.data;
-                const totalStudents = users.filter(u => u.role === 'student').length;
-                const activeInstructors = users.filter(u => u.role === 'instructor' && u.status === 'active').length;
-                const pendingApprovals = users.filter(u => u.status === 'pending').length;
 
+                // Calculate statistics based on role and status
                 setStats({
-                    students: totalStudents,
-                    instructors: activeInstructors,
-                    pending: pendingApprovals
+                    students: users.filter(u => u.role === 'student').length,
+                    instructors: users.filter(u => u.role === 'instructor' && u.status === 'active').length,
+                    pending: users.filter(u => u.status === 'pending').length
                 });
             } catch (error) {
                 console.error("Failed to fetch dashboard statistics", error);
+                // Note: If error is a 401, your api.js interceptor will redirect before this point
             } finally {
                 setLoading(false);
             }
         };
+
         fetchStats();
     }, []);
 
     return (
-        <div className="admin-dashboard-wrapper">
-            <div className="admin-layout-container">
+        <div className="falsicode-admin-root">
+            <div className="admin-max-width">
                 
-                {/* Standardized Dark Banner */}
-                <header className="admin-welcome-banner">
-                    <div className="banner-content">
-                        <h1>Admin Overview</h1>
-                        <p>Falsicode Central Intelligence: System growth and verification monitoring.</p>
+                {/* Clean, minimalist top header */}
+                <header className="admin-clean-header">
+                    <div>
+                        <h1 className="admin-title">System Overview</h1>
+                        <p className="admin-subtitle">Falsicode Global Administration Node</p>
                     </div>
-                    <div className="banner-badge-glass">
-                        <span>System Status</span>
-                        <strong className="status-online-glow">OPERATIONAL</strong>
+                    <div className="live-status-indicator">
+                        <div className="blinking-dot"></div>
+                        <span>ALL SYSTEMS NOMINAL</span>
                     </div>
                 </header>
 
-                <div className="admin-grid-section">
-                    <div className="section-header-title">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        <h2>Platform Analytics</h2>
-                    </div>
-
-                    <div className="cyber-stats-grid">
-                        {/* Active Students Card */}
-                        <div className="stat-cyber-card">
-                            <div className="stat-icon-wrapper blue-glow">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            </div>
-                            <div className="stat-data">
-                                <span className="stat-title">Active Students</span>
-                                <p className="stat-value">{loading ? '...' : stats.students}</p>
+                {/* Modern Bento Box Layout */}
+                <div className="admin-bento-grid">
+                    
+                    {/* Primary Focus: Pending Approvals */}
+                    <div className={`bento-card priority-card ${stats.pending > 0 ? 'needs-action' : ''}`}>
+                        <div className="bento-card-header">
+                            <span className="bento-label">Pending Requests</span>
+                            <div className="bento-icon orange">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                             </div>
                         </div>
-
-                        {/* Active Instructors Card */}
-                        <div className="stat-cyber-card">
-                            <div className="stat-icon-wrapper purple-glow">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                            </div>
-                            <div className="stat-data">
-                                <span className="stat-title">Verified Instructors</span>
-                                <p className="stat-value">{loading ? '...' : stats.instructors}</p>
-                            </div>
-                        </div>
-
-                        {/* Pending Approvals Card - Highlights if > 0 */}
-                        <div className={`stat-cyber-card ${stats.pending > 0 ? 'warning-glow-border' : ''}`}>
-                            <div className="stat-icon-wrapper orange-glow">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            </div>
-                            <div className="stat-data">
-                                <span className="stat-title">Pending Approvals</span>
-                                <p className="stat-value text-orange">{loading ? '...' : stats.pending}</p>
-                                {stats.pending > 0 && <small className="action-hint">Attention Required</small>}
-                            </div>
-                        </div>
-
-                        {/* System Health Card */}
-                        <div className="stat-cyber-card">
-                            <div className="stat-icon-wrapper green-glow">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            </div>
-                            <div className="stat-data">
-                                <span className="stat-title">System Health</span>
-                                <p className="stat-value text-green">99.9%</p>
-                            </div>
+                        <div className="bento-value-wrapper">
+                            <h2 className="bento-value text-orange">{loading ? '-' : stats.pending}</h2>
+                            {stats.pending > 0 ? (
+                                <span className="bento-trend warning">Requires review</span>
+                            ) : (
+                                <span className="bento-trend good">Up to date</span>
+                            )}
                         </div>
                     </div>
+
+                    {/* Secondary Stat: Students */}
+                    <div className="bento-card">
+                        <div className="bento-card-header">
+                            <span className="bento-label">Active Students</span>
+                            <div className="bento-icon blue">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div className="bento-value-wrapper">
+                            <h2 className="bento-value">{loading ? '-' : stats.students}</h2>
+                            <span className="bento-trend">Total enrolled</span>
+                        </div>
+                    </div>
+
+                    {/* Secondary Stat: Instructors */}
+                    <div className="bento-card">
+                        <div className="bento-card-header">
+                            <span className="bento-label">Verified Instructors</span>
+                            <div className="bento-icon purple">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            </div>
+                        </div>
+                        <div className="bento-value-wrapper">
+                            <h2 className="bento-value">{loading ? '-' : stats.instructors}</h2>
+                            <span className="bento-trend">Active accounts</span>
+                        </div>
+                    </div>
+
+                    {/* Wide Health Card */}
+                    <div className="bento-card wide-card">
+                        <div className="bento-card-header">
+                            <span className="bento-label">Network Health & Uptime</span>
+                            <span className="health-percentage text-green">99.99%</span>
+                        </div>
+                        <div className="health-visualizer">
+                            <div className="health-bar-bg">
+                                <div className="health-bar-fill"></div>
+                            </div>
+                            <div className="health-markers">
+                                <span>Core Server</span>
+                                <span>Database</span>
+                                <span>Analysis Engine</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../services/api'; // Swapped standard axios for centralized api service
 import './Register.css'; 
 
 const Register = () => {
@@ -17,7 +17,8 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/auth/register', formData);
+            // Simplified API call
+            await api.post('/auth/register', formData);
             
             if (formData.role === 'instructor') {
                 alert("Registration Successful! Please wait for Admin approval before logging in.");
@@ -37,7 +38,7 @@ const Register = () => {
         <div className="auth-isolated-wrapper">
             <div className="auth-card auth-card-relative">
                 
-                {/* --- NEW: Back Button --- */}
+                {/* Back Button */}
                 <button className="auth-back-btn" onClick={() => navigate('/login')}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -57,7 +58,7 @@ const Register = () => {
                 </div>
 
                 <h2 className="auth-title">Create Account</h2>
-                <p className="auth-subtitle">Join Salingan and start your learning journey</p>
+                <p className="auth-subtitle">Join Falsicode and start your learning journey</p>
 
                 <form onSubmit={handleSubmit}>
                     
@@ -159,7 +160,7 @@ const Register = () => {
             </div>
 
             <div className="auth-page-footer">
-                © 2024 Salingan. All rights reserved.
+                © 2026 Falsicode. All rights reserved.
             </div>
         </div>
     );

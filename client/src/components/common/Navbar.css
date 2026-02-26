@@ -168,3 +168,34 @@
 .dropdown-logout:hover {
     background-color: rgba(251, 113, 133, 0.1);
 }
+
+/* --- Admin Specific Theme --- */
+.admin-theme {
+    background-color: #0b1121 !important; /* Deep Navy */
+    border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.admin-theme .brand-logo {
+    background-color: #f59e0b; /* Gold/Orange for Admin */
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.admin-theme .brand-panel {
+    color: #f59e0b;
+    font-family: 'Fira Code', monospace;
+    font-weight: 700;
+}
+
+.admin-theme .user-avatar-small {
+    background: #f59e0b;
+    color: #000;
+}
+
+.admin-theme .nav-link-item.active {
+    color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.admin-theme .profile-toggle:hover {
+    border-color: #f59e0b;
+}

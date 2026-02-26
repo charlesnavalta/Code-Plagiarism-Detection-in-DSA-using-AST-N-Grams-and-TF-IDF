@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './Profile.css';
+// Changed: Use the centralized API service
+import api from '../../services/api'; 
 
 const Profile = () => {
     const rawUser = localStorage.getItem('user');
-    const user = rawUser && rawUser !== "undefined" ? JSON.parse(rawUser) : {};
+    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
 
     // Password State
     const [newPassword, setNewPassword] = useState('');
@@ -18,7 +19,7 @@ const Profile = () => {
 
     const handleUpdateEmail = (e) => {
         e.preventDefault();
-        alert("Email update functionality is coming soon!");
+        alert("System Notice: Email update functionality is currently being provisioned.");
     };
 
     const handleUpdatePassword = async (e) => {
@@ -26,26 +27,28 @@ const Profile = () => {
         setMessage('');
         setError('');
 
+        // Basic Validation
         if (newPassword !== confirmPassword) {
-            return setError("Passwords do not match!");
+            return setError("Security protocol failed: Passwords do not match.");
         }
 
         if (newPassword.length < 6) {
-            return setError("Password must be at least 6 characters.");
+            return setError("Security protocol failed: Password must be at least 6 characters.");
         }
 
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.put('http://localhost:5000/api/auth/profile', 
-                { new_password: newPassword },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setMessage(res.data.message);
+            // Simplified: The 'api' service handles the baseURL and Authorization header automatically
+            const res = await api.put('/auth/profile', { 
+                new_password: newPassword 
+            });
+
+            setMessage(res.data.message || "Security credentials updated successfully.");
             setNewPassword('');
             setConfirmPassword('');
         } catch (err) {
-            setError(err.response?.data?.error || "Failed to update profile.");
+            // If the session expired, the interceptor will handle the logout before this
+            setError(err.response?.data?.error || "Critical failure: Unable to update security parameters.");
         } finally {
             setLoading(false);
         }
@@ -60,7 +63,7 @@ const Profile = () => {
                 
                 <div className="premium-header">
                     <h1>Account Overview</h1>
-                    <p>Manage your CodeGuard identity and security preferences.</p>
+                    <p>Manage your Falsicode identity and security preferences.</p>
                 </div>
 
                 <div className="premium-profile-grid">
@@ -73,12 +76,14 @@ const Profile = () => {
                         </div>
                         
                         <div className="identity-details">
-                            <h2 className="identity-name">{user.username || 'Unknown User'}</h2>
-                            <p className="identity-email">{user.email || 'No email provided'}</p>
+                            <h2 className="identity-name">{user.username || 'Unknown Node'}</h2>
+                            <p className="identity-email">{user.email || 'No email associated'}</p>
                             
                             <div className="identity-role-wrapper">
                                 <span className={`premium-role-badge role-${user.role?.toLowerCase()}`}>
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
                                     {user.role?.toUpperCase()}
                                 </span>
                             </div>
@@ -86,12 +91,12 @@ const Profile = () => {
 
                         <div className="identity-meta">
                             <div className="meta-item">
-                                <span className="meta-label">Account Status</span>
-                                <span className="meta-value text-green">Active</span>
+                                <span className="meta-label">Node Status</span>
+                                <span className="meta-value text-green">Online</span>
                             </div>
                             <div className="meta-item">
-                                <span className="meta-label">Authentication</span>
-                                <span className="meta-value">Standard</span>
+                                <span className="meta-label">Encryption</span>
+                                <span className="meta-value">AES-256 Enabled</span>
                             </div>
                         </div>
                     </div>
@@ -99,22 +104,24 @@ const Profile = () => {
                     {/* RIGHT COLUMN: Settings Card */}
                     <div className="profile-settings-card">
                         
-                        {/* SECTION 1: Dummy Email Update */}
+                        {/* SECTION 1: Email Update */}
                         <div className="settings-header">
                             <h3>Email Preferences</h3>
-                            <p>Update the email address associated with your account.</p>
+                            <p>Update the primary contact address for this system node.</p>
                         </div>
 
                         <form onSubmit={handleUpdateEmail} className="premium-form">
                             <div className="premium-input-group">
                                 <label>Contact Email</label>
                                 <div className="premium-input-wrapper">
-                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
                                     <input 
                                         type="email" 
                                         value={emailInput} 
                                         onChange={(e) => setEmailInput(e.target.value)} 
-                                        placeholder="you@example.com"
+                                        placeholder="node@falsicode.com"
                                     />
                                 </div>
                             </div>
@@ -130,8 +137,8 @@ const Profile = () => {
 
                         {/* SECTION 2: Password Update */}
                         <div className="settings-header header-no-border">
-                            <h3>Security Settings</h3>
-                            <p>Ensure your account is using a long, random password to stay secure.</p>
+                            <h3>Security Protocols</h3>
+                            <p>Ensure your account uses a complex, unique password to maintain node integrity.</p>
                         </div>
 
                         <form onSubmit={handleUpdatePassword} className="premium-form">
@@ -153,7 +160,9 @@ const Profile = () => {
                             <div className="premium-input-group">
                                 <label>New Password</label>
                                 <div className="premium-input-wrapper">
-                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
                                     <input 
                                         type="password" 
                                         value={newPassword} 
@@ -165,9 +174,11 @@ const Profile = () => {
                             </div>
 
                             <div className="premium-input-group">
-                                <label>Confirm New Password</label>
+                                <label>Verify New Password</label>
                                 <div className="premium-input-wrapper">
-                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
                                     <input 
                                         type="password" 
                                         value={confirmPassword} 
@@ -179,8 +190,12 @@ const Profile = () => {
                             </div>
 
                             <div className="form-actions">
-                                <button type="submit" className="btn-save-premium" disabled={loading || !newPassword || !confirmPassword}>
-                                    {loading ? "Updating..." : "Update Password"}
+                                <button 
+                                    type="submit" 
+                                    className="btn-save-premium" 
+                                    disabled={loading || !newPassword || !confirmPassword}
+                                >
+                                    {loading ? "Syncing..." : "Update Credentials"}
                                 </button>
                             </div>
                         </form>

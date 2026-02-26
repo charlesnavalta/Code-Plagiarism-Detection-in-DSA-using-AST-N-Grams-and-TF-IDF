@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // 1. CORE COMPONENTS & COMMON UI
 // ==========================================
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Navbar from './components/common/Navbar';
 import Profile from './pages/common/Profile';
 
 // ==========================================
@@ -15,8 +14,10 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 
 // ==========================================
-// 3. LAYOUTS
+// 3. MASTER & ROLE LAYOUTS
 // ==========================================
+// RootLayout ensures the dark navy theme and top Navbar are persistent
+import RootLayout from './layouts/RootLayout'; 
 import AdminLayout from './layouts/AdminLayout';
 
 // ==========================================
@@ -37,86 +38,87 @@ import UserManagement from './pages/admin/UserManagement';
 function App() {
   return (  
     <Router>
-      {/* Global Navbar: Automatically hides itself on Admin pages via its internal logic */}
-      <Navbar /> 
-      
-      <Routes>
-        {/* LANDING REDIRECT: Automatically send the root URL to Login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* ==========================================
-            PUBLIC ROUTES (No authentication required)
-        ========================================== */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* ROOT WRAPPER: Handles the Global Navy Theme & Top Navbar */}
+      <RootLayout>
+        <Routes>
+          {/* LANDING REDIRECT: Automatically send the root URL to Login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* ==========================================
+              PUBLIC ROUTES (No authentication required)
+          ========================================== */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* ==========================================
-            STUDENT ROUTES (Nested Routing)
-        ========================================== */}
-        <Route path="/student/*" element={
-          <ProtectedRoute allowedRole="student">
-            <Routes>
-              {/* Default route: /student/ shows the enrolled classes dashboard */}
-              <Route path="/" element={<StudentDash />} />
-              
-              {/* Dynamic route: /student/class/:id shows a specific classroom's workspace */}
-              <Route path="class/:id" element={<StudentClassroomView />} />
-              
-              {/* Shared route: /student/profile for account management */}
-              <Route path="profile" element={<Profile />} />
-            </Routes>
-          </ProtectedRoute>
-        } />
-
-        {/* ==========================================
-            INSTRUCTOR ROUTES (Nested Routing)
-        ========================================== */}
-        <Route path="/instructor/*" element={
-          <ProtectedRoute allowedRole="instructor">
-            <Routes>
-              {/* Default route: /instructor/ shows the main dashboard grid */}
-              <Route path="/" element={<InstructorDash />} />
-              
-              {/* Dynamic route: /instructor/class/:id shows a specific classroom's workspace */}
-              <Route path="class/:id" element={<InstructorClassroomView />} />
-              
-              {/* Shared route: /instructor/profile for account management */}
-              <Route path="profile" element={<Profile />} />
-            </Routes>
-          </ProtectedRoute>
-        } />
-
-        {/* ==========================================
-            ADMIN ROUTES WITH CUSTOM LAYOUT
-        ========================================== */}
-        <Route path="/admin/*" element={
-          <ProtectedRoute allowedRole="admin">
-            <AdminLayout>
+          {/* ==========================================
+              STUDENT ROUTES (Nested Routing)
+          ========================================== */}
+          <Route path="/student/*" element={
+            <ProtectedRoute allowedRole="student">
               <Routes>
-                {/* Default route: /admin/ shows the Overview statistics */}
-                <Route path="/" element={<AdminDash />} />
+                {/* Default route: /student/ shows the enrolled classes dashboard */}
+                <Route path="/" element={<StudentDash />} />
                 
-                {/* Secondary route: /admin/users shows the User Management table */}
-                <Route path="users" element={<UserManagement />} />
+                {/* Dynamic route: /student/class/:id shows a specific classroom's workspace */}
+                <Route path="class/:id" element={<StudentClassroomView />} />
+                
+                {/* Shared route: /student/profile for account management */}
+                <Route path="profile" element={<Profile />} />
               </Routes>
-            </AdminLayout>
-          </ProtectedRoute>
-        } />
+            </ProtectedRoute>
+          } />
 
-        {/* ==========================================
-            ERROR & FALLBACK ROUTES
-        ========================================== */}
-        <Route path="/unauthorized" element={
-            <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                <h1>403 - Access Denied</h1>
-                <p>You do not have permission to view this page.</p>
-                <a href="/login" style={{ color: '#3498db', textDecoration: 'none' }}>Back to Login</a>
-            </div>
-        } />
-        
-        {/* CATCH-ALL: Redirect any unknown URL to Login */}
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
+          {/* ==========================================
+              INSTRUCTOR ROUTES (Nested Routing)
+          ========================================== */}
+          <Route path="/instructor/*" element={
+            <ProtectedRoute allowedRole="instructor">
+              <Routes>
+                {/* Default route: /instructor/ shows the main dashboard grid */}
+                <Route path="/" element={<InstructorDash />} />
+                
+                {/* Dynamic route: /instructor/class/:id shows a specific classroom's workspace */}
+                <Route path="class/:id" element={<InstructorClassroomView />} />
+                
+                {/* Shared route: /instructor/profile for account management */}
+                <Route path="profile" element={<Profile />} />
+              </Routes>
+            </ProtectedRoute>
+          } />
+
+          {/* ==========================================
+              ADMIN ROUTES (Nested with Sidebar Layout)
+          ========================================== */}
+          <Route path="/admin/*" element={
+            <ProtectedRoute allowedRole="admin">
+              {/* AdminLayout handles the specialized Bento Sidebar */}
+              <AdminLayout>
+                <Routes>
+                  {/* Default route: /admin/ shows the Overview statistics */}
+                  <Route path="/" element={<AdminDash />} />
+                  
+                  {/* Secondary route: /admin/users shows the User Management table */}
+                  <Route path="users" element={<UserManagement />} />
+                </Routes>
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* ==========================================
+              ERROR & FALLBACK ROUTES
+          ========================================== */}
+          <Route path="/unauthorized" element={
+              <div style={{ textAlign: 'center', marginTop: '100px', color: '#e2e8f0' }}>
+                  <h1>403 - Access Denied</h1>
+                  <p>System security protocols prevent your access to this node.</p>
+                  <a href="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 'bold' }}>Return to Terminal</a>
+              </div>
+          } />
+          
+          {/* CATCH-ALL: Redirect any unknown URL to Login */}
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </RootLayout>
     </Router>
   );
 }

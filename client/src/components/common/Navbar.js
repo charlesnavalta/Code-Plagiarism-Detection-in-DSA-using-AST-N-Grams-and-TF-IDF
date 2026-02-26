@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect to imports
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import './Navbar.css'; 
 
@@ -10,21 +10,53 @@ const Navbar = () => {
     const rawUser = localStorage.getItem('user');
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
 
+    // ==========================================
+    // UI IMPROVEMENT: Auto-Close Dropdown
+    // ==========================================
+    // This effect listens for any click on the window. 
+    // If you click outside the '.profile-menu', it automatically closes the dropdown.
+    useEffect(() => {
+        const closeDropdown = (e) => {
+            if (!e.target.closest('.profile-menu')) {
+                setDropdownOpen(false);
+            }
+        };
+        window.addEventListener('click', closeDropdown);
+        
+        // Cleanup listener when component unmounts to prevent memory leaks
+        return () => window.removeEventListener('click', closeDropdown);
+    }, []);
+
+    // ==========================================
+    // AUTH LOGIC: Hard Reset Logout
+    // ==========================================
     const handleLogout = () => {
+        setDropdownOpen(false); // Explicitly close dropdown
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        navigate('/login');
+        
+        // This forces a full browser reload at the login screen.
+        // It ensures no role-leakage, memory state, or "Mori" account data 
+        // remains when switching to a different account.
+        window.location.href = '/login'; 
     };
 
+    // If no user is found, the navbar will not render (e.g., on Login/Register pages)
     if (!user) return null;
-    if (location.pathname.startsWith('/admin') || user.role === 'admin') return null;
 
-    // Helper to check active link
+    // Helper to check active link for CSS highlighting
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
+    // Determine the theme class based on the logged-in user role
+    const getThemeClass = () => {
+        if (user.role === 'admin') return 'admin-theme';
+        return user.role === 'instructor' ? 'instructor-theme' : 'student-theme';
+    };
+
     return (
-        <nav className={`navbar-container ${user.role === 'instructor' ? 'instructor-theme' : 'student-theme'}`}>
+        <nav className={`navbar-container ${getThemeClass()}`}>
             <div className="navbar-left">
+                {/* Brand Identity Section */}
                 <div className="brand-logo">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
@@ -33,11 +65,11 @@ const Navbar = () => {
                 </div>
                 <span className="brand-text">Falsicode</span>
                 <span className="brand-divider">|</span>
-                <span className="brand-panel">
-                    {user.role === 'instructor' ? 'Instructor Panel' : 'Student Portal'}
+                <span className="brand-panel">  
+                    {user.role === 'admin' ? 'System Root' : user.role === 'instructor' ? 'Instructor Panel' : 'Student Portal'}
                 </span>
 
-                {/* Navbar Links - Middle Section */}
+                {/* Navbar Links Section - Dynamic based on Role */}
                 <div className="navbar-center-links">
                     {user.role === 'student' && (
                         <>
@@ -49,13 +81,11 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-right">
-                {/* Simplified Notification for both */}
-                <div className="nav-notification" style={{color: '#94a3b8', cursor: 'pointer'}}>
-                    🔔
-                </div>
-                
+                {/* System Notifications */}
+                <div className="nav-notification">🔔</div>
                 <span className="brand-divider">|</span>
 
+                {/* Profile Access & Logout Menu */}
                 <div className="profile-menu">
                     <button 
                         className="profile-toggle" 
@@ -68,20 +98,16 @@ const Navbar = () => {
                         <span style={{fontSize: '0.6rem', opacity: 0.6}}>▼</span>
                     </button>
                     
+                    {/* Dropdown Card */}
                     {dropdownOpen && (
                         <div className="dropdown-menu">
                             <Link 
-                                to={user.role === 'instructor' ? "/instructor" : "/student"} 
+                                to={user.role === 'admin' ? "/admin" : user.role === 'instructor' ? "/instructor" : "/student"} 
                                 onClick={() => setDropdownOpen(false)}
                             >
                                 Dashboard Home
                             </Link>
-                            <Link 
-                                to={user.role === 'instructor' ? "/instructor/profile" : "/student/profile"} 
-                                onClick={() => setDropdownOpen(false)}
-                            >
-                                Settings
-                            </Link>
+                            {/* Sign Out triggers the hard reset logout */}
                             <button onClick={handleLogout} className="dropdown-logout">
                                 Sign Out
                             </button>

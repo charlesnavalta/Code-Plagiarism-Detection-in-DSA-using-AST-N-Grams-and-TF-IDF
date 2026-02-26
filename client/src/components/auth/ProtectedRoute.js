@@ -2,20 +2,19 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRole }) => {
-    // We parse the user object from localStorage
-    const user = JSON.parse(localStorage.getItem('user')); 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
 
-    // 1. If no user is found, send them back to Login
-    if (!user) {
+    // If no user OR no token is found, clean storage and redirect
+    if (!user || !token) {
+        localStorage.clear(); 
         return <Navigate to="/login" replace />;
     }
 
-    // 2. If the user's role doesn't match the required role, send to "Unauthorized"
     if (user.role !== allowedRole) {
         return <Navigate to="/unauthorized" replace />;
     }
 
-    // 3. If everything is correct, show the requested page
     return children;
 };
 

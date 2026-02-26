@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// Changed: Using centralized api service
+import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
 
 const StudentClassroomView = () => {
@@ -14,14 +15,16 @@ const StudentClassroomView = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const headers = { Authorization: `Bearer ${token}` };
-                const classRes = await axios.get(`http://localhost:5000/api/classrooms/${id}`, { headers });
+                // Fetch classroom meta and assignments using relative paths
+                const [classRes, assignRes] = await Promise.all([
+                    api.get(`/classrooms/${id}`),
+                    api.get(`/classrooms/${id}/assignments`)
+                ]);
+                
                 setClassroom(classRes.data);
-                const assignRes = await axios.get(`http://localhost:5000/api/classrooms/${id}/assignments`, { headers });
                 setAssignments(assignRes.data);
             } catch (error) {
-                alert("Failed to load classroom details.");
+                alert("Security Notice: Failed to synchronize classroom node.");
                 navigate('/student'); 
             } finally {
                 setLoading(false);
@@ -39,24 +42,31 @@ const StudentClassroomView = () => {
 
     const handleFileUpload = async (assignmentId) => {
         const fileToUpload = selectedFiles[assignmentId];
-        if (!fileToUpload) return alert("Please select a .py file first!");
+        if (!fileToUpload) return alert("System Notice: Please select a valid .py file.");
+        
         const formData = new FormData();
         formData.append('file', fileToUpload);
+
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post(
-                `http://localhost:5000/api/classrooms/${id}/assignments/${assignmentId}/submit`, 
-                formData,
-                { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
+            // Interceptor handles Authorization; browser handles multipart boundary
+            const res = await api.post(
+                `/classrooms/${id}/assignments/${assignmentId}/submit`, 
+                formData
             );
             alert(res.data.message);
             setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
         } catch (error) {
-            alert(error.response?.data?.error || "Error uploading file.");
+            alert(error.response?.data?.error || "Critical failure uploading file to node.");
         }
     };
 
-    if (loading) return <div className="student-loading-screen"><div className="cyber-spinner"></div></div>;
+    if (loading) return (
+        <div className="student-loading-screen">
+            <div className="cyber-spinner"></div>
+            <p>Accessing Node Data...</p>
+        </div>
+    );
+
     if (!classroom) return null;
 
     return (
@@ -65,16 +75,16 @@ const StudentClassroomView = () => {
                 <header className="workspace-banner">
                     <button onClick={() => navigate('/student')} className="btn-back-glow">
                         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Dashboard
+                        Exit Workspace
                     </button>
                     <div className="banner-details">
                         <div className="banner-title-group">
                             <h1>{classroom.name}</h1>
-                            <p className="instructor-tag">Instructor: <strong>{classroom.instructor}</strong></p>
+                            <p className="instructor-tag">Lead Instructor: <strong>{classroom.instructor}</strong></p>
                         </div>
                         <div className="status-pill-glass">
-                            <span>Enrollment Status</span>
-                            <strong className="status-enrolled">ENROLLED</strong>
+                            <span>Status</span>
+                            <strong className="status-enrolled">AUTHORIZED</strong>
                         </div>
                     </div>
                 </header>
@@ -82,12 +92,12 @@ const StudentClassroomView = () => {
                 <div className="assignment-section">
                     <h2 className="section-label">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Class Assignments
+                        Node Assignment Queue
                     </h2>
                     
                     {assignments.length === 0 ? (
                         <div className="empty-assignment-box">
-                            <p>No assignments posted yet.</p>
+                            <p>No assignment protocols detected in this cluster.</p>
                         </div>
                     ) : (
                         <div className="assignment-stack">
@@ -95,7 +105,7 @@ const StudentClassroomView = () => {
                                 <div key={assignment.id} className="cyber-assignment-card">
                                     <div className="assignment-content">
                                         <h3>{assignment.title}</h3>
-                                        <p>{assignment.description || "No specific instructions provided."}</p>
+                                        <p>{assignment.description || "No specific parameters provided."}</p>
                                     </div>
                                     
                                     <div className="assignment-actions">
@@ -109,7 +119,7 @@ const StudentClassroomView = () => {
                                         
                                         {!selectedFiles[assignment.id] ? (
                                             <label htmlFor={`file-${assignment.id}`} className="btn-select-cyber">
-                                                Choose .py File
+                                                Select .py Source
                                             </label>
                                         ) : (
                                             <div className="upload-prep-container">
@@ -120,7 +130,7 @@ const StudentClassroomView = () => {
                                                     className="btn-glow-submit" 
                                                     onClick={() => handleFileUpload(assignment.id)}
                                                 >
-                                                    Submit to LogicGuard
+                                                    Deploy to LogicGuard
                                                 </button>
                                             </div>
                                         )}
