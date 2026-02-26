@@ -1,63 +1,64 @@
 /* src/pages/auth/Register.css */
 
-.register-container {
+.auth-isolated-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 90vh; /* Slightly taller to accommodate the extra field */
-}
-
-.register-card {
-    padding: 40px;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    background: #fff;
-}
-
-.register-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-field, .select-field {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    min-height: 100vh;
+    background-color: #1a202c; 
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    padding: 40px 0; 
     box-sizing: border-box;
 }
 
-.register-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #2c3e50;
-    color: white;
+/* Ensure the card allows absolute positioning for the back button */
+.auth-card-relative {
+    position: relative;
+}
+
+/* Back Button Styles */
+.auth-back-btn {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: transparent;
     border: none;
-    border-radius: 4px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
-.register-button:hover {
-    background-color: #34495e;
+.auth-back-btn:hover {
+    background-color: #f3f4f6;
+    color: #111827;
 }
 
-.register-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.9rem;
+.blue-bg {
+    background: #3b82f6;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
-.register-link {
-    color: #3498db;
-    text-decoration: none;
+.auth-styled-select {
+    cursor: pointer;
+    appearance: none; 
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ca3af%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px top 50%;
+    background-size: 10px auto;
+}
+
+.auth-terms-row {
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #6b7280;
+    text-align: left;
 }

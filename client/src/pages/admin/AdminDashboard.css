@@ -1,67 +1,213 @@
 /* src/pages/admin/AdminDashboard.css */
 
-.admin-container {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 1000px;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin: 20px auto;
+.falsicode-admin-root {
+    background-color: #0b1121; /* Guaranteed dark background */
+    min-height: calc(100vh - 65px);
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    padding: 40px 30px;
 }
 
-.admin-container h1 {
-    color: #2c3e50;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+.admin-max-width {
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
-.subtitle {
-    color: #7f8c8d;
-    margin-bottom: 2.5rem;
+/* --- Clean Header --- */
+.admin-clean-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 40px;
 }
 
-/* Grid Layout for the Statistics Cards */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+.admin-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    letter-spacing: -0.5px;
 }
 
-.stat-card {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid #3498db; /* Blue accent edge */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.stat-card h3 {
-    margin-top: 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    text-transform: uppercase;
+.admin-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
     letter-spacing: 0.5px;
 }
 
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 10px 0 0 0;
+/* Blinking Status Pill */
+.live-status-indicator {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 8px 16px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #10b981;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
-/* Specific Card Styles to draw the Admin's eye */
-.pending-card {
-    border-left: 5px solid #f39c12; /* Orange for attention */
-    background: #fffdfa;
+.blinking-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+    animation: fadeBlink 2s infinite ease-in-out;
 }
 
-.pending-card small {
-    color: #e67e22;
-    font-weight: bold;
+@keyframes fadeBlink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; box-shadow: 0 0 12px #10b981; }
 }
 
-.status-good {
-    color: #27ae60; /* Green to show the system is healthy */
+/* --- Bento Box Layout --- */
+.admin-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.bento-card {
+    background: #121826; /* Darker, cleaner slate */
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle glow on hover instead of big movement */
+.bento-card:hover {
+    background: #161e2f;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Decorative top gradient line for cards */
+.bento-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent);
+}
+
+.bento-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.bento-label {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bento-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bento-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.bento-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.bento-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+.bento-value-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.bento-value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+}
+
+.bento-trend {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Specific Highlights */
+.text-orange { color: #f59e0b !important; }
+.bento-trend.warning { color: #f59e0b; font-weight: 600; }
+.bento-trend.good { color: #10b981; }
+
+.needs-action {
+    border-color: rgba(245, 158, 11, 0.3);
+    background: linear-gradient(180deg, #121826 0%, rgba(245, 158, 11, 0.02) 100%);
+}
+
+.needs-action::before { background: #f59e0b; } /* Orange top line */
+
+/* --- Wide Health Card --- */
+.wide-card {
+    grid-column: span 3;
+    padding: 35px 30px;
+}
+
+.health-percentage {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.health-visualizer {
+    margin-top: 15px;
+}
+
+.health-bar-bg {
+    height: 8px;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.health-bar-fill {
+    width: 99.9%;
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.health-markers {
+    display: flex;
+    justify-content: space-between;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Responsive Grid */
+@media (max-width: 900px) {
+    .admin-bento-grid { grid-template-columns: 1fr 1fr; }
+    .wide-card { grid-column: span 2; }
+}
+
+@media (max-width: 600px) {
+    .admin-bento-grid { grid-template-columns: 1fr; }
+    .wide-card { grid-column: span 1; }
+    .admin-clean-header { flex-direction: column; align-items: flex-start; gap: 15px; }
 }

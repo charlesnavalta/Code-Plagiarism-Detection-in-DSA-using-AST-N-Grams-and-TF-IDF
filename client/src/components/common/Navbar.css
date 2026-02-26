@@ -6,97 +6,196 @@
     align-items: center;
     padding: 0 30px;
     height: 65px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #151e32; /* Unified dark background */
+    border-bottom: 1px solid #1f2937;
 }
 
-.navbar-logo {
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-.logo-link {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-/* NEW: Styles for the central links */
-.navbar-nav-items {
-    display: flex;
-    gap: 30px;
-    margin-right: auto; /* Pushes the logout section to the right */
-    margin-left: 50px;
-}
-
-.nav-link {
-    color: #bdc3c7;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 5px 0;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-    color: #ffffff;
-}
-
-.navbar-links {
+/* Common Brand Elements */
+.navbar-left {
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
-.user-greet {
-    margin-right: 20px;
-    font-size: 0.95rem;
-    color: #bdc3c7;
-}
-
-.logout-btn {
-    background-color: #e74c3c;
+.brand-logo {
+    border-radius: 8px; /* Slightly squircle for modern look */
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
-.logout-btn:hover {
-    background-color: #c0392b; 
-}
+/* Theme Specific Logo Colors */
+.instructor-theme .brand-logo { background-color: #3b82f6; } /* Blue for Teachers */
+.student-theme .brand-logo { background-color: #8b5cf6; }    /* Purple for Students */
 
-.logo-link {
+.brand-text {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #ffffff;
-    text-decoration: none;
+}
+
+.brand-divider {
+    color: #334155;
+    margin: 0 10px;
+}
+
+.brand-panel {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.navbar-nav-items {
+/* Nav Items (Middle/Right) */
+.navbar-center-links {
     display: flex;
-    gap: 15px;
-    margin-right: auto; /* Pushes the logout section to the right */
-    margin-left: 40px;
+    gap: 5px;
+    margin-left: 20px;
 }
 
-.nav-button {
-    color: #bdc3c7;
+.nav-link-item {
+    color: #94a3b8;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    padding: 8px 16px;
+    padding: 8px 15px;
     border-radius: 6px;
-    transition: all 0.2s ease;
-    background-color: transparent;
+    transition: all 0.2s;
 }
 
-.nav-button:hover {
+.nav-link-item:hover {
     color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle highlight effect */
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link-item.active {
+    color: #ffffff;
+    background-color: rgba(59, 130, 246, 0.1); /* Blue glow for active */
+}
+
+/* User Actions Right */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-menu {
+    position: relative;
+}
+
+.profile-toggle {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+}
+
+.profile-toggle:hover {
+    border-color: #4b5563;
+    background: #243049;
+}
+
+.user-avatar-small {
+    width: 24px;
+    height: 24px;
+    background: #475569;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    min-width: 180px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.dropdown-menu a, .dropdown-logout {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: 0.2s;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu a:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+.dropdown-logout {
+    color: #fb7185;
+    border-top: 1px solid #334155;
+    margin-top: 5px;
+}
+
+.dropdown-logout:hover {
+    background-color: rgba(251, 113, 133, 0.1);
+}
+
+/* --- Admin Specific Theme --- */
+.admin-theme {
+    background-color: #0b1121 !important; /* Deep Navy */
+    border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.admin-theme .brand-logo {
+    background-color: #f59e0b; /* Gold/Orange for Admin */
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.admin-theme .brand-panel {
+    color: #f59e0b;
+    font-family: 'Fira Code', monospace;
+    font-weight: 700;
+}
+
+.admin-theme .user-avatar-small {
+    background: #f59e0b;
+    color: #000;
+}
+
+.admin-theme .nav-link-item.active {
+    color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.admin-theme .profile-toggle:hover {
+    border-color: #f59e0b;
 }
