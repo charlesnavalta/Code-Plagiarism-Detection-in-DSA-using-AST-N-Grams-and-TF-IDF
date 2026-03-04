@@ -1,70 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// Changed: Using centralized api service
 import api from '../../services/api'; 
 import './InstructorClassroomView.css';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
+    const dashboardRef = useRef(null);
     
-    // Core State Cluster
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [theme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
-    // Modal Visibility
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
-    
-    // Data Sync States
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
     const [currentSubmissions, setCurrentSubmissions] = useState([]);
     const [selectedAssignment, setSelectedAssignment] = useState(null);
-
-    // LogicGuard Analysis State
     const [analysisResults, setAnalysisResults] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-    // --- READ: Sync Node Data ---
-    const fetchData = async () => {
-        try {
-            // Simultaneous fetch for classroom meta and assignments
-            const [classRes, assignRes] = await Promise.all([
-                api.get(`/classrooms/${id}`),
-                api.get(`/classrooms/${id}/assignments`)
-            ]);
-            
-            setClassroom(classRes.data);
-            setAssignments(assignRes.data);
-        } catch (error) {
-            alert("Security Notice: Failed to sync classroom parameters.");
-            navigate('/instructor'); 
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [classRes, assignRes] = await Promise.all([
+                    api.get(`/classrooms/${id}`),
+                    api.get(`/classrooms/${id}/assignments`)
+                ]);
+                setClassroom(classRes.data);
+                setAssignments(assignRes.data);
+            } catch (error) {
+                navigate('/instructor'); 
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchData();
-    }, [id]);
+    }, [id, navigate]);
 
-    // --- CREATE: Deploy New Assignment ---
-    const handleCreateAssignment = async (e) => {
-        e.preventDefault();
-        try {
-            await api.post(`/classrooms/${id}/assignments`, { title, description });
-            setShowCreateModal(false);
-            setTitle('');
-            setDescription('');
-            fetchData(); 
-        } catch (error) {
-            alert("Protocol failure: Unable to deploy assignment.");
+    const handleMouseMove = (e) => {
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         }
     };
 
-    // --- READ: Retrieve Student Submissions ---
     const handleViewSubmissions = async (assignment) => {
         try {
             const res = await api.get(`/classrooms/${id}/assignments/${assignment.id}/submissions`);
@@ -73,245 +56,148 @@ const InstructorClassroomView = () => {
             setAnalysisResults(null); 
             setShowSubmissionsModal(true);
         } catch (error) {
-            alert("Security Notice: Access to submissions denied.");
+            alert("Access to submissions denied.");
         }
     };
 
-    // --- EXECUTE: Run LogicGuard Plagiarism Scan ---
     const handleRunAnalysis = async () => {
-        if (currentSubmissions.length < 2) {
-            return alert("Logic Error: Minimum of two submissions required for cross-comparison.");
-        }
-
+        if (currentSubmissions.length < 2) return alert("Minimum 2 submissions required.");
         setIsAnalyzing(true);
         try {
             const res = await api.post(`/analyze/${selectedAssignment.id}`, {});
             setAnalysisResults(res.data.results);
         } catch (error) {
-            alert(error.response?.data?.error || "Critical failure during LogicGuard analysis.");
+            alert("Analysis failed.");
         } finally {
             setIsAnalyzing(false);
         }
     };
 
-    if (loading) return (
-        <div className="classroom-loading">
-            <div className="loader-spinner"></div> 
-            Synchronizing Workspace...
-        </div>
-    );
-    
-    if (!classroom) return null;
+    if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
 
     return (
-        <div className="classroom-view-wrapper">
-            <div className="classroom-view-container">
-                
-                {/* --- Node Control Banner --- */}
-                <header className="classroom-banner">
-                    <button onClick={() => navigate('/instructor')} className="btn-back-light">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Return to Dashboard
-                    </button>
-                    <div className="banner-content">
-                        <div className="banner-text">
-                            <h1>{classroom.name}</h1>
-                            <p>Provision assignments and monitor code integrity</p>
+        <div className={`falsicode-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-1"></div>
+                <div className="aurora-blob blob-2"></div>
+            </div>
+
+            <div className="classroom-layout">
+                {/* Cinematic Banner */}
+                <header className="spatial-card cinematic-header fade-in-down">
+                    <div className="header-inner">
+                        <div className="top-meta">
+                            <button onClick={() => navigate('/instructor')} className="neo-back-btn">Hub</button>
+                            <div className="glass-chip">
+                                <span className="mono-label">INVITE CODE: {classroom?.invite_code}</span>
+                            </div>
                         </div>
-                        <div className="invite-badge-glass">
-                            <span>Node Invite Code</span>
-                            <strong>{classroom.invite_code}</strong>
+                        <h1 className="hero-title">{classroom?.name}</h1>
+                        <div className="stat-badges">
+                            <span className="b-label">Total Submissions: {assignments.reduce((acc, curr) => acc + (curr.submission_count || 0), 0)}</span>
+                            <span className="b-label status-active">Status: ACTIVE HUB</span>
                         </div>
                     </div>
                 </header>
 
-                <div className="workspace-section">
-                    <div className="workspace-header">
-                        <h2>Deployed Assignments</h2>
-                        <button className="btn-create-assignment" onClick={() => setShowCreateModal(true)}>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
-                            New Assignment
-                        </button>
+                <main className="content-hub">
+                    <div className="hub-header">
+                        <h2>Assignment Stream</h2>
+                        <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>New Assignment</button>
                     </div>
-                    
-                    {assignments.length === 0 ? (
-                        <div className="empty-workspace-dark">
-                            <div className="empty-icon-ring">
-                                <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            </div>
-                            <h3>Cluster is Empty</h3>
-                            <p>No assignments found. Initialize a deployment to start receiving submissions.</p>
-                        </div>
-                    ) : (
-                        <div className="assignments-grid">
-                            {assignments.map(assignment => (
-                                <div key={assignment.id} className="assignment-card-rich">
-                                    <div className="assignment-card-left">
-                                        <div className="assignment-icon">
-                                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                        </div>
-                                        <div className="assignment-info">
-                                            <h3>{assignment.title}</h3>
-                                            <p>{assignment.description || "No manual instructions provided."}</p>
-                                        </div>
-                                    </div>
-                                    <button className="btn-view-submissions" onClick={() => handleViewSubmissions(assignment)}>
-                                        Submissions & Analysis &rarr;
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
 
-                {/* --- Deployment Modal --- */}
-                {showCreateModal && (
-                    <div className="dark-modal-overlay">
-                        <div className="dark-modal-content">
-                            <div className="modal-header">
-                                <h2>Deploy New Assignment</h2>
-                                <button className="btn-close-icon" onClick={() => setShowCreateModal(false)}>&times;</button>
+                    {/* Assignment List */}
+                    <div className="assignment-grid">
+                        {assignments.map((assignment, idx) => (
+                            <div key={assignment.id} className="assignment-item-row">
+                                <span className="task-id">TASK_0{idx + 1}</span>
+                                <span className="sub-count">{assignment.submission_count || 0} Submissions</span>
+                                <h3>{assignment.title}</h3>
+                                <p>{assignment.description}</p>
+                                <button className="btn-glass-action" onClick={() => handleViewSubmissions(assignment)}>
+                                    Audit Submissions & Analysis →
+                                </button>
                             </div>
-                            <form onSubmit={handleCreateAssignment}>
-                                <div className="dark-form-group">
-                                    <label>Title</label>
-                                    <input 
-                                        type="text"
-                                        className="dark-input-field"
-                                        placeholder="Assignment ID"
-                                        value={title} 
-                                        onChange={(e) => setTitle(e.target.value)} 
-                                        required 
-                                    />
-                                </div>
-                                <div className="dark-form-group">
-                                    <label>Requirements</label>
-                                    <textarea 
-                                        className="dark-input-field"
-                                        placeholder="Assignment parameters and constraints..."
-                                        value={description} 
-                                        onChange={(e) => setDescription(e.target.value)} 
-                                        rows="5" 
-                                    />
-                                </div>
-                                <div className="dark-modal-actions">
-                                    <button type="button" className="btn-cancel-dark" onClick={() => setShowCreateModal(false)}>Cancel</button>
-                                    <button type="submit" className="btn-save-dark">Confirm Deployment</button>
-                                </div>
-                            </form>
-                        </div>
+                        ))}
                     </div>
-                )}
+                </main>
+            </div>
 
-                {/* --- Integrity Analysis Modal --- */}
-                {showSubmissionsModal && (
-                    <div className="dark-modal-overlay">
-                        <div className="dark-modal-content wide-modal">
-                            <div className="modal-header">
-                                <div>
-                                    <h2>{selectedAssignment?.title}</h2>
-                                    <p className="modal-subtitle">Reviewing student logic submissions</p>
-                                </div>
-                                <button className="btn-close-icon" onClick={() => setShowSubmissionsModal(false)}>&times;</button>
-                            </div>
-                            
-                            <div className="submissions-list-container">
-                                {currentSubmissions.length === 0 ? (
-                                    <div className="empty-table-state">
-                                        <p>Protocol: No incoming submissions detected for this assignment.</p>
+            {/* Tree Audit Modal */}
+            {showSubmissionsModal && (
+                <div className="falsicode-hud-overlay">
+                    <div className="spatial-card hud-modal-content wide-hud fade-in">
+                        <div className="hud-header">
+                            <button className="btn-close-icon" onClick={() => setShowSubmissionsModal(false)}>&times;</button>
+                            <h2>Tree</h2>
+                            <p className="hud-subtitle">Reviewing student logic submissions</p>
+                        </div>
+                        
+                        <div className="hud-body-scroll">
+                            <table className="falsicode-table-hud">
+                                <thead>
+                                    <tr>
+                                        <th style={{width: '40px'}}></th>
+                                        <th>STUDENT IDENTITY</th>
+                                        <th>SOURCE FILE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentSubmissions.map(sub => (
+                                        <tr key={sub.id}>
+                                            <td className="status-cell">
+                                                <div className="status-dot yellow"></div>
+                                            </td>
+                                            <td>
+                                                <div className="hud-stu-cell">
+                                                    <div className="stu-icon">{sub.student_name.charAt(0)}</div>
+                                                    <strong>{sub.student_name}</strong>
+                                                </div>
+                                            </td>
+                                            <td><code className="code-box">{sub.filename}</code></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+
+                            {/* LogicGuard Analysis Result */}
+                            {analysisResults && (
+                                <div className="analysis-report-section">
+                                    <div className="report-header">
+                                        <h3>LogicGuard Analysis Report</h3>
+                                        <span className="scan-badge">SCAN COMPLETE</span>
                                     </div>
-                                ) : (
-                                    <table className="dark-data-table">
+                                    <table className="falsicode-table-hud report-table">
                                         <thead>
                                             <tr>
-                                                <th>Student Identity</th>
-                                                <th>Source File</th>
-                                                <th>Timestamp</th>
+                                                <th>MATCHED PAIR</th>
+                                                <th style={{textAlign: 'right'}}>SIM</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {currentSubmissions.map(sub => (
-                                                <tr key={sub.id}>
-                                                    <td>
-                                                        <div className="student-cell">
-                                                            <div className="student-avatar">{sub.student_name.charAt(0).toUpperCase()}</div>
-                                                            <strong>{sub.student_name}</strong>
-                                                        </div>
+                                            {analysisResults.map((res, i) => (
+                                                <tr key={i}>
+                                                    <td className="comparison-text">
+                                                        {res.file1} ↔ {res.file2}
                                                     </td>
-                                                    <td className="code-font">{sub.filename}</td>
-                                                    <td className="date-cell">{new Date(sub.submitted_at).toLocaleString()}</td>
+                                                    <td className="sim-score">{res.score}%</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
-                                )}
-                            </div>
-
-                            {/* LogicGuard Analysis Report */}
-                            {analysisResults && (
-                                <div className="analysis-results-section fade-in">
-                                    <div className="analysis-header">
-                                        <h3>LogicGuard Analysis Report</h3>
-                                        <span className="analysis-badge">Scan Complete</span>
-                                    </div>
-                                    <div className="analysis-table-wrapper">
-                                        <table className="dark-data-table results-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Matched Pair</th>
-                                                    <th>Similarity Profile</th>
-                                                    <th style={{width: '120px'}}>Threat Level</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {analysisResults.map((res, index) => {
-                                                    const isHigh = res.status.toLowerCase() === 'high';
-                                                    const isMed = res.status.toLowerCase() === 'medium';
-                                                    const barColor = isHigh ? '#ef4444' : (isMed ? '#f59e0b' : '#10b981');
-                                                    
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td className="comparison-cell">
-                                                                <span className="file-tag">{res.file1}</span>
-                                                                <svg className="arrow-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                                                                <span className="file-tag">{res.file2}</span>
-                                                            </td>
-                                                            <td>
-                                                                <div className="score-container">
-                                                                    <span className="score-text" style={{color: barColor}}>{res.score}%</span>
-                                                                    <div className="score-bar-bg">
-                                                                        <div className="score-bar-fill" style={{ width: `${res.score}%`, backgroundColor: barColor }}></div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <span className={`status-badge status-${res.status.toLowerCase()}`}>
-                                                                    {res.status}
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
                                 </div>
                             )}
+                        </div>
 
-                            <div className="dark-modal-actions split-actions">
-                                <button className="btn-cancel-dark" onClick={() => setShowSubmissionsModal(false)}>Terminate Window</button>
-                                <button 
-                                    className={`btn-run-analysis ${isAnalyzing ? 'pulsing' : ''}`} 
-                                    onClick={handleRunAnalysis}
-                                    disabled={isAnalyzing || currentSubmissions.length < 2}
-                                >
-                                    {isAnalyzing ? "Executing LogicGuard Analysis..." : "Run LogicGuard Analysis"}
-                                </button>
-                            </div>
+                        {/* Updated Footer Actions */}
+                        <div className="hud-footer-actions">
+                            <button className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} onClick={handleRunAnalysis} disabled={isAnalyzing}>
+                                {isAnalyzing ? "Processing..." : "Run LogicGuard Analysis"}
+                            </button>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

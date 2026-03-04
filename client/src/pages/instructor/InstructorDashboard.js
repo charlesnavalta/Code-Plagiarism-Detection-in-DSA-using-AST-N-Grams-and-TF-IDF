@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 import './InstructorDashboard.css'; 
@@ -7,9 +7,36 @@ const InstructorDashboard = () => {
     const [classrooms, setClassrooms] = useState([]);
     const [newClassName, setNewClassName] = useState('');
     const [loading, setLoading] = useState(true);
+    const dashboardRef = useRef(null);
     const navigate = useNavigate();
 
-    // --- READ: Fetch Managed Classrooms ---
+    // --- Nexus Theme Synchronization ---
+    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+
+    useEffect(() => {
+        const handleSync = () => {
+            const currentTheme = localStorage.getItem('app-theme') || 'dark';
+            setTheme(currentTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        };
+        window.addEventListener('storage', handleSync);
+        return () => window.removeEventListener('storage', handleSync);
+    }, []);
+
+    // --- Dynamic User Identity ---
+    const getUserData = () => {
+        try {
+            const rawUser = localStorage.getItem('user');
+            if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
+        } catch (e) { console.error("Identity Sync Error", e); }
+        return { username: 'Instructor Node', role: 'instructor' }; 
+    };
+
+    const currentUser = getUserData();
+    const displayName = currentUser.name || currentUser.username || 'Instructor';
+    const userInitial = displayName.charAt(0).toUpperCase();
+
+    // --- API Operations ---
     const fetchClassrooms = async () => {
         try {
             const res = await api.get('/classrooms/');
@@ -25,7 +52,7 @@ const InstructorDashboard = () => {
         fetchClassrooms();
     }, []);
 
-    // Logic: Aggregating total student density across all nodes
+    // Logic: Aggregating total student density
     const totalStudents = classrooms.reduce((acc, cls) => acc + (cls.student_count || 0), 0);
 
     // --- CREATE: Initialize New Classroom Node ---
@@ -41,102 +68,129 @@ const InstructorDashboard = () => {
         }
     };
 
+    // --- Spatial Spotlight Logic ---
+    const handleMouseMove = (e) => {
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+    };
+
     return (
-        <div className="instructor-dashboard-wrapper">
-            <div className="instructor-layout">
-                {/* --- Left Sidebar Stats Cluster --- */}
-                <aside className="instructor-sidebar">
-                    <div className="profile-widget">
-                        <div className="avatar-glow instructor-glow">I</div>
-                        <h3>Instructor Workspace</h3>
-                        <p className="status-tag online">Node Active</p>
+        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+            {/* Background Aurora Engine */}
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-primary"></div>
+                <div className="aurora-blob blob-secondary"></div>
+            </div>
+
+            <div className="nexus-layout">
+                {/* --- Sidebar: Identity Node --- */}
+                <aside className="nexus-sidebar fade-in-left">
+                    <div className="spatial-card profile-card">
+                        <div className="card-glass-layer"></div>
+                        <div className="card-content">
+                            <div className="avatar-hologram">
+                                <div className="avatar-core">{userInitial}</div>
+                                <div className="avatar-ring-1"></div>
+                            </div>
+                            <h2 className="user-display-name">{displayName}</h2>
+                            <p className="user-role-text">Instructor Workspace</p>
+                            <div className="system-status">
+                                <span className="status-dot online"></span>ACTIVE
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="sidebar-stats">
-                        {/* Active Classes Card */}
-                        <div className="mini-stat-card">
-                            <div className="stat-header">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                <span className="stat-label">Active Classes</span>
-                            </div>
-                            <span className="stat-num">{classrooms.length}</span>
+                    <div className="spatial-card stat-card delay-1">
+                        <div className="card-content">
+                            <span className="stat-label">Active Classes</span>
+                            <span className="stat-value">{classrooms.length}</span>
                         </div>
-                        
-                        {/* Total Enrollment Card */}
-                        <div className="mini-stat-card">
-                            <div className="stat-header">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                <span className="stat-label">Total Students</span>
-                            </div>
-                            <span className="stat-num">{totalStudents}</span>
-                        </div>
+                    </div>
 
-                        {/* Integrity Alert Card */}
-                        <div className="mini-stat-card">
-                            <div className="stat-header">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span className="stat-label">Integrity Alerts</span>
-                            </div>
-                            <span className="stat-num">0</span>
+                    <div className="spatial-card stat-card delay-2">
+                        <div className="card-content">
+                            <span className="stat-label">Total Students</span>
+                            <span className="stat-value">{totalStudents}</span>
                         </div>
                     </div>
                 </aside>
 
-                {/* --- Primary Control Center --- */}
-                <main className="instructor-main">
-                    <header className="instructor-welcome-banner">
-                        <div className="banner-info">
-                            <h1>Welcome Back</h1>
-                            <p>Provision classrooms, deploy assignments, and review logic integrity reports.</p>
-                        </div>
-                        <div className="launch-glow-box">
-                            <form onSubmit={handleCreateClass} className="glass-launch-form">
+                {/* --- Main Hub Area --- */}
+                <main className="nexus-main fade-in-up">
+                    
+                    {/* Action Banner */}
+                    <div className="action-banner-nexus spatial-card">
+                        <div className="banner-content">
+                            <div className="banner-text">
+                                <h1>Welcome Back, {displayName.split(' ')[0]}</h1>
+                                <p>Provision classrooms, deploy assignments, and review logic integrity.</p>
+                            </div>
+                            
+                            <form onSubmit={handleCreateClass} className="nexus-join-form">
                                 <input 
-                                    type="text" 
-                                    placeholder="Class Name (e.g. CS101)" 
-                                    value={newClassName}
-                                    onChange={(e) => setNewClassName(e.target.value)}
+                                    type="text" placeholder="Class Name" 
+                                    value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
+                                    className="nexus-input"
                                 />
-                                <button type="submit" className="btn-glow-launch">Provision +</button>
+                                <button type="submit" className="nexus-btn-primary">Create Class </button>
                             </form>
                         </div>
-                    </header>
+                    </div>
 
-                    <section className="classes-grid-container">
-                        <div className="section-heading">
+                    {/* Workspaces Grid */}
+                    <div className="workspace-section">
+                        <div className="section-title-block">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             <h2>Active Managed Nodes</h2>
                         </div>
 
                         {loading ? (
-                            <div className="loader-wrapper"><div className="cyber-spinner"></div></div>
+                            <div className="spatial-card loading-card">
+                                <div className="quantum-spinner"></div>
+                                <p>Synchronizing nodes...</p>
+                            </div>
+                        ) : classrooms.length === 0 ? (
+                            <div className="spatial-card empty-card">
+                                <div className="empty-icon">📁</div>
+                                <h3>No Nodes Connected</h3>
+                                <p>Provision a new classroom above to get started.</p>
+                            </div>
                         ) : (
-                            <div className="cyber-grid">
-                                {classrooms.map((cls) => (
-                                    <div key={cls.id} className="cyber-card" onClick={() => navigate(`/instructor/class/${cls.id}`)}>
-                                        <div className="cyber-card-content">
-                                            <div className="card-top-row">
-                                                <span className="card-badge instructor-badge">Online</span>
-                                                <span className="student-count-pill">
-                                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                                    {cls.student_count || 0}
+                            <div className="classroom-grid">
+                                {classrooms.map((cls, index) => (
+                                    <div 
+                                        key={cls.id} className="spatial-card course-card" 
+                                        onClick={() => navigate(`/instructor/class/${cls.id}`)}
+                                        style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
+                                    >
+                                        <div className="card-glass-layer"></div>
+                                        <div className="card-content flex-col">
+                                            <span className="node-badge">Command Center</span>
+                                            <h3 className="course-title">{cls.name}</h3>
+                                            
+                                            {/* Reusing student tag CSS for Instructor data */}
+                                            <div className="instructor-tag-nexus">
+                                                <div className="ins-mini-avatar">🔑</div>
+                                                <span className="ins-name">
+                                                    Code: <strong style={{color: 'var(--text-main)'}}>{cls.invite_code}</strong> | Students: {cls.student_count || 0}
                                                 </span>
                                             </div>
-                                            <h4>{cls.name}</h4>
-                                            <div className="invite-info-pill">
-                                                <span>Invite Code:</span>
-                                                <strong>{cls.invite_code}</strong>
+
+                                            <div className="course-footer-nexus">
+                                                <span>Access Node</span>
+                                                <svg className="arrow-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                             </div>
-                                            <button className="btn-enter-cyber instructor-btn">
-                                                Access Command Center
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                                            </button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
-                    </section>
+                    </div>
                 </main>
             </div>
         </div>
