@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// Changed: Using centralized api service
 import api from '../../services/api'; 
 import './StudentDashboard.css';
 
@@ -8,129 +7,175 @@ const StudentDashboard = () => {
     const [enrolledClasses, setEnrolledClasses] = useState([]);
     const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState(true);
+    const dashboardRef = useRef(null);
     const navigate = useNavigate();
 
-    // --- READ: Fetch Enrolled Classroom Nodes ---
-    const fetchEnrolledClasses = async () => {
-        try {
-            // Simplified: Headers and Base URL handled by interceptor
-            const res = await api.get('/classrooms/enrolled');
-            setEnrolledClasses(res.data);
-        } catch (error) {
-            console.error("Critical error syncing enrolled nodes:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // --- Nexus Theme Synchronization ---
+    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
     useEffect(() => {
-        fetchEnrolledClasses();
+        const handleSync = () => {
+            const currentTheme = localStorage.getItem('app-theme') || 'dark';
+            setTheme(currentTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        };
+        window.addEventListener('storage', handleSync);
+        return () => window.removeEventListener('storage', handleSync);
     }, []);
 
-    // --- CREATE: Join New Classroom Node ---
+    // --- Dynamic User Identity ---
+    const getUserData = () => {
+        try {
+            const rawUser = localStorage.getItem('user');
+            if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
+        } catch (e) { console.error("Identity Sync Error", e); }
+        return { username: 'Guest Student', role: 'student' }; 
+    };
+
+    const currentUser = getUserData();
+    const displayName = currentUser.name || currentUser.username || 'Student';
+    const userInitial = displayName.charAt(0).toUpperCase();
+
+    // --- API Operations ---
+    const fetchEnrolledClasses = async () => {
+        try {
+            const res = await api.get('/classrooms/enrolled');
+            setEnrolledClasses(res.data);
+        } catch (error) { console.error("Critical error syncing nodes:", error); } 
+        finally { setLoading(false); }
+    };
+
+    useEffect(() => { fetchEnrolledClasses(); }, []);
+
     const handleJoinClass = async (e) => {
         e.preventDefault();
-        if (!inviteCode.trim() || inviteCode.length !== 6) {
-            return alert("Security Notice: Please enter a valid 6-character invite code.");
-        }
-
+        if (!inviteCode.trim() || inviteCode.length !== 6) return alert("Security Notice: Invalid node hash.");
         try {
-            const res = await api.post('/classrooms/join', { 
-                invite_code: inviteCode 
-            });
+            const res = await api.post('/classrooms/join', { invite_code: inviteCode });
             alert(res.data.message);
             setInviteCode('');
             fetchEnrolledClasses();
-        } catch (error) {
-            alert(error.response?.data?.error || "Protocol failure: Unable to join classroom.");
+        } catch (error) { alert("Protocol failure: Unable to join classroom."); }
+    };
+
+    // --- Senior UI: Spatial Spotlight Logic ---
+    const handleMouseMove = (e) => {
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         }
     };
 
     return (
-        <div className="student-dashboard-wrapper">
-            <div className="student-layout">
-                {/* --- Left Sidebar --- */}
-                <aside className="student-sidebar">
-                    <div className="profile-widget">
-                        <div className="avatar-glow">S</div>
-                        <h3>Student Workspace</h3>
-                        <p className="status-tag">Node Online</p>
+        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+            {/* Background Aurora Engine */}
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-primary"></div>
+                <div className="aurora-blob blob-secondary"></div>
+            </div>
+
+            <div className="nexus-layout">
+                {/* --- Sidebar: Identity Node --- */}
+                <aside className="nexus-sidebar fade-in-left">
+                    <div className="spatial-card profile-card">
+                        <div className="card-glass-layer"></div>
+                        <div className="card-content">
+                            <div className="avatar-hologram">
+                                <div className="avatar-core">{userInitial}</div>
+                                <div className="avatar-ring-1"></div>
+                            </div>
+                            <h2 className="user-display-name">{displayName}</h2>
+                            <p className="user-role-text">Student Workspace</p>
+                            <div className="system-status">
+                                <span className="status-dot online"></span>ONLINE
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="sidebar-stats">
-                        <div className="mini-stat-card">
+                    <div className="spatial-card stat-card delay-1">
+                        <div className="card-content">
                             <span className="stat-label">Active Enrollments</span>
-                            <span className="stat-num">{enrolledClasses.length}</span>
+                            <span className="stat-value">{enrolledClasses.length}</span>
                         </div>
-                        <div className="mini-stat-card">
+                    </div>
+
+                    <div className="spatial-card stat-card delay-2">
+                        <div className="card-content">
                             <span className="stat-label">Logic Checks</span>
-                            <span className="stat-num">0</span>
+                            <span className="stat-value">0</span>
                         </div>
                     </div>
                 </aside>
 
-                {/* --- Main Dashboard Area --- */}
-                <main className="student-main">
-                    <header className="student-welcome-banner">
-                        <div className="banner-info">
-                            <h1>Welcome Back</h1>
-                            <p>Provision your logic for analysis. Join a node or continue your progress below.</p>
-                        </div>
-                        <div className="invite-glow-box">
-                            <form onSubmit={handleJoinClass} className="glass-join-form">
+                {/* --- Main Hub Area --- */}
+                <main className="nexus-main fade-in-up">
+                    
+                    {/* RESTORED: High-Contrast Action Banner */}
+                    <div className="action-banner-nexus spatial-card">
+                        <div className="banner-content">
+                            <div className="banner-text">
+                                <h1>Welcome Back, {displayName.split(' ')[0]}</h1>
+                                <p>Provision your logic for analysis. Join a classroom to continue.</p>
+                            </div>
+                            
+                            <form onSubmit={handleJoinClass} className="nexus-join-form">
                                 <input 
-                                    type="text" 
-                                    placeholder="Invite Code" 
-                                    maxLength={6}
-                                    value={inviteCode}
-                                    onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                    type="text" placeholder="Invite Code" maxLength={6}
+                                    value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                    className="nexus-input"
                                 />
-                                <button type="submit" className="btn-glow-join">Join Node +</button>
+                                <button type="submit" className="nexus-btn-primary">Join Class</button>
                             </form>
                         </div>
-                    </header>
+                    </div>
 
-                    <section className="classes-grid-container">
-                        <div className="section-heading">
+                    {/* Workspaces Grid */}
+                    <div className="workspace-section">
+                        <div className="section-title-block">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                             <h2>Your Active Classrooms</h2>
                         </div>
 
                         {loading ? (
-                            <div className="student-loader-wrapper">
-                                <div className="cyber-spinner"></div>
-                                <p>Synchronizing codebases...</p>
+                            <div className="spatial-card loading-card">
+                                <div className="quantum-spinner"></div>
+                                <p>Synchronizing nodes...</p>
                             </div>
                         ) : enrolledClasses.length === 0 ? (
-                            <div className="student-empty-state">
-                                <div className="empty-ring">
-                                    <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <h3>Workspace Empty</h3>
-                                <p>You aren't enrolled in any nodes. Enter an invite code in the terminal above.</p>
+                            <div className="spatial-card empty-card">
+                                <div className="empty-icon">📁</div>
+                                <h3>No Nodes Connected</h3>
+                                <p>Gain access by entering an instructor hash code above.</p>
                             </div>
                         ) : (
-                            <div className="cyber-grid">
-                                {enrolledClasses.map((cls) => (
-                                    <div key={cls.id} className="cyber-card" onClick={() => navigate(`/student/class/${cls.id}`)}>
-                                        <div className="cyber-card-overlay"></div>
-                                        <div className="cyber-card-content">
-                                            <span className="card-badge">Course Node</span>
-                                            <h4>{cls.name}</h4>
-                                            <div className="instructor-info">
-                                                <div className="instructor-avatar-mini">{cls.instructor.charAt(0)}</div>
-                                                <span>{cls.instructor}</span>
+                            <div className="classroom-grid">
+                                {enrolledClasses.map((cls, index) => (
+                                    <div 
+                                        key={cls.id} className="spatial-card course-card" 
+                                        onClick={() => navigate(`/student/class/${cls.id}`)}
+                                        style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
+                                    >
+                                        <div className="card-glass-layer"></div>
+                                        <div className="card-content flex-col">
+                                            <span className="node-badge">Classroom Node</span>
+                                            <h3 className="course-title">{cls.name}</h3>
+                                            <div className="instructor-tag-nexus">
+                                                <div className="ins-mini-avatar">{cls.instructor.charAt(0)}</div>
+                                                <span className="ins-name">{cls.instructor}</span>
                                             </div>
-                                            <button className="btn-enter-cyber">
-                                                Open Workspace
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                            </button>
+                                            <div className="course-footer-nexus">
+                                                <span>Open Workspace</span>
+                                                <svg className="arrow-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
-                    </section>
+                    </div>
                 </main>
             </div>
         </div>

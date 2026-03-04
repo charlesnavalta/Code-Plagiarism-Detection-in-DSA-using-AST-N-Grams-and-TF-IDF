@@ -1,259 +1,130 @@
-/* src/pages/instructor/InstructorDashboard.css */
-
-/* --- Base Layout --- */
-* {
-    box-sizing: border-box;
+/* =========================================
+   NEXUS CORE THEME (Clean & Premium)
+   ========================================= */
+   .nexus-wrapper {
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.5);
+    --border-card: rgba(255, 255, 255, 0.05);
+    --text-main: #f9fafb;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --blob-1: rgba(59, 130, 246, 0.1);
+    --blob-2: rgba(139, 92, 246, 0.1);
 }
 
-.instructor-dashboard-wrapper {
-    background-color: #0b1121;
+.nexus-wrapper.light {
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --border-card: rgba(0, 0, 0, 0.05);
+    --text-main: #0f172a;
+    --text-dim: #64748b;
+    --accent: #2563eb;
+    --blob-1: rgba(59, 130, 246, 0.1);
+    --blob-2: rgba(139, 92, 246, 0.1);
+}
+
+.nexus-wrapper {
+    background-color: var(--bg-app);
+    color: var(--text-main);
     min-height: calc(100vh - 65px);
-    color: #e2e8f0;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    padding: 40px;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease;
 }
 
-.instructor-layout {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 30px;
-    align-items: start;
-}
+/* Background Aurora Blobs */
+.aurora-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.aurora-blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: drift 20s infinite alternate; }
+.blob-primary { width: 60vw; height: 60vw; background: var(--blob-1); top: -20%; left: -10%; }
+.blob-secondary { width: 50vw; height: 50vw; background: var(--blob-2); bottom: -10%; right: -10%; }
+@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
 
-/* --- Left Sidebar Widgets --- */
-.instructor-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+.nexus-layout { max-width: 1400px; margin: 0 auto; padding: 40px; display: flex; gap: 32px; position: relative; z-index: 10; }
 
-.profile-widget {
-    background: #151e32;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.avatar-glow {
-    width: 65px;
-    height: 65px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    border-radius: 50%;
-    margin: 0 auto 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: white;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-}
-
-.status-tag {
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #10b981;
-}
-
-/* --- FIX: Unified Sidebar Stats with Icon Alignment --- */
-.sidebar-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.mini-stat-card {
-    background: #151e32;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 18px;
-}
-
-.stat-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    color: #64748b;
-}
-
-.stat-header svg {
-    opacity: 0.7;
-}
-
-.stat-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.stat-num {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #ffffff;
-    display: block;
-}
-
-/* --- Welcome Banner & Provision Form (Compact Pill) --- */
-.instructor-welcome-banner {
-    background: linear-gradient(100deg, #1e3a8a 0%, #151e32 100%);
-    border-radius: 16px;
-    padding: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    margin-bottom: 40px;
-}
-
-.banner-info h1 {
-    font-size: 2.4rem;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    color: white;
-}
-
-.banner-info p {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.glass-launch-form {
-    background: rgba(11, 17, 33, 0.9); 
-    padding: 6px 6px 6px 20px;
-    border-radius: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    width: fit-content; 
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-}
-
-.glass-launch-form input {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 0.9rem;
-    width: 190px;
-    outline: none;
-    font-family: 'Inter', sans-serif;
-}
-
-.btn-glow-launch {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-    transition: 0.2s;
-}
-
-/* --- Classroom Grid & Card FIXES --- */
-.cyber-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 25px;
-}
-
-.cyber-card {
-    background: #151e32;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 30px;
-    transition: 0.3s;
-    cursor: pointer;
-}
-
-.cyber-card:hover {
-    border-color: #3b82f6;
-    transform: translateY(-5px);
-}
-
-.card-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-}
-
-.card-badge {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-/* FIX: Icon and Student Count Alignment in Card */
-.student-count-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #94a3b8;
-    font-size: 0.8rem;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 5px 12px;
+/* SPATIAL CARDS */
+.spatial-card {
+    background: var(--bg-card);
     border-radius: 20px;
+    border: 1px solid var(--border-card);
+    backdrop-filter: blur(30px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.student-count-pill svg {
-    color: #3b82f6;
+.spatial-card::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.05), transparent 40%);
+    opacity: 0; transition: opacity 0.3s;
+}
+.spatial-card:hover::after { opacity: 1; }
+.spatial-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+
+.card-content { padding: 32px; position: relative; z-index: 2; }
+.flex-col { display: flex; flex-direction: column; height: 100%; }
+
+/* SIDEBAR */
+.nexus-sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; }
+.avatar-hologram { width: 70px; height: 70px; margin: 0 auto 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+.avatar-core { width: 56px; height: 56px; background: var(--accent); border-radius: 50%; color: white; font-weight: 800; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
+.avatar-ring-1 { position: absolute; inset: 0; border: 1px solid var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.4); opacity: 0; } }
+
+.user-display-name { font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; text-align: center;}
+.user-role-text { font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-bottom: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.system-status { font-size: 0.7rem; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 8px; justify-content: center; letter-spacing: 1px; }
+.status-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+
+.stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+.stat-value { font-size: 2rem; font-weight: 900; line-height: 1; }
+
+/* ACTION BANNER */
+.nexus-main { flex-grow: 1; display: flex; flex-direction: column; gap: 40px; }
+
+.action-banner-nexus {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
 }
 
-.cyber-card h4 {
-    font-size: 1.35rem;
-    margin: 0 0 20px 0;
-    color: white;
-}
+.banner-content { padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+.banner-text h1 { color: #ffffff !important; font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; margin: 0 0 10px; }
+.banner-text p { color: rgba(255, 255, 255, 0.8) !important; margin: 0; font-size: 1.1rem; }
 
-.invite-info-pill {
-    background: #0b1121;
-    border: 1px solid #1f2937;
-    padding: 12px 15px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
+.nexus-join-form { display: flex; gap: 12px; background: rgba(0, 0, 0, 0.15); padding: 8px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(20px); }
+.nexus-input { background: transparent !important; border: none !important; color: #ffffff !important; padding: 12px 24px; outline: none !important; width: 160px; font-family: 'Inter', monospace; letter-spacing: 1px; }
+.nexus-input::placeholder { color: rgba(255, 255, 255, 0.5) !important; letter-spacing: 0; }
+.nexus-btn-primary { background: #ffffff !important; color: #4f46e5 !important; border: none !important; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.nexus-btn-primary:hover { transform: scale(1.05); }
 
-.invite-info-pill strong {
-    color: #f59e0b;
-    font-family: 'Fira Code', monospace;
-    letter-spacing: 1.5px;
-}
+/* COURSE CARDS */
+.section-title-block { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.section-title-block h2 { font-size: 1.1rem; font-weight: 700; margin: 0; }
 
-.btn-enter-cyber {
-    width: 100%;
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #cbd5e1;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 700;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    transition: 0.2s;
-}
+.classroom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.course-card { cursor: pointer; height: 100%; }
+.node-badge { background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; align-self: flex-start; margin-bottom: 16px; }
+.course-title { font-size: 1.6rem; font-weight: 800; margin: 0 0 24px; letter-spacing: -0.5px; }
 
-.cyber-card:hover .btn-enter-cyber {
-    background: #3b82f6;
-    color: white; 
-    border-color: #3b82f6;
+.instructor-tag-nexus { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.ins-mini-avatar { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+.ins-name { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
+
+.course-footer-nexus { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.9rem; font-weight: 600; }
+.course-card:hover .course-footer-nexus { color: var(--accent); }
+.arrow-icon { transition: transform 0.3s ease; }
+.course-card:hover .arrow-icon { transform: translateX(5px); }
+
+/* ANIMATIONS */
+.fade-in-left { animation: slideRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+.fade-in-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+@keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
+
+@media (max-width: 1024px) {
+    .nexus-layout { flex-direction: column; }
+    .nexus-sidebar { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+    .banner-content { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .nexus-join-form { width: 100%; }
 }

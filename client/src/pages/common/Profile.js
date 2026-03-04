@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Profile.css';
 import api from '../../services/api'; 
 
 const Profile = () => {
     const rawUser = localStorage.getItem('user');
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
+    const dashboardRef = useRef(null);
 
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -12,6 +13,19 @@ const Profile = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState(user.email || '');
+
+    // --- Nexus Theme Synchronization ---
+    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+
+    useEffect(() => {
+        const handleSync = () => {
+            const currentTheme = localStorage.getItem('app-theme') || 'dark';
+            setTheme(currentTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        };
+        window.addEventListener('storage', handleSync);
+        return () => window.removeEventListener('storage', handleSync);
+    }, []);
 
     const handleUpdateEmail = (e) => {
         e.preventDefault();
@@ -33,10 +47,7 @@ const Profile = () => {
 
         setLoading(true);
         try {
-            const res = await api.put('/auth/profile', { 
-                new_password: newPassword 
-            });
-
+            const res = await api.put('/auth/profile', { new_password: newPassword });
             setMessage(res.data.message || "Security credentials updated successfully.");
             setNewPassword('');
             setConfirmPassword('');
@@ -47,27 +58,47 @@ const Profile = () => {
         }
     };
 
+    // --- Spatial Spotlight Logic ---
+    const handleMouseMove = (e) => {
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+    };
+
     const userInitial = user.username ? user.username.charAt(0).toUpperCase() : '?';
 
     return (
-        <div className="premium-profile-wrapper">
-            <div className="premium-profile-container">
-                
-                <div className="premium-header">
-                    <h1>Account Overview</h1>
-                    <p>Manage your Falsicode identity and security preferences.</p>
-                </div>
+        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+            {/* Background Aurora Engine */}
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-primary"></div>
+                <div className="aurora-blob blob-secondary"></div>
+            </div>
+
+            <div className="premium-profile-container fade-in-up">
+                <header className="action-banner-nexus spatial-card" style={{ marginBottom: '40px' }}>
+                    <div className="banner-content banner-header-split">
+                        <div className="banner-text">
+                            <h1>Account Overview</h1>
+                            <p>Manage your LogicGuard identity and security preferences.</p>
+                        </div>
+                    </div>
+                </header>
 
                 <div className="premium-profile-grid">
-                    
                     {/* LEFT COLUMN: Identity Card */}
-                    <div className="profile-identity-card">
+                    <div className="spatial-card profile-identity-card">
+                        <div className="card-glass-layer"></div>
                         <div className="avatar-banner"></div>
                         <div className="avatar-container">
                             <div className="avatar-circle">{userInitial}</div>
                         </div>
                         
-                        <div className="identity-details">
+                        <div className="identity-details relative-z">
                             <h2 className="identity-name">{user.username || 'Unknown Node'}</h2>
                             <p className="identity-email">{user.email || 'No email associated'}</p>
                             
@@ -76,12 +107,12 @@ const Profile = () => {
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                                     </svg>
-                                    {user.role?.toUpperCase()}
+                                    {user.role?.toUpperCase()} NODE
                                 </span>
                             </div>
                         </div>
 
-                        <div className="identity-meta">
+                        <div className="identity-meta relative-z">
                             <div className="meta-item">
                                 <span className="meta-label">Node Status</span>
                                 <span className="meta-value text-green">Online</span>
@@ -93,94 +124,76 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Settings Card */}
-                    <div className="profile-settings-card">
-                        
-                        <div className="settings-header">
-                            <h3>Email Preferences</h3>
-                            <p>Update the primary contact address for this system node.</p>
+                    {/* RIGHT COLUMN: Settings */}
+                    <div className="spatial-card profile-settings-card">
+                        <div className="card-glass-layer"></div>
+                        <div className="settings-section relative-z">
+                            <div className="settings-header">
+                                <h3>Email Preferences</h3>
+                                <p>Update the primary contact address for this system node.</p>
+                            </div>
+
+                            <form onSubmit={handleUpdateEmail} className="premium-form">
+                                <div className="dark-form-group">
+                                    <label>Contact Email</label>
+                                    <div className="nexus-input-wrapper">
+                                        <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <input 
+                                            type="email" className="nexus-input-field with-icon"
+                                            value={emailInput} onChange={(e) => setEmailInput(e.target.value)} 
+                                            placeholder="node@logicguard.com"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-actions">
+                                    <button type="submit" className="nexus-btn-secondary">Update Email</button>
+                                </div>
+                            </form>
                         </div>
 
-                        <form onSubmit={handleUpdateEmail} className="premium-form">
-                            <div className="premium-input-group">
-                                <label>Contact Email</label>
-                                <div className="premium-input-wrapper">
-                                    <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <input 
-                                        type="email" 
-                                        value={emailInput} 
-                                        onChange={(e) => setEmailInput(e.target.value)} 
-                                        placeholder="node@falsicode.com"
-                                    />
+                        <div className="settings-divider"></div>
+
+                        <div className="settings-section relative-z">
+                            <div className="settings-header">
+                                <h3>Security Protocols</h3>
+                                <p>Ensure your account uses a complex, unique password.</p>
+                            </div>
+
+                            <form onSubmit={handleUpdatePassword} className="premium-form">
+                                {message && <div className="nexus-alert success">{message}</div>}
+                                {error && <div className="nexus-alert error">{error}</div>}
+
+                                <div className="form-group-row">
+                                    <div className="dark-form-group w-50">
+                                        <label>New Password</label>
+                                        <input 
+                                            type="password" className="nexus-input-field"
+                                            value={newPassword} onChange={(e) => setNewPassword(e.target.value)} 
+                                            placeholder="Min. 6 chars" required
+                                        />
+                                    </div>
+                                    <div className="dark-form-group w-50">
+                                        <label>Verify Password</label>
+                                        <input 
+                                            type="password" className="nexus-input-field"
+                                            value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} 
+                                            placeholder="Repeat password" required
+                                        />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="form-actions">
-                                <button type="submit" className="btn-save-secondary">
-                                    Update Email
-                                </button>
-                            </div>
-                        </form>
-
-                        <hr className="settings-divider" />
-
-                        <div className="settings-header header-no-border">
-                            <h3>Security Protocols</h3>
-                            <p>Ensure your account uses a complex, unique password.</p>
+                                <div className="form-actions">
+                                    <button 
+                                        type="submit" className="nexus-btn-primary" 
+                                        disabled={loading || !newPassword || !confirmPassword}
+                                    >
+                                        {loading ? "Syncing..." : "Update Credentials"}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-
-                        <form onSubmit={handleUpdatePassword} className="premium-form">
-                            
-                            {message && (
-                                <div className="premium-alert success-alert">
-                                    <div className="alert-text">{message}</div>
-                                </div>
-                            )}
-                            
-                            {error && (
-                                <div className="premium-alert error-alert">
-                                    <div className="alert-text">{error}</div>
-                                </div>
-                            )}
-
-                            <div className="premium-input-group">
-                                <label>New Password</label>
-                                <div className="premium-input-wrapper">
-                                    <input 
-                                        type="password" 
-                                        value={newPassword} 
-                                        onChange={(e) => setNewPassword(e.target.value)} 
-                                        placeholder="Minimum 6 characters"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="premium-input-group">
-                                <label>Verify New Password</label>
-                                <div className="premium-input-wrapper">
-                                    <input 
-                                        type="password" 
-                                        value={confirmPassword} 
-                                        onChange={(e) => setConfirmPassword(e.target.value)} 
-                                        placeholder="Repeat new password"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-actions">
-                                <button 
-                                    type="submit" 
-                                    className="btn-save-premium" 
-                                    disabled={loading || !newPassword || !confirmPassword}
-                                >
-                                    {loading ? "Syncing..." : "Update Credentials"}
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

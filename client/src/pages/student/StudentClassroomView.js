@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// Changed: Using centralized api service
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
 
@@ -11,20 +10,27 @@ const StudentClassroomView = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedFiles, setSelectedFiles] = useState({});
+    
+    // --- Dynamic Theme & Spatial Sync ---
+    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+    const workspaceRef = useRef(null);
+
+    useEffect(() => {
+        const handleSync = () => setTheme(localStorage.getItem('app-theme') || 'dark');
+        window.addEventListener('storage', handleSync);
+        return () => window.removeEventListener('storage', handleSync);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch classroom meta and assignments using relative paths
                 const [classRes, assignRes] = await Promise.all([
                     api.get(`/classrooms/${id}`),
                     api.get(`/classrooms/${id}/assignments`)
                 ]);
-                
                 setClassroom(classRes.data);
                 setAssignments(assignRes.data);
             } catch (error) {
-                alert("Security Notice: Failed to synchronize classroom node.");
                 navigate('/student'); 
             } finally {
                 setLoading(false);
@@ -33,113 +39,115 @@ const StudentClassroomView = () => {
         fetchData();
     }, [id, navigate]);
 
+    // --- Spatial UI: Mouse Spotlight Logic ---
+    const handleMouseMove = (e) => {
+        if (!workspaceRef.current) return;
+        const cards = workspaceRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+    };
+
     const handleFileChange = (assignmentId, event) => {
         const file = event.target.files[0];
-        if (file) {
-            setSelectedFiles(prev => ({ ...prev, [assignmentId]: file }));
-        }
+        if (file) setSelectedFiles(prev => ({ ...prev, [assignmentId]: file }));
     };
 
     const handleFileUpload = async (assignmentId) => {
         const fileToUpload = selectedFiles[assignmentId];
-        if (!fileToUpload) return alert("System Notice: Please select a valid .py file.");
-        
+        if (!fileToUpload) return alert("Select a .py file.");
         const formData = new FormData();
         formData.append('file', fileToUpload);
-
         try {
-            // Interceptor handles Authorization; browser handles multipart boundary
-            const res = await api.post(
-                `/classrooms/${id}/assignments/${assignmentId}/submit`, 
-                formData
-            );
-            alert(res.data.message);
+            await api.post(`/classrooms/${id}/assignments/${assignmentId}/submit`, formData);
+            alert("Node Deployment Successful.");
             setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
-        } catch (error) {
-            alert(error.response?.data?.error || "Critical failure uploading file to node.");
-        }
+        } catch (error) { alert("Upload failed."); }
     };
 
-    if (loading) return (
-        <div className="student-loading-screen">
-            <div className="cyber-spinner"></div>
-            <p>Accessing Node Data...</p>
-        </div>
-    );
-
+    if (loading) return <div className={`nexus-loader ${theme}`}><div className="quantum-spinner"></div></div>;
     if (!classroom) return null;
 
     return (
-        <div className="student-workspace-wrapper">
-            <div className="workspace-container">
-                <header className="workspace-banner">
-                    <button onClick={() => navigate('/student')} className="btn-back-glow">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Exit Workspace
-                    </button>
-                    <div className="banner-details">
-                        <div className="banner-title-group">
-                            <h1>{classroom.name}</h1>
-                            <p className="instructor-tag">Lead Instructor: <strong>{classroom.instructor}</strong></p>
+        <div className={`nexus-wrapper ${theme}`} ref={workspaceRef} onMouseMove={handleMouseMove}>
+            {/* Background Aurora Engine */}
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-primary"></div>
+                <div className="aurora-blob blob-secondary"></div>
+            </div>
+
+            <div className="nexus-content">
+                
+                {/* --- HEADER BOX: Matches Dashboard Action Banner --- */}
+                <header className="spatial-card nexus-action-header fade-in">
+                    <div className="header-box-content">
+                        <div className="header-top-row">
+                            <button onClick={() => navigate('/student')} className="back-pill-nexus">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                                Return to Hub
+                            </button>
+                            
+                            {/* Security Badge Removed as requested */}
                         </div>
-                        <div className="status-pill-glass">
-                            <span>Status</span>
-                            <strong className="status-enrolled">AUTHORIZED</strong>
+                        
+                        <div className="identity-block">
+                            <h1 className="nexus-title-main">{classroom.name}</h1>
+                            
+                            <div className="instructor-row-nexus">
+                                <span className="ins-label">Instructor</span>
+                                <div className="ins-name-pill">
+                                    <span className="ins-name-text">{classroom.instructor}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="assignment-section">
-                    <h2 className="section-label">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Node Assignment Queue
-                    </h2>
+                {/* --- Assignment Stream --- */}
+                <section className="assignment-nexus slide-up">
+                    <div className="stream-header-nexus">
+                        <h2>Assignment Queue</h2>
+                        <div className="label-line-nexus"></div>
+                    </div>
                     
-                    {assignments.length === 0 ? (
-                        <div className="empty-assignment-box">
-                            <p>No assignment protocols detected in this cluster.</p>
-                        </div>
-                    ) : (
-                        <div className="assignment-stack">
-                            {assignments.map(assignment => (
-                                <div key={assignment.id} className="cyber-assignment-card">
-                                    <div className="assignment-content">
-                                        <h3>{assignment.title}</h3>
-                                        <p>{assignment.description || "No specific parameters provided."}</p>
-                                    </div>
-                                    
-                                    <div className="assignment-actions">
-                                        <input 
-                                            type="file" 
-                                            accept=".py" 
-                                            id={`file-${assignment.id}`} 
-                                            className="hidden-file-input" 
-                                            onChange={(e) => handleFileChange(assignment.id, e)}
-                                        />
+                    <div className="assignment-stack">
+                        {assignments.length === 0 ? (
+                            <div className="spatial-card empty-card-nexus">
+                                <p>No active protocols detected in this cluster.</p>
+                            </div>
+                        ) : (
+                            assignments.map((assignment, index) => (
+                                <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
+                                    <div className="card-glass-layer"></div>
+                                    <div className="row-grid-content">
+                                        <div className="row-info-nexus">
+                                            <span className="row-op-tag">OP_TASK_0{index + 1}</span>
+                                            <h3>{assignment.title}</h3>
+                                            <p>{assignment.description || "Parameters standard."}</p>
+                                        </div>
                                         
-                                        {!selectedFiles[assignment.id] ? (
-                                            <label htmlFor={`file-${assignment.id}`} className="btn-select-cyber">
-                                                Select .py Source
-                                            </label>
-                                        ) : (
-                                            <div className="upload-prep-container">
-                                                <div className="selected-file-pill">
-                                                    <code>{selectedFiles[assignment.id].name}</code>
+                                        <div className="row-actions-nexus">
+                                            <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
+                                            
+                                            {!selectedFiles[assignment.id] ? (
+                                                <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
+                                                    Initialize Source
+                                                </label>
+                                            ) : (
+                                                <div className="nexus-deploy-group">
+                                                    <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
+                                                    <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
                                                 </div>
-                                                <button 
-                                                    className="btn-glow-submit" 
-                                                    onClick={() => handleFileUpload(assignment.id)}
-                                                >
-                                                    Deploy to LogicGuard
-                                                </button>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
             </div>
         </div>
     );
