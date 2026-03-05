@@ -1,0 +1,146 @@
+import os
+import ast
+from werkzeug.utils import secure_filename
+from flask import Blueprint, request, jsonify, current_app
+from database import db
+from models import User, Classroom, Assignment, Enrollment, Submission
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+# Create a dedicated Blueprint for submissions
+submissions_bp = Blueprint('submissions', __name__)
+
+@submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submit', methods=['POST'])
+@jwt_required()
+def submit_assignment(class_id, assignment_id):
+    """Handles .py file uploads with AST validation and a One-Time Submission Lock"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if user.role != 'student':
+        return jsonify({"error": "Only students can submit assignments."}), 403
+
+    enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
+    if not enrollment:
+        return jsonify({"error": "You are not enrolled in this class."}), 403
+
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found."}), 404
+
+    # 1. THE HARD LOCK: Check if they already submitted!
+    existing_submission = Submission.query.filter_by(student_id=user.id, assignment_id=assignment.id).first()
+    if existing_submission:
+        return jsonify({"error": "You have already submitted this assignment. Multiple uploads are not allowed."}), 400
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part detected."}), 400
+        
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No file selected."}), 400
+        
+    if not file.filename.endswith('.py'):
+        return jsonify({"error": "Invalid format. Only .py files are allowed."}), 400
+
+    try:
+        file_content = file.read().decode('utf-8')
+        ast.parse(file_content)
+        file.seek(0) 
+    except SyntaxError as e:
+        return jsonify({"error": f"Upload rejected! Syntax error on line {e.lineno}: {e.msg}"}), 400
+    except Exception as e:
+        return jsonify({"error": f"Upload rejected! Invalid Python file: {str(e)}"}), 400
+
+    original_filename = secure_filename(file.filename)
+    unique_filename = f"student_{user.id}_assign_{assignment.id}_{original_filename}"
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+    file.save(filepath)
+    
+    try:
+        new_submission = Submission(
+            assignment_id=assignment.id,
+            student_id=user.id,
+            filename=original_filename,
+            file_path=filepath
+        )
+        db.session.add(new_submission)
+        db.session.commit()
+        return jsonify({"message": "Python file submitted successfully!"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving submission: {e}")
+        return jsonify({"error": "Database error occurred while saving submission."}), 500
+    
+
+@submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions', methods=['GET'])
+@jwt_required()
+def get_assignment_submissions(class_id, assignment_id):
+    """Allows an instructor to see all student submissions, including file content"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+    if not classroom:
+        return jsonify({"error": "Classroom not found or access denied"}), 404
+
+    submissions = Submission.query.filter_by(assignment_id=assignment_id).all()
+    submissions_data = []
+    
+    for s in submissions:
+        content = "File content unavailable on server disk."
+        if s.file_path and os.path.exists(s.file_path):
+            try:
+                with open(s.file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+            except Exception as e:
+                print(f"Error reading file for {s.student.username}: {e}")
+
+        submissions_data.append({
+            "id": s.id,
+            "student_name": s.student.username,
+            "filename": s.filename,
+            "content": content, 
+            "score": s.score or "Pending",
+            "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return jsonify(submissions_data), 200
+
+@submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions/<int:submission_id>/grade', methods=['POST'])
+@jwt_required()
+def grade_submission(class_id, assignment_id, submission_id):
+    """Allows an instructor to save a manual grade for a student's submission"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Verify classroom ownership
+    classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+    if not classroom:
+        return jsonify({"error": "Classroom not found or access denied"}), 404
+
+    data = request.get_json()
+    score = data.get('score')
+
+    if not score:
+        return jsonify({"error": "Score is required."}), 400
+
+    # Find the specific submission
+    submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
+    if not submission:
+        return jsonify({"error": "Submission not found."}), 404
+
+    # Save the score
+    try:
+        submission.score = score
+        db.session.commit()
+        return jsonify({"message": "Grade saved successfully!", "score": score}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred while saving grade."}), 500
