@@ -46,7 +46,7 @@
 .spatial-card:hover::after { opacity: 1; }
 
 /* =========================================
-   HEADER BOX: DASHBOARD MATCH
+    HEADER BOX: DASHBOARD MATCH
    ========================================= */
 .nexus-action-header {
     background: var(--banner-gradient) !important;
@@ -82,7 +82,7 @@
 .ins-name-text { color: #ffffff; font-weight: 700; font-size: 1rem; }
 
 /* =========================================
-   ASSIGNMENT QUEUE
+    ASSIGNMENT QUEUE
    ========================================= */
 .stream-header-nexus { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
 .stream-header-nexus h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-dim); margin: 0; }
@@ -113,3 +113,54 @@
 .quantum-spinner { width: 40px; height: 40px; border: 3px solid var(--border-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- SUBMITTED STATE & SCORE UI --- */
+.submitted-status-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-pill.success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.score-display {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-glass);
+    padding: 6px 16px;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+.score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+}
+
+.score-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-hero);
+}
+
+.score-value.pending {
+    color: var(--status-yellow);
+    font-style: italic;
+    font-size: 0.9rem;
+    padding-top: 2px;
+}

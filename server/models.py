@@ -83,6 +83,7 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    max_score = db.Column(db.Integer, nullable=False, default=100)
     
     # Foreign Key: Links this assignment strictly to one specific classroom
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
@@ -94,10 +95,11 @@ class Assignment(db.Model):
     # the assignments get deleted automatically!
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
 
-    def __init__(self, title, description, classroom_id):
+    def __init__(self, title, description, classroom_id, max_score=100):
         self.title = title
         self.description = description
         self.classroom_id = classroom_id
+        self.max_score = max_score
 
     def __repr__(self):
         return f'<Assignment {self.title} | Classroom ID: {self.classroom_id}>'
@@ -140,7 +142,10 @@ class Submission(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
     # Links to the Student
     student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    
+    # Optional score field to store the result of plagiarism analysis or manual grading
+    score = db.Column(db.String(20), nullable=True)
+    # Maximum score for the assignment (e.g., 100 points) - this can be used for grading purposes
+    max_score = db.Column(db.Integer, nullable=True, default=100)
     # Stores the original file name (e.g., 'dijkstra_algo.py')
     filename = db.Column(db.String(255), nullable=False)
     

@@ -1,25 +1,32 @@
 import os
+import time
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from sqlalchemy.exc import OperationalError
 
 # Database and Models
 from database import setup_db, db 
 from models import User, Classroom, Assignment 
 
+# Import the Seeder Logic
+from seeder import run_smart_seed
+
 # Blueprints (Controllers)
 from routes.analysis import analysis_bp
 from routes.auth import auth_bp
 from routes.classrooms import classrooms_bp
+from routes.assignments import assignments_bp
+from routes.submissions import submissions_bp
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    # 1. Load all configurations from config.py
+    # 1. Load configurations
     app.config.from_object('config.Config')
 
-    # 2. Ensure Upload Folder Exists before anything runs
+    # 2. Ensure Upload Folder Exists
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -27,44 +34,43 @@ def create_app():
     jwt = JWTManager(app) 
     setup_db(app)
 
-    # 4. Base Route
+    # 4. --- DATABASE INITIALIZATION & SEEDING ---
+    with app.app_context():
+        print("Falsicode: Checking database connection...")
+        
+        retries = 10
+        connected = False
+        while retries > 0:
+            try:
+                db.create_all() 
+                connected = True
+                break
+            except (OperationalError, Exception):
+                retries -= 1
+                print(f"Falsicode: Database not ready... retrying in 3s ({10-retries}/10)")
+                time.sleep(3)
+        
+        if connected:
+            # Trigger the smart seeder from the separate file
+            run_smart_seed(db)
+        else:
+            print("CRITICAL: Falsicode could not connect to database.")
+
+    # 5. Base Route
     @app.route('/')
     def home():
-        return {"status": "The LogicGuard System is Running Successfully!"}
+        return {"status": "The Falsicode System is Running Successfully!"}
 
-    # 5. --- AUTOMATIC ADMIN SEEDING LOGIC ---
-    # We use app.app_context() to interact with the database before the server fully starts
-    with app.app_context():
-        db.create_all() # Ensures tables exist
-        
-        # Check if the Master Admin is already in the database
-        admin_user = User.query.filter_by(email='admin@test.com').first()
-        
-        if not admin_user:
-            print("No admin found. Creating default Master Admin...")
-            new_admin = User(
-                username='admin',
-                email='admin@test.com',
-                role='admin',
-                status='active' # Admins are immediately active
-            )
-            new_admin.set_password('admin123') 
-            
-            db.session.add(new_admin)
-            db.session.commit()
-            print("Master Admin account created successfully!")
-    # --- END SEEDING LOGIC ---
-
-    # 6. Register Blueprints (The "Controllers")
+    # 6. Register Blueprints
     app.register_blueprint(analysis_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(classrooms_bp, url_prefix='/api/classrooms')
+    app.register_blueprint(assignments_bp, url_prefix='/api/classrooms')
+    app.register_blueprint(submissions_bp, url_prefix='/api/classrooms')
 
     return app
 
-# Initialize the application
 app = create_app()
 
 if __name__ == '__main__':
-    # host='0.0.0.0' is required for Docker to allow external access
     app.run(debug=True, host='0.0.0.0', port=5000)

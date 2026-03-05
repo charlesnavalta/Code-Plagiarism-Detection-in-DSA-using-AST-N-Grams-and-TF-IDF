@@ -3,6 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 import './InstructorClassroomView.css';
 
+// Import our isolated components
+import CreateAssignmentModal from './components/CreateAssignmentModal';
+import SubmissionsAuditModal from './components/SubmissionsAuditModal';
+
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
@@ -83,7 +87,6 @@ const InstructorClassroomView = () => {
             </div>
 
             <div className="classroom-layout">
-                {/* Cinematic Banner */}
                 <header className="spatial-card cinematic-header fade-in-down">
                     <div className="header-inner">
                         <div className="top-meta">
@@ -106,7 +109,6 @@ const InstructorClassroomView = () => {
                         <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>New Assignment</button>
                     </div>
 
-                    {/* Assignment List */}
                     <div className="assignment-grid">
                         {assignments.map((assignment, idx) => (
                             <div key={assignment.id} className="assignment-item-row">
@@ -123,81 +125,24 @@ const InstructorClassroomView = () => {
                 </main>
             </div>
 
-            {/* Tree Audit Modal */}
-            {showSubmissionsModal && (
-                <div className="falsicode-hud-overlay">
-                    <div className="spatial-card hud-modal-content wide-hud fade-in">
-                        <div className="hud-header">
-                            <button className="btn-close-icon" onClick={() => setShowSubmissionsModal(false)}>&times;</button>
-                            <h2>Tree</h2>
-                            <p className="hud-subtitle">Reviewing student logic submissions</p>
-                        </div>
-                        
-                        <div className="hud-body-scroll">
-                            <table className="falsicode-table-hud">
-                                <thead>
-                                    <tr>
-                                        <th style={{width: '40px'}}></th>
-                                        <th>STUDENT IDENTITY</th>
-                                        <th>SOURCE FILE</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {currentSubmissions.map(sub => (
-                                        <tr key={sub.id}>
-                                            <td className="status-cell">
-                                                <div className="status-dot yellow"></div>
-                                            </td>
-                                            <td>
-                                                <div className="hud-stu-cell">
-                                                    <div className="stu-icon">{sub.student_name.charAt(0)}</div>
-                                                    <strong>{sub.student_name}</strong>
-                                                </div>
-                                            </td>
-                                            <td><code className="code-box">{sub.filename}</code></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+            {/* Injected Modals */}
+            <CreateAssignmentModal 
+                isOpen={showCreateModal} 
+                onClose={() => setShowCreateModal(false)} 
+                classroomId={id}
+                onAssignmentCreated={(newAssignment) => setAssignments([...assignments, newAssignment])}
+            />
 
-                            {/* LogicGuard Analysis Result */}
-                            {analysisResults && (
-                                <div className="analysis-report-section">
-                                    <div className="report-header">
-                                        <h3>LogicGuard Analysis Report</h3>
-                                        <span className="scan-badge">SCAN COMPLETE</span>
-                                    </div>
-                                    <table className="falsicode-table-hud report-table">
-                                        <thead>
-                                            <tr>
-                                                <th>MATCHED PAIR</th>
-                                                <th style={{textAlign: 'right'}}>SIM</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {analysisResults.map((res, i) => (
-                                                <tr key={i}>
-                                                    <td className="comparison-text">
-                                                        {res.file1} ↔ {res.file2}
-                                                    </td>
-                                                    <td className="sim-score">{res.score}%</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Updated Footer Actions */}
-                        <div className="hud-footer-actions">
-                            <button className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} onClick={handleRunAnalysis} disabled={isAnalyzing}>
-                                {isAnalyzing ? "Processing..." : "Run LogicGuard Analysis"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <SubmissionsAuditModal 
+                isOpen={showSubmissionsModal}
+                onClose={() => setShowSubmissionsModal(false)}
+                submissions={currentSubmissions}
+                analysisResults={analysisResults}
+                isAnalyzing={isAnalyzing}
+                onRunAnalysis={handleRunAnalysis}
+                classroomId={id} // <-- ADD THIS
+                assignmentId={selectedAssignment?.id} // <-- ADD THIS
+            />
         </div>
     );
 };

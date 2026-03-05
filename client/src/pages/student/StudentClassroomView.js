@@ -64,7 +64,14 @@ const StudentClassroomView = () => {
             await api.post(`/classrooms/${id}/assignments/${assignmentId}/submit`, formData);
             alert("Node Deployment Successful.");
             setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
-        } catch (error) { alert("Upload failed."); }
+            
+            // Instantly update the UI to lock the button without needing a page refresh
+            setAssignments(prev => prev.map(a => 
+                a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
+            ));
+        } catch (error) { 
+            alert(error.response?.data?.error || "Upload failed."); 
+        }
     };
 
     if (loading) return <div className={`nexus-loader ${theme}`}><div className="quantum-spinner"></div></div>;
@@ -72,15 +79,12 @@ const StudentClassroomView = () => {
 
     return (
         <div className={`nexus-wrapper ${theme}`} ref={workspaceRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-primary"></div>
                 <div className="aurora-blob blob-secondary"></div>
             </div>
 
             <div className="nexus-content">
-                
-                {/* --- HEADER BOX: Matches Dashboard Action Banner --- */}
                 <header className="spatial-card nexus-action-header fade-in">
                     <div className="header-box-content">
                         <div className="header-top-row">
@@ -88,8 +92,6 @@ const StudentClassroomView = () => {
                                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
                                 Return to Hub
                             </button>
-                            
-                            {/* Security Badge Removed as requested */}
                         </div>
                         
                         <div className="identity-block">
@@ -105,7 +107,6 @@ const StudentClassroomView = () => {
                     </div>
                 </header>
 
-                {/* --- Assignment Stream --- */}
                 <section className="assignment-nexus slide-up">
                     <div className="stream-header-nexus">
                         <h2>Assignment Queue</h2>
@@ -129,17 +130,32 @@ const StudentClassroomView = () => {
                                         </div>
                                         
                                         <div className="row-actions-nexus">
-                                            <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
-                                            
-                                            {!selectedFiles[assignment.id] ? (
-                                                <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
-                                                    Initialize Source
-                                                </label>
-                                            ) : (
-                                                <div className="nexus-deploy-group">
-                                                    <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
-                                                    <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
+                                            {/* --- THE LOCK AND SCORE LOGIC --- */}
+                                            {assignment.has_submitted ? (
+                                                <div className="submitted-status-group">
+                                                    <span className="status-pill success">✓ Turned In</span>
+                                                    <div className="score-display">
+                                                        <span className="score-label">FALSICODE SCORE</span>
+                                                        <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
+                                                            {assignment.score}
+                                                        </span>
+                                                    </div>
                                                 </div>
+                                            ) : (
+                                                <>
+                                                    <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
+                                                    
+                                                    {!selectedFiles[assignment.id] ? (
+                                                        <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
+                                                            Initialize Source
+                                                        </label>
+                                                    ) : (
+                                                        <div className="nexus-deploy-group">
+                                                            <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
+                                                            <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     </div>
