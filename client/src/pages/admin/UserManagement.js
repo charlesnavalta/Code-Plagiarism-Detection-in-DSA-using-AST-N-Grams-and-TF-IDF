@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import api from '../../services/api'; 
+import { useUserCRUD } from '../../hooks/useUserCRUD'; 
 import './UserManagement.css'; 
 
 const UserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    // 1. Pull everything from the custom hook
+    const { 
+        users, loading, error, processing, 
+        approveUser, deleteUser, saveUser 
+    } = useUserCRUD();
+
     const dashboardRef = useRef(null);
 
-    // Modal State
+    // 2. UI State only (Modals and Themes)
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('create'); 
-    const [formData, setFormData] = useState({ id: null, username: '', email: '', role: 'student', password: '' });
-    const [processing, setProcessing] = useState(false);
-
+    // Updated formData to include 'status' to match DB defaults
+    const [formData, setFormData] = useState({ id: null, username: '', email: '', role: 'student', status: 'active', password: '' });
+    
     // --- Nexus Theme Synchronization ---
     const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
@@ -27,54 +30,18 @@ const UserManagement = () => {
         return () => window.removeEventListener('storage', handleSync);
     }, []);
 
-    // --- READ ---
-    const fetchUsers = async () => {
-        try {
-            const res = await api.get('/auth/users');
-            const nonAdminUsers = res.data.filter(user => user.role !== 'admin');
-            setUsers(nonAdminUsers);
-            setLoading(false);
-        } catch (err) {
-            setError('System Protocol: Failed to fetch users. Ensure the backend is active.');
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    // --- UPDATE (Approve Instructor) ---
-    const handleApprove = async (userId) => {
-        try {
-            await api.patch(`/auth/users/${userId}/approve`);
-            fetchUsers();
-        } catch (err) {
-            alert("Security Protocol: Failed to approve user.");
-        }
-    };
-
-    // --- DELETE ---
-    const handleDelete = async (userId) => {
-        if (!window.confirm("Warning: Are you sure you want to permanently purge this user node?")) return;
-        try {
-            await api.delete(`/auth/users/${userId}`);
-            fetchUsers();
-        } catch (err) {
-            alert(err.response?.data?.error || "Protocol failure: Unable to delete user.");
-        }
-    };
-
     // --- MODAL HANDLERS ---
     const openCreateModal = () => {
         setModalMode('create');
-        setFormData({ id: null, username: '', email: '', role: 'student', password: '' });
+        // Reset state, including default status
+        setFormData({ id: null, username: '', email: '', role: 'student', status: 'active', password: '' });
         setShowModal(true);
     };
 
     const openEditModal = (user) => {
         setModalMode('edit');
-        setFormData({ id: user.id, username: user.username, email: user.email, role: user.role, password: '' });
+        // Populate state with existing user data, including status
+        setFormData({ id: user.id, username: user.username, email: user.email, role: user.role, status: user.status, password: '' });
         setShowModal(true);
     };
 
@@ -82,24 +49,12 @@ const UserManagement = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // --- CREATE & UPDATE (Submit Form) ---
     const handleModalSubmit = async (e) => {
         e.preventDefault();
-        setProcessing(true);
-        try {
-            if (modalMode === 'create') {
-                await api.post('/auth/users', formData);
-            } else {
-                const payload = { username: formData.username, email: formData.email, role: formData.role };
-                if (formData.password) payload.password = formData.password;
-                await api.put(`/auth/users/${formData.id}`, payload);
-            }
+        // Use the hook's save function. If successful, close the modal.
+        const success = await saveUser(modalMode, formData);
+        if (success) {
             setShowModal(false);
-            fetchUsers();
-        } catch (err) {
-            alert(err.response?.data?.error || `Failed to ${modalMode} user node.`);
-        } finally {
-            setProcessing(false);
         }
     };
 
@@ -125,7 +80,6 @@ const UserManagement = () => {
 
     return (
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-primary"></div>
                 <div className="aurora-blob blob-secondary"></div>
@@ -204,14 +158,14 @@ const UserManagement = () => {
                                                 <td>
                                                     <div className="table-action-group">
                                                         {user.status === 'pending' && (
-                                                            <button className="action-btn approve" onClick={() => handleApprove(user.id)} title="Approve">
+                                                            <button className="action-btn approve" onClick={() => approveUser(user.id)} title="Approve">
                                                                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                                                             </button>
                                                         )}
                                                         <button className="action-btn edit" onClick={() => openEditModal(user)} title="Edit">
                                                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                         </button>
-                                                        <button className="action-btn delete" onClick={() => handleDelete(user.id)} title="Delete">
+                                                        <button className="action-btn delete" onClick={() => deleteUser(user.id)} title="Delete">
                                                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                         </button>
                                                     </div>
@@ -237,12 +191,30 @@ const UserManagement = () => {
                             
                             <form onSubmit={handleModalSubmit} className="relative-z" style={{ padding: '0 30px 30px 30px' }}>
                                 <div className="dark-form-group">
-                                    <label>User Identity</label>
-                                    <input type="text" name="username" value={formData.username} onChange={handleInputChange} required className="nexus-input-field" placeholder="Enter username" />
+                                    <label>User Identity (Max 50 chars)</label>
+                                    <input 
+                                        type="text" 
+                                        name="username" 
+                                        value={formData.username} 
+                                        onChange={handleInputChange} 
+                                        required 
+                                        maxLength="50" 
+                                        className="nexus-input-field" 
+                                        placeholder="Enter username" 
+                                    />
                                 </div>
                                 <div className="dark-form-group">
                                     <label>Email Transmission Address</label>
-                                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="nexus-input-field" placeholder="Enter email" />
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        value={formData.email} 
+                                        onChange={handleInputChange} 
+                                        required 
+                                        maxLength="120" 
+                                        className="nexus-input-field" 
+                                        placeholder="Enter email" 
+                                    />
                                 </div>
                                 <div className="form-group-row">
                                     <div className="dark-form-group w-50">
@@ -250,15 +222,32 @@ const UserManagement = () => {
                                         <select name="role" value={formData.role} onChange={handleInputChange} className="nexus-input-field">
                                             <option value="student">Student</option>
                                             <option value="instructor">Instructor</option>
+                                            <option value="admin">Administrator</option>
                                         </select>
                                     </div>
                                     <div className="dark-form-group w-50">
-                                        <label>{modalMode === 'edit' ? 'New Key (Optional)' : 'Security Key'}</label>
-                                        <input type="password" name="password" value={formData.password} onChange={handleInputChange} required={modalMode === 'create'} className="nexus-input-field" placeholder="••••••••" />
+                                        <label>Network Status</label>
+                                        <select name="status" value={formData.status} onChange={handleInputChange} className="nexus-input-field">
+                                            <option value="active">Active</option>
+                                            <option value="pending">Pending</option>
+                                        </select>
                                     </div>
                                 </div>
+                                <div className="dark-form-group" style={{ marginTop: '15px' }}>
+                                    <label>{modalMode === 'edit' ? 'New Key (Leave blank to keep current)' : 'Security Key (Min 6 chars)'}</label>
+                                    <input 
+                                        type="password" 
+                                        name="password" 
+                                        value={formData.password} 
+                                        onChange={handleInputChange} 
+                                        required={modalMode === 'create'} 
+                                        minLength="6" 
+                                        className="nexus-input-field" 
+                                        placeholder="••••••••" 
+                                    />
+                                </div>
                                 
-                                <div className="modal-actions" style={{ marginTop: '20px' }}>
+                                <div className="modal-actions" style={{ marginTop: '25px' }}>
                                     <button type="button" className="nexus-btn-ghost" onClick={() => setShowModal(false)}>Cancel</button>
                                     <button type="submit" className="nexus-btn-primary" disabled={processing}>
                                         {processing ? 'Processing...' : (modalMode === 'create' ? 'Provision User' : 'Save Parameters')}
