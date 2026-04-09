@@ -84,7 +84,7 @@ const Profile = () => {
                     <div className="banner-content banner-header-split">
                         <div className="banner-text">
                             <h1>Account Overview</h1>
-                            <p>Manage your LogicGuard identity and security preferences.</p>
+                            <p>Manage your Falsicode identity and security preferences.</p>
                         </div>
                     </div>
                 </header>
@@ -143,7 +143,7 @@ const Profile = () => {
                                         <input 
                                             type="email" className="nexus-input-field with-icon"
                                             value={emailInput} onChange={(e) => setEmailInput(e.target.value)} 
-                                            placeholder="node@logicguard.com"
+                                            placeholder="node@Falsicode.com"
                                         />
                                     </div>
                                 </div>

@@ -53,7 +53,7 @@ export const useUserCRUD = () => {
 
     // CREATE & UPDATE (Save Form Data)
     const saveUser = async (modalMode, formData) => {
-        setProcessing(true);
+        setProcessing(true);         
         try {
             if (modalMode === 'create') {
                 await api.post('/auth/users', formData);

@@ -45,7 +45,7 @@ const AdminLayout = ({ children }) => {
                 </nav>
 
                 <div className="sidebar-footer-nexus">
-                    <span className="version-tag">LogicGuard v1.0.4</span>
+                    <span className="version-tag">Falsicode v1.0.4</span>
                 </div>
             </aside>
 
