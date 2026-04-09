@@ -1,10 +1,10 @@
-from models import User, Classroom, Enrollment
+from models import User, Classroom, Enrollment, Assignment, Submission
 from flask_bcrypt import generate_password_hash 
 
 def run_smart_seed(db):
     """
     Non-destructive seeder for Falsicode.
-    Dynamically generates classrooms for all instructors and enrolls all students.
+    Dynamically generates classrooms, enrolls students, and creates assignments.
     """
     print("-" * 30)
     print("FALSICODE: Starting Smart Seed...")
@@ -12,14 +12,14 @@ def run_smart_seed(db):
     try:
         # A. Define User Identity Data (Spaced for readability)
         users_to_seed = [
-            # Admin account - only 1 allowed, will be skipped if already exists
+            # Admin account
             {
                 "email": "admin@test.com", 
                 "username": "admin", 
                 "password": "admin123", 
                 "role": "admin"
             },
-            # Instructors below - 10 total, each will get their own unique class created for them.
+            # Instructors
             {
                 "email": "renz@gmail.com", 
                 "username": "renz", 
@@ -80,7 +80,7 @@ def run_smart_seed(db):
                 "password": "vange123", 
                 "role": "instructor"
             },
-            #Students below - 10 total, all enrolled in every class created above.
+            # Students
             {
                 "email": "mary@gmail.com", 
                 "username": "mary", 
@@ -187,7 +187,174 @@ def run_smart_seed(db):
             }
         ]
 
-        # B. Smart User Seeding
+        # C. Explicit Assignment Data
+        assignments_to_seed = [
+            {
+                "title": "1. Quick Sort Implementation",
+                "description": "Write a Python script that implements the Quick Sort algorithm. You must include a partition helper function.",
+                "max_score": 100,
+                "classroom_name": "3CSB - DSA"
+            },
+            {
+                "title": "2. Merge Sort Implementation",
+                "description": "Implement the Merge Sort algorithm using a recursive divide-and-conquer approach. Ensure your code handles lists of both even and odd lengths.",
+                "max_score": 100,
+                "classroom_name": "3CSB - DSA"
+            },
+            {
+                "title": "3. Singly Linked List",
+                "description": "Develop a Node class and a LinkedList class. Implement methods to append a node, prepend a node, and reverse the entire linked list in place.",
+                "max_score": 100,
+                "classroom_name": "3CSB - DSA"
+            },
+            {
+                "title": "4. Basic Binary Tree Traversals",
+                "description": "Construct a basic Binary Tree. Implement and print the results of pre-order, in-order, and post-order traversals for a tree with at least 7 nodes.",
+                "max_score": 100,
+                "classroom_name": "3CSB - DSA"
+            },
+            {
+                "title": "5. Binary Search Tree (BST) Operations",
+                "description": "Implement a fully functional Binary Search Tree. Your script must include methods to insert a new value, search for an existing value, and delete a leaf node.",
+                "max_score": 100,
+                "classroom_name": "3CSB - DSA"
+            },
+        ]
+
+        # D. Explicit Submission Data (Pointing to Physical Files in the Datasets Folder)
+        submissions_to_seed = [
+
+            #Assignment 1 Submissions - Quick Sort Implementation
+            
+            {
+                "student_username": "charles",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "original.py",
+                "file_path": "datasets/quick_sort/original.py"
+            },
+            {
+                "student_username": "nicolo",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_1_exact_of_structucal4.py",
+                "file_path": "datasets/quick_sort/type_1_exact_of_structucal4.py"
+            },
+            {
+                "student_username": "dan",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_2_renamed_of_Structural4.py",
+                "file_path": "datasets/quick_sort/type_2_renamed_of_Structural4.py"
+            },
+            {
+                "student_username": "mary",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_2_renamed.py",
+                "file_path": "datasets/quick_sort/type_2_renamed.py"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_2_renamed2.py",
+                "file_path": "datasets/quick_sort/type_2_renamed2.py"
+            },
+            {
+                "student_username": "jude",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_3_structural.py",
+                "file_path": "datasets/quick_sort/type_3_structural.py"
+            },
+            {
+                "student_username": "jm",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_3_structural2.py",
+                "file_path": "datasets/quick_sort/type_3_structural2.py"
+            },
+            {
+                "student_username": "patrick",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_3_structural3.py",
+                "file_path": "datasets/quick_sort/type_3_structural3.py"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "1. Quick Sort Implementation",
+                "filename": "type_3_structural4.py",
+                "file_path": "datasets/quick_sort/type_3_structural4.py"
+            },
+
+            # Assignment 2 Submissions - Merge Sort Implementation
+
+            {
+                "student_username": "charles",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "original.py",
+                "file_path": "datasets/merge_sort/original.py"
+            },
+            {
+                "student_username": "nicolo",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "type_1_exact.py",
+                "file_path": "datasets/merge_sort/type_1_exact.py"
+            },
+            {
+                "student_username": "dan",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "type_2_renamed.py",
+                "file_path": "datasets/merge_sort/type_2_renamed.py"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "type_2_renamed2.py",
+                "file_path": "datasets/merge_sort/type_2_renamed2.py"
+            },
+            {
+                "student_username": "karo",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "type_3_structural.py",
+                "file_path": "datasets/merge_sort/type_3_structural.py"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "2. Merge Sort Implementation",
+                "filename": "type_3_structural2.py",
+                "file_path": "datasets/merge_sort/type_3_structural2.py"
+            },
+
+            # Assignment 3 Submissions - Singly Linked List
+
+            {
+                "student_username": "mary",
+                "assignment_title": "3. Singly Linked List",
+                "filename": "original.py",
+                "file_path": "datasets/linked_list/original.py"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "3. Singly Linked List",
+                "filename": "type_1_exact.py",
+                "file_path": "datasets/linked_list/type_1_exact.py"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "3. Singly Linked List",
+                "filename": "type_2_renamed.py",
+                "file_path": "datasets/linked_list/type_2_renamed.py"
+            },
+            {
+                "student_username": "karo",
+                "assignment_title": "3. Singly Linked List",
+                "filename": "type_2_renamed2.py",
+                "file_path": "datasets/linked_list/type_2_renamed2.py"
+            },
+            {
+                "student_username": "jm",
+                "assignment_title": "3. Singly Linked List",
+                "filename": "type_3_structural.py",
+                "file_path": "datasets/linked_list/type_3_structural.py"
+            },
+        ]
+
+        # 1. Smart User Seeding
         for u in users_to_seed:
             existing_user = User.query.filter_by(email=u["email"]).first()
             if not existing_user:
@@ -203,15 +370,13 @@ def run_smart_seed(db):
         
         db.session.commit()
 
-        # C. Smart Classroom Seeding (Using Explicit Names)
+        # 2. Smart Classroom Seeding (Using Explicit Names)
         seeded_classrooms = []
 
         for class_data in classrooms_to_seed:
-            # 1. Find the specific instructor for this class
             instructor = User.query.filter_by(username=class_data["instructor_username"]).first()
             
             if instructor:
-                # 2. Check if this specific class already exists
                 existing_class = Classroom.query.filter_by(name=class_data["name"], instructor_id=instructor.id).first()
 
                 if not existing_class:
@@ -223,21 +388,17 @@ def run_smart_seed(db):
                     db.session.add(existing_class)
                     db.session.flush() # Flush to get the ID before committing
                 
-                # Keep track for the student enrollment step
                 seeded_classrooms.append(existing_class)
             else:
-                print(f"FALSICODE WARNING: Could not find instructor '{class_data['instructor_username']}' for class '{class_data['name']}'")
+                print(f"FALSICODE WARNING: Could not find instructor '{class_data['instructor_username']}'")
             
         db.session.commit()
 
-        # D. SMART ENROLLMENT SEEDING (Dynamic for ALL Students)
+        # 3. SMART ENROLLMENT SEEDING (Dynamic for ALL Students)
         students = User.query.filter_by(role='student').all()
 
-        # Loop through every classroom we just made...
         for classroom in seeded_classrooms:
-            # ...and loop through every student in the database
             for student in students:
-                # Check if the student is already in this specific class
                 is_enrolled = Enrollment.query.filter_by(
                     student_id=student.id, 
                     classroom_id=classroom.id
@@ -250,6 +411,59 @@ def run_smart_seed(db):
                         classroom_id=classroom.id
                     )
                     db.session.add(enrollment)
+        
+        db.session.commit()
+
+        # 4. SMART ASSIGNMENT SEEDING (NEW SECTION)
+        for assign_data in assignments_to_seed:
+            # Find the classroom by its name
+            classroom = Classroom.query.filter_by(name=assign_data["classroom_name"]).first()
+            
+            if classroom:
+                # Check if this assignment already exists in this classroom
+                existing_assignment = Assignment.query.filter_by(
+                    title=assign_data["title"], 
+                    classroom_id=classroom.id
+                ).first()
+                
+                if not existing_assignment:
+                    print(f"FALSICODE: Adding Assignment '{assign_data['title']}' to {classroom.name}")
+                    new_assignment = Assignment(
+                        title=assign_data["title"],
+                        description=assign_data["description"],
+                        max_score=assign_data["max_score"],
+                        classroom_id=classroom.id
+                    )
+                    db.session.add(new_assignment)
+            else:
+                print(f"FALSICODE WARNING: Classroom '{assign_data['classroom_name']}' not found for assignment seeding.")
+                
+        db.session.commit()
+
+        # 5. SMART SUBMISSION SEEDING (NEW SECTION)
+        for sub_data in submissions_to_seed:
+            # Look up the student and assignment
+            student = User.query.filter_by(username=sub_data["student_username"]).first()
+            assignment = Assignment.query.filter_by(title=sub_data["assignment_title"]).first()
+
+            if student and assignment:
+                # Check if this student already submitted a file for this exact assignment
+                existing_sub = Submission.query.filter_by(
+                    student_id=student.id, 
+                    assignment_id=assignment.id
+                ).first()
+
+                if not existing_sub:
+                    print(f"FALSICODE: Seeding Submission '{sub_data['filename']}' for {student.username}")
+                    new_submission = Submission(
+                        assignment_id=assignment.id,
+                        student_id=student.id,
+                        filename=sub_data["filename"],
+                        file_path=sub_data["file_path"]
+                    )
+                    db.session.add(new_submission)
+            else:
+                print(f"FALSICODE WARNING: Could not find Student or Assignment for '{sub_data['filename']}'")
         
         db.session.commit()
 

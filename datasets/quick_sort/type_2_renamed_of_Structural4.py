@@ -1,21 +1,21 @@
-def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
+def fast_sort(sequence):
+    if len(sequence) <= 1:
+        return sequence
 
-    pivot = arr[-1]
-    left, right = partition(arr[:-1], pivot)
+    anchor = sequence[-1]
+    lower_half, upper_half = split_data(sequence[:-1], anchor)
 
-    return quick_sort(left) + [pivot] + quick_sort(right)
+    return fast_sort(lower_half) + [anchor] + fast_sort(upper_half)
 
 
-def partition(arr, pivot):
-    smaller = []
-    larger = []
+def split_data(sequence, anchor):
+    items_below = []
+    items_above = []
 
-    for value in arr:
-        if value <= pivot:
-            smaller.append(value)
+    for item in sequence:
+        if item <= anchor:
+            items_below.append(item)
         else:
-            larger.append(value)
+            items_above.append(item)
 
-    return smaller, larger
+    return items_below, items_above

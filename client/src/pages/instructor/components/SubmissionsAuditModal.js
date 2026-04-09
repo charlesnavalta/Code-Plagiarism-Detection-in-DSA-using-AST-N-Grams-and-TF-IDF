@@ -114,7 +114,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                             {analysisResults && (
                                 <div className="analysis-report-section">
                                     <div className="report-header">
-                                        <h3>LogicGuard Analysis Report</h3>
+                                        <h3>Falsicode Analysis Report</h3>
                                         <span className="scan-badge">SCAN COMPLETE</span>
                                     </div>
                                     <table className="falsicode-table-hud report-table hoverable-table">
@@ -173,7 +173,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                 <div className="hud-footer-actions">
                     {!selectedPair && (
                         <button className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} onClick={onRunAnalysis} disabled={isAnalyzing}>
-                            {isAnalyzing ? "Processing..." : "Run LogicGuard Analysis"}
+                            {isAnalyzing ? "Processing..." : "Run Falsicode Analysis"}
                         </button>
                     )}
                 </div>

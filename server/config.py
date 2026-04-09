@@ -8,7 +8,7 @@ load_dotenv()
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    """Base configuration class for the LogicGuard system."""
+    """Base configuration class for the Falsicode system."""
     
     # 1. Security Keys
     SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback_secret_key_for_dev')
