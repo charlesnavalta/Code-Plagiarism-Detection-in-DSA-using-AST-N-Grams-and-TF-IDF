@@ -1,40 +1,25 @@
 import React, { useState } from 'react';
-import api from '../../../services/api'; // Make sure to import your API
+import api from '../../../services/api'; 
+// IMPORT THE NEW COMPONENT
+import CodeComparisonView from './CodeComparisonView'; 
 
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {
     const [selectedPair, setSelectedPair] = useState(null);
-    const [gradeInputs, setGradeInputs] = useState({}); // Stores the typed grades before saving
+    const [gradeInputs, setGradeInputs] = useState({}); 
 
     if (!isOpen) {
         if (selectedPair) setSelectedPair(null);
         return null;
     }
 
-    const getCodeByFilename = (label) => {
-        const sub = submissions.find(s => `${s.student_name} (${s.filename})` === label);
-        return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
+    // --- Dynamic Color for the List View ---
+    const getScoreColor = (score) => {
+        if (score >= 95) return "#ef4444"; // Type I: Red
+        if (score >= 80) return "#f97316"; // Type II: Orange
+        if (score >= 70) return "#eab308"; // Type III: Yellow
+        return "#10b981";                  // Safe: Green
     };
 
-    const renderCodeWithHighlights = (code, highlightedLines = []) => {
-        if (!code || code.startsWith("Code content not available")) {
-            return <code>{code}</code>;
-        }
-
-        const lines = code.split('\n');
-        return lines.map((line, index) => {
-            const lineNumber = index + 1;
-            const isHighlighted = highlightedLines.includes(lineNumber);
-            
-            return (
-                <div key={index} className={`code-line ${isHighlighted ? 'highlight-plagiarism' : ''}`}>
-                    <span className="line-number">{lineNumber}</span>
-                    <span className="line-content">{line || ' '}</span>
-                </div>
-            );
-        });
-    };
-
-    // --- NEW: Handle saving the manual grade ---
     const handleSaveGrade = async (submissionId) => {
         const scoreToSave = gradeInputs[submissionId];
         if (!scoreToSave) return alert("Please enter a score first.");
@@ -42,7 +27,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
         try {
             await api.post(`/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${submissionId}/grade`, { score: scoreToSave });
             alert("Grade saved successfully!");
-            // Update the local submission array so it shows the new score instantly
             const subToUpdate = submissions.find(s => s.id === submissionId);
             if (subToUpdate) subToUpdate.score = scoreToSave;
         } catch (error) {
@@ -56,7 +40,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
             <div className="spatial-card hud-modal-content wide-hud fade-in">
                 <div className="hud-header">
                     <button className="btn-close-icon" onClick={onClose}>&times;</button>
-                    <h2>{selectedPair ? "Code Comparison" : "Tree"}</h2>
+                    <h2>{selectedPair ? "Code Comparison" : "Submission Tree"}</h2>
                     <p className="hud-subtitle">
                         {selectedPair 
                             ? `Detailed logic analysis between ${selectedPair.file1} and ${selectedPair.file2}`
@@ -73,7 +57,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                         <th style={{width: '40px'}}></th>
                                         <th>STUDENT IDENTITY</th>
                                         <th>SOURCE FILE</th>
-                                        <th style={{width: '180px'}}>ASSIGN GRADE</th> {/* NEW COLUMN */}
+                                        <th style={{width: '180px'}}>ASSIGN GRADE</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -87,8 +71,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                                 </div>
                                             </td>
                                             <td><code className="code-box">{sub.filename}</code></td>
-                                            
-                                            {/* NEW GRADE INPUT UI */}
                                             <td>
                                                 <div className="grade-input-group">
                                                     <input 
@@ -98,12 +80,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                                         value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
                                                         onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
                                                     />
-                                                    <button 
-                                                        className="btn-save-grade" 
-                                                        onClick={() => handleSaveGrade(sub.id)}
-                                                    >
-                                                        Save
-                                                    </button>
+                                                    <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>Save</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -130,9 +107,10 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                                     <tr key={i} onClick={() => setSelectedPair(res)} className="clickable-row">
                                                         <td className="comparison-text">
                                                             {res.file1} <span className="arrow-icon">↔</span> {res.file2}
-                                                            <span className="view-details-text">Click to view code</span>
+                                                            <span className="view-details-text">Click to view comparison</span>
                                                         </td>
-                                                        <td className="sim-score">{res.score}%</td>
+                                                        {/* DYNAMIC COLOR APPLIED HERE */}
+                                                        <td className="sim-score" style={{ color: getScoreColor(res.score) }}>{res.score}%</td>
                                                     </tr>
                                                 ))
                                             ) : (
@@ -148,25 +126,12 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                             )}
                         </>
                     ) : (
-                        <div className="code-comparison-view fade-in">
-                            <button className="btn-back-link" onClick={() => setSelectedPair(null)}>
-                                ← Back to Analysis Report
-                            </button>
-                            <div className="split-screen-container">
-                                <div className="code-pane">
-                                    <div className="code-pane-header"><span className="file-badge">{selectedPair.file1}</span></div>
-                                    <pre className="code-block">
-                                        {renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1)}
-                                    </pre>
-                                </div>
-                                <div className="code-pane">
-                                    <div className="code-pane-header"><span className="file-badge">{selectedPair.file2}</span></div>
-                                    <pre className="code-block">
-                                        {renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2)}
-                                    </pre>
-                                </div>
-                            </div>
-                        </div>
+                        // USE THE NEW COMPONENT HERE
+                        <CodeComparisonView 
+                            selectedPair={selectedPair} 
+                            submissions={submissions} 
+                            onBack={() => setSelectedPair(null)} 
+                        />
                     )}
                 </div>
 
