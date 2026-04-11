@@ -655,3 +655,47 @@
     background: var(--status-green);
     color: white;
 }
+
+/* =========================================
+   NEW: PLAGIARISM TYPE FOOTER
+   ========================================= */
+.plagiarism-proof-footer {
+    /* FIX: Removed position: absolute so it stops blocking the code! */
+    background: rgba(15, 15, 25, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-top: 10px; /* Adds space between the code panels and this box */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.proof-tag {
+    display: flex;
+    flex-direction: column;
+    padding-left: 12px;
+}
+
+.proof-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+}
+
+.proof-value {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-top: 2px;
+}
+
+.proof-description {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.4;
+    opacity: 0.8;
+}
