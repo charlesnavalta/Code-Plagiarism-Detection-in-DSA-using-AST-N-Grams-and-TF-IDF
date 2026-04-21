@@ -37,7 +37,7 @@ function App() {
   useEffect(() => {
     let inactivityTimer;
     
-    // 30 Minutes in milliseconds
+    // 3 Minutes in milliseconds
     const INACTIVITY_LIMIT = 3 * 60 * 1000; 
 
     const handleLogout = () => {
