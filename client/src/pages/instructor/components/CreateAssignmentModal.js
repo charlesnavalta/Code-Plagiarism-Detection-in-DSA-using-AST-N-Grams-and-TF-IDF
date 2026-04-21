@@ -8,14 +8,16 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         e.preventDefault();
         const title = e.target.title.value;
         const description = e.target.description.value;
-        const max_score = e.target.max_score.value; // <-- Get the max score
+        const max_score = e.target.max_score.value;
+        const language = e.target.language.value; // <-- Get the selected language
 
         try {
-            // Send max_score to the Flask backend
+            // Send max_score AND language to the Flask backend
             const res = await api.post(`/classrooms/${classroomId}/assignments`, { 
                 title, 
                 description, 
-                max_score: parseInt(max_score) 
+                max_score: parseInt(max_score),
+                language: language 
             });
             onAssignmentCreated(res.data.assignment); 
             onClose(); 
@@ -58,7 +60,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                             ></textarea>
                         </div>
                         
-                        {/* --- NEW MAX SCORE INPUT --- */}
                         <div className="input-group">
                             <label>Maximum Score (Points)</label>
                             <input 
@@ -70,6 +71,15 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                                 min={1}
                                 required 
                             />
+                        </div>
+
+                        {/* --- NEW LANGUAGE SELECTOR --- */}
+                        <div className="input-group">
+                            <label>Target Language</label>
+                            <select name="language" className="styled-input" required>
+                                <option value="python">Python (.py)</option>
+                                <option value="java">Java (.java)</option>
+                            </select>
                         </div>
                         
                         <div className="hud-footer-actions" style={{ marginTop: '20px' }}>

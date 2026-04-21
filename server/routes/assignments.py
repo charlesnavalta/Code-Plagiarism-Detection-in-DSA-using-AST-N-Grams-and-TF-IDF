@@ -28,7 +28,9 @@ def create_assignment(class_id):
         title=data['title'],
         description=data.get('description', ''),
         max_score=data.get('max_score', 100),
-        classroom_id=classroom.id
+        classroom_id=classroom.id,
+        # 🌟 NEW: Capture the language from the request (default to python if missing)
+        language=data.get('language', 'python').lower()
     )
     
     try:
@@ -40,7 +42,8 @@ def create_assignment(class_id):
                 "id": new_assignment.id,
                 "title": new_assignment.title,
                 "description": new_assignment.description,
-                "max_score": new_assignment.max_score
+                "max_score": new_assignment.max_score,
+                "language": new_assignment.language # 🌟 Include in response
             }
         }), 201
     except Exception as e:
@@ -75,6 +78,7 @@ def get_assignments(class_id):
             "title": a.title,
             "description": a.description,
             "max_score": a.max_score,
+            "language": a.language, # 🌟 NEW: Expose language to the frontend
             "has_submitted": False,
             "score": None
         }

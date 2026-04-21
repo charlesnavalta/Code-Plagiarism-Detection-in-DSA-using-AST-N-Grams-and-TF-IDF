@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import './CodeComparisonView.css'; // <-- NEW: Import the dedicated CSS file
+import './CodeComparisonView.css'; 
 
 const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
-    // --- NEW: State to toggle the report ---
+    // --- State Toggles ---
     const [showReport, setShowReport] = useState(false);
-    
+    const [viewMode, setViewMode] = useState('code'); // 'code' or 'ast'
+
     // --- Pure Algorithmic Plagiarism Classification ---
     const getPlagiarismType = (pair) => {
         const score = pair.score;
@@ -37,6 +38,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
     };
 
+    // --- RENDER HELPERS ---
     const renderCodeWithHighlights = (code, highlightedLines = []) => {
         if (!code || code.startsWith("Code content not available")) {
             return <code>{code}</code>;
@@ -56,29 +58,76 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         });
     };
 
+    const renderASTStream = (tokens) => {
+        if (!tokens || tokens.length === 0) return <div className="empty-ast">No structural tokens extracted. Please check backend configuration.</div>;
+        
+        return (
+            <div className="ast-stream-container">
+                <div className="ast-path-line"></div>
+                {tokens.map((token, index) => (
+                    <div key={index} className="ast-node-pill">
+                        <span className="ast-node-index">{index + 1}</span>
+                        <span className="ast-node-name">{token}</span>
+                    </div>
+                ))}
+                {tokens.length === 20 && <div className="ast-node-pill more-nodes">... truncated for view</div>}
+            </div>
+        );
+    };
+
     const typeData = getPlagiarismType(selectedPair);
 
     return (
         <div className="code-comparison-view fade-in">
-            <button className="btn-back-link" onClick={onBack}>
-                ← Back to Analysis Report
-            </button>
-            <div className="split-screen-container">
-                <div className="code-pane">
-                    <div className="code-pane-header"><span className="file-badge">{selectedPair.file1}</span></div>
-                    <pre className="code-block">
-                        {renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1)}
-                    </pre>
-                </div>
-                <div className="code-pane">
-                    <div className="code-pane-header"><span className="file-badge">{selectedPair.file2}</span></div>
-                    <pre className="code-block">
-                        {renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2)}
-                    </pre>
+            {/* Header Area with Toggles */}
+            <div className="comparison-header-flex">
+                <button className="btn-back-link" onClick={onBack}>
+                    ← Back to Analysis Report
+                </button>
+                
+                <div className="view-toggle-group">
+                    <button 
+                        className={`toggle-btn ${viewMode === 'code' ? 'active' : ''}`} 
+                        onClick={() => setViewMode('code')}
+                    >
+                        Raw Source Code
+                    </button>
+                    <button 
+                        className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
+                        onClick={() => setViewMode('ast')}
+                    >
+                        AST Token Stream (XAI)
+                    </button>
                 </div>
             </div>
 
-            {/* --- TOGGLEABLE SIMILARITY REPORT --- */}
+            {/* Main Visualizer Panes */}
+            <div className="split-screen-container">
+                <div className="code-pane">
+                    <div className="code-pane-header">
+                        <span className="file-badge student-a">{selectedPair.file1}</span>
+                    </div>
+                    <div className="pane-content-scroll">
+                        {viewMode === 'code' 
+                            ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1)}</pre>
+                            : renderASTStream(selectedPair.ast1)
+                        }
+                    </div>
+                </div>
+                <div className="code-pane">
+                    <div className="code-pane-header">
+                        <span className="file-badge student-b">{selectedPair.file2}</span>
+                    </div>
+                    <div className="pane-content-scroll">
+                        {viewMode === 'code' 
+                            ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2)}</pre>
+                            : renderASTStream(selectedPair.ast2)
+                        }
+                    </div>
+                </div>
+            </div>
+
+            {/* Similarity Report Footer */}
             <div className="plagiarism-report-wrapper">
                 {!showReport ? (
                     <button className="btn-view-report fade-in" onClick={() => setShowReport(true)}>
@@ -89,7 +138,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <div className="report-header-flex">
                             <div className="proof-tag">
                                 <span className="proof-label">DETECTION PROOF:</span>
-                                <strong className="proof-value">{typeData.label}</strong>
+                                <strong className="proof-value" style={{color: '#fff'}}>{typeData.label}</strong>
                             </div>
                             
                             <div className="score-badge" style={{ color: typeData.color, borderColor: typeData.color }}>

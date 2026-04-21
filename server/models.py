@@ -84,6 +84,9 @@ class Assignment(db.Model):
     description = db.Column(db.Text, nullable=True)
     max_score = db.Column(db.Integer, nullable=False, default=100)
     
+    # 🌟 NEW: Track the target language for the Falsicode Engine
+    language = db.Column(db.String(50), nullable=False, default='python')
+    
     # Foreign Key: Links this assignment strictly to one specific classroom
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
     
@@ -92,14 +95,16 @@ class Assignment(db.Model):
     # SQLAlchemy Relationship: Already has cascade, which is perfect!
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
 
-    def __init__(self, title, description, classroom_id, max_score=100):
+    # 🌟 UPDATE: Added language to the initializer
+    def __init__(self, title, description, classroom_id, max_score=100, language='python'):
         self.title = title
         self.description = description
         self.classroom_id = classroom_id
         self.max_score = max_score
+        self.language = language
 
     def __repr__(self):
-        return f'<Assignment {self.title} | Classroom ID: {self.classroom_id}>'
+        return f'<Assignment {self.title} | Lang: {self.language} | Classroom: {self.classroom_id}>'
 
 # ==========================================
 # ENROLLMENT MODEL (Bridge between Student & Classroom)
