@@ -3,26 +3,15 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import './Navbar.css'; 
 
 const Navbar = () => {
+    // 1. ALL HOOKS MUST GO FIRST
     const navigate = useNavigate();
     const location = useLocation(); 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('app-theme', newTheme);
-        window.dispatchEvent(new Event('storage'));
-    };
-
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
-
-    // Pulling user name automatically from localStorage
-    const rawUser = localStorage.getItem('user');
-    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
-    const displayName = user?.name || user?.username || 'User';
 
     useEffect(() => {
         const closeDropdown = (e) => {
@@ -32,6 +21,14 @@ const Navbar = () => {
         return () => window.removeEventListener('click', closeDropdown);
     }, []);
 
+    // 2. STANDARD LOGIC
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        localStorage.setItem('app-theme', newTheme);
+        window.dispatchEvent(new Event('storage'));
+    };
+
     const handleLogout = () => {
         setDropdownOpen(false); 
         localStorage.removeItem('user');
@@ -39,6 +36,13 @@ const Navbar = () => {
         window.location.href = '/login'; 
     };
 
+    const rawUser = localStorage.getItem('user');
+    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
+    const displayName = user?.name || user?.username || 'User';
+
+    // 3. EARLY RETURNS MUST GO LAST (Before the JSX)
+    const hiddenRoutes = ['/login', '/register', '/'];
+    if (hiddenRoutes.includes(location.pathname)) return null;
     if (!user) return null;
 
     const isActive = (path) => location.pathname === path ? 'active' : '';
@@ -46,7 +50,6 @@ const Navbar = () => {
     return (
         <nav className="navbar-nexus" data-theme={theme}>
             <div className="navbar-left">
-                {/* Brand anchored to the corner */}
                 <Link to={`/${user.role}`} className="brand-anchor">
                     <div className="brand-logo-nexus">
                         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">

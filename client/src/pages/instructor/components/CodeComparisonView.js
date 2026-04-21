@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import './CodeComparisonView.css'; // <-- NEW: Import the dedicated CSS file
 
 const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
+    // --- NEW: State to toggle the report ---
+    const [showReport, setShowReport] = useState(false);
     
     // --- Pure Algorithmic Plagiarism Classification ---
     const getPlagiarismType = (pair) => {
@@ -9,7 +12,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         if (score >= 95) return { 
             label: "Type I: Exact Copying", 
             color: "#ef4444",
-            description: "The engine detected an exceptionally high structural match. This indicates a direct replication where the logic, sequence, and syntax are virtually identical."
+            description: "The AST N-Grams engine detected an exceptionally high structural match. This indicates a direct replication where the logic, sequence, and syntax are virtually identical."
         };
         if (score >= 80) return { 
             label: "Type II: Renamed Identifiers", 
@@ -53,6 +56,8 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         });
     };
 
+    const typeData = getPlagiarismType(selectedPair);
+
     return (
         <div className="code-comparison-view fade-in">
             <button className="btn-back-link" onClick={onBack}>
@@ -73,16 +78,47 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                 </div>
             </div>
 
-            {/* --- PLAGIARISM TYPE INDICATOR (Bottom Left) --- */}
-            <div className="plagiarism-proof-footer">
-                <div className="proof-tag" style={{ borderLeft: `4px solid ${getPlagiarismType(selectedPair).color}` }}>
-                    <span className="proof-label">DETECTION PROOF:</span>
-                    <strong className="proof-value">{getPlagiarismType(selectedPair).label}</strong>
-                </div>
-                {/* THE FIX: Replaced hardcoded text with the dynamic description */}
-                <p className="proof-description">
-                    {getPlagiarismType(selectedPair).description}
-                </p>
+            {/* --- TOGGLEABLE SIMILARITY REPORT --- */}
+            <div className="plagiarism-report-wrapper">
+                {!showReport ? (
+                    <button className="btn-view-report fade-in" onClick={() => setShowReport(true)}>
+                        <span className="icon">📊</span> View Detailed Similarity Report
+                    </button>
+                ) : (
+                    <div className="plagiarism-proof-footer expanded fade-in-down" style={{ borderLeft: `4px solid ${typeData.color}` }}>
+                        <div className="report-header-flex">
+                            <div className="proof-tag">
+                                <span className="proof-label">DETECTION PROOF:</span>
+                                <strong className="proof-value">{typeData.label}</strong>
+                            </div>
+                            
+                            <div className="score-badge" style={{ color: typeData.color, borderColor: typeData.color }}>
+                                {selectedPair.score}% MATCH
+                            </div>
+                            
+                            <button className="btn-close-report" onClick={() => setShowReport(false)}>&times;</button>
+                        </div>
+                        
+                        <p className="proof-description">
+                            {typeData.description}
+                        </p>
+
+                        <div className="report-metrics-grid">
+                            <div className="metric-box">
+                                <span className="m-label">Analysis Engine</span>
+                                <span className="m-value">AST N-Grams (TF-IDF)</span>
+                            </div>
+                            <div className="metric-box">
+                                <span className="m-label">Variable Names</span>
+                                <span className="m-value">Sanitized / Ignored</span>
+                            </div>
+                            <div className="metric-box">
+                                <span className="m-label">Flagged Nodes</span>
+                                <span className="m-value">{selectedPair.lines1?.length || 0} Suspicious Lines</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
