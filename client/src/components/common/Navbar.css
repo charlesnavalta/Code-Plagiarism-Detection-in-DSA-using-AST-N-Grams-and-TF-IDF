@@ -1,102 +1,251 @@
-/* src/components/common/Navbar.css */
+/* =========================================
+   NEXUS NAVBAR (ANCHORED BRANDING)
+   ========================================= */
+.navbar-nexus {
+    --nav-bg: rgba(21, 30, 50, 0.7);
+    --nav-border: rgba(255, 255, 255, 0.06);
+    --nav-text: #ffffff;
+    --nav-text-sub: #94a3b8;
+    --nav-accent: #3b82f6;
+    --nav-highlight: rgba(255, 255, 255, 0.1);
+}
 
-.navbar-container {
+.navbar-nexus[data-theme='light'] {
+    --nav-bg: rgba(255, 255, 255, 0.8);
+    --nav-border: rgba(0, 0, 0, 0.05);
+    --nav-text: #0f172a;
+    --nav-text-sub: #64748b;
+    --nav-accent: #2563eb;
+    --nav-highlight: rgba(255, 255, 255, 1);
+}
+
+.navbar-nexus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 30px;
+    padding: 0 24px; /* Tighter padding for corner anchor */
     height: 65px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
     position: sticky;
     top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 2000;
+    background: var(--nav-bg);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border-bottom: 1px solid var(--nav-border);
+    color: var(--nav-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: all 0.4s ease;
 }
 
-.navbar-logo {
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-.logo-link {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-/* NEW: Styles for the central links */
-.navbar-nav-items {
-    display: flex;
-    gap: 30px;
-    margin-right: auto; /* Pushes the logout section to the right */
-    margin-left: 50px;
-}
-
-.nav-link {
-    color: #bdc3c7;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 5px 0;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-    color: #ffffff;
-}
-
-.navbar-links {
+/* LEFT SIDE */
+.navbar-left {
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
-.user-greet {
-    margin-right: 20px;
-    font-size: 0.95rem;
-    color: #bdc3c7;
-}
-
-.logout-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.logout-btn:hover {
-    background-color: #c0392b; 
-}
-
-.logo-link {
-    color: #ffffff;
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.navbar-nav-items {
+.brand-anchor {
     display: flex;
-    gap: 15px;
-    margin-right: auto; /* Pushes the logout section to the right */
-    margin-left: 40px;
-}
-
-.nav-button {
-    color: #bdc3c7;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    background-color: transparent;
+    color: inherit;
+    transition: transform 0.2s;
 }
 
-.nav-button:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle highlight effect */
+.brand-anchor:hover {
+    transform: scale(1.02);
+}
+
+.brand-logo-nexus {
+    width: 32px;
+    height: 32px;
+    background: var(--nav-accent);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.brand-text-nexus {
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+}
+
+.brand-divider-nexus {
+    color: var(--nav-border);
+    margin: 0 4px;
+    font-weight: 200;
+}
+
+.brand-panel-nexus {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--nav-text-sub);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: 12px;
+}
+
+/* NAV LINKS */
+.nav-links-nexus {
+    display: flex;
+    gap: 4px;
+}
+
+.nav-item-nexus {
+    text-decoration: none;
+    color: var(--nav-text-sub);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.nav-item-nexus:hover {
+    color: var(--nav-text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item-nexus.active {
+    color: var(--nav-accent);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* RIGHT SIDE */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--nav-text-sub);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.nav-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--nav-text);
+}
+
+.profile-trigger-nexus {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--nav-border);
+    border-radius: 40px;
+    padding: 4px 12px 4px 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--nav-text);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.user-avatar-mini {
+    width: 28px;
+    height: 28px;
+    background: var(--nav-accent);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.user-name-nexus {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* DROPDOWN */
+.dropdown-nexus {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    width: 220px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(32px);
+    border: 1px solid var(--nav-border);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-header-nexus {
+    padding: 8px 12px;
+}
+
+.dropdown-header-nexus strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.dropdown-header-nexus span {
+    font-size: 0.7rem;
+    color: var(--nav-text-sub);
+    text-transform: capitalize;
+}
+
+.dropdown-divider-nexus {
+    height: 1px;
+    background: var(--nav-border);
+    margin: 6px 0;
+}
+
+.dropdown-item-nexus {
+    background: transparent;
+    border: none;
+    color: var(--nav-text-sub);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-decoration: none;
+    text-align: left;
+}
+
+.dropdown-item-nexus:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--nav-text);
+}
+
+.logout-nexus {
+    color: #fb7185;
+}
+
+.item-icon {
+    font-size: 1rem;
+    width: 18px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* ANIMATION */
+.fade-in-down {
+    animation: fInD 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fInD {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }

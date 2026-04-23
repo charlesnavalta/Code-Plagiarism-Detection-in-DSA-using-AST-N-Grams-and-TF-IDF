@@ -1,0 +1,36 @@
+/* src/index.css */
+
+/* 1. Force the root background to be dark everywhere */
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0b1121 !important; /* The Falsicode Navy */
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 2. Prevent white flashes during transitions */
+* {
+    box-sizing: border-box;
+}
+
+/* 3. Style the scrollbar to match the dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0b1121;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}

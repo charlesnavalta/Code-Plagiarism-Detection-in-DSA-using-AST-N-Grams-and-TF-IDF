@@ -139,9 +139,127 @@ def approve_user(user_id):
         db.session.rollback()
         return jsonify({"error": "Database error occurred"}), 500
 
-from flask_jwt_extended import jwt_required, get_jwt_identity
-# Make sure jwt_required and get_jwt_identity are imported at the top!
+# ==========================================
+# 4. ADMIN CRUD: CREATE USER
+# ==========================================
+@auth_bp.route('/users', methods=['POST'])
+@jwt_required()
+def admin_create_user():
+    """Allows an Admin to manually create a user with a specific status."""
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
 
+    # 4.1 Security Check: Only admins can do this
+    if not current_user or current_user.role != 'admin':
+        return jsonify({"error": "Unauthorized: Admin access required"}), 403
+
+    data = request.get_json()
+    
+    # 4.2 Validation
+    if not data or 'username' not in data or 'password' not in data or 'email' not in data:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({"error": "Email already registered"}), 400
+        
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({"error": "Username already taken"}), 400
+
+    # 4.3 Create the user (Admins bypass the 'pending' rule if they want)
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        role=data.get('role', 'student'),
+        status=data.get('status', 'active') # Explicitly grab status from React
+    )
+    new_user.set_password(data['password'])
+    
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User provisioned successfully!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred"}), 500
+
+
+# ==========================================
+# 5. ADMIN CRUD: UPDATE USER
+# ==========================================
+@auth_bp.route('/users/<int:user_id>', methods=['PUT'])
+@jwt_required()
+def admin_update_user(user_id):
+    """Allows an Admin to modify a user's role, status, email, or password."""
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    # 5.1 Security Check
+    if not current_user or current_user.role != 'admin':
+        return jsonify({"error": "Unauthorized: Admin access required"}), 403
+
+    # 5.2 Find User
+    user_to_update = User.query.get(user_id)
+    if not user_to_update:
+        return jsonify({"error": "User not found"}), 404
+
+    data = request.get_json()
+
+    # 5.3 Prevent Duplicate Emails/Usernames (excluding current user's own data)
+    if 'email' in data and data['email'] != user_to_update.email:
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({"error": "Email is already in use by another account"}), 400
+            
+    if 'username' in data and data['username'] != user_to_update.username:
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({"error": "Username is already taken"}), 400
+
+    # 5.4 Apply Updates from React payload
+    user_to_update.username = data.get('username', user_to_update.username)
+    user_to_update.email = data.get('email', user_to_update.email)
+    user_to_update.role = data.get('role', user_to_update.role)
+    user_to_update.status = data.get('status', user_to_update.status) # Catch the status change!
+
+    # 5.5 Optional Password Update
+    if 'password' in data and len(data['password']) >= 6:
+        user_to_update.set_password(data['password'])
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "User parameters updated successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred"}), 500
+
+
+# ==========================================
+# 6. ADMIN CRUD: DELETE USER
+# ==========================================
+@auth_bp.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def admin_delete_user(user_id):
+    """Allows an Admin to permanently delete a user."""
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    if not current_user or current_user.role != 'admin':
+        return jsonify({"error": "Unauthorized: Admin access required"}), 403
+
+    user_to_delete = User.query.get(user_id)
+    if not user_to_delete:
+        return jsonify({"error": "User not found"}), 404
+        
+    # Prevent the admin from deleting themselves
+    if user_to_delete.id == current_user.id:
+        return jsonify({"error": "System restriction: You cannot delete the active admin account."}), 403
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return jsonify({"message": "User node permanently purged."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database constraint error. User may have active dependencies."}), 500
+    
 @auth_bp.route('/profile', methods=['PUT'])
 @jwt_required()
 def update_profile():

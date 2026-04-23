@@ -30,7 +30,6 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        # Updated to show role and status in your terminal logs
         return f'<User {self.username} | Role: {self.role} | Status: {self.status}>'
 
 
@@ -51,9 +50,9 @@ class Classroom(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # SQLAlchemy Relationship: This makes it easy to fetch the instructor's details
-    # when looking at a classroom (e.g., classroom.instructor.username)
-    instructor = db.relationship('User', backref=db.backref('classrooms', lazy=True))
+    # 🛠️ FIX: Added cascade="all, delete-orphan"
+    # If an instructor is deleted, all their classrooms are deleted too
+    instructor = db.relationship('User', backref=db.backref('classrooms', lazy=True, cascade="all, delete-orphan"))
 
     def __init__(self, name, instructor_id):
         self.name = name
@@ -83,21 +82,21 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    max_score = db.Column(db.Integer, nullable=False, default=100)
     
     # Foreign Key: Links this assignment strictly to one specific classroom
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # SQLAlchemy Relationship: Allows you to easily fetch all assignments for a classroom,
-    # and cascade="all, delete-orphan" ensures if a teacher deletes a class, 
-    # the assignments get deleted automatically!
+    # SQLAlchemy Relationship: Already has cascade, which is perfect!
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
 
-    def __init__(self, title, description, classroom_id):
+    def __init__(self, title, description, classroom_id, max_score=100):
         self.title = title
         self.description = description
         self.classroom_id = classroom_id
+        self.max_score = max_score
 
     def __repr__(self):
         return f'<Assignment {self.title} | Classroom ID: {self.classroom_id}>'
@@ -117,8 +116,9 @@ class Enrollment(db.Model):
     
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # SQLAlchemy Relationships
-    student = db.relationship('User', backref=db.backref('enrollments', lazy=True))
+    # 🛠️ FIX: Added cascade="all, delete-orphan" to the student relationship
+    # If a student is deleted, their enrollments disappear cleanly
+    student = db.relationship('User', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
     classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True))
 
     def __init__(self, student_id, classroom_id):
@@ -140,7 +140,10 @@ class Submission(db.Model):
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
     # Links to the Student
     student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    
+    # Optional score field to store the result of plagiarism analysis or manual grading
+    score = db.Column(db.String(20), nullable=True)
+    # Maximum score for the assignment (e.g., 100 points) - this can be used for grading purposes
+    max_score = db.Column(db.Integer, nullable=True, default=100)
     # Stores the original file name (e.g., 'dijkstra_algo.py')
     filename = db.Column(db.String(255), nullable=False)
     
@@ -149,9 +152,10 @@ class Submission(db.Model):
     
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # SQLAlchemy Relationships
+    # 🛠️ FIX: Added cascade="all, delete-orphan" to the student relationship
+    # If a student is deleted, their uploaded files/submissions are removed from the DB tracking
     assignment = db.relationship('Assignment', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
-    student = db.relationship('User', backref=db.backref('submissions', lazy=True))
+    student = db.relationship('User', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
 
     def __init__(self, assignment_id, student_id, filename, file_path):
         self.assignment_id = assignment_id

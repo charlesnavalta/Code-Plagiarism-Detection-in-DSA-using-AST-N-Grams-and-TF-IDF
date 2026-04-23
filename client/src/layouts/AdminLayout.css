@@ -1,92 +1,153 @@
-/* src/layouts/AdminLayout.css */
 
-.admin-layout {
+.admin-layout-root {
+    /* Dark Mode Defaults */
+    --sidebar-bg: #0f172a;
+    --sidebar-border: rgba(255, 255, 255, 0.05);
+    --sidebar-text-main: #f8fafc;
+    --sidebar-text-dim: #64748b;
+    --sidebar-hover: rgba(255, 255, 255, 0.05);
+    --main-bg: #030712;
+    
     display: flex;
-    height: 100vh;
-    background-color: #f4f7f6;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: calc(100vh - 65px);
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: background 0.4s ease;
 }
 
-/* Sidebar Styles */
-.admin-sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
+/* LIGHT MODE OVERRIDES */
+.admin-layout-root[data-theme='light'] {
+    --sidebar-bg: #ffffff;
+    --sidebar-border: rgba(0, 0, 0, 0.08);
+    --sidebar-text-main: #0f172a; /* Visibility Fix */
+    --sidebar-text-dim: #64748b;
+    --sidebar-hover: rgba(0, 0, 0, 0.03);
+    --main-bg: #f8fafc;
+}
+
+/* SIDEBAR CONTAINER */
+.admin-sidebar-nexus {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
     display: flex;
     flex-direction: column;
+    padding: 30px 15px;
+    flex-shrink: 0;
+    transition: all 0.4s ease;
 }
 
-.sidebar-header {
-    padding: 20px;
-    background-color: #1a252f;
-    text-align: center;
-    border-bottom: 1px solid #34495e;
+.sidebar-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--sidebar-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    padding-left: 15px;
 }
 
-.sidebar-header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-}
-
-.sidebar-nav {
+/* NAVIGATION ITEMS */
+.sidebar-nav-list {
     display: flex;
     flex-direction: column;
-    padding-top: 20px;
+    gap: 8px;
+    flex-grow: 1;
 }
 
-.nav-link {
-    color: #ecf0f1;
+.nav-item {
     text-decoration: none;
-    padding: 15px 20px;
-    border-left: 4px solid transparent;
-    transition: all 0.3s ease;
+    color: var(--sidebar-text-dim);
+    padding: 12px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
-.nav-link:hover {
-    background-color: #34495e;
-    border-left: 4px solid #3498db;
+.nav-item:hover {
+    color: var(--sidebar-text-main);
+    background-color: var(--sidebar-hover);
 }
 
-/* Main Area Styles */
-.admin-main {
-    flex: 1;
+/* ACTIVE STATE (Nexus Orange/Gold) */
+.nav-item.active {
+    color: #f59e0b; 
+    background-color: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+.nav-item.active .nav-icon {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4));
+}
+
+/* VIEWPORT CONTENT */
+.admin-viewport-main {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: var(--main-bg);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    transition: background 0.4s ease;
 }
 
-.admin-topbar {
-    height: 60px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
+/* SIDEBAR FOOTER */
+.sidebar-footer-nexus {
+    padding: 20px 15px 0;
+    border-top: 1px solid var(--sidebar-border);
+    margin-top: auto;
 }
 
-.welcome-text {
-    font-weight: 600;
-    color: #333;
+.version-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--sidebar-text-dim);
 }
 
-.logout-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
+/* =========================================
+   SIDEBAR RESPONSIVE ENGINE
+   ========================================= */
+@media (max-width: 768px) {
+    .admin-layout-root {
+        flex-direction: column; /* Stacks sidebar on top of content on mobile */
+    }
 
-.logout-btn:hover {
-    background-color: #c0392b;
-}
+    .admin-sidebar-nexus {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--sidebar-border);
+        padding: 15px;
+    }
 
-.admin-content {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
+    .sidebar-label {
+        display: none; /* Save space on mobile */
+    }
+
+    .sidebar-nav-list {
+        flex-direction: row; /* Horizontal scrolling nav on mobile */
+        overflow-x: auto;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-item {
+        white-space: nowrap;
+        padding: 10px 15px;
+    }
+
+    .sidebar-footer-nexus {
+        display: none; /* Hide versioning on small screens */
+    }
 }

@@ -1,111 +1,200 @@
-.profile-container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 0 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* =========================================
+   NEXUS CORE THEME (Profile Edition)
+   ========================================= */
+.nexus-wrapper {
+    /* DARK MODE (Default) */
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.5);
+    --border-card: rgba(255, 255, 255, 0.05);
+    --text-main: #f9fafb;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --blob-1: rgba(59, 130, 246, 0.1);
+    --blob-2: rgba(139, 92, 246, 0.1);
 }
 
-.profile-header h2 {
-    color: #2c3e50;
-    margin-bottom: 5px;
+.nexus-wrapper.light {
+    /* LIGHT MODE OVERRIDES */
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --border-card: rgba(0, 0, 0, 0.05);
+    --text-main: #0f172a; 
+    --text-dim: #64748b;
+    --accent: #7dd3fc; /* Lightened to make the black text pop */
+    --blob-1: rgba(59, 130, 246, 0.05);
+    --blob-2: rgba(139, 92, 246, 0.05);
 }
 
-.profile-header p {
-    color: #7f8c8d;
-    margin-bottom: 30px;
+.nexus-wrapper {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    min-height: calc(100vh - 65px);
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-.profile-card {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+/* Background Aurora Engine */
+.aurora-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.aurora-blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: drift 20s infinite alternate; }
+.blob-primary { width: 60vw; height: 60vw; background: var(--blob-1); top: -20%; left: -10%; }
+.blob-secondary { width: 50vw; height: 50vw; background: var(--blob-2); bottom: -10%; right: -10%; }
+@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
+
+/* LAYOUT STRUCTURE */
+.premium-profile-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 10;
 }
 
-.profile-info-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+.premium-profile-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+    align-items: start;
 }
 
-.info-group label {
-    display: block;
-    font-weight: 600;
-    color: #34495e;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
-
-.disabled-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #f8f9fa;
-    color: #7f8c8d;
-    cursor: not-allowed;
-    font-size: 1rem;
-}
-
-.role-badge {
-    display: inline-block;
-    background-color: #3498db;
-    color: white;
-    padding: 5px 12px;
+/* SPATIAL CARDS */
+.spatial-card {
+    background: var(--bg-card);
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 1px;
+    border: 1px solid var(--border-card);
+    backdrop-filter: blur(30px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.profile-divider {
-    border: 0;
-    height: 1px;
-    background: #ecf0f1;
-    margin: 30px 0;
+.spatial-card::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.05), transparent 40%);
+    opacity: 0; transition: opacity 0.3s; z-index: 1;
 }
 
-.profile-form h3 {
-    margin-top: 0;
-    color: #2c3e50;
-    margin-bottom: 20px;
+.spatial-card:hover::after { opacity: 1; }
+.spatial-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.relative-z { position: relative; z-index: 2; }
+
+/* ACTION BANNER */
+.action-banner-nexus {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
+.banner-content { padding: 40px; display: flex; justify-content: space-between; align-items: flex-end; }
+.banner-text h1 { color: #ffffff !important; font-size: 2.8rem; font-weight: 900; letter-spacing: -1px; margin: 0 0 8px; }
+.banner-text p { color: rgba(255, 255, 255, 0.8) !important; margin: 0; font-size: 1.1rem; }
+
+/* IDENTITY CARD */
+.avatar-banner { height: 100px; background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%); }
+.avatar-container { display: flex; justify-content: center; margin-top: -45px; position: relative; z-index: 5; }
+.avatar-circle {
+    width: 90px; height: 90px; background: var(--bg-app); border: 4px solid var(--border-card);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; font-weight: 800; color: var(--text-main); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
-.alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-}
+.identity-details { text-align: center; padding: 20px 20px 30px; border-bottom: 1px solid var(--border-card); }
+.identity-name { margin: 0 0 4px; color: var(--text-main); font-size: 1.5rem; font-weight: 800; }
+.identity-email { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 15px; }
 
-.btn-update {
-    background-color: #2c3e50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
+.premium-role-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+}
+.role-instructor { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+.role-student { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+.role-admin { background: rgba(139, 92, 246, 0.1); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.2); }
+
+.identity-meta { padding: 20px; background: rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 12px; }
+.meta-item { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.meta-label { color: var(--text-dim); }
+.meta-value { color: var(--text-main); font-weight: 700; }
+.text-green { color: #10b981; }
+
+/* SETTINGS SECTION */
+.settings-section { padding: 30px; }
+.settings-header h3 { margin: 0 0 8px; color: var(--text-main); font-size: 1.3rem; font-weight: 800; }
+.settings-header p { margin: 0; color: var(--text-dim); font-size: 0.95rem; }
+.settings-divider { height: 1px; background: var(--border-card); }
+
+/* FORMS */
+.form-group-row { display: flex; gap: 20px; width: 100%; margin-bottom: 20px; }
+.w-50 { flex: 1; }
+.dark-form-group { margin-bottom: 20px; }
+.dark-form-group label { display: block; margin-bottom: 8px; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+.nexus-input-field {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: rgba(0,0,0,0.1); border: 1px solid var(--border-card);
+    color: var(--text-main); font-family: inherit; font-size: 1rem; transition: 0.3s;
+    box-sizing: border-box;
+}
+.nexus-input-field:focus { border-color: var(--accent); outline: none; background: rgba(0,0,0,0.2); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+.nexus-input-field.with-icon { padding-left: 45px; }
+
+.nexus-input-wrapper { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; left: 16px; color: var(--text-dim); pointer-events: none; }
+
+/* ALERTS */
+.nexus-alert { padding: 14px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; font-weight: 600; text-align: center; }
+.nexus-alert.success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.nexus-alert.error { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+/* BUTTONS */
+.form-actions { margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px; }
+
+/* =========================================
+   BUTTON COLOR FIX (Update Credentials)
+   ========================================= */
+.nexus-btn-primary {
+    background-color: var(--accent) !important; 
+    color: #ffffff !important; /* Default: White in Dark Mode */
+    border: none !important;
+    padding: 14px 32px;
+    border-radius: 40px;
+    font-weight: 800;
+    font-size: 1rem;
     cursor: pointer;
-    width: 100%;
-    transition: 0.2s;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
 
-.btn-update:hover {
-    background-color: #1a252f;
+/* 🔥 LIGHT MODE OVERRIDES FOR BUTTON 🔥 */
+.nexus-wrapper.light .nexus-btn-primary {
+    color: #000000 !important; /* Always black text in Light Mode */
 }
-.btn-update:disabled {
-    background-color: #95a5a6;
+
+.nexus-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+}
+
+.nexus-btn-primary:disabled {
+    background-color: var(--text-dim) !important;
+    opacity: 0.5;
     cursor: not-allowed;
+    box-shadow: none;
 }
+
+.nexus-wrapper.light .nexus-btn-primary:disabled {
+    color: #000000 !important; /* Force black text even when disabled */
+    opacity: 0.6; /* Slightly higher opacity so black text stays sharp */
+}
+
+.nexus-btn-secondary {
+    background: transparent; color: var(--text-main); border: 1px solid var(--border-card); padding: 10px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
+}
+.nexus-btn-secondary:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+.nexus-wrapper.light .nexus-btn-secondary:hover { background: rgba(0, 0, 0, 0.05); }
+
+/* ANIMATIONS */
+.fade-in-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
+

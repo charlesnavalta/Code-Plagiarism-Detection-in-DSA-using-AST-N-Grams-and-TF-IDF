@@ -1,164 +1,169 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../instructor/InstructorClassroomView.css'; 
+import api from '../../services/api'; 
+import './StudentClassroomView.css'; 
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
-    
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    
-    // NEW: Tracks the selected file for each specific assignment
     const [selectedFiles, setSelectedFiles] = useState({});
+    
+    // --- Dynamic Theme & Spatial Sync ---
+    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+    const workspaceRef = useRef(null);
+
+    useEffect(() => {
+        const handleSync = () => setTheme(localStorage.getItem('app-theme') || 'dark');
+        window.addEventListener('storage', handleSync);
+        return () => window.removeEventListener('storage', handleSync);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const headers = { Authorization: `Bearer ${token}` };
-
-                const classRes = await axios.get(`http://localhost:5000/api/classrooms/${id}`, { headers });
+                const [classRes, assignRes] = await Promise.all([
+                    api.get(`/classrooms/${id}`),
+                    api.get(`/classrooms/${id}/assignments`)
+                ]);
                 setClassroom(classRes.data);
-
-                const assignRes = await axios.get(`http://localhost:5000/api/classrooms/${id}/assignments`, { headers });
                 setAssignments(assignRes.data);
-
             } catch (error) {
-                alert("Failed to load classroom details. You might not be enrolled.");
                 navigate('/student'); 
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, [id, navigate]);
 
-    // NEW: Handle selecting a file from the computer
+    // --- Spatial UI: Mouse Spotlight Logic ---
+    const handleMouseMove = (e) => {
+        if (!workspaceRef.current) return;
+        const cards = workspaceRef.current.querySelectorAll('.spatial-card');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+    };
+
     const handleFileChange = (assignmentId, event) => {
         const file = event.target.files[0];
-        if (file) {
-            setSelectedFiles(prev => ({
-                ...prev,
-                [assignmentId]: file
-            }));
-        }
+        if (file) setSelectedFiles(prev => ({ ...prev, [assignmentId]: file }));
     };
 
-    // NEW: Handle sending the file to the Flask backend
     const handleFileUpload = async (assignmentId) => {
         const fileToUpload = selectedFiles[assignmentId];
-        
-        if (!fileToUpload) {
-            return alert("Please select a .py file first!");
-        }
-
-        // We MUST use FormData to send files over HTTP!
+        if (!fileToUpload) return alert("Select a .py file.");
         const formData = new FormData();
         formData.append('file', fileToUpload);
-
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post(
-                `http://localhost:5000/api/classrooms/${id}/assignments/${assignmentId}/submit`, 
-                formData,
-                { 
-                    headers: { 
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data' // Required for file uploads
-                    } 
-                }
-            );
-
-            alert(res.data.message); // Success!
-            
-            // Clear the selected file from the UI after successful upload
+            await api.post(`/classrooms/${id}/assignments/${assignmentId}/submit`, formData);
+            alert("Node Deployment Successful.");
             setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
-
-        } catch (error) {
-            // Display the specific error from our AST Syntax Checker
-            if (error.response && error.response.data.error) {
-                alert(error.response.data.error);
-            } else {
-                alert("An error occurred while uploading the file.");
-                console.error(error);
-            }
+            
+            // Instantly update the UI to lock the button without needing a page refresh
+            setAssignments(prev => prev.map(a => 
+                a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
+            ));
+        } catch (error) { 
+            alert(error.response?.data?.error || "Upload failed."); 
         }
     };
 
-    if (loading) return <div className="loading-state">Loading classroom...</div>;
+    if (loading) return <div className={`nexus-loader ${theme}`}><div className="quantum-spinner"></div></div>;
     if (!classroom) return null;
 
     return (
-        <div className="classroom-view-container">
-            <header className="classroom-header">
-                <div>
-                    <button onClick={() => navigate('/student')} className="btn-back">
-                        &larr; Back to Enrolled Classes
-                    </button>
-                    <h1>{classroom.name}</h1>
-                    <p style={{ color: '#7f8c8d', margin: '5px 0 0 0' }}>Instructor: {classroom.instructor}</p>
-                </div>
-            </header>
+        <div className={`nexus-wrapper ${theme}`} ref={workspaceRef} onMouseMove={handleMouseMove}>
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-primary"></div>
+                <div className="aurora-blob blob-secondary"></div>
+            </div>
 
-            <div className="workspace-section">
-                <div className="workspace-header">
-                    <h2>Class Assignments</h2>
-                </div>
-                
-                {assignments.length === 0 ? (
-                    <div className="empty-workspace">
-                        <p>No assignments posted yet.</p>
-                        <small>Check back later when your instructor uploads a task!</small>
-                    </div>
-                ) : (
-                    <div className="assignments-list">
-                        {assignments.map(assignment => (
-                            <div key={assignment.id} className="assignment-card">
-                                <div className="assignment-info">
-                                    <h3>{assignment.title}</h3>
-                                    <p>{assignment.description || "No description provided."}</p>
-                                </div>
-                                
-                                {/* REPLACED: This is the real, working upload section */}
-                                <div className="assignment-upload-section">
-                                    {/* Hidden file input that does the actual work */}
-                                    <input 
-                                        type="file" 
-                                        accept=".py" 
-                                        id={`file-${assignment.id}`} 
-                                        style={{ display: 'none' }} 
-                                        onChange={(e) => handleFileChange(assignment.id, e)}
-                                    />
-                                    
-                                    {/* Custom label that triggers the hidden input */}
-                                    <label htmlFor={`file-${assignment.id}`} className="btn-select-file">
-                                        Choose .py File
-                                    </label>
-                                    
-                                    {/* Show the selected filename and the Submit button only if a file is chosen */}
-                                    {selectedFiles[assignment.id] && (
-                                        <div className="selected-file-container">
-                                            <span className="file-name-display">
-                                                {selectedFiles[assignment.id].name}
-                                            </span>
-                                            <button 
-                                                className="btn-save" 
-                                                style={{ backgroundColor: '#3498db' }}
-                                                onClick={() => handleFileUpload(assignment.id)}
-                                            >
-                                                Upload File
-                                            </button>
-                                        </div>
-                                    )}
+            <div className="nexus-content">
+                <header className="spatial-card nexus-action-header fade-in">
+                    <div className="header-box-content">
+                        <div className="header-top-row">
+                            <button onClick={() => navigate('/student')} className="back-pill-nexus">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                                Return to Hub
+                            </button>
+                        </div>
+                        
+                        <div className="identity-block">
+                            <h1 className="nexus-title-main">{classroom.name}</h1>
+                            
+                            <div className="instructor-row-nexus">
+                                <span className="ins-label">Instructor</span>
+                                <div className="ins-name-pill">
+                                    <span className="ins-name-text">{classroom.instructor}</span>
                                 </div>
                             </div>
-                        ))}
+                        </div>
                     </div>
-                )}
+                </header>
+
+                <section className="assignment-nexus slide-up">
+                    <div className="stream-header-nexus">
+                        <h2>Assignment Queue</h2>
+                        <div className="label-line-nexus"></div>
+                    </div>
+                    
+                    <div className="assignment-stack">
+                        {assignments.length === 0 ? (
+                            <div className="spatial-card empty-card-nexus">
+                                <p>No active protocols detected in this cluster.</p>
+                            </div>
+                        ) : (
+                            assignments.map((assignment, index) => (
+                                <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
+                                    <div className="card-glass-layer"></div>
+                                    <div className="row-grid-content">
+                                        <div className="row-info-nexus">
+                                            <span className="row-op-tag">OP_TASK_0{index + 1}</span>
+                                            <h3>{assignment.title}</h3>
+                                            <p>{assignment.description || "Parameters standard."}</p>
+                                        </div>
+                                        
+                                        <div className="row-actions-nexus">
+                                            {/* --- THE LOCK AND SCORE LOGIC --- */}
+                                            {assignment.has_submitted ? (
+                                                <div className="submitted-status-group">
+                                                    <span className="status-pill success">✓ Turned In</span>
+                                                    <div className="score-display">
+                                                        <span className="score-label">FALSICODE SCORE</span>
+                                                        <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
+                                                            {assignment.score}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
+                                                    
+                                                    {!selectedFiles[assignment.id] ? (
+                                                        <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
+                                                            Initialize Source
+                                                        </label>
+                                                    ) : (
+                                                        <div className="nexus-deploy-group">
+                                                            <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
+                                                            <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
             </div>
         </div>
     );

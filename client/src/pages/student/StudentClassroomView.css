@@ -1,0 +1,166 @@
+.nexus-wrapper {
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.5);
+    --border-card: rgba(255, 255, 255, 0.05);
+    --text-main: #f9fafb;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --banner-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+}
+
+.nexus-wrapper.light {
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --border-card: rgba(0, 0, 0, 0.05);
+    --text-main: #0f172a;
+    --text-dim: #64748b;
+    --accent: #2563eb;
+}
+
+.nexus-wrapper {
+    background-color: var(--bg-app); color: var(--text-main); min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif; position: relative; overflow-x: hidden;
+    transition: background-color 0.5s ease;
+}
+
+/* Background Aurora */
+.aurora-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.aurora-blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: drift 20s infinite alternate; }
+.blob-primary { width: 60vw; height: 60vw; background: rgba(59, 130, 246, 0.1); top: -10%; left: -10%; }
+.blob-secondary { width: 50vw; height: 50vw; background: rgba(139, 92, 246, 0.1); bottom: -10%; right: -10%; }
+@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
+
+.nexus-content { max-width: 1100px; margin: 0 auto; padding: 60px 40px; position: relative; z-index: 10; }
+
+/* SPATIAL ENGINE */
+.spatial-card {
+    background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-card);
+    backdrop-filter: blur(30px); position: relative; overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.spatial-card::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.05), transparent 40%);
+    opacity: 0; transition: opacity 0.3s;
+}
+.spatial-card:hover::after { opacity: 1; }
+
+/* =========================================
+    HEADER BOX: DASHBOARD MATCH
+   ========================================= */
+.nexus-action-header {
+    background: var(--banner-gradient) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
+    margin-bottom: 60px;
+}
+
+.header-box-content { padding: 48px; display: flex; flex-direction: column; gap: 40px; }
+
+.back-pill-nexus {
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff; padding: 8px 20px; border-radius: 100px; cursor: pointer;
+    display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 700;
+}
+.back-pill-nexus:hover { background: #ffffff; color: #4f46e5; transform: translateX(-4px); }
+
+.header-top-row {
+    display: flex;
+    justify-content: flex-start; /* Aligned left now that badge is gone */
+    align-items: center;
+    width: 100%;
+}
+
+.nexus-title-main {
+    color: #ffffff !important; font-size: 4rem; font-weight: 900; margin: 0;
+    letter-spacing: -3px; line-height: 1;
+}
+
+.instructor-row-nexus { display: flex; align-items: center; gap: 16px; margin-top: 10px;}
+.ins-label { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.7); letter-spacing: 2px; font-weight: 800; }
+.ins-name-pill { background: rgba(255, 255, 255, 0.15); padding: 8px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); }
+.ins-name-text { color: #ffffff; font-weight: 700; font-size: 1rem; }
+
+/* =========================================
+    ASSIGNMENT QUEUE
+   ========================================= */
+.stream-header-nexus { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
+.stream-header-nexus h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-dim); margin: 0; }
+.label-line-nexus { flex-grow: 1; height: 1px; background: var(--border-card); }
+
+.assignment-stack { display: flex; flex-direction: column; gap: 20px; }
+.assignment-row-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+
+.row-grid-content { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: center; padding: 40px; position: relative; z-index: 2; }
+.row-op-tag { color: var(--accent); font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 12px; display: block; }
+.row-info-nexus h3 { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.5px; }
+.row-info-nexus p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0; }
+
+.nexus-select-btn {
+    background: var(--text-main); color: var(--bg-app); padding: 16px 32px; border-radius: 14px;
+    font-weight: 800; font-size: 0.9rem; cursor: pointer; text-align: center; transition: 0.3s;
+}
+.nexus-select-btn:hover { opacity: 0.85; transform: scale(1.02); }
+
+.nexus-deploy-group { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.nexus-file-pill { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 12px; text-align: center; }
+.nexus-file-pill code { color: var(--accent); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.nexus-deploy-btn { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.nexus-deploy-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+/* LOADING */
+.nexus-loader { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.quantum-spinner { width: 40px; height: 40px; border: 3px solid var(--border-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- SUBMITTED STATE & SCORE UI --- */
+.submitted-status-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-pill.success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.score-display {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-glass);
+    padding: 6px 16px;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+.score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+}
+
+.score-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-hero);
+}
+
+.score-value.pending {
+    color: var(--status-yellow);
+    font-style: italic;
+    font-size: 0.9rem;
+    padding-top: 2px;
+}
