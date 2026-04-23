@@ -39,7 +39,6 @@ const StudentClassroomView = () => {
         fetchData();
     }, [id, navigate]);
 
-    // --- Spatial UI: Mouse Spotlight Logic ---
     const handleMouseMove = (e) => {
         if (!workspaceRef.current) return;
         const cards = workspaceRef.current.querySelectorAll('.spatial-card');
@@ -57,7 +56,9 @@ const StudentClassroomView = () => {
 
     const handleFileUpload = async (assignmentId) => {
         const fileToUpload = selectedFiles[assignmentId];
-        if (!fileToUpload) return alert("Select a .py file.");
+        // Dynamic error message based on file type
+        if (!fileToUpload) return alert("Please select a file to deploy.");
+        
         const formData = new FormData();
         formData.append('file', fileToUpload);
         try {
@@ -65,7 +66,6 @@ const StudentClassroomView = () => {
             alert("Node Deployment Successful.");
             setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
             
-            // Instantly update the UI to lock the button without needing a page refresh
             setAssignments(prev => prev.map(a => 
                 a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
             ));
@@ -119,18 +119,28 @@ const StudentClassroomView = () => {
                                 <p>No active protocols detected in this cluster.</p>
                             </div>
                         ) : (
-                            assignments.map((assignment, index) => (
+                            assignments.map((assignment, index) => {
+                                // --- NEW: Determine the correct file extension ---
+                                const isJava = assignment.language?.toLowerCase() === 'java';
+                                const fileExtension = isJava ? '.java' : '.py';
+                                
+                                return (
                                 <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
                                     <div className="card-glass-layer"></div>
                                     <div className="row-grid-content">
                                         <div className="row-info-nexus">
-                                            <span className="row-op-tag">OP_TASK_0{index + 1}</span>
+                                            <span className="row-op-tag">
+                                                OP_TASK_0{index + 1} 
+                                                {/* --- NEW: Language Badge --- */}
+                                                <span style={{color: isJava ? '#fb923c' : '#60a5fa', marginLeft: '10px'}}>
+                                                    [{isJava ? 'JAVA' : 'PYTHON'}]
+                                                </span>
+                                            </span>
                                             <h3>{assignment.title}</h3>
                                             <p>{assignment.description || "Parameters standard."}</p>
                                         </div>
                                         
                                         <div className="row-actions-nexus">
-                                            {/* --- THE LOCK AND SCORE LOGIC --- */}
                                             {assignment.has_submitted ? (
                                                 <div className="submitted-status-group">
                                                     <span className="status-pill success">✓ Turned In</span>
@@ -143,11 +153,18 @@ const StudentClassroomView = () => {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
+                                                    {/* --- NEW: Dynamic accept attribute --- */}
+                                                    <input 
+                                                        type="file" 
+                                                        accept={fileExtension} 
+                                                        id={`f-${assignment.id}`} 
+                                                        style={{display: 'none'}} 
+                                                        onChange={(e) => handleFileChange(assignment.id, e)} 
+                                                    />
                                                     
                                                     {!selectedFiles[assignment.id] ? (
                                                         <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
-                                                            Initialize Source
+                                                            Initialize {isJava ? 'Java' : 'Python'} Source
                                                         </label>
                                                     ) : (
                                                         <div className="nexus-deploy-group">
@@ -160,7 +177,7 @@ const StudentClassroomView = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))
+                            )})
                         )}
                     </div>
                 </section>

@@ -193,31 +193,36 @@ def run_smart_seed(db):
                 "title": "1. Quick Sort Implementation",
                 "description": "Write a Python script that implements the Quick Sort algorithm. You must include a partition helper function.",
                 "max_score": 100,
-                "classroom_name": "3CSB - DSA"
+                "classroom_name": "3CSB - DSA",
+                "language": "python"
             },
             {
                 "title": "2. Merge Sort Implementation",
                 "description": "Implement the Merge Sort algorithm using a recursive divide-and-conquer approach. Ensure your code handles lists of both even and odd lengths.",
                 "max_score": 100,
-                "classroom_name": "3CSB - DSA"
+                "classroom_name": "3CSB - DSA",
+                "language": "python"
             },
             {
                 "title": "3. Singly Linked List",
                 "description": "Develop a Node class and a LinkedList class. Implement methods to append a node, prepend a node, and reverse the entire linked list in place.",
                 "max_score": 100,
-                "classroom_name": "3CSB - DSA"
+                "classroom_name": "3CSB - DSA",
+                "language": "python"
             },
             {
                 "title": "4. Basic Binary Tree Traversals",
                 "description": "Construct a basic Binary Tree. Implement and print the results of pre-order, in-order, and post-order traversals for a tree with at least 7 nodes.",
                 "max_score": 100,
-                "classroom_name": "3CSB - DSA"
+                "classroom_name": "3CSB - DSA",
+                "language": "python"
             },
             {
                 "title": "5. Binary Search Tree (BST) Operations",
                 "description": "Implement a fully functional Binary Search Tree. Your script must include methods to insert a new value, search for an existing value, and delete a leaf node.",
                 "max_score": 100,
-                "classroom_name": "3CSB - DSA"
+                "classroom_name": "3CSB - DSA",
+                "language": "python"
             },
         ]
 
@@ -230,55 +235,55 @@ def run_smart_seed(db):
                 "student_username": "charles",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "original.py",
-                "file_path": "datasets/quick_sort/original.py"
+                "file_path": "datasets/python_source-code/quick_sort/original.py"
             },
             {
                 "student_username": "nicolo",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_1_exact_of_structucal4.py",
-                "file_path": "datasets/quick_sort/type_1_exact_of_structucal4.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_1_exact_of_structucal4.py"
             },
             {
                 "student_username": "dan",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_2_renamed_of_Structural4.py",
-                "file_path": "datasets/quick_sort/type_2_renamed_of_Structural4.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_2_renamed_of_Structural4.py"
             },
             {
                 "student_username": "mary",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_2_renamed.py",
-                "file_path": "datasets/quick_sort/type_2_renamed.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_2_renamed.py"
             },
             {
                 "student_username": "ramon",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_2_renamed2.py",
-                "file_path": "datasets/quick_sort/type_2_renamed2.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_2_renamed2.py"
             },
             {
                 "student_username": "jude",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_3_structural.py",
-                "file_path": "datasets/quick_sort/type_3_structural.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_3_structural.py"
             },
             {
                 "student_username": "jm",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_3_structural2.py",
-                "file_path": "datasets/quick_sort/type_3_structural2.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_3_structural2.py"
             },
             {
                 "student_username": "patrick",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_3_structural3.py",
-                "file_path": "datasets/quick_sort/type_3_structural3.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_3_structural3.py"
             },
             {
                 "student_username": "rachel",
                 "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_3_structural4.py",
-                "file_path": "datasets/quick_sort/type_3_structural4.py"
+                "file_path": "datasets/python_source-code/quick_sort/type_3_structural4.py"
             },
 
             # Assignment 2 Submissions - Merge Sort Implementation
@@ -287,37 +292,37 @@ def run_smart_seed(db):
                 "student_username": "charles",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "original.py",
-                "file_path": "datasets/merge_sort/original.py"
+                "file_path": "datasets/python_source-code/merge_sort/original.py"
             },
             {
                 "student_username": "nicolo",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_1_exact.py",
-                "file_path": "datasets/merge_sort/type_1_exact.py"
+                "file_path": "datasets/python_source-code/merge_sort/type_1_exact.py"
             },
             {
                 "student_username": "dan",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_2_renamed.py",
-                "file_path": "datasets/merge_sort/type_2_renamed.py"
+                "file_path": "datasets/python_source-code/merge_sort/type_2_renamed.py"
             },
             {
                 "student_username": "ramon",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_2_renamed2.py",
-                "file_path": "datasets/merge_sort/type_2_renamed2.py"
+                "file_path": "datasets/python_source-code/merge_sort/type_2_renamed2.py"
             },
             {
                 "student_username": "karo",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_3_structural.py",
-                "file_path": "datasets/merge_sort/type_3_structural.py"
+                "file_path": "datasets/python_source-code/merge_sort/type_3_structural.py"
             },
             {
                 "student_username": "rachel",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_3_structural2.py",
-                "file_path": "datasets/merge_sort/type_3_structural2.py"
+                "file_path": "datasets/python_source-code/merge_sort/type_3_structural2.py"
             },
 
             # Assignment 3 Submissions - Singly Linked List
@@ -326,31 +331,31 @@ def run_smart_seed(db):
                 "student_username": "mary",
                 "assignment_title": "3. Singly Linked List",
                 "filename": "original.py",
-                "file_path": "datasets/linked_list/original.py"
+                "file_path": "datasets/python_source-code/linked_list/original.py"
             },
             {
                 "student_username": "ramon",
                 "assignment_title": "3. Singly Linked List",
                 "filename": "type_1_exact.py",
-                "file_path": "datasets/linked_list/type_1_exact.py"
+                "file_path": "datasets/python_source-code/linked_list/type_1_exact.py"
             },
             {
                 "student_username": "rachel",
                 "assignment_title": "3. Singly Linked List",
                 "filename": "type_2_renamed.py",
-                "file_path": "datasets/linked_list/type_2_renamed.py"
+                "file_path": "datasets/python_source-code/linked_list/type_2_renamed.py"
             },
             {
                 "student_username": "karo",
                 "assignment_title": "3. Singly Linked List",
                 "filename": "type_2_renamed2.py",
-                "file_path": "datasets/linked_list/type_2_renamed2.py"
+                "file_path": "datasets/python_source-code/linked_list/type_2_renamed2.py"
             },
             {
                 "student_username": "jm",
                 "assignment_title": "3. Singly Linked List",
                 "filename": "type_3_structural.py",
-                "file_path": "datasets/linked_list/type_3_structural.py"
+                "file_path": "datasets/python_source-code/linked_list/type_3_structural.py"
             },
         ]
 

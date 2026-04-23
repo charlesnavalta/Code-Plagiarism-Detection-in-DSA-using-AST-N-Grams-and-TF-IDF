@@ -8,3 +8,4 @@ flask-migrate
 mysql-connector-python
 flask-bcrypt         # For secure password hashing
 flask-jwt-extended   # For managing user sessions (tokens)
+javalang==0.13.0     # For parsing Java Abstract Syntax Trees

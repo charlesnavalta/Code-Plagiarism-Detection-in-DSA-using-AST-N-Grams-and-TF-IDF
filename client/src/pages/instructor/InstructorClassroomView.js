@@ -71,7 +71,9 @@ const InstructorClassroomView = () => {
             const res = await api.post(`/analyze/${selectedAssignment.id}`, {});
             setAnalysisResults(res.data.results);
         } catch (error) {
-            alert("Analysis failed.");
+            // Detailed error logging added here
+            console.error("Full Backend Error:", error);
+            alert("Analysis failed: " + (error.response?.data?.error || error.message));
         } finally {
             setIsAnalyzing(false);
         }
@@ -140,8 +142,8 @@ const InstructorClassroomView = () => {
                 analysisResults={analysisResults}
                 isAnalyzing={isAnalyzing}
                 onRunAnalysis={handleRunAnalysis}
-                classroomId={id} // <-- ADD THIS
-                assignmentId={selectedAssignment?.id} // <-- ADD THIS
+                classroomId={id} 
+                assignmentId={selectedAssignment?.id} 
             />
         </div>
     );
