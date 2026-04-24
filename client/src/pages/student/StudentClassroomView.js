@@ -120,9 +120,9 @@ const StudentClassroomView = () => {
                             </div>
                         ) : (
                             assignments.map((assignment, index) => {
-                                // --- NEW: Determine the correct file extension ---
+                                // --- UPDATED: Safety net allows both .java and .py if backend is missing the language field ---
                                 const isJava = assignment.language?.toLowerCase() === 'java';
-                                const fileExtension = isJava ? '.java' : '.py';
+                                const fileExtension = isJava ? '.java' : '.py, .java';
                                 
                                 return (
                                 <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
@@ -131,7 +131,6 @@ const StudentClassroomView = () => {
                                         <div className="row-info-nexus">
                                             <span className="row-op-tag">
                                                 OP_TASK_0{index + 1} 
-                                                {/* --- NEW: Language Badge --- */}
                                                 <span style={{color: isJava ? '#fb923c' : '#60a5fa', marginLeft: '10px'}}>
                                                     [{isJava ? 'JAVA' : 'PYTHON'}]
                                                 </span>
@@ -153,7 +152,6 @@ const StudentClassroomView = () => {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    {/* --- NEW: Dynamic accept attribute --- */}
                                                     <input 
                                                         type="file" 
                                                         accept={fileExtension} 
@@ -164,7 +162,7 @@ const StudentClassroomView = () => {
                                                     
                                                     {!selectedFiles[assignment.id] ? (
                                                         <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
-                                                            Initialize {isJava ? 'Java' : 'Python'} Source
+                                                            Initialize {isJava ? 'Java' : 'Source'} File
                                                         </label>
                                                     ) : (
                                                         <div className="nexus-deploy-group">
