@@ -102,43 +102,55 @@ def run_smart_seed(db):
             {
                 "email": "dan@gmail.com", 
                 "username": "dan", 
-                "password": "dandan", 
+                "password": "dan123", 
                 "role": "student"
             },
             {
                 "email": "ramon@gmail.com", 
                 "username": "ramon", 
-                "password": "ramonramon", 
+                "password": "ramon123", 
                 "role": "student"
             },
             {
                 "email": "jude@gmail.com", 
                 "username": "jude", 
-                "password": "judejude", 
+                "password": "jude123", 
                 "role": "student"
             },
             {
                 "email": "jm@gmail.com", 
                 "username": "jm", 
-                "password": "jmjm", 
+                "password": "jm123", 
                 "role": "student"
             },
             {
                 "email": "patrick@gmail.com", 
                 "username": "patrick", 
-                "password": "patrickpatrick", 
+                "password": "patrick123", 
                 "role": "student"
             },
             {
                 "email": "rachel@gmail.com", 
                 "username": "rachel", 
-                "password": "rachelrachel", 
+                "password": "rachel123", 
                 "role": "student"
             },
             {
                 "email": "karo@gmail.com", 
                 "username": "karo", 
-                "password": "karokaro", 
+                "password": "karo123", 
+                "role": "student"
+            },
+            {
+                "email": "sol@gmail.com", 
+                "username": "sol", 
+                "password": "sol123", 
+                "role": "student"
+            },
+            {
+                "email": "ramil@gmail.com", 
+                "username": "ramil", 
+                "password": "ramil123", 
                 "role": "student"
             }
         ]
@@ -151,7 +163,7 @@ def run_smart_seed(db):
             },
             {
                 "name": "Advanced Database Systems", 
-                "instructor_username": "doca"
+                "instructor_username": "janus"
             },
             {
                 "name": "Web Development 101", 
@@ -224,6 +236,52 @@ def run_smart_seed(db):
                 "classroom_name": "3CSB - DSA",
                 "language": "python"
             },
+            #Sir Janus Assignment
+            #Part 1 
+            {
+                "title": "TS-A Level 1: Merge Sort (Exact Copy)",
+                "description": "Implement the Merge Sort algorithm. This assignment serves as the baseline for Type I (Exact Copy) plagiarism detection testing.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
+                "description": "Implement the Quick Sort algorithm. This assignment tests Type II plagiarism detection, specifically evaluating the Java parser's resilience against variable renaming and comment alteration.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
+                "description": "Write a Python script that implements the Binary Search algorithm. This assignment evaluates the system's ability to ignore whitespace manipulation, line condensing, and formatting changes.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            #Part2
+            {
+                "title": "TS-B Level 1: Fibonacci (Statement Reordering)",
+                "description": "Write a Python script to calculate the Fibonacci sequence. This assignment serves as the baseline for Type III (Structural) plagiarism detection, specifically testing resilience against independent variable swapping.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
+                "description": "Implement a sorting algorithm in Java. This assignment evaluates the TF-IDF engine's ability to detect structural copying even when core loop logic is extracted into a completely separate helper method.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-B Level 3: Iteration (Control Flow Replacement)",
+                "description": "Implement an iterative algorithm in Python. This is a high-level Type III obfuscation test designed to evaluate if the AST N-Gram engine can still detect underlying logic similarities when a 'for' loop is rewritten as a 'while' loop.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+
         ]
 
         # D. Explicit Submission Data (Pointing to Physical Files in the Datasets Folder)
@@ -357,6 +415,89 @@ def run_smart_seed(db):
                 "filename": "type_3_structural.py",
                 "file_path": "datasets/python_source-code/linked_list/type_3_structural.py"
             },
+
+            #Assignment Sir Janus
+            #Assignment A 1 TS-A Level 1: Merge Sort (Exact Copy)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-A Level 1: Merge Sort (Exact Copy)",
+                "filename": "TS-A_Level1.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level1.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-A Level 1: Merge Sort (Exact Copy)",
+                "filename": "TS-A_Level1-ExactCopy.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level1-ExactCopy.py"
+            },
+            #Assignment A 2 TS-A Level 2: Quick Sort (Lexical Obfuscation)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
+                "filename": "TS-A_Level2.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level2.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
+                "filename": "TS-A_Level2-LexicalObfuscation.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level2-LexicalObfuscation.py"
+            },
+            #Assignment A 3 TS-A Level 3: Binary Search (Formatting Manipulation)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
+                "filename": "TS-A_Level3.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level3.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
+                "filename": "TS-A_Level3-FormattingManipulation.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level3-FormattingManipulation.py"
+            },
+            #Assignment B 1 TS-B Level 1: Fibonacci (Statement Reordering)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-B Level 1: Fibonacci (Statement Reordering)",
+                "filename": "TS-B_Level1.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level1.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-B Level 1: Fibonacci (Statement Reordering)",
+                "filename": "TS-B_Level1-StatementReordering.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level1-StatementReordering.py"
+            },
+
+            #Assignment B 2 TS-B Level 2: Monolithic Sort (Method Extraction)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
+                "filename": "TS-B_Level2.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level2.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
+                "filename": "TS-B_Level2-MethodExtraction.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level2-MethodExtraction.py"
+            },
+            
+            #Assignment B 3 TS-B Level 3: Iteration (Control Flow Replacement)
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-B Level 3: Iteration (Control Flow Replacement)",
+                "filename": "TS-B_Level3.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level3.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-B Level 3: Iteration (Control Flow Replacement)",
+                "filename": "TS-B_Level3-ControlFlowReplacement.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level3-ControlFlowReplacement.py"
+            }
+
         ]
 
         # 1. Smart User Seeding
@@ -437,7 +578,8 @@ def run_smart_seed(db):
                         title=assign_data["title"],
                         description=assign_data["description"],
                         max_score=assign_data["max_score"],
-                        classroom_id=classroom.id
+                        classroom_id=classroom.id,
+                        language=assign_data.get("language", "python") # <--- ADDED THIS LINE!
                     )
                     db.session.add(new_assignment)
             else:
