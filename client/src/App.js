@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; // <-- Imported useEffect
+import React, { useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // ==========================================
@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Navbar from './components/common/Navbar';
 import Profile from './pages/common/Profile';
+import LandingPage from './pages/common/LandingPage'; // <-- NEW: Imported Landing Page
 
 // ==========================================
 // 2. AUTHENTICATION PAGES
@@ -53,7 +54,7 @@ function App() {
 
     const resetTimer = () => {
       clearTimeout(inactivityTimer);
-      // Restart the 30-minute countdown
+      // Restart the 3-minute countdown
       inactivityTimer = setTimeout(handleLogout, INACTIVITY_LIMIT);
     };
 
@@ -78,7 +79,8 @@ function App() {
       <Navbar /> 
       
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* NEW: Base route now points to the Landing Page instead of redirecting */}
+        <Route path="/" element={<LandingPage />} />
         
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -132,4 +134,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
