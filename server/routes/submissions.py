@@ -1,5 +1,6 @@
 import os
 import ast
+import javalang
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app
 from database import db
@@ -12,7 +13,7 @@ submissions_bp = Blueprint('submissions', __name__)
 @submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submit', methods=['POST'])
 @jwt_required()
 def submit_assignment(class_id, assignment_id):
-    """Handles .py file uploads with AST validation and a One-Time Submission Lock"""
+    """Handles multi-language file uploads with dynamic AST validation and a One-Time Submission Lock"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -39,17 +40,33 @@ def submit_assignment(class_id, assignment_id):
     if file.filename == '':
         return jsonify({"error": "No file selected."}), 400
         
-    if not file.filename.endswith('.py'):
-        return jsonify({"error": "Invalid format. Only .py files are allowed."}), 400
+    # --- NEW: Dynamic Language Validation ---
+    target_language = assignment.language.lower() if assignment.language else 'python'
+    expected_extension = '.java' if target_language == 'java' else '.py'
+
+    if not file.filename.endswith(expected_extension):
+        return jsonify({"error": f"Invalid format. This assignment requires {expected_extension} files."}), 400
 
     try:
         file_content = file.read().decode('utf-8')
-        ast.parse(file_content)
+        
+        # Validate Syntax based on language
+        if target_language == 'java':
+            try:
+                javalang.parse.parse(file_content)
+            except javalang.parser.JavaSyntaxError:
+                # Try wrapping it in a dummy class if it's just a raw method
+                javalang.parse.parse(f"public class DummyClass {{ {file_content} }}")
+        else:
+            ast.parse(file_content)
+            
         file.seek(0) 
     except SyntaxError as e:
-        return jsonify({"error": f"Upload rejected! Syntax error on line {e.lineno}: {e.msg}"}), 400
+        return jsonify({"error": f"Upload rejected! Syntax error on line {getattr(e, 'lineno', 'unknown')}: {getattr(e, 'msg', str(e))}"}), 400
+    except javalang.parser.JavaSyntaxError as e:
+        return jsonify({"error": f"Upload rejected! Java syntax error: {str(e)}"}), 400
     except Exception as e:
-        return jsonify({"error": f"Upload rejected! Invalid Python file: {str(e)}"}), 400
+        return jsonify({"error": f"Upload rejected! Invalid code file: {str(e)}"}), 400
 
     original_filename = secure_filename(file.filename)
     unique_filename = f"student_{user.id}_assign_{assignment.id}_{original_filename}"
@@ -65,7 +82,7 @@ def submit_assignment(class_id, assignment_id):
         )
         db.session.add(new_submission)
         db.session.commit()
-        return jsonify({"message": "Python file submitted successfully!"}), 200
+        return jsonify({"message": f"{target_language.capitalize()} file submitted successfully!"}), 200
         
     except Exception as e:
         db.session.rollback()
@@ -99,11 +116,13 @@ def get_assignment_submissions(class_id, assignment_id):
             except Exception as e:
                 print(f"Error reading file for {s.student.username}: {e}")
 
+        # Adding raw_code to match frontend requirement for the CodeComparisonView
         submissions_data.append({
             "id": s.id,
             "student_name": s.student.username,
             "filename": s.filename,
             "content": content, 
+            "raw_code": content, # Redundant but safe for specific frontend hooks
             "score": s.score or "Pending",
             "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
         })

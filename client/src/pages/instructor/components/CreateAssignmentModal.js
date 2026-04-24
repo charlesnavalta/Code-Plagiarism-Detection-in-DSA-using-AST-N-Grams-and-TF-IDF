@@ -9,10 +9,9 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         const title = e.target.title.value;
         const description = e.target.description.value;
         const max_score = e.target.max_score.value;
-        const language = e.target.language.value; // <-- Get the selected language
+        const language = e.target.language.value; 
 
         try {
-            // Send max_score AND language to the Flask backend
             const res = await api.post(`/classrooms/${classroomId}/assignments`, { 
                 title, 
                 description, 
@@ -36,7 +35,8 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                     <p className="hud-subtitle">Create a new coding assignment for your students</p>
                 </div>
                 
-                <div className="hud-body" style={{ padding: '20px' }}>
+                {/* ADDED SCROLLING FIX HERE: maxHeight and overflowY */}
+                <div className="hud-body" style={{ padding: '20px', maxHeight: '65vh', overflowY: 'auto' }}>
                     <form onSubmit={handleCreateAssignment}>
                         <div className="input-group">
                             <label>Assignment Title</label>
@@ -73,7 +73,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                             />
                         </div>
 
-                        {/* --- NEW LANGUAGE SELECTOR --- */}
                         <div className="input-group">
                             <label>Target Language</label>
                             <select name="language" className="styled-input" required>
