@@ -19,13 +19,13 @@ const LandingPage = () => {
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <main className="landing-hero">
+            {/* Hero Section - SPLIT LAYOUT */}
+            <main className="landing-hero split-layout">
                 <div className="hero-bg-glow blob-1"></div>
                 <div className="hero-bg-glow blob-2"></div>
                 
-                <div className="hero-content fade-in-up">
-                    <div className="hero-badge">XAI Multi-Language Engine</div>
+                {/* LEFT COLUMN: Text Content */}
+                <div className="hero-text-column fade-in-up">
                     <h1 className="hero-title">
                         Beyond Text. <br/>
                         <span className="text-gradient">Analyze the Algorithm.</span>
@@ -36,13 +36,41 @@ const LandingPage = () => {
                         even if variable names, comments, and spacing are completely changed.
                     </p>
                     
-                    <div className="hero-buttons">
+                    <div className="hero-action-group">
                         <button className="btn-primary-large" onClick={() => navigate('/login')}>
                             Access Dashboard
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginLeft: '8px'}}>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>
                         </button>
+                        <span className="hero-microcopy">Secure platform for instructors and students.</span>
+                    </div>
+                </div>
+
+                {/* RIGHT COLUMN: Mockup/Graphic */}
+                <div className="hero-graphic-column fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="glass-mockup">
+                        {/* Simulated UI Window */}
+                        <div className="mockup-header">
+                            <div className="mockup-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div className="mockup-url">falsicode.app/analysis</div>
+                        </div>
+                        <div className="mockup-body">
+                            <div className="mockup-code-block">
+                                <span className="m-keyword">def</span> <span className="m-func">merge_sort</span>(arr):
+                                <br/>&nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(arr) {'>'} 1:
+                                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mid = len(arr)//2
+                            </div>
+                            <div className="mockup-ast-line">
+                                <span className="ast-node">FunctionDef</span> ➔ <span className="ast-node">If</span> ➔ <span className="ast-node">Assign</span>
+                            </div>
+                            <div className="mockup-match-box">
+                                <span className="match-label">Structural Match Found</span>
+                                <span className="match-percent text-gradient">92.4%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>

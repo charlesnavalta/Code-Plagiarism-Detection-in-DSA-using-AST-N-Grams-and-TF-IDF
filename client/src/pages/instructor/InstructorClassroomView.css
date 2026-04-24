@@ -187,8 +187,8 @@
 
 .hud-modal-content {
     background: #0a0e17; 
-    width: 100%; 
-    max-width: 850px; 
+    width: 90vw;           /* Takes up 90% of the screen width */
+    max-width: 1400px;
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.1); 
     overflow: hidden; 
