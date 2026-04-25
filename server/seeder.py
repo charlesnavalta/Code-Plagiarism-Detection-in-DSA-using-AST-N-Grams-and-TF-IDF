@@ -238,6 +238,7 @@ def run_smart_seed(db):
             },
             #Sir Janus Assignment
             #Part 1 
+            #TS-A Part: Lexical Obfuscation
             {
                 "title": "TS-A Level 1: Merge Sort (Exact Copy)",
                 "description": "Implement the Merge Sort algorithm. This assignment serves as the baseline for Type I (Exact Copy) plagiarism detection testing.",
@@ -260,6 +261,7 @@ def run_smart_seed(db):
                 "language": "python"
             },
             #Part2
+            #TS-B Part: Structural Obfuscation
             {
                 "title": "TS-B Level 1: Fibonacci (Statement Reordering)",
                 "description": "Write a Python script to calculate the Fibonacci sequence. This assignment serves as the baseline for Type III (Structural) plagiarism detection, specifically testing resilience against independent variable swapping.",
@@ -277,6 +279,29 @@ def run_smart_seed(db):
             {
                 "title": "TS-B Level 3: Iteration (Control Flow Replacement)",
                 "description": "Implement an iterative algorithm in Python. This is a high-level Type III obfuscation test designed to evaluate if the AST N-Gram engine can still detect underlying logic similarities when a 'for' loop is rewritten as a 'while' loop.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            #Part 3 (Additional Assignments for More Submissions)
+            # TS-C Part: Advanced Logic & Noise Injection
+            {
+                "title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
+                "description": "Implement Quick Sort. This test evaluates if the system can ignore 'Dead Code'—functions and variables that are defined but never used to alter the algorithm's output.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-C Level 2: Linked List (Expression Substitution)",
+                "description": "Implement a Singly Linked List. This test checks if the AST engine recognizes equivalent logic, such as replacing 'if not x < y' with 'if x >= y'.",
+                "max_score": 100,
+                "classroom_name": "Advanced Database Systems",
+                "language": "python"
+            },
+            {
+                "title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
+                "description": "The Ultimate Test: A combination of renaming, reordering, and dead code injection within a Binary Search Tree implementation.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
                 "language": "python"
@@ -496,7 +521,49 @@ def run_smart_seed(db):
                 "assignment_title": "TS-B Level 3: Iteration (Control Flow Replacement)",
                 "filename": "TS-B_Level3-ControlFlowReplacement.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level3-ControlFlowReplacement.py"
-            }
+            },
+            #Assignment C 1 TS-C Level 1: Quick Sort (Dead Code Injection)
+            # Assignment C 1: Dead Code Injection
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
+                "filename": "TS-C_Level1.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
+                "filename": "TS-C_Level1-DeadCode.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1-DeadCode.py"
+            },
+
+            # Assignment C 2: Expression Substitution
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
+                "filename": "TS-C_Level2.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
+                "filename": "TS-C_Level2-Substitution.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2-Substitution.py"
+            },
+
+            # Assignment C 3: Mixed Attack
+            {
+                "student_username": "mary",
+                "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
+                "filename": "TS-C_Level3.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3.py"
+            },
+            {
+                "student_username": "charles",
+                "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
+                "filename": "TS-C_Level3-MixedAttack.py",
+                "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3-MixedAttack.py"
+            },
 
         ]
 
