@@ -38,6 +38,18 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
     };
 
+    // --- N-GRAM GENERATOR HELPER ---
+    const generateNGrams = (tokens, n = 3) => {
+        if (!tokens || tokens.length === 0) return [];
+        if (tokens.length < n) return [tokens]; 
+        
+        let nGrams = [];
+        for (let i = 0; i <= tokens.length - n; i++) {
+            nGrams.push(tokens.slice(i, i + n));
+        }
+        return nGrams;
+    };
+
     // --- RENDER HELPERS ---
     const renderCodeWithHighlights = (code, highlightedLines = []) => {
         if (!code || code.startsWith("Code content not available")) {
@@ -61,16 +73,34 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     const renderASTStream = (tokens) => {
         if (!tokens || tokens.length === 0) return <div className="empty-ast">No structural tokens extracted. Please check backend configuration.</div>;
         
+        const nGrams = generateNGrams(tokens, 3);
+        
         return (
-            <div className="ast-stream-container">
-                <div className="ast-path-line"></div>
-                {tokens.map((token, index) => (
-                    <div key={index} className="ast-node-pill">
-                        <span className="ast-node-index">{index + 1}</span>
-                        <span className="ast-node-name">{token}</span>
+            <div className="ast-pattern-stream">
+                {nGrams.map((ngramPattern, patternIndex) => (
+                    <div key={`pattern-${patternIndex}`} className="ngram-pattern-box">
+                        <div className="pattern-header">Pattern {patternIndex + 1}</div>
+                        
+                        <div className="pattern-tokens-container">
+                            {ngramPattern.map((token, tokenIndex) => (
+                                <React.Fragment key={`token-${patternIndex}-${tokenIndex}`}>
+                                    <div className="ast-token-pill">
+                                        <span className="token-index">{patternIndex + tokenIndex + 1}</span>
+                                        <span className="token-name">{token}</span>
+                                    </div>
+                                    
+                                    {/* Arrow connection between tokens */}
+                                    {tokenIndex < ngramPattern.length - 1 && (
+                                        <svg className="pattern-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                        </svg>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </div>
                     </div>
                 ))}
-                {tokens.length === 20 && <div className="ast-node-pill more-nodes">... truncated for view</div>}
+                {tokens.length === 20 && <div className="ast-token-pill more-nodes">... subsequent patterns truncated for view</div>}
             </div>
         );
     };
@@ -96,7 +126,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
                         onClick={() => setViewMode('ast')}
                     >
-                        AST Token Stream (XAI)
+                        AST N-Grams (XAI)
                     </button>
                 </div>
             </div>

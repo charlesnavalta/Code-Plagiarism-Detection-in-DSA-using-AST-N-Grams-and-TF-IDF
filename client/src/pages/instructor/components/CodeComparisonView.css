@@ -69,9 +69,9 @@
 /* --- SPLIT SCREEN PANES --- */
 .split-screen-container { 
     display: flex; 
-    gap: 20px; 
+    gap: 24px; /* Increased gap slightly for wider screens */
     width: 100%; 
-    min-height: 400px;
+    min-height: 550px; /* Increased from 400px to give more vertical breathing room */
 }
 
 .code-pane { 
@@ -104,8 +104,8 @@
 .pane-content-scroll {
     flex: 1;
     overflow-y: auto;
-    height: 400px;
-    padding: 15px 0;
+    height: 550px; /* Increased from 400px to match the container */
+    padding: 20px 0; /* Added slightly more padding */
 }
 
 /* --- RAW CODE VIEW STYLING --- */
@@ -146,52 +146,68 @@
     color: #ef4444; 
 }
 
-/* --- EXPLAINABLE AI (AST STREAM) STYLING --- */
-.ast-stream-container {
+/* --- EXPLAINABLE AI (AST N-GRAM PATTERN STREAM) STYLING --- */
+.ast-pattern-stream {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    position: relative;
-    padding-left: 30px;
-    font-family: 'JetBrains Mono', monospace;
+    gap: 1.5rem;
+    padding: 0 16px 16px 16px;
 }
 
-.ast-path-line {
-    position: absolute;
-    left: 45px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0.1));
-    z-index: 0;
+.ngram-pattern-box {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.ast-node-pill {
+.pattern-header {
+    font-size: 0.85rem;
+    color: #a5b4fc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.pattern-tokens-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 10px;
+}
+
+.ast-token-pill {
     display: flex;
     align-items: center;
     background: #1e1b4b;
     border: 1px solid rgba(139, 92, 246, 0.4);
     border-radius: 20px;
     padding: 6px 16px 6px 6px;
-    width: fit-content;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     color: #c4b5fd;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.ast-node-index {
+.token-index {
     background: rgba(139, 92, 246, 0.3);
-    color: #fff;
+    color: white;
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    margin-right: 12px;
+    margin-right: 10px;
     font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.pattern-arrow {
+    color: #8b5cf6;
+    opacity: 0.8;
 }
 
 .more-nodes {
@@ -199,6 +215,7 @@
     border: 1px dashed rgba(139, 92, 246, 0.4);
     color: #64748b;
     padding-left: 16px;
+    width: fit-content;
 }
 
 /* =========================================
