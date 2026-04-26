@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../services/api'; // Swapped standard axios for centralized api service
+import api from '../../services/api'; 
 import './Register.css'; 
 
 const Register = () => {
@@ -17,7 +17,6 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            // Simplified API call
             await api.post('/auth/register', formData);
             
             if (formData.role === 'instructor') {
@@ -35,10 +34,18 @@ const Register = () => {
     };
 
     return (
-        <div className="auth-isolated-wrapper">
-            <div className="auth-card auth-card-relative">
+        <div className="register-centered-wrapper">
+            
+            {/* Ambient Animated Background */}
+            <div className="aurora-canvas">
+                <div className="hero-bg-glow blob-1"></div>
+                <div className="hero-bg-glow blob-2"></div>
+            </div>
+
+            {/* Centered Registration Card */}
+            <div className="register-auth-card fade-in-up">
                 
-                {/* Back Button */}
+                {/* Back to Login Button */}
                 <button className="auth-back-btn" onClick={() => navigate('/login')}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -47,14 +54,8 @@ const Register = () => {
                     Back
                 </button>
 
-                {/* Top Blue Icon */}
-                <div className="auth-header-icon">
-                    <div className="auth-icon-bg blue-bg">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                    </div>
+                <div className="register-brand-header">
+                    <span className="logo-icon">⎔</span> Falsicode.
                 </div>
 
                 <h2 className="auth-title">Create Account</h2>
@@ -63,9 +64,8 @@ const Register = () => {
                 <form onSubmit={handleSubmit}>
                     
                     <div className="auth-input-group">
-                        <label>Username</label>
                         <div className="auth-input-wrapper">
-                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
@@ -81,15 +81,14 @@ const Register = () => {
                     </div>
                     
                     <div className="auth-input-group">
-                        <label>Email Address</label>
                         <div className="auth-input-wrapper">
-                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                 <polyline points="22,6 12,13 2,6"></polyline>
                             </svg>
                             <input 
                                 type="email" 
-                                placeholder="you@example.com" 
+                                placeholder="Email Address" 
                                 className="auth-styled-input"
                                 value={formData.email}
                                 onChange={e => setFormData({...formData, email: e.target.value})} 
@@ -99,9 +98,8 @@ const Register = () => {
                     </div>
 
                     <div className="auth-input-group">
-                        <label>Password</label>
                         <div className="auth-input-wrapper">
-                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
@@ -118,9 +116,8 @@ const Register = () => {
                     </div>
 
                     <div className="auth-input-group">
-                        <label>User Role</label>
                         <div className="auth-input-wrapper">
-                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg className="auth-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -131,8 +128,8 @@ const Register = () => {
                                 value={formData.role}
                                 onChange={e => setFormData({...formData, role: e.target.value})}
                             >
-                                <option value="student">Student</option>
-                                <option value="instructor">Instructor</option>
+                                <option value="student">Student Account</option>
+                                <option value="instructor">Instructor Account</option>
                             </select>
                         </div>
                     </div>
@@ -141,12 +138,12 @@ const Register = () => {
                         <label className="auth-checkbox-container">
                             <input type="checkbox" required />
                             <span className="auth-checkmark"></span>
-                            I agree to the <a href="#terms" className="auth-link">Terms of Service</a> and <a href="#privacy" className="auth-link">Privacy Policy</a>
+                            <span>I agree to the <a href="#terms" className="auth-link">Terms of Service</a> & <a href="#privacy" className="auth-link">Privacy Policy</a></span>
                         </label>
                     </div>
 
-                    <button type="submit" className="auth-submit-btn" disabled={loading}>
-                        {loading ? "Registering..." : "Create Account"}
+                    <button type="submit" className="auth-submit-btn register-btn-accent" disabled={loading}>
+                        {loading ? "Registering..." : "Sign Up"}
                     </button>
                 </form>
 
@@ -155,11 +152,12 @@ const Register = () => {
                 </div>
 
                 <p className="auth-footer-text">
-                    Already have an account? <Link to="/login" className="auth-link bold">Sign In</Link>
+                    Already have an account? <Link to="/login" className="auth-link bold">Log In here</Link>
                 </p>
+                
             </div>
-
-            <div className="auth-page-footer">
+            
+            <div className="register-page-footer">
                 © 2026 Falsicode. All rights reserved.
             </div>
         </div>
