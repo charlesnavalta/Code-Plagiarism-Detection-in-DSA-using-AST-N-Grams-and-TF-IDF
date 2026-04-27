@@ -68,9 +68,9 @@ const Login = () => {
                     <div className="graphic-cluster">
                         <div className="abstract-card card-front">
                             <code>def quick_sort(arr):</code>
-                            <div className="code-line w-75"></div>
-                            <div className="code-line w-50"></div>
-                            <div className="code-line w-100"></div>
+                            <div className="dummy-code-line w-75"></div>
+                            <div className="dummy-code-line w-50"></div>
+                            <div className="dummy-code-line w-100"></div>
                         </div>
                         <div className="abstract-card card-back">
                             <code>Match: 94.2%</code>

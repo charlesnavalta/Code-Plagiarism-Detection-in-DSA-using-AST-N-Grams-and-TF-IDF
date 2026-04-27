@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
+import './InstructorTheme.css'; 
 import './InstructorClassroomView.css';
+
 
 // Import our isolated components
 import CreateAssignmentModal from './components/CreateAssignmentModal';
