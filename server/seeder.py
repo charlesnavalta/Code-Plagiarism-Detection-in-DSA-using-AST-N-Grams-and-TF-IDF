@@ -152,7 +152,7 @@ def run_smart_seed(db):
                 "username": "ramil", 
                 "password": "ramil123", 
                 "role": "student"
-            }
+            },
         ]
 
         # B. Define Explicit Classroom Data
@@ -196,7 +196,7 @@ def run_smart_seed(db):
             {
                 "name": "Mobile App Development", 
                 "instructor_username": "vange"
-            }
+            },
         ]
 
         # C. Explicit Assignment Data
@@ -306,6 +306,42 @@ def run_smart_seed(db):
                 "classroom_name": "Advanced Database Systems",
                 "language": "python"
             },
+            # Assignement for Web Development 101 Java
+            {
+                "title": "1. Quick Sort Implementation (Java)",
+                "description": "Develop a Java program that implements the Quick Sort algorithm. Your class must include a separate partition method and utilize a recursive approach to sort an array of integers.",
+                "max_score": 100,
+                "classroom_name": "Web Development 101",
+                "language": "java"
+            },
+            {
+                "title": "2. Merge Sort Implementation (Java)",
+                "description": "Create a Java class to implement the Merge Sort algorithm using a divide-and-conquer strategy. The implementation must handle the recursive splitting of arrays and a merge helper method for reconstruction.",
+                "max_score": 100,
+                "classroom_name": "Web Development 101",
+                "language": "java"
+            },
+            {
+                "title": "3. Singly Linked List (Java)",
+                "description": "Implement a Singly Linked List in Java. You must define a Node class and include methods for append(), prepend(), and an in-place reverse() method to flip the list structure without creating a new list.",
+                "max_score": 100,
+                "classroom_name": "Web Development 101",
+                "language": "java"
+            },
+            {
+                "title": "4. Binary Tree Traversals (Java)",
+                "description": "Construct a Binary Tree structure in Java. Write recursive methods to perform Pre-order, In-order, and Post-order traversals, demonstrating the output on a tree containing at least 7 nodes.",
+                "max_score": 100,
+                "classroom_name": "Web Development 101",
+                "language": "java"
+            },
+            {
+                "title": "5. Binary Search Tree (BST) Operations (Java)",
+                "description": "Develop a Binary Search Tree (BST) in Java. Your implementation must successfully handle the insertion of new elements, searching for specific values, and the logic required to delete a leaf node.",
+                "max_score": 100,
+                "classroom_name": "Web Development 101",
+                "language": "java"
+            },
 
         ]
 
@@ -313,7 +349,6 @@ def run_smart_seed(db):
         submissions_to_seed = [
 
             #Assignment 1 Submissions - Quick Sort Implementation
-            
             {
                 "student_username": "charles",
                 "assignment_title": "1. Quick Sort Implementation",
@@ -565,6 +600,201 @@ def run_smart_seed(db):
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3-MixedAttack.py"
             },
 
+            #Java Assignments Submissions
+            {
+                "student_username": "charles",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "original.java",
+                "file_path": "datasets/java_source-code/quick_sort/original.java"
+            },
+            {
+                "student_username": "nicolo",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_1_exact_of_structucal4.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_1_exact_of_structucal4.java"
+            },
+            {
+                "student_username": "dan",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_2_renamed_of_Structural4.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed_of_Structural4.java"
+            },
+            {
+                "student_username": "mary",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_2_renamed.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed.java"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_2_renamed2.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed2.java"
+            },
+            {
+                "student_username": "jude",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_3_structural.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_3_structural.java"
+            },
+            {
+                "student_username": "jm",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_3_structural2.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_3_structural2.java"
+            },
+            {
+                "student_username": "patrick",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_3_structural3.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_3_structural3.java"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "1. Quick Sort Implementation (Java)",
+                "filename": "type_3_structural4.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_3_structural4.java"
+            },
+
+            #Assignment 2 Submissions - Merge Sort Implementation (Java)
+            {
+                "student_username": "charles",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "original.java",
+                "file_path": "datasets/java_source-code/merge_sort/original.java"
+            },
+            {
+                "student_username": "nicolo",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "type_1_exact.java",
+                "file_path": "datasets/java_source-code/merge_sort/type_1_exact.java"
+            },
+            {
+                "student_username": "dan",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "type_2_renamed.java",
+                "file_path": "datasets/java_source-code/merge_sort/type_2_renamed.java"
+            },
+            {
+                "student_username": "mary",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "type_2_renamed2.java",
+                "file_path": "datasets/java_source-code/merge_sort/type_2_renamed2.java"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "type_3_structural.java",
+                "file_path": "datasets/java_source-code/merge_sort/type_3_structural.java"
+            },
+            {
+                "student_username": "jude",
+                "assignment_title": "2. Merge Sort Implementation (Java)",
+                "filename": "type_3_structural2.java",
+                "file_path": "datasets/java_source-code/merge_sort/type_3_structural2.java"
+            },
+
+            #Assignment 3 Submissions - Singly Linked List (Java)
+            {
+                "student_username": "jm",
+                "assignment_title": "3. Singly Linked List (Java)",
+                "filename": "original.java",
+                "file_path": "datasets/java_source-code/linked_list/original.java"
+            },
+            {
+                "student_username": "patrick",
+                "assignment_title": "3. Singly Linked List (Java)",
+                "filename": "type_1_exact.java",
+                "file_path": "datasets/java_source-code/linked_list/type_1_exact.java"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "3. Singly Linked List (Java)",
+                "filename": "type_2_renamed.java",
+                "file_path": "datasets/java_source-code/linked_list/type_2_renamed.java"
+            },
+            {
+                "student_username": "karo",
+                "assignment_title": "3. Singly Linked List (Java)",
+                "filename": "type_2_renamed2.java",
+                "file_path": "datasets/java_source-code/linked_list/type_2_renamed2.java"
+            },
+            {
+                "student_username": "sol",
+                "assignment_title": "3. Singly Linked List (Java)",
+                "filename": "type_3_structural.java",
+                "file_path": "datasets/java_source-code/linked_list/type_3_structural.java"
+            },
+
+            #Assignment 4 Submissions - Binary Tree Traversals
+            {
+                "student_username": "charles",
+                "assignment_title": "4. Binary Tree Traversals (Java)",
+                "filename": "original..java",
+                "file_path": "datasets/java_source-code/binary_tree/original..java"
+            },
+            {
+                "student_username": "nicolo",
+                "assignment_title": "4. Binary Tree Traversals (Java)",
+                "filename": "type_2_renamed.java",
+                "file_path": "datasets/java_source-code/binary_tree/type_2_renamed.java"
+            },
+            {
+                "student_username": "dan",
+                "assignment_title": "4. Binary Tree Traversals (Java)",
+                "filename": "type_2_renamed2.java",
+                "file_path": "datasets/java_source-code/binary_tree/type_2_renamed2.java"
+            },
+            {
+                "student_username": "mary",
+                "assignment_title": "4. Binary Tree Traversals (Java)",
+                "filename": "type_3_structural.java",
+                "file_path": "datasets/java_source-code/binary_tree/type_3_structural.java"
+            },
+            {
+                "student_username": "ramon",
+                "assignment_title": "4. Binary Tree Traversals (Java)",
+                "filename": "type_3_structural2.java",
+                "file_path": "datasets/java_source-code/binary_tree/type_3_structural2.java"
+            },
+
+            #Binary Search Tree (BST) Operations Submissions
+            {
+                "student_username": "jude",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "original.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/original.java"
+            },
+            {
+                "student_username": "jm",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "type_1_exact.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/type_1_exact.java"
+            },
+            {
+                "student_username": "patrick",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "type_2_renamed.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/type_2_renamed.java"
+            },
+            {
+                "student_username": "rachel",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "type_2_renamed2.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/type_2_renamed2.java"
+            },
+            {
+                "student_username": "karo",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "type_3_structural.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/type_3_structural.java"
+            },
+            {
+                "student_username": "sol",
+                "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
+                "filename": "type_3_structural2.java",
+                "file_path": "datasets/java_source-code/binary_search_tree/type_3_structural2.java"
+            },
         ]
 
         # 1. Smart User Seeding
