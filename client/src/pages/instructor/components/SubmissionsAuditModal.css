@@ -1,0 +1,118 @@
+/* =========================================
+   1. MODAL FOUNDATION (Shared with Create Modal)
+   ========================================= */
+.falsicode-hud-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); 
+    backdrop-filter: blur(20px); z-index: 5000; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+.hud-modal-content {
+    background: #0a0e17; width: 90vw; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1); overflow: hidden; 
+    position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    max-height: 90vh; display: flex; flex-direction: column;
+}
+
+/* Wide variant for Audit/Comparison */
+.wide-hud { max-width: 1400px; }
+
+.hud-header { padding: 35px 40px 20px; position: relative; }
+.hud-header h2 { font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+.hud-subtitle { color: var(--text-dim); margin-top: 5px; font-size: 0.95rem; }
+
+.hud-body-scroll {
+    flex: 1; overflow-y: auto; padding-bottom: 20px;
+}
+
+/* Custom Scrollbar for the Audit List */
+.hud-body-scroll::-webkit-scrollbar { width: 8px; }
+.hud-body-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+.hud-body-scroll::-webkit-scrollbar-thumb { 
+    background: rgba(255, 255, 255, 0.1); border-radius: 10px; 
+}
+
+/* =========================================
+   2. SUBMISSION TABLE & STUDENT IDENTITY
+   ========================================= */
+.falsicode-table-hud { width: 100%; border-collapse: collapse; margin-top: 10px; }
+
+.falsicode-table-hud th { 
+    text-align: left; color: #475569; font-size: 0.75rem; 
+    font-weight: 800; letter-spacing: 1.5px; padding: 15px 40px; 
+    text-transform: uppercase;
+}
+
+.falsicode-table-hud td { padding: 16px 40px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+.hud-stu-cell { display: flex; align-items: center; gap: 15px; }
+
+.stu-icon { 
+    width: 32px; height: 32px; background: #1e293b; color: #60a5fa; 
+    border-radius: 8px; display: flex; align-items: center; 
+    justify-content: center; font-weight: 800; font-size: 0.9rem;
+}
+
+.code-box { 
+    background: rgba(30, 41, 59, 0.4); padding: 6px 12px; 
+    border-radius: 6px; font-family: 'JetBrains Mono', monospace; 
+    font-size: 0.85rem; color: var(--text-dim); 
+}
+
+/* =========================================
+   3. MANUAL GRADING UI
+   ========================================= */
+.grade-input-group { display: flex; gap: 8px; align-items: center; }
+
+.grade-input-small {
+    width: 100px; padding: 6px 10px; background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass); border-radius: 6px;
+    color: var(--text-hero); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; transition: all 0.2s;
+}
+
+.grade-input-small:focus {
+    outline: none; border-color: var(--status-green);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.btn-save-grade {
+    background: rgba(16, 185, 129, 0.1); color: var(--status-green);
+    border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+    font-weight: 800; text-transform: uppercase; transition: all 0.2s;
+}
+
+.btn-save-grade:hover { background: var(--status-green); color: white; }
+
+/* =========================================
+   4. ANALYSIS REPORT & MATCHES
+   ========================================= */
+.analysis-report-section { 
+    background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05); 
+    padding-bottom: 20px; margin-top: 20px; 
+}
+
+.report-header { padding: 30px 40px 10px; display: flex; flex-direction: column; gap: 12px; }
+
+.scan-badge { 
+    background: rgba(16, 185, 129, 0.1); color: var(--status-green); 
+    border: 1px solid rgba(16, 185, 129, 0.2); padding: 4px 10px; 
+    border-radius: 4px; font-size: 0.7rem; font-weight: 800;
+}
+
+/* Interaction Logic for Pairs */
+.hoverable-table tbody tr.clickable-row { transition: background 0.2s; cursor: pointer; }
+.hoverable-table tbody tr.clickable-row:hover { background: rgba(59, 130, 246, 0.1); }
+
+.view-details-text { 
+    display: block; font-size: 0.75rem; color: var(--accent-blue); 
+    opacity: 0; transition: opacity 0.2s; margin-top: 4px; 
+}
+.clickable-row:hover .view-details-text { opacity: 1; }
+
+.sim-score { font-weight: 800; font-size: 1.2rem; text-align: right; }
+
+/* Animations */
+.pulsing { animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }

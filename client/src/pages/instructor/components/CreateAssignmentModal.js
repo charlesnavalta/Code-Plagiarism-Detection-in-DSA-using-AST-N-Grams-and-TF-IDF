@@ -1,5 +1,6 @@
 import React from 'react';
 import api from '../../../services/api';
+import './CreateAssignmentModal.css';
 
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
     if (!isOpen) return null;
