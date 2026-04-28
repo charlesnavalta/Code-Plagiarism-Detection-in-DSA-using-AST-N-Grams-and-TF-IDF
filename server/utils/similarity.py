@@ -3,11 +3,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 def compare_all_files(file_data, ngram_bounds):
-    """
-    Language-agnostic TF-IDF comparison engine.
-    Extracts synchronized, shared IDF weights using a representative sample 
-    (High, Middle, Low) for XAI frontend visualization.
-    """
     if len(file_data) < 2: 
         return []
 
@@ -15,7 +10,16 @@ def compare_all_files(file_data, ngram_bounds):
     filenames = [f['name'] for f in file_data]
     tokens_list = [f['tokens'] for f in file_data] 
 
-    vectorizer = TfidfVectorizer(ngram_range=ngram_bounds, sublinear_tf=True, max_df=0.85)
+    # --- THE FIX ---
+    # If there are 5 or fewer files, do NOT use max_df (set it to 1.0 / 100%)
+    # Otherwise, use 0.85 to filter out the professor's boilerplate
+    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.85
+
+    vectorizer = TfidfVectorizer(
+        ngram_range=ngram_bounds, 
+        sublinear_tf=True, 
+        max_df=dynamic_max_df # Applied here!
+    )
     
     try:
         tfidf_matrix = vectorizer.fit_transform(documents)
