@@ -13,3 +13,7 @@ def sort_numbers(values):
             larger.append(values[index])
 
     return sort_numbers(smaller) + [p] + sort_numbers(larger)
+
+if __name__ == "__main__":
+        d = [10, 7, 8, 9, 1, 5]
+        print(sort_numbers(data))

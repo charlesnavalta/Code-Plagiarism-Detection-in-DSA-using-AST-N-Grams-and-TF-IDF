@@ -1,31 +1,56 @@
-def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
+public class Main {
 
-    mid_index = len(arr) // 2
-    left = arr[:mid_index]
-    right = arr[mid_index:]
+    public static int[] mergeSort(int[] arr) {
+        if (arr.length <= 1) {
+            return arr;
+        }
 
-    left_sorted = merge_sort(left)
-    right_sorted = merge_sort(right)
+        int midIndex = arr.length / 2;
 
-    return merge_lists(left_sorted, right_sorted)
+        int[] left = new int[midIndex];
+        int[] right = new int[arr.length - midIndex];
 
+        for (int i = 0; i < midIndex; i++) {
+            left[i] = arr[i];
+        }
 
-def merge_lists(list1, list2):
-    result = []
-    p1 = p2 = 0
+        for (int i = midIndex; i < arr.length; i++) {
+            right[i - midIndex] = arr[i];
+        }
 
-    while p1 < len(list1):
-        if p2 >= len(list2) or list1[p1] < list2[p2]:
-            result.append(list1[p1])
-            p1 += 1
-        else:
-            result.append(list2[p2])
-            p2 += 1
+        int[] leftSorted = mergeSort(left);
+        int[] rightSorted = mergeSort(right);
 
-    while p2 < len(list2):
-        result.append(list2[p2])
-        p2 += 1
+        return mergeLists(leftSorted, rightSorted);
+    }
 
-    return result
+    public static int[] mergeLists(int[] list1, int[] list2) {
+        int[] result = new int[list1.length + list2.length];
+
+        int p1 = 0, p2 = 0, k = 0;
+
+        while (p1 < list1.length) {
+            if (p2 >= list2.length || list1[p1] < list2[p2]) {
+                result[k++] = list1[p1++];
+            } else {
+                result[k++] = list2[p2++];
+            }
+        }
+
+        while (p2 < list2.length) {
+            result[k++] = list2[p2++];
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int[] data = {38, 27, 43, 3, 9, 82, 10};
+
+        int[] sorted = mergeSort(data);
+
+        for (int num : sorted) {
+            System.out.print(num + " ");
+        }
+    }
+}

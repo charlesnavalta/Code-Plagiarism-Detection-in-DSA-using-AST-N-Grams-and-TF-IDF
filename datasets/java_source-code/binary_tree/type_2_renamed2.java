@@ -1,19 +1,32 @@
-class Node:
-    def __init__(self, x):
-        self.x = x
-        self.left = None
-        self.right = None
+import java.util.ArrayList;
 
+class Node {
+    int x;
+    Node left, right;
 
-def inorder(node):
-    if node is None:
-        return []
+    public Node(int x) {
+        this.x = x;
+        left = right = null;
+    }
+}
 
-    values = []
-    values += inorder(node.left)
-    values.append(node.x)
-    values += inorder(node.right)
+public class Main {
 
-    return values
+    public static ArrayList<Integer> inorder(Node node) {
+        ArrayList<Integer> values = new ArrayList<>();
 
-print("File executed")
+        if (node == null) {
+            return values;
+        }
+
+        values.addAll(inorder(node.left));
+        values.add(node.x);
+        values.addAll(inorder(node.right));
+
+        return values;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("File executed");
+    }
+}

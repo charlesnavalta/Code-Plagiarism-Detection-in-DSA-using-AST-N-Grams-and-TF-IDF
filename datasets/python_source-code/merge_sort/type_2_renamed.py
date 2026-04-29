@@ -29,3 +29,7 @@ def merge_lists(list1, list2):
         p2 += 1
 
     return result
+
+if __name__ == "__main__":
+    data = [38, 27, 43, 3, 9, 82, 10]
+    print(merge_sort(data))

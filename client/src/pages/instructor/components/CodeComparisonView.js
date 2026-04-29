@@ -20,7 +20,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
             color: "#f97316",
             description: "The engine detected highly identical underlying logic. This indicates superficial modifications, such as renaming variables or functions, while preserving the exact original structure."
         };
-        if (score >= 70) return { 
+        if (score >= 50) return { 
             label: "Type III: Structural Modification", 
             color: "#eab308",
             description: "The engine identified significantly overlapping logic sequences. This indicates the modification of control structures (e.g., swapping loop types) or statement reordering to hide copied algorithms."

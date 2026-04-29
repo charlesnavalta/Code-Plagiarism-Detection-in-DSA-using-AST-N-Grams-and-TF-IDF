@@ -11,14 +11,11 @@ def compare_all_files(file_data, ngram_bounds):
     tokens_list = [f['tokens'] for f in file_data] 
 
     # --- THE FIX ---
-    # If there are 5 or fewer files, do NOT use max_df (set it to 1.0 / 100%)
-    # Otherwise, use 0.85 to filter out the professor's boilerplate
-    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.85
-
+    # Removed max_df entirely. We must evaluate every single structural token, 
+    # even if 100% of the class copied the exact same structure.
     vectorizer = TfidfVectorizer(
         ngram_range=ngram_bounds, 
-        sublinear_tf=True, 
-        max_df=dynamic_max_df # Applied here!
+        sublinear_tf=True
     )
     
     try:
@@ -35,9 +32,9 @@ def compare_all_files(file_data, ngram_bounds):
                 score = round(sim_matrix[i][j] * 100, 2)
                 
                 status = "Low"
-                if score > 70: 
+                if score > 80: 
                     status = "High"
-                elif score > 40: 
+                elif score >= 50: 
                     status = "Medium"
 
                 if score > 0:
@@ -65,7 +62,7 @@ def compare_all_files(file_data, ngram_bounds):
                     lines_i = extract_lines_from_tfidf(tokens_i, shared_ngrams)
                     lines_j = extract_lines_from_tfidf(tokens_j, shared_ngrams)
 
-                    # --- THE FIX: Synchronized Shared Patterns + Representative Sample ---
+                    # --- Synchronized Shared Patterns + Representative Sample ---
                     def get_top_shared_patterns(tokens_for_case, shared_set, ngram_size=3):
                         extracted_patterns = {}
                         max_possible_idf = np.log(len(documents)) + 1
@@ -89,7 +86,7 @@ def compare_all_files(file_data, ngram_bounds):
                         suspicious_patterns = sorted(extracted_patterns.values(), key=lambda x: x['weight'], reverse=True)
                         total_patterns = len(suspicious_patterns)
 
-                        # --- NEW: The "Thesis Defense" Representative Sample Strategy ---
+                        # --- The Representative Sample Strategy ---
                         # If the file is small (fewer than 40 patterns), show them all.
                         if total_patterns <= 40:
                             return suspicious_patterns

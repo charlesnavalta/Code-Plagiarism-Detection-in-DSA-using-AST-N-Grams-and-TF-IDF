@@ -349,6 +349,7 @@ def run_smart_seed(db):
         submissions_to_seed = [
 
             #Assignment 1 Submissions - Quick Sort Implementation
+            # Note: These files are intentionally crafted to represent different levels of plagiarism (Exact Copy and Renamed Variables) for robust testing.
             {
                 "student_username": "charles",
                 "assignment_title": "1. Quick Sort Implementation",
@@ -358,53 +359,18 @@ def run_smart_seed(db):
             {
                 "student_username": "nicolo",
                 "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_1_exact_of_structucal4.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_1_exact_of_structucal4.py"
+                "filename": "type_1_exact_copy.py",
+                "file_path": "datasets/python_source-code/quick_sort/type_1_exact_copy.py"
             },
             {
                 "student_username": "dan",
                 "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_2_renamed_of_Structural4.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_2_renamed_of_Structural4.py"
-            },
-            {
-                "student_username": "mary",
-                "assignment_title": "1. Quick Sort Implementation",
                 "filename": "type_2_renamed.py",
                 "file_path": "datasets/python_source-code/quick_sort/type_2_renamed.py"
             },
-            {
-                "student_username": "ramon",
-                "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_2_renamed2.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_2_renamed2.py"
-            },
-            {
-                "student_username": "jude",
-                "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_3_structural.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_3_structural.py"
-            },
-            {
-                "student_username": "jm",
-                "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_3_structural2.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_3_structural2.py"
-            },
-            {
-                "student_username": "patrick",
-                "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_3_structural3.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_3_structural3.py"
-            },
-            {
-                "student_username": "rachel",
-                "assignment_title": "1. Quick Sort Implementation",
-                "filename": "type_3_structural4.py",
-                "file_path": "datasets/python_source-code/quick_sort/type_3_structural4.py"
-            },
 
             # Assignment 2 Submissions - Merge Sort Implementation
+            # These Test case is specifically designed to evaluate the structe plagiarism detection capabilities of the system, with varying levels of structural changes while maintaining core logic.
 
             {
                 "student_username": "charles",
@@ -415,29 +381,11 @@ def run_smart_seed(db):
             {
                 "student_username": "nicolo",
                 "assignment_title": "2. Merge Sort Implementation",
-                "filename": "type_1_exact.py",
-                "file_path": "datasets/python_source-code/merge_sort/type_1_exact.py"
-            },
-            {
-                "student_username": "dan",
-                "assignment_title": "2. Merge Sort Implementation",
-                "filename": "type_2_renamed.py",
-                "file_path": "datasets/python_source-code/merge_sort/type_2_renamed.py"
-            },
-            {
-                "student_username": "ramon",
-                "assignment_title": "2. Merge Sort Implementation",
-                "filename": "type_2_renamed2.py",
-                "file_path": "datasets/python_source-code/merge_sort/type_2_renamed2.py"
-            },
-            {
-                "student_username": "karo",
-                "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_3_structural.py",
                 "file_path": "datasets/python_source-code/merge_sort/type_3_structural.py"
             },
             {
-                "student_username": "rachel",
+                "student_username": "dan",
                 "assignment_title": "2. Merge Sort Implementation",
                 "filename": "type_3_structural2.py",
                 "file_path": "datasets/python_source-code/merge_sort/type_3_structural2.py"

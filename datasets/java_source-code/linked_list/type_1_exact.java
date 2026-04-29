@@ -1,8 +1,8 @@
-public class Type2Renamed {
+public class Main {
 
     public static boolean linearSearch(int[] arr, int target) {
-        for (int i : arr) {
-            if (i == target) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
                 return true;
             }
         }

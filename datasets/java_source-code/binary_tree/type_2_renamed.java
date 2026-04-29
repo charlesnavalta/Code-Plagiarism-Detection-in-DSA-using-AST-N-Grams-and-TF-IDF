@@ -1,27 +1,38 @@
-class TreeElement:
-    def __init__(self, data):
-        self.data = data
-        self.left_child = None
-        self.right_child = None
+import java.util.ArrayList;
 
+class TreeElement {
+    int data;
+    TreeElement left_child, right_child;
 
-def inorder_walk(current_node):
-    if current_node is None:
-        return []
+    public TreeElement(int data) {
+        this.data = data;
+        left_child = right_child = null;
+    }
+}
 
-    output = []
-    output.extend(inorder_walk(current_node.left_child))
-    output.append(current_node.data)
-    output.extend(inorder_walk(current_node.right_child))
+public class Main {
 
-    return output
+    public static ArrayList<Integer> inorderWalk(TreeElement currentNode) {
+        ArrayList<Integer> output = new ArrayList<>();
 
+        if (currentNode == null) {
+            return output;
+        }
 
-if __name__ == "__main__":
-    main_root = TreeElement(1)
-    main_root.left_child = TreeElement(2)
-    main_root.right_child = TreeElement(3)
-    main_root.left_child.left_child = TreeElement(4)
-    main_root.left_child.right_child = TreeElement(5)
+        output.addAll(inorderWalk(currentNode.left_child));
+        output.add(currentNode.data);
+        output.addAll(inorderWalk(currentNode.right_child));
 
-    print(inorder_walk(main_root))
+        return output;
+    }
+
+    public static void main(String[] args) {
+        TreeElement mainRoot = new TreeElement(1);
+        mainRoot.left_child = new TreeElement(2);
+        mainRoot.right_child = new TreeElement(3);
+        mainRoot.left_child.left_child = new TreeElement(4);
+        mainRoot.left_child.right_child = new TreeElement(5);
+
+        System.out.println(inorderWalk(mainRoot));
+    }
+}

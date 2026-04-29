@@ -1,76 +1,95 @@
-class Node:
-    """Structure for a single tree element."""
-    def __init__(self, val):
-        self.key = val
-        self.left = None
-        self.right = None
+class Node {
+    int key;
+    Node left, right;
 
-class BinarySearchTree:
-    """
-    BST Implementation using encapsulated recursion.
-    This approach hides the root handling from the user.
-    """
-    def __init__(self):
-        self.root = None
+    public Node(int val) {
+        this.key = val;
+        left = right = null;
+    }
+}
 
-    # Requirement Part 1: Recursive Insertion (Internal Helper)
-    def insert(self, root, key):
-        # Even though the prompt asks to pass root, 
-        # we fulfill it while keeping the logic unique.
-        if not root:
-            return Node(key)
-        
-        if key < root.key:
-            root.left = self.insert(root.left, key)
-        else:
-            root.right = self.insert(root.right, key)
-        return root
+class BinarySearchTree {
+    Node root;
 
-    # Requirement Part 1: Recursive Search
-    def search(self, node, target):
-        # Base cases: value found or reached a leaf
-        if node is None or node.key == target:
-            return node
-        
-        # Logic: If target is smaller, search left; otherwise, search right
-        return self.search(node.left, target) if target < node.key else self.search(node.right, target)
+    public BinarySearchTree() {
+        root = null;
+    }
 
-    # Requirement Part 3: In-Order Traversal (Left-Root-Right)
-    def inorder_print(self, current_node):
-        if current_node:
-            self.inorder_print(current_node.left)
-            print(f"{current_node.key}", end=" ")
-            self.inorder_print(current_node.right)
+    // Recursive insertion (matches Python insert)
+    public Node insert(Node root, int key) {
+        if (root == null) {
+            return new Node(key);
+        }
 
-    # Requirement Part 3: Find Minimum
-    def get_min_value(self, current_node):
-        # The smallest value is always the 'leftmost' leaf
-        if current_node is None:
-            return None
-        
-        while current_node.left:
-            current_node = current_node.left
-        return current_node.key
+        if (key < root.key) {
+            root.left = insert(root.left, key);
+        } else {
+            root.right = insert(root.right, key);
+        }
 
-# Requirement Part 2: Tree Data & Testing
-if __name__ == "__main__":
-    my_tree = BinarySearchTree()
-    dataset = [50, 30, 70, 20, 40, 60, 80]
+        return root;
+    }
 
-    # Data Insertion
-    for item in dataset:
-        my_tree.root = my_tree.insert(my_tree.root, item)
+    // Recursive search (returns Node like Python version)
+    public Node search(Node node, int target) {
+        if (node == null || node.key == target) {
+            return node;
+        }
 
-    # Verification 1: Search for 60
-    found_node = my_tree.search(my_tree.root, 60)
-    print(f"Found: 60" if found_node else "Not Found: 60")
+        if (target < node.key) {
+            return search(node.left, target);
+        } else {
+            return search(node.right, target);
+        }
+    }
 
-    # Verification 2: Search for 99
-    missing_node = my_tree.search(my_tree.root, 99)
-    print(f"Found: 99" if missing_node else "Not Found: 99")
+    // In-order traversal (Left - Root - Right)
+    public void inorderPrint(Node node) {
+        if (node != null) {
+            inorderPrint(node.left);
+            System.out.print(node.key + " ");
+            inorderPrint(node.right);
+        }
+    }
 
-    # Part 3: Extension Results
-    print("\nIn-Order Traversal Output:")
-    my_tree.inorder_print(my_tree.root)
-    
-    print(f"\n\nSmallest Value Found: {my_tree.get_min_value(my_tree.root)}")
+    // Find minimum value (leftmost node)
+    public Integer getMinValue(Node node) {
+        if (node == null) {
+            return null;
+        }
+
+        while (node.left != null) {
+            node = node.left;
+        }
+
+        return node.key;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BinarySearchTree myTree = new BinarySearchTree();
+
+        int[] dataset = {50, 30, 70, 20, 40, 60, 80};
+
+        // Data insertion
+        for (int item : dataset) {
+            myTree.root = myTree.insert(myTree.root, item);
+        }
+
+        // Search 60
+        Node foundNode = myTree.search(myTree.root, 60);
+        System.out.println(foundNode != null ? "Found: 60" : "Not Found: 60");
+
+        // Search 99
+        Node missingNode = myTree.search(myTree.root, 99);
+        System.out.println(missingNode != null ? "Found: 99" : "Not Found: 99");
+
+        // In-order traversal
+        System.out.println("\nIn-Order Traversal Output:");
+        myTree.inorderPrint(myTree.root);
+
+        // Minimum value
+        System.out.println("\n\nSmallest Value Found: " + myTree.getMinValue(myTree.root));
+    }
+}

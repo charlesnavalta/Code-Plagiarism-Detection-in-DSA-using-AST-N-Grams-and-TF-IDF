@@ -43,11 +43,11 @@ def create_app():
         while retries > 0:
             try:
                 # 🌟 THE FIX: Add db.drop_all() right before create_all()
-                print("Falsicode: Dropping old tables to reset schema...")
-                db.drop_all() 
+                #print("Falsicode: Dropping old tables to reset schema...")
+                #db.drop_all() 
                 
-                print("Falsicode: Creating new tables with updated schema...")
-                db.create_all() 
+                #print("Falsicode: Creating new tables with updated schema...")
+                #db.create_all() 
                 
                 connected = True
                 break

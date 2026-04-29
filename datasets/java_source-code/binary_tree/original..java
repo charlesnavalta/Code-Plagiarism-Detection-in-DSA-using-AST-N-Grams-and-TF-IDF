@@ -1,26 +1,39 @@
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
+import java.util.ArrayList;
 
+class Node {
+    int value;
+    Node left, right;
 
-def inorder_traversal(root):
-    if root is None:
-        return []
+    public Node(int value) {
+        this.value = value;
+        left = right = null;
+    }
+}
 
-    result = []
-    result.extend(inorder_traversal(root.left))
-    result.append(root.value)
-    result.extend(inorder_traversal(root.right))
+public class Main {
 
-    return result
+    // Inorder traversal that returns a list
+    public static ArrayList<Integer> inorderTraversal(Node root) {
+        ArrayList<Integer> result = new ArrayList<>();
 
-if __name__ == "__main__":
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
+        if (root == null) {
+            return result;
+        }
 
-    print(inorder_traversal(root))
+        result.addAll(inorderTraversal(root.left));
+        result.add(root.value);
+        result.addAll(inorderTraversal(root.right));
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Node root = new Node(1);
+        root.left = new Node(2);
+        root.right = new Node(3);
+        root.left.left = new Node(4);
+        root.left.right = new Node(5);
+
+        System.out.println(inorderTraversal(root));
+    }
+}

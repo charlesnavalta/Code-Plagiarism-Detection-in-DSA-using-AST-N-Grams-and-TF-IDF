@@ -1,43 +1,77 @@
-class Node:
-    def __init__(self, key):
-        self.key = key
-        self.left = None
-        self.right = None
+class Node {
+    int key;
+    Node left, right;
 
+    public Node(int key) {
+        this.key = key;
+        left = right = null;
+    }
+}
 
-class BinarySearchTree:
-    def __init__(self):
-        self.root = None
+class BinarySearchTree {
+    Node root;
 
-    def insert(self, key):
-        new_node = Node(key)
+    public BinarySearchTree() {
+        root = null;
+    }
 
-        if self.root is None:
-            self.root = new_node
-            return
+    // Iterative insert
+    public void insert(int key) {
+        Node newNode = new Node(key);
 
-        current = self.root
-        while True:
-            if key < current.key:
-                if current.left is None:
-                    current.left = new_node
-                    break
-                current = current.left
-            else:
-                if current.right is None:
-                    current.right = new_node
-                    break
-                current = current.right
+        if (root == null) {
+            root = newNode;
+            return;
+        }
 
-    def search(self, key):
-        current = self.root
+        Node current = root;
 
-        while current:
-            if current.key == key:
-                return True
-            elif key < current.key:
-                current = current.left
-            else:
-                current = current.right
+        while (true) {
+            if (key < current.key) {
+                if (current.left == null) {
+                    current.left = newNode;
+                    break;
+                }
+                current = current.left;
+            } else {
+                if (current.right == null) {
+                    current.right = newNode;
+                    break;
+                }
+                current = current.right;
+            }
+        }
+    }
 
-        return False
+    // Iterative search
+    public boolean search(int key) {
+        Node current = root;
+
+        while (current != null) {
+            if (current.key == key) {
+                return true;
+            } else if (key < current.key) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+        }
+
+        return false;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BinarySearchTree bst = new BinarySearchTree();
+
+        int[] values = {50, 30, 70, 20, 40, 60, 80};
+
+        for (int v : values) {
+            bst.insert(v);
+        }
+
+        System.out.println(bst.search(60) ? "Found" : "Not Found");
+        System.out.println(bst.search(100) ? "Found" : "Not Found");
+    }
+}

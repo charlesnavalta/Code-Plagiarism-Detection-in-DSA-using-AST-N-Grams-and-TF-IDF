@@ -1,26 +1,60 @@
-def sort_list(values):
-    if len(values) <= 1:
-        return values
+public class Main {
 
-    middle = len(values) // 2
-    first_half = sort_list(values[:middle])
-    second_half = sort_list(values[middle:])
+    public static int[] sortList(int[] values) {
+        if (values.length <= 1) {
+            return values;
+        }
 
-    return combine(first_half, second_half)
+        int middle = values.length / 2;
 
+        int[] firstHalf = new int[middle];
+        int[] secondHalf = new int[values.length - middle];
 
-def combine(a, b):
-    merged = []
-    x = y = 0
+        for (int i = 0; i < middle; i++) {
+            firstHalf[i] = values[i];
+        }
 
-    while x < len(a) and y < len(b):
-        if a[x] < b[y]:
-            merged.append(a[x])
-            x += 1
-        else:
-            merged.append(b[y])
-            y += 1
+        for (int i = middle; i < values.length; i++) {
+            secondHalf[i - middle] = values[i];
+        }
 
-    merged.extend(a[x:])
-    merged.extend(b[y:])
-    return merged
+        int[] left = sortList(firstHalf);
+        int[] right = sortList(secondHalf);
+
+        return combine(left, right);
+    }
+
+    public static int[] combine(int[] a, int[] b) {
+        int[] merged = new int[a.length + b.length];
+
+        int x = 0, y = 0, k = 0;
+
+        while (x < a.length && y < b.length) {
+            if (a[x] < b[y]) {
+                merged[k++] = a[x++];
+            } else {
+                merged[k++] = b[y++];
+            }
+        }
+
+        while (x < a.length) {
+            merged[k++] = a[x++];
+        }
+
+        while (y < b.length) {
+            merged[k++] = b[y++];
+        }
+
+        return merged;
+    }
+
+    public static void main(String[] args) {
+        int[] values = {38, 27, 43, 3, 9, 82, 10};
+
+        int[] sorted = sortList(values);
+
+        for (int v : sorted) {
+            System.out.print(v + " ");
+        }
+    }
+}

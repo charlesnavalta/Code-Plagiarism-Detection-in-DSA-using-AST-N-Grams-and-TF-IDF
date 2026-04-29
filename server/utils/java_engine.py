@@ -11,14 +11,33 @@ def process_java_file(content):
     except Exception:
         return "", []
 
+    # --- THE FIX: Cross-Language Dictionary Mapping ---
+    # We must force Java AST nodes to speak "Python AST" so TF-IDF can match them.
+    java_to_python_map = {
+        "MethodDeclaration": "FunctionDef_FUNC",
+        "VariableDeclarator": "Name_ID",
+        "MemberReference": "Name_ID",       # Don't ignore this! It's a variable usage.
+        "Literal": "Constant_CONST",
+        "ClassDeclaration": "ClassDef_CLASS",
+        "MethodInvocation": "Call_CALL",
+        "IfStatement": "If",
+        "ForStatement": "For",
+        "WhileStatement": "While",
+        "ReturnStatement": "Return"
+    }
+
     tokens = []
     for path, node in tree:
         node_type = type(node).__name__
-        # Ignore boilerplate/literals to focus purely on structural logic
-        if node_type not in ['Literal', 'MemberReference', 'TypeArgument']:
-            # Attempt to extract line number for highlighting
+        
+        # We only ignore TypeArguments now to keep the logic clean
+        if node_type not in ['TypeArgument']:
+            
+            # Map the Java node to the Python equivalent if it exists in our dictionary
+            token_str = java_to_python_map.get(node_type, node_type)
+            
             lineno = node.position.line if hasattr(node, 'position') and node.position else -1
-            tokens.append((node_type, lineno))
+            tokens.append((token_str, lineno))
             
     doc_str = " ".join([t[0] for t in tokens])
     return doc_str, tokens
