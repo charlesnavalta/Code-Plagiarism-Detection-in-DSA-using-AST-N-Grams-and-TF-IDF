@@ -1,21 +1,46 @@
-def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    pivot = arr[-1]
-    left, right = partition(arr[:-1], pivot)
+public class type_3_structural {
 
-    return quick_sort(left) + [pivot] + quick_sort(right)
+    public static List<Integer> customSort(List<Integer> dataSet) {
+        // Evaluate base condition using a variable instead of an inline check
+        int length = dataSet.size();
+        if (length < 2) {
+            return dataSet;
+        }
 
+        // STRUCTURAL SHIFT 1: Use the FIRST element as the pivot instead of the LAST
+        int pivotNode = dataSet.get(0);
+        List<Integer> lowerHalf = new ArrayList<>();
+        List<Integer> upperHalf = new ArrayList<>();
 
-def partition(arr, pivot):
-    smaller = []
-    larger = []
+        // STRUCTURAL SHIFT 2: Replace the 'for' loop with a 'while' loop
+        int index = 1; // Start at 1 because index 0 is our pivot
+        while (index < length) {
+            int currentVal = dataSet.get(index);
+            
+            // STRUCTURAL SHIFT 3: Flip the if/else logic (check 'greater than' first)
+            if (currentVal > pivotNode) {
+                upperHalf.add(currentVal);
+            } else {
+                lowerHalf.add(currentVal);
+            }
+            index++;
+        }
 
-    for value in arr:
-        if value <= pivot:
-            smaller.append(value)
-        else:
-            larger.append(value)
+        // Recursively sort and merge
+        List<Integer> finalResult = new ArrayList<>();
+        finalResult.addAll(customSort(lowerHalf));
+        finalResult.add(pivotNode);
+        finalResult.addAll(customSort(upperHalf));
 
-    return smaller, larger
+        return finalResult;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> rawNumbers = Arrays.asList(10, 7, 8, 9, 1, 5);
+        System.out.println(customSort(rawNumbers));
+    }
+}

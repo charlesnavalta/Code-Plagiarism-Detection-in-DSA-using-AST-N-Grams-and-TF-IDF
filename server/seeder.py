@@ -548,7 +548,8 @@ def run_smart_seed(db):
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3-MixedAttack.py"
             },
 
-            #Java Assignments Submissions
+            # Java Assignments Submissions
+            # Assignment 1 Submissions - Quick Sort Implementation (Java)
             {
                 "student_username": "charles",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
@@ -558,53 +559,35 @@ def run_smart_seed(db):
             {
                 "student_username": "nicolo",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
-                "filename": "type_1_exact_of_structucal4.java",
-                "file_path": "datasets/java_source-code/quick_sort/type_1_exact_of_structucal4.java"
+                "filename": "type_1_exact_of_copy.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_1_exact_of_copy.java"
             },
             {
                 "student_username": "dan",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
-                "filename": "type_2_renamed_of_Structural4.java",
-                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed_of_Structural4.java"
+                "filename": "type_2_renamed_of_renamed.java",
+                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed_of_renamed.java"
             },
             {
                 "student_username": "mary",
-                "assignment_title": "1. Quick Sort Implementation (Java)",
-                "filename": "type_2_renamed.java",
-                "file_path": "datasets/java_source-code/quick_sort/type_2_renamed.java"
-            },
-            {
-                "student_username": "ramon",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_2_renamed2.java"
             },
             {
-                "student_username": "jude",
+                "student_username": "ramon",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_3_structural.java"
             },
             {
-                "student_username": "jm",
+                "student_username": "jude",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_3_structural2.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_3_structural2.java"
             },
-            {
-                "student_username": "patrick",
-                "assignment_title": "1. Quick Sort Implementation (Java)",
-                "filename": "type_3_structural3.java",
-                "file_path": "datasets/java_source-code/quick_sort/type_3_structural3.java"
-            },
-            {
-                "student_username": "rachel",
-                "assignment_title": "1. Quick Sort Implementation (Java)",
-                "filename": "type_3_structural4.java",
-                "file_path": "datasets/java_source-code/quick_sort/type_3_structural4.java"
-            },
 
-            #Assignment 2 Submissions - Merge Sort Implementation (Java)
+            # Assignment 2 Submissions - Merge Sort Implementation (Java)
             {
                 "student_username": "charles",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
@@ -635,14 +618,8 @@ def run_smart_seed(db):
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/merge_sort/type_3_structural.java"
             },
-            {
-                "student_username": "jude",
-                "assignment_title": "2. Merge Sort Implementation (Java)",
-                "filename": "type_3_structural2.java",
-                "file_path": "datasets/java_source-code/merge_sort/type_3_structural2.java"
-            },
 
-            #Assignment 3 Submissions - Singly Linked List (Java)
+            # Assignment 3 Submissions - Singly Linked List (Java)
             {
                 "student_username": "jm",
                 "assignment_title": "3. Singly Linked List (Java)",
@@ -674,7 +651,7 @@ def run_smart_seed(db):
                 "file_path": "datasets/java_source-code/linked_list/type_3_structural.java"
             },
 
-            #Assignment 4 Submissions - Binary Tree Traversals
+            # Assignment 4 Submissions - Binary Tree Traversals
             {
                 "student_username": "charles",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
@@ -706,7 +683,7 @@ def run_smart_seed(db):
                 "file_path": "datasets/java_source-code/binary_tree/type_3_structural2.java"
             },
 
-            #Binary Search Tree (BST) Operations Submissions
+            # Assignment 5 Submissions - Binary Search Tree (BST) Operations
             {
                 "student_username": "jude",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",

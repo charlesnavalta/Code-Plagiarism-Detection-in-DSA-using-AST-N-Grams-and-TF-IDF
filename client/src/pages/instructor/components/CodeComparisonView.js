@@ -10,7 +10,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     const getPlagiarismType = (pair) => {
         const score = pair.score;
 
-        if (score >= 95) return { 
+        if (score === 100) return { 
             label: "Type I: Exact Copying", 
             color: "#ef4444",
             description: "The AST N-Grams engine detected an exceptionally high structural match. This indicates a direct replication where the logic, sequence, and syntax are virtually identical."

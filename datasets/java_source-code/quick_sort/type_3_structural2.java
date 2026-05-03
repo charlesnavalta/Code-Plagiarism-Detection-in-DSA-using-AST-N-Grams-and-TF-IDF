@@ -1,23 +1,51 @@
-def quick_sort(arr, low=0, high=None):
-    if high is None:
-        high = len(arr) - 1
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    if low < high:
-        pivot_index = partition(arr, low, high)
-        quick_sort(arr, low, pivot_index - 1)
-        quick_sort(arr, pivot_index + 1, high)
+public class type_3_structural2 {
 
-    return arr
+    public static List<Integer> advancedSort(List<Integer> collection) {
+        // STRUCTURAL SHIFT 1: Split the base case into two separate 'if' blocks 
+        // and use .isEmpty() instead of checking the size.
+        if (collection.isEmpty()) {
+            return collection;
+        }
+        if (collection.size() == 1) {
+            return collection;
+        }
 
+        // STRUCTURAL SHIFT 2: Extract the middle element and physically remove it 
+        // from a copied list so we don't have to track indices.
+        List<Integer> workingList = new ArrayList<>(collection);
+        int middleIndex = workingList.size() / 2;
+        int pivotItem = workingList.remove(middleIndex); 
 
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
+        List<Integer> leftBin = new ArrayList<>();
+        List<Integer> rightBin = new ArrayList<>();
 
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
+        // STRUCTURAL SHIFT 3: Use an Enhanced For-Each loop instead of an indexed loop.
+        // Because we removed the pivot above, we don't need to skip it here.
+        for (Integer item : workingList) {
+            
+            // STRUCTURAL SHIFT 4: Use a logical NOT (!) operator to flip the condition,
+            // rather than just changing the > or < sign.
+            if (!(item > pivotItem)) { 
+                leftBin.add(item);
+            } else {
+                rightBin.add(item);
+            }
+        }
 
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
+        // Recursively sort and merge using the constructor for the first addAll
+        List<Integer> output = new ArrayList<>(advancedSort(leftBin));
+        output.add(pivotItem);
+        output.addAll(advancedSort(rightBin));
+
+        return output;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> startingData = Arrays.asList(10, 7, 8, 9, 1, 5);
+        System.out.println(advancedSort(startingData));
+    }
+}

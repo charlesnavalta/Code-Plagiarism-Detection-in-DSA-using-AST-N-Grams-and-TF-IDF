@@ -10,12 +10,13 @@ def compare_all_files(file_data, ngram_bounds):
     filenames = [f['name'] for f in file_data]
     tokens_list = [f['tokens'] for f in file_data] 
 
-    # --- THE FIX ---
-    # Removed max_df entirely. We must evaluate every single structural token, 
-    # even if 100% of the class copied the exact same structure.
+    # Dynamic max_df safely filters out boilerplate for large batches
+    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.85
+
     vectorizer = TfidfVectorizer(
         ngram_range=ngram_bounds, 
-        sublinear_tf=True
+        sublinear_tf=True, 
+        max_df=dynamic_max_df 
     )
     
     try:
@@ -31,15 +32,29 @@ def compare_all_files(file_data, ngram_bounds):
             for j in range(i + 1, len(filenames)):
                 score = round(sim_matrix[i][j] * 100, 2)
                 
-                status = "Low"
-                if score > 80: 
-                    status = "High"
-                elif score >= 50: 
-                    status = "Medium"
-
                 if score > 0:
                     vec_i = tfidf_matrix[i].toarray()[0]
                     vec_j = tfidf_matrix[j].toarray()[0]
+
+                    # --- NEW MATH: CONTAINMENT SKELETON METRIC ---
+                    weight_i = np.sum(vec_i)
+                    weight_j = np.sum(vec_j)
+                    
+                    shared_weight = np.sum([min(vec_i[idx], vec_j[idx]) for idx in range(len(feature_names))])
+                    
+                    if min(weight_i, weight_j) > 0:
+                        containment_score = round((shared_weight / min(weight_i, weight_j)) * 100, 2)
+                    else:
+                        containment_score = 0.0
+                    
+                    # Use the HIGHER of the two scores for the final output
+                    final_score = max(score, containment_score)
+                    
+                    status = "Low"
+                    if final_score > 80: 
+                        status = "High"
+                    elif final_score >= 50: 
+                        status = "Medium"
 
                     shared_ngrams = set()
                     for idx in range(len(feature_names)):
@@ -71,7 +86,6 @@ def compare_all_files(file_data, ngram_bounds):
                             original_sequence = [t[0] for t in tokens_for_case[k:k+ngram_size]]
                             ngram_str = " ".join(s.lower() for s in original_sequence)
                             
-                            # ONLY extract the pattern if it exists in BOTH files
                             if ngram_str in shared_set and ngram_str not in extracted_patterns:
                                 real_weight = ngram_weight_map.get(ngram_str, 0.0)
                                 normalized_score = round((real_weight / max_possible_idf) * 100, 2) if max_possible_idf > 0 else 0
@@ -82,39 +96,28 @@ def compare_all_files(file_data, ngram_bounds):
                                     "is_shared": True
                                 }
                                 
-                        # Sort these SHARED patterns by highest weight descending
                         suspicious_patterns = sorted(extracted_patterns.values(), key=lambda x: x['weight'], reverse=True)
                         total_patterns = len(suspicious_patterns)
 
-                        # --- The Representative Sample Strategy ---
-                        # If the file is small (fewer than 40 patterns), show them all.
                         if total_patterns <= 40:
                             return suspicious_patterns
 
-                        # Otherwise, take a strategic sample:
-                        # 1. Take the Top 20 (Absolute highest proof of copying)
                         representative_sample = suspicious_patterns[:20]
-
-                        # 2. Take 5 from the middle (Average structural overlap)
                         mid_index = total_patterns // 2
                         representative_sample.extend(suspicious_patterns[mid_index : mid_index + 5])
-
-                        # 3. Take 5 from the bottom (Common, low-weight boilerplate)
                         representative_sample.extend(suspicious_patterns[-5:])
 
                         return representative_sample
 
-                    # Generate ONE synchronized list of the most suspicious shared patterns
                     top_shared_patterns = get_top_shared_patterns(tokens_i, shared_ngrams, ngram_size=3)
 
                     results.append({
                         "file1": filenames[i], 
                         "file2": filenames[j], 
-                        "score": score, 
+                        "score": final_score, # This now sends the optimized score to the React UI
                         "status": status,
                         "lines1": lines_i, 
                         "lines2": lines_j,
-                        # Pass the exact same list to both panes so the UI mirrors perfectly side-by-side
                         "ast_xai_1": top_shared_patterns, 
                         "ast_xai_2": top_shared_patterns  
                     })
