@@ -244,3 +244,84 @@
     from { opacity: 0; transform: translateY(-20px); } 
     to { opacity: 1; transform: translateY(0); } 
 }
+
+/* =========================================
+   UPDATES FOR ASSIGNMENT STREAM
+   ========================================= */
+
+.header-titles h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 0 0 5px 0;
+}
+
+.header-titles .sub-text {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+}
+
+.assignment-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.assignment-meta-top .task-id {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+    font-size: 0.7rem; 
+    color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.1); /* Translucent blue tint */
+    border: 1px solid rgba(59, 130, 246, 0.2); /* Very subtle border */
+    padding: 4px 10px;
+    border-radius: 6px; /* Soft, modern corners */
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.assignment-meta-top .sub-count {
+    position: static; /* Remove absolute positioning from old CSS */
+    font-size: 0.85rem; 
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.sub-count.no-subs {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+}
+
+.sub-count.has-subs {
+    background: rgba(16, 185, 129, 0.15); /* Subtle green background */
+    color: var(--status-green); /* Highlights when students start submitting */
+}
+
+/* Subtle glow when submissions are ready to be audited */
+.btn-glass-action.ready-to-audit {
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #fff;
+}
+
+.btn-glass-action.ready-to-audit:hover {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.assignment-item-row.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.assignment-item-row.clickable-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+}

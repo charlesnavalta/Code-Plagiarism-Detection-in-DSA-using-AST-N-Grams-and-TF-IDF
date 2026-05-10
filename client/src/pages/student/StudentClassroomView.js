@@ -2,24 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
+import SubmitFileModal from './components/SubmitFileModal';
+import ViewAssignmentModal from './components/ViewAssignmentModal'; // <-- 1. Import new modal
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
+    const dashboardRef = useRef(null);
+    
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedFiles, setSelectedFiles] = useState({});
-    
-    // --- Dynamic Theme & Spatial Sync ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-    const workspaceRef = useRef(null);
+    const [theme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
-    useEffect(() => {
-        const handleSync = () => setTheme(localStorage.getItem('app-theme') || 'dark');
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
+    // Modal States
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+    const [activeAssignment, setActiveAssignment] = useState(null);
+    const [viewAssignment, setViewAssignment] = useState(null); // <-- 2. New state for viewing
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,8 +39,8 @@ const StudentClassroomView = () => {
     }, [id, navigate]);
 
     const handleMouseMove = (e) => {
-        if (!workspaceRef.current) return;
-        const cards = workspaceRef.current.querySelectorAll('.spatial-card');
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
         for (const card of cards) {
             const rect = card.getBoundingClientRect();
             card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
@@ -49,137 +48,136 @@ const StudentClassroomView = () => {
         }
     };
 
-    const handleFileChange = (assignmentId, event) => {
-        const file = event.target.files[0];
-        if (file) setSelectedFiles(prev => ({ ...prev, [assignmentId]: file }));
+    const handleOpenSubmission = (assignment) => {
+        if (assignment.has_submitted) return; 
+        setActiveAssignment(assignment);
+        setShowSubmitModal(true);
     };
 
-    const handleFileUpload = async (assignmentId) => {
-        const fileToUpload = selectedFiles[assignmentId];
-        // Dynamic error message based on file type
-        if (!fileToUpload) return alert("Please select a file to deploy.");
-        
-        const formData = new FormData();
-        formData.append('file', fileToUpload);
-        try {
-            await api.post(`/classrooms/${id}/assignments/${assignmentId}/submit`, formData);
-            alert("Node Deployment Successful.");
-            setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
-            
-            setAssignments(prev => prev.map(a => 
-                a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
-            ));
-        } catch (error) { 
-            alert(error.response?.data?.error || "Upload failed."); 
-        }
+    const handleSubmissionSuccess = (assignmentId) => {
+        setAssignments(assignments.map(a => 
+            a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
+        ));
     };
 
-    if (loading) return <div className={`nexus-loader ${theme}`}><div className="quantum-spinner"></div></div>;
-    if (!classroom) return null;
+    if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
+
+    const completedTasks = assignments.filter(a => a.has_submitted).length;
+    const totalTasks = assignments.length;
+    const progressPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={workspaceRef} onMouseMove={handleMouseMove}>
+        <div className={`falsicode-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             <div className="aurora-canvas">
-                <div className="aurora-blob blob-primary"></div>
-                <div className="aurora-blob blob-secondary"></div>
+                <div className="aurora-blob blob-1"></div>
+                <div className="aurora-blob blob-2"></div>
             </div>
 
-            <div className="nexus-content">
-                <header className="spatial-card nexus-action-header fade-in">
-                    <div className="header-box-content">
-                        <div className="header-top-row">
-                            <button onClick={() => navigate('/student')} className="back-pill-nexus">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                                Return to Hub
-                            </button>
+            <div className="classroom-layout">
+                <header className="spatial-card cinematic-header fade-in-down">
+                    <div className="header-inner">
+                        <div className="top-meta">
+                            <button onClick={() => navigate('/student')} className="neo-back-btn">Hub</button>
+                            <div className="glass-chip">
+                                <span className="mono-label">STUDENT WORKSPACE</span>
+                            </div>
+                        </div>
+                        <h1 className="hero-title">{classroom?.name}</h1>
+                        <div className="instructor-badge">
+                            <span className="ins-label" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textTransform: 'uppercase', marginRight: '10px' }}>Instructor:</span>
+                            <span className="ins-name" style={{ fontWeight: 'bold' }}>{classroom?.instructor}</span>
                         </div>
                         
-                        <div className="identity-block">
-                            <h1 className="nexus-title-main">{classroom.name}</h1>
-                            
-                            <div className="instructor-row-nexus">
-                                <span className="ins-label">Instructor</span>
-                                <div className="ins-name-pill">
-                                    <span className="ins-name-text">{classroom.instructor}</span>
-                                </div>
+                        <div className="student-stats-row" style={{ marginTop: '20px', maxWidth: '400px' }}>
+                            <div style={{ height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', overflow: 'hidden', marginBottom: '8px' }}>
+                                <div style={{ height: '100%', width: `${progressPercentage}%`, background: '#10b981', borderRadius: '10px', transition: 'width 0.5s ease-out', boxShadow: '0 0 10px rgba(16, 185, 129, 0.5)' }}></div>
                             </div>
+                            <span style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.8)', fontWeight: '600' }}>{completedTasks} / {totalTasks} Tasks Completed</span>
                         </div>
                     </div>
                 </header>
 
-                <section className="assignment-nexus slide-up">
-                    <div className="stream-header-nexus">
-                        <h2>Assignment Queue</h2>
-                        <div className="label-line-nexus"></div>
+                <main className="content-hub">
+                    <div className="hub-header">
+                        <div className="header-titles">
+                            <h2>Assignment Queue</h2>
+                            <p className="sub-text">Review requirements and deploy your source code nodes.</p>
+                        </div>
                     </div>
-                    
-                    <div className="assignment-stack">
-                        {assignments.length === 0 ? (
-                            <div className="spatial-card empty-card-nexus">
-                                <p>No active protocols detected in this cluster.</p>
-                            </div>
-                        ) : (
-                            assignments.map((assignment, index) => {
-                                // --- UPDATED: Safety net allows both .java and .py if backend is missing the language field ---
-                                const isJava = assignment.language?.toLowerCase() === 'java';
-                                const fileExtension = isJava ? '.java' : '.py, .java';
-                                
-                                return (
-                                <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
-                                    <div className="card-glass-layer"></div>
-                                    <div className="row-grid-content">
-                                        <div className="row-info-nexus">
-                                            <span className="row-op-tag">
-                                                OP_TASK_0{index + 1} 
-                                                <span style={{color: isJava ? '#fb923c' : '#60a5fa', marginLeft: '10px'}}>
-                                                    [{isJava ? 'JAVA' : 'PYTHON'}]
-                                                </span>
-                                            </span>
-                                            <h3>{assignment.title}</h3>
-                                            <p>{assignment.description || "Parameters standard."}</p>
-                                        </div>
-                                        
-                                        <div className="row-actions-nexus">
-                                            {assignment.has_submitted ? (
-                                                <div className="submitted-status-group">
-                                                    <span className="status-pill success">✓ Turned In</span>
-                                                    <div className="score-display">
-                                                        <span className="score-label">FALSICODE SCORE</span>
-                                                        <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
-                                                            {assignment.score}
-                                                        </span>
-                                                    </div>
-                                                </div>
+
+                    <div className="assignment-grid">
+                        {assignments.map((assignment, idx) => {
+                            const isLocked = assignment.has_submitted;
+                            const language = assignment.language ? assignment.language.toUpperCase() : 'PYTHON';
+
+                            return (
+                                /* 3. Added clickable-row class and onClick to open the View modal */
+                                <div 
+                                    key={assignment.id} 
+                                    className={`assignment-item-row clickable-row ${isLocked ? 'locked-card' : ''}`}
+                                    onClick={() => setViewAssignment(assignment)}
+                                >
+                                    <div className="assignment-meta-top">
+                                        <span className="task-id">
+                                            TASK {String(idx + 1).padStart(2, '0')} • {language}
+                                        </span>
+                                        <span className={`status-badge ${isLocked ? 'badge-completed' : 'badge-pending'}`}>
+                                            {isLocked ? '✓ Turned In' : 'Pending'}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3>{assignment.title}</h3>
+                                    <p>{assignment.description}</p>
+                                    
+                                    <div className="card-footer-split" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div className="score-display">
+                                            {isLocked ? (
+                                                <>
+                                                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>FALSICODE SCORE</span>
+                                                    <span style={{ fontWeight: 'bold', color: assignment.score === 'Pending' ? '#f59e0b' : 'white' }}>{assignment.score}</span>
+                                                </>
                                             ) : (
                                                 <>
-                                                    <input 
-                                                        type="file" 
-                                                        accept={fileExtension} 
-                                                        id={`f-${assignment.id}`} 
-                                                        style={{display: 'none'}} 
-                                                        onChange={(e) => handleFileChange(assignment.id, e)} 
-                                                    />
-                                                    
-                                                    {!selectedFiles[assignment.id] ? (
-                                                        <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
-                                                            Initialize {isJava ? 'Java' : 'Source'} File
-                                                        </label>
-                                                    ) : (
-                                                        <div className="nexus-deploy-group">
-                                                            <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
-                                                            <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
-                                                        </div>
-                                                    )}
+                                                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>MAX SCORE</span>
+                                                    <span style={{ fontWeight: 'bold' }}>{assignment.max_score} pts</span>
                                                 </>
                                             )}
                                         </div>
+
+                                        <button 
+                                            className={`btn-glass-action ${isLocked ? 'btn-disabled' : 'btn-active'}`} 
+                                            onClick={(e) => {
+                                                /* 4. Stop propagation so clicking the button doesn't open the View modal */
+                                                e.stopPropagation();
+                                                handleOpenSubmission(assignment);
+                                            }}
+                                            disabled={isLocked}
+                                            style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                                        >
+                                            {isLocked ? '🔒 Node Locked' : 'Initialize Source File →'}
+                                        </button>
                                     </div>
                                 </div>
-                            )})
-                        )}
+                            );
+                        })}
                     </div>
-                </section>
+                </main>
             </div>
+
+            <SubmitFileModal 
+                isOpen={showSubmitModal}
+                onClose={() => setShowSubmitModal(false)}
+                assignment={activeAssignment}
+                classroomId={id}
+                onSuccess={handleSubmissionSuccess}
+            />
+
+            {/* 5. Inject the View Modal */}
+            <ViewAssignmentModal 
+                isOpen={!!viewAssignment}
+                onClose={() => setViewAssignment(null)}
+                assignment={viewAssignment}
+            />
         </div>
     );
 };

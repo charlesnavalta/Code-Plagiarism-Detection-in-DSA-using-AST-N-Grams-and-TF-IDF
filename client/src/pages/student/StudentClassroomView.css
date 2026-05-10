@@ -96,17 +96,6 @@
 .row-info-nexus h3 { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.5px; }
 .row-info-nexus p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0; }
 
-.nexus-select-btn {
-    background: var(--text-main); color: var(--bg-app); padding: 16px 32px; border-radius: 14px;
-    font-weight: 800; font-size: 0.9rem; cursor: pointer; text-align: center; transition: 0.3s;
-}
-.nexus-select-btn:hover { opacity: 0.85; transform: scale(1.02); }
-
-.nexus-deploy-group { width: 100%; display: flex; flex-direction: column; gap: 12px; }
-.nexus-file-pill { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 12px; text-align: center; }
-.nexus-file-pill code { color: var(--accent); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-.nexus-deploy-btn { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-.nexus-deploy-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
 /* LOADING */
 .nexus-loader { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -163,4 +152,47 @@
     font-style: italic;
     font-size: 0.9rem;
     padding-top: 2px;
+}
+
+/* Student Specific UI Additions */
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b; /* Amber */
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981; /* Green */
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.locked-card {
+    opacity: 0.75;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.locked-card:hover {
+    background: rgba(0, 0, 0, 0.2); /* Remove hover highlight if locked */
+    transform: none;
+}
+
+.assignment-item-row.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.assignment-item-row.clickable-row:not(.locked-card):hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
 }

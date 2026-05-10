@@ -4,10 +4,10 @@ import api from '../../services/api';
 import './InstructorTheme.css'; 
 import './InstructorClassroomView.css';
 
-
 // Import our isolated components
 import CreateAssignmentModal from './components/CreateAssignmentModal';
 import SubmissionsAuditModal from './components/SubmissionsAuditModal';
+import EditAssignmentModal from './components/EditAssignmentModal'; // <-- Newly added modal
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -25,6 +25,9 @@ const InstructorClassroomView = () => {
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [analysisResults, setAnalysisResults] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    
+    // NEW: State to track which assignment is currently being edited
+    const [editingAssignment, setEditingAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,12 +76,19 @@ const InstructorClassroomView = () => {
             const res = await api.post(`/analyze/${selectedAssignment.id}`, {});
             setAnalysisResults(res.data.results);
         } catch (error) {
-            // Detailed error logging added here
             console.error("Full Backend Error:", error);
             alert("Analysis failed: " + (error.response?.data?.error || error.message));
         } finally {
             setIsAnalyzing(false);
         }
+    };
+
+    // NEW: Function to handle the successful update from the modal
+    const handleAssignmentUpdated = (updatedAssignment) => {
+        const updatedList = assignments.map(a => 
+            a.id === updatedAssignment.id ? updatedAssignment : a
+        );
+        setAssignments(updatedList);
     };
 
     if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
@@ -109,22 +119,55 @@ const InstructorClassroomView = () => {
 
                 <main className="content-hub">
                     <div className="hub-header">
-                        <h2>Assignment Stream</h2>
-                        <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>New Assignment</button>
+                        <div className="header-titles">
+                            <h2>Assignment Stream</h2>
+                            <p className="sub-text">Deploy coding tasks and run structural plagiarism scans on student submissions.</p>
+                        </div>
+                        <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>
+                            + Deploy New Task
+                        </button>
                     </div>
 
                     <div className="assignment-grid">
-                        {assignments.map((assignment, idx) => (
-                            <div key={assignment.id} className="assignment-item-row">
-                                <span className="task-id">TASK_0{idx + 1}</span>
-                                <span className="sub-count">{assignment.submission_count || 0} Submissions</span>
-                                <h3>{assignment.title}</h3>
-                                <p>{assignment.description}</p>
-                                <button className="btn-glass-action" onClick={() => handleViewSubmissions(assignment)}>
-                                    Audit Submissions & Analysis →
-                                </button>
-                            </div>
-                        ))}
+                        {assignments.map((assignment, idx) => {
+                            const subCount = assignment.submission_count || 0;
+                            const hasSubmissions = subCount > 0;
+
+                            return (
+                                /* 🌟 NEW: Added clickable-row class and onClick handler */
+                                <div 
+                                    key={assignment.id} 
+                                    className="assignment-item-row clickable-row"
+                                    onClick={() => {
+                                        console.log("Card clicked! Assignment:", assignment);
+                                        setEditingAssignment(assignment);
+                                    }}
+                                >
+                                    <div className="assignment-meta-top">
+                                        <span className="task-id">
+                                            TASK {String(idx + 1).padStart(2, '0')} • {assignment.language ? assignment.language.toUpperCase() : 'PYTHON'}
+                                        </span>
+                                        <span className={`sub-count ${hasSubmissions ? 'has-subs' : 'no-subs'}`}>
+                                            {subCount} {subCount === 1 ? 'Submission' : 'Submissions'}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3>{assignment.title}</h3>
+                                    <p>{assignment.description}</p>
+                                    
+                                    <button 
+                                        className={`btn-glass-action ${hasSubmissions ? 'ready-to-audit' : ''}`} 
+                                        onClick={(e) => {
+                                            /* 🌟 NEW: Stops the click from opening the edit modal */
+                                            e.stopPropagation(); 
+                                            handleViewSubmissions(assignment);
+                                        }}
+                                    >
+                                        {hasSubmissions ? 'Launch Plagiarism Audit →' : 'View Workspace →'}
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
                 </main>
             </div>
@@ -146,6 +189,15 @@ const InstructorClassroomView = () => {
                 onRunAnalysis={handleRunAnalysis}
                 classroomId={id} 
                 assignmentId={selectedAssignment?.id} 
+            />
+
+            {/* 🌟 NEW: Pass the classroomId prop here */}
+            <EditAssignmentModal
+                isOpen={!!editingAssignment}
+                assignment={editingAssignment}
+                onClose={() => setEditingAssignment(null)}
+                onAssignmentUpdated={handleAssignmentUpdated}
+                classroomId={id} 
             />
         </div>
     );
