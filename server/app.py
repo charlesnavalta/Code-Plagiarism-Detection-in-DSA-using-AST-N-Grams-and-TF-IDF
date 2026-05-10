@@ -42,16 +42,22 @@ def create_app():
         connected = False
         while retries > 0:
             try:
-                db.create_all() 
+                # 🌟 THE FIX: Add db.drop_all() right before create_all()
+                #print("Falsicode: Dropping old tables to reset schema...")
+                #db.drop_all() 
+                
+                #print("Falsicode: Creating new tables with updated schema...")
+                #db.create_all() 
+                
                 connected = True
                 break
-            except (OperationalError, Exception):
+            except (OperationalError, Exception) as e:
                 retries -= 1
-                print(f"Falsicode: Database not ready... retrying in 3s ({10-retries}/10)")
+                print(f"Falsicode: Database not ready... retrying in 3s ({10-retries}/10). Error: {e}")
                 time.sleep(3)
         
         if connected:
-            # Trigger the smart seeder from the separate file
+            # Trigger the smart seeder
             run_smart_seed(db)
         else:
             print("CRITICAL: Falsicode could not connect to database.")

@@ -6,18 +6,26 @@ class ASTTokenExtractor(ast.NodeVisitor):
 
     def generic_visit(self, node):
         node_type = type(node).__name__
+        # Default to -1 if the node (like a math operator) has no line number
         lineno = getattr(node, 'lineno', -1)
         
         token_str = node_type
+        
+        # --- THE FIX 1: Restored full sanitization to match Java ---
         if isinstance(node, ast.Name): 
-            token_str = f"{node_type}_ID"
+            token_str = "Name_ID"
         elif isinstance(node, ast.Constant): 
-            token_str = f"{node_type}_CONST"
+            token_str = "Constant_CONST"
         elif isinstance(node, ast.FunctionDef): 
-            token_str = f"{node_type}_FUNC"
+            token_str = "FunctionDef_FUNC"
+        elif isinstance(node, ast.Call): 
+            token_str = "Call_CALL"
+        elif isinstance(node, ast.ClassDef): 
+            token_str = "ClassDef_CLASS"
             
-        if lineno != -1:
-            self.tokens.append((token_str, lineno))
+        # --- THE FIX 2: NO IF STATEMENT ---
+        # We MUST append every single node to preserve structural integrity.
+        self.tokens.append((token_str, lineno))
             
         ast.NodeVisitor.generic_visit(self, node)
 

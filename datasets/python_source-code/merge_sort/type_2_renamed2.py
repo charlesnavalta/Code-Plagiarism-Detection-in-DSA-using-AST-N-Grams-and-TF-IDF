@@ -24,3 +24,7 @@ def combine(a, b):
     merged.extend(a[x:])
     merged.extend(b[y:])
     return merged
+
+if __name__ == "__main__":
+    data = [38, 27, 43, 3, 9, 82, 10]
+    print(sort_list(data))

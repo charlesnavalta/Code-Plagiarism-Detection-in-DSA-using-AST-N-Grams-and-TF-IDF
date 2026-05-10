@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import api from '../../../services/api'; 
 // IMPORT THE NEW COMPONENT
 import CodeComparisonView from './CodeComparisonView'; 
+import './SubmissionsAuditModal.css'; // Add this line
 
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {
     const [selectedPair, setSelectedPair] = useState(null);
@@ -16,7 +17,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
     const getScoreColor = (score) => {
         if (score >= 95) return "#ef4444"; // Type I: Red
         if (score >= 80) return "#f97316"; // Type II: Orange
-        if (score >= 70) return "#eab308"; // Type III: Yellow
+        if (score >= 50) return "#eab308"; // Type III: Yellow
         return "#10b981";                  // Safe: Green
     };
 

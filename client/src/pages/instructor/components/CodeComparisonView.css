@@ -328,3 +328,27 @@
     color: #cbd5e1;
     font-weight: 600;
 }
+
+/* Styling for the new Pattern Header Row and Score Badge */
+.pattern-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Subtle divider */
+}
+
+.pattern-weight-badge {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
