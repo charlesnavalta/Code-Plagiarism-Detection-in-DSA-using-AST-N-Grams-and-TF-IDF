@@ -30,8 +30,8 @@ const Login = () => {
         } catch (err) {
             console.error("Login Error Details:", err.response);
             const errorMessage = err.response?.data?.error || 
-                                 err.response?.data?.message || 
-                                 "Invalid Credentials or Server Offline";
+                                err.response?.data?.message || 
+                                "Invalid Credentials or Server Offline";
             alert(`Login Failed: ${errorMessage}`);
         } finally {
             setLoading(false);
@@ -97,7 +97,7 @@ const Login = () => {
                                 </svg>
                                 <input 
                                     type="text" 
-                                    placeholder="Email or mobile number" 
+                                    placeholder="Username or Email" 
                                     className="auth-styled-input"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)} 
