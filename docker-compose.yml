@@ -26,9 +26,11 @@ services:
     volumes:
       - ./server:/app
       - ./datasets:/app/datasets
-      - /app/uploads
+      # 🌟 THE FIX: Map uploads to a real folder so student code is never lost
+      - ./server/uploads:/app/uploads 
     env_file:
-      - .env
+      # 🌟 Ensures Docker reads the env file from the same folder as this yaml file
+      - .env 
     depends_on:
       - db
     environment:
@@ -72,6 +74,5 @@ services:
     depends_on:
       - db
 
-# Make sure 'volumes:' is all the way to the left!
 volumes:
   db_data:

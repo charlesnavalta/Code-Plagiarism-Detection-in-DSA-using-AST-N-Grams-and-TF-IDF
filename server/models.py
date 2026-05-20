@@ -4,38 +4,51 @@ from database import db
 from datetime import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
-# ==========================================
-# USER MODEL
-# ==========================================
+# ==============================================================================
+# 1. USER MODEL (Accounts & Authentication)
+# ==============================================================================
 class User(db.Model):
     __tablename__ = 'users'
 
+    # --- Core Identifiers ---
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     
+    # --- Roles & Status ---
     # User's permission level ('student', 'instructor', 'admin')
     role = db.Column(db.String(20), nullable=False, default='student') 
-    
     # Tracks if the user is allowed to log in ('active' or 'pending')
     status = db.Column(db.String(20), nullable=False, default='active') 
     
+    # --- 🌟 NEW: OTP Verification Columns ---
+    # Tracks if the user has successfully entered their 6-digit code
+    is_verified = db.Column(db.Boolean, default=False)
+    # Stores the currently active 6-digit code (e.g., '592841')
+    verification_code = db.Column(db.String(6), nullable=True)
+    # Stores the exact exact time the code expires (10 minutes after generation)
+    verification_expires = db.Column(db.DateTime, nullable=True)
+
+    # --- Timestamps ---
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # --- Helper Methods ---
     def set_password(self, password):
+        """Hashes the password securely before saving it to the database."""
         self.password = generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
+        """Compares a plain text password against the stored hash."""
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return f'<User {self.username} | Role: {self.role} | Status: {self.status}>'
+        return f'<User {self.username} | Role: {self.role} | Verified: {self.is_verified}>'
 
 
-# ==========================================
-# CLASSROOM MODEL (Google Classroom Style)
-# ==========================================
+# ==============================================================================
+# 2. CLASSROOM MODEL (Workspace & Grouping)
+# ==============================================================================
 class Classroom(db.Model):
     __tablename__ = 'classrooms'
 
@@ -50,8 +63,7 @@ class Classroom(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # 🛠️ FIX: Added cascade="all, delete-orphan"
-    # If an instructor is deleted, all their classrooms are deleted too
+    # Relationship: If an instructor is deleted, all their classrooms are deleted too
     instructor = db.relationship('User', backref=db.backref('classrooms', lazy=True, cascade="all, delete-orphan"))
 
     def __init__(self, name, instructor_id):
@@ -73,9 +85,10 @@ class Classroom(db.Model):
     def __repr__(self):
         return f'<Classroom {self.name} | Code: {self.invite_code}>'
 
-# ==========================================
-# ASSIGNMENT MODEL
-# ==========================================
+
+# ==============================================================================
+# 3. ASSIGNMENT MODEL (Tasks & Plagiarism Targets)
+# ==============================================================================
 class Assignment(db.Model):
     __tablename__ = 'assignments'
 
@@ -84,7 +97,7 @@ class Assignment(db.Model):
     description = db.Column(db.Text, nullable=True)
     max_score = db.Column(db.Integer, nullable=False, default=100)
     
-    # 🌟 NEW: Track the target language for the Falsicode Engine
+    # Target language for the Falsicode Engine (e.g., 'python')
     language = db.Column(db.String(50), nullable=False, default='python')
     
     # Foreign Key: Links this assignment strictly to one specific classroom
@@ -92,10 +105,9 @@ class Assignment(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # SQLAlchemy Relationship: Already has cascade, which is perfect!
+    # Relationship: If a classroom is deleted, all its assignments are removed
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
 
-    # 🌟 UPDATE: Added language to the initializer
     def __init__(self, title, description, classroom_id, max_score=100, language='python'):
         self.title = title
         self.description = description
@@ -106,9 +118,10 @@ class Assignment(db.Model):
     def __repr__(self):
         return f'<Assignment {self.title} | Lang: {self.language} | Classroom: {self.classroom_id}>'
 
-# ==========================================
-# ENROLLMENT MODEL (Bridge between Student & Classroom)
-# ==========================================
+
+# ==============================================================================
+# 4. ENROLLMENT MODEL (Bridge between Student & Classroom)
+# ==============================================================================
 class Enrollment(db.Model):
     __tablename__ = 'enrollments'
 
@@ -121,8 +134,7 @@ class Enrollment(db.Model):
     
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # 🛠️ FIX: Added cascade="all, delete-orphan" to the student relationship
-    # If a student is deleted, their enrollments disappear cleanly
+    # Relationships: If a student is deleted, their enrollments disappear cleanly
     student = db.relationship('User', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
     classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True))
 
@@ -133,32 +145,30 @@ class Enrollment(db.Model):
     def __repr__(self):
         return f'<Enrollment Student: {self.student_id} | Class: {self.classroom_id}>'
     
-# ==========================================
-# SUBMISSION MODEL (Stores the .py files)
-# ==========================================
+
+# ==============================================================================
+# 5. SUBMISSION MODEL (Stores the uploaded source code files)
+# ==============================================================================
 class Submission(db.Model):
     __tablename__ = 'submissions'
 
     id = db.Column(db.Integer, primary_key=True)
     
-    # Links to the Assignment
+    # Foreign Keys
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
-    # Links to the Student
     student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # Optional score field to store the result of plagiarism analysis or manual grading
-    score = db.Column(db.String(20), nullable=True)
-    # Maximum score for the assignment (e.g., 100 points) - this can be used for grading purposes
-    max_score = db.Column(db.Integer, nullable=True, default=100)
-    # Stores the original file name (e.g., 'dijkstra_algo.py')
-    filename = db.Column(db.String(255), nullable=False)
     
-    # Stores the actual location on the server (e.g., 'uploads/student_1_assign_2_dijkstra.py')
-    file_path = db.Column(db.String(255), nullable=False)
+    # Grading & Metadata
+    score = db.Column(db.String(20), nullable=True)
+    max_score = db.Column(db.Integer, nullable=True, default=100)
+    
+    # File Storage Data
+    filename = db.Column(db.String(255), nullable=False)  # Original name (e.g., 'dijkstra.py')
+    file_path = db.Column(db.String(255), nullable=False) # Server path (e.g., 'uploads/...')
     
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # 🛠️ FIX: Added cascade="all, delete-orphan" to the student relationship
-    # If a student is deleted, their uploaded files/submissions are removed from the DB tracking
+    # Relationships: If a student or assignment is deleted, wipe the submission record
     assignment = db.relationship('Assignment', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
     student = db.relationship('User', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
 
