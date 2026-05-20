@@ -10,148 +10,194 @@ def run_smart_seed(db):
     print("FALSICODE: Starting Smart Seed...")
     
     try:
-        # A. Define User Identity Data (Spaced for readability)
+        # A. Define User Identity Data
         users_to_seed = [
             # Admin account
             {
                 "email": "admin@test.com", 
                 "username": "admin", 
                 "password": "admin123", 
-                "role": "admin"
+                "role": "admin",
+                "status": "active",
+                "is_verified": True
             },
             # Instructors
             {
                 "email": "renz@gmail.com", 
                 "username": "renz", 
                 "password": "renz123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "doca@gmail.com", 
                 "username": "doca", 
                 "password": "doca123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "ba@gmail.com", 
                 "username": "ba", 
                 "password": "ba123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "janus@gmail.com", 
                 "username": "janus", 
                 "password": "janus123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "pat@gmail.com", 
                 "username": "pat", 
                 "password": "pat123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "joseph@gmail.com", 
                 "username": "joseph", 
                 "password": "joseph123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "mel@gmail.com", 
                 "username": "mel", 
                 "password": "mel123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "kier@gmail.com", 
                 "username": "kier", 
                 "password": "kier123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "marvin@gmail.com", 
                 "username": "marvin", 
                 "password": "marvin123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "vange@gmail.com", 
                 "username": "vange", 
                 "password": "vange123", 
-                "role": "instructor"
+                "role": "instructor",
+                "status": "active",
+                "is_verified": True
             },
             # Students
             {
                 "email": "mary@gmail.com", 
                 "username": "mary", 
                 "password": "mary123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "charles@gmail.com", 
                 "username": "charles", 
                 "password": "charles123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "nicolo@gmail.com", 
                 "username": "nicolo", 
                 "password": "nicolo123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "dan@gmail.com", 
                 "username": "dan", 
                 "password": "dan123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "ramon@gmail.com", 
                 "username": "ramon", 
                 "password": "ramon123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "jude@gmail.com", 
                 "username": "jude", 
                 "password": "jude123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "jm@gmail.com", 
                 "username": "jm", 
                 "password": "jm123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "patrick@gmail.com", 
                 "username": "patrick", 
                 "password": "patrick123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "rachel@gmail.com", 
                 "username": "rachel", 
                 "password": "rachel123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "karo@gmail.com", 
                 "username": "karo", 
                 "password": "karo123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "sol@gmail.com", 
                 "username": "sol", 
                 "password": "sol123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
             {
                 "email": "ramil@gmail.com", 
                 "username": "ramil", 
                 "password": "ramil123", 
-                "role": "student"
+                "role": "student",
+                "status": "active",
+                "is_verified": True
             },
         ]
 
@@ -727,13 +773,20 @@ def run_smart_seed(db):
             existing_user = User.query.filter_by(email=u["email"]).first()
             if not existing_user:
                 print(f"FALSICODE: Adding {u['role'].capitalize()} account: {u['username']}")
+                
                 user = User(
                     email=u["email"],
                     username=u["username"],
                     role=u["role"],
-                    status='active'
+                    # We can use .get() to pull the status if it exists, default to 'active'
+                    status=u.get("status", "active") 
                 )
+                
                 user.password = generate_password_hash(u["password"]).decode('utf-8')
+                
+                # 🌟 THE FIX: Force the account to be verified so it bypasses the OTP lock
+                user.is_verified = u.get("is_verified", True)
+                
                 db.session.add(user)
         
         db.session.commit()
