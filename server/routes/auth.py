@@ -36,6 +36,7 @@ def request_code():
             
     except Exception as e:
         return jsonify({"error": "Failed to process request: " + str(e)}), 500
+    
 # ==============================================================================
 # 1. REGISTRATION ENDPOINT
 # ==============================================================================
@@ -145,6 +146,7 @@ def login():
             "user": {
                 "id": user.id,
                 "username": user.username,
+                "email": user.email,
                 "role": user.role 
             }
         }), 200
@@ -312,12 +314,43 @@ def admin_delete_user(user_id):
     
 
 # ==============================================================================
-# 6. PROFILE MANAGEMENT
+# 6. PROFILE MANAGEMENT & SECURITY
 # ==============================================================================
+@auth_bp.route('/profile/request-code', methods=['POST'])
+@jwt_required()
+def request_profile_code():
+    """Generates and sends an OTP to a logged-in user for security changes."""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    try:
+        code = generate_6_digit_code()
+        
+        # Save code to the user's database row
+        user.verification_code = code
+        user.verification_expires = datetime.utcnow() + timedelta(minutes=10)
+        db.session.commit()
+
+        # Send the HTML email you just designed!
+        email_sent = send_otp_email(user.email, code)
+        
+        if email_sent:
+            return jsonify({"message": "Security code sent to your email!"}), 200
+        else:
+            return jsonify({"error": "Failed to send email. Check server logs."}), 500
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
+
+
 @auth_bp.route('/profile', methods=['PUT'])
 @jwt_required()
 def update_profile():
-    """Allows a logged-in user to update their password"""
+    """Updates the password after verifying the current password and OTP."""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -325,15 +358,36 @@ def update_profile():
         return jsonify({"error": "User not found."}), 404
 
     data = request.get_json()
+    current_password = data.get('current_password')
     new_password = data.get('new_password')
+    code = data.get('code')
 
-    if not new_password or len(new_password) < 6:
-        return jsonify({"error": "Password must be at least 6 characters long."}), 400
+    # 1. Validate all fields are present
+    if not current_password or not new_password or not code:
+        return jsonify({"error": "All fields (current password, new password, and code) are required."}), 400
 
+    # 2. Verify the CURRENT password is correct
+    if not user.check_password(current_password):
+        return jsonify({"error": "Security protocol failed: Current password is incorrect."}), 403
+
+    # 3. Verify the OTP code matches
+    if user.verification_code != code:
+        return jsonify({"error": "Security protocol failed: Invalid verification code."}), 400
+
+    # 4. Verify the OTP code is not expired
+    if user.verification_expires and datetime.utcnow() > user.verification_expires:
+        return jsonify({"error": "Verification code has expired. Please request a new one."}), 400
+
+    if len(new_password) < 6:
+        return jsonify({"error": "New password must be at least 6 characters long."}), 400
+
+    # 5. Success! Update password and clear the OTP from the database
     try:
         user.set_password(new_password)
+        user.verification_code = None
+        user.verification_expires = None
         db.session.commit()
-        return jsonify({"message": "Password updated successfully!"}), 200
+        return jsonify({"message": "Security credentials updated successfully!"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Database error occurred."}), 500
