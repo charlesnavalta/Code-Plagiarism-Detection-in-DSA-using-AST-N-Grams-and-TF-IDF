@@ -24,7 +24,7 @@ def run_smart_seed(db):
             # Instructors
             {
                 "email": "renz@gmail.com", 
-                "username": "renz", 
+                "username": "Renz", 
                 "password": "renz123", 
                 "role": "instructor",
                 "status": "active",
@@ -32,7 +32,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "doca@gmail.com", 
-                "username": "doca", 
+                "username": "Doca", 
                 "password": "doca123", 
                 "role": "instructor",
                 "status": "active",
@@ -40,7 +40,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "ba@gmail.com", 
-                "username": "ba", 
+                "username": "Ba", 
                 "password": "ba123", 
                 "role": "instructor",
                 "status": "active",
@@ -48,56 +48,8 @@ def run_smart_seed(db):
             },
             {
                 "email": "janus@gmail.com", 
-                "username": "janus", 
+                "username": "Janus", 
                 "password": "janus123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "pat@gmail.com", 
-                "username": "pat", 
-                "password": "pat123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "joseph@gmail.com", 
-                "username": "joseph", 
-                "password": "joseph123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "mel@gmail.com", 
-                "username": "mel", 
-                "password": "mel123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "kier@gmail.com", 
-                "username": "kier", 
-                "password": "kier123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "marvin@gmail.com", 
-                "username": "marvin", 
-                "password": "marvin123", 
-                "role": "instructor",
-                "status": "active",
-                "is_verified": True
-            },
-            {
-                "email": "vange@gmail.com", 
-                "username": "vange", 
-                "password": "vange123", 
                 "role": "instructor",
                 "status": "active",
                 "is_verified": True
@@ -105,7 +57,7 @@ def run_smart_seed(db):
             # Students
             {
                 "email": "mary@gmail.com", 
-                "username": "mary", 
+                "username": "Mary", 
                 "password": "mary123", 
                 "role": "student",
                 "status": "active",
@@ -113,7 +65,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "charles@gmail.com", 
-                "username": "charles", 
+                "username": "Charles", 
                 "password": "charles123", 
                 "role": "student",
                 "status": "active",
@@ -121,7 +73,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "nicolo@gmail.com", 
-                "username": "nicolo", 
+                "username": "Nicolo", 
                 "password": "nicolo123", 
                 "role": "student",
                 "status": "active",
@@ -129,7 +81,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "dan@gmail.com", 
-                "username": "dan", 
+                "username": "Dan", 
                 "password": "dan123", 
                 "role": "student",
                 "status": "active",
@@ -137,7 +89,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "ramon@gmail.com", 
-                "username": "ramon", 
+                "username": "Ramon", 
                 "password": "ramon123", 
                 "role": "student",
                 "status": "active",
@@ -145,7 +97,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "jude@gmail.com", 
-                "username": "jude", 
+                "username": "Jude", 
                 "password": "jude123", 
                 "role": "student",
                 "status": "active",
@@ -153,7 +105,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "jm@gmail.com", 
-                "username": "jm", 
+                "username": "Jm", 
                 "password": "jm123", 
                 "role": "student",
                 "status": "active",
@@ -161,7 +113,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "patrick@gmail.com", 
-                "username": "patrick", 
+                "username": "Patrick", 
                 "password": "patrick123", 
                 "role": "student",
                 "status": "active",
@@ -169,7 +121,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "rachel@gmail.com", 
-                "username": "rachel", 
+                "username": "Rachel", 
                 "password": "rachel123", 
                 "role": "student",
                 "status": "active",
@@ -177,7 +129,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "karo@gmail.com", 
-                "username": "karo", 
+                "username": "Karo", 
                 "password": "karo123", 
                 "role": "student",
                 "status": "active",
@@ -185,7 +137,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "sol@gmail.com", 
-                "username": "sol", 
+                "username": "Sol", 
                 "password": "sol123", 
                 "role": "student",
                 "status": "active",
@@ -193,7 +145,7 @@ def run_smart_seed(db):
             },
             {
                 "email": "ramil@gmail.com", 
-                "username": "ramil", 
+                "username": "Ramil", 
                 "password": "ramil123", 
                 "role": "student",
                 "status": "active",
@@ -205,43 +157,15 @@ def run_smart_seed(db):
         classrooms_to_seed = [
             {
                 "name": "3CSB - DSA", 
-                "instructor_username": "renz"
+                "instructor_username": "Renz"
             },
             {
                 "name": "Advanced Database Systems", 
-                "instructor_username": "janus"
+                "instructor_username": "Janus"
             },
             {
                 "name": "Web Development 101", 
-                "instructor_username": "ba"
-            },
-            {
-                "name": "Software Engineering II", 
-                "instructor_username": "janus"
-            },
-            {
-                "name": "Information Assurance", 
-                "instructor_username": "pat"
-            },
-            {
-                "name": "Machine Learning Fundamentals", 
-                "instructor_username": "joseph"
-            },
-            {
-                "name": "Operating Systems", 
-                "instructor_username": "mel"
-            },
-            {
-                "name": "Data Communications", 
-                "instructor_username": "kier"
-            },
-            {
-                "name": "Human Computer Interaction", 
-                "instructor_username": "marvin"
-            },
-            {
-                "name": "Mobile App Development", 
-                "instructor_username": "vange"
+                "instructor_username": "Ba"
             },
         ]
 
@@ -554,13 +478,13 @@ def run_smart_seed(db):
             #Assignment C 1 TS-C Level 1: Quick Sort (Dead Code Injection)
             # Assignment C 1: Dead Code Injection
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
                 "filename": "TS-C_Level1.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1.py"
             },
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
                 "filename": "TS-C_Level1-DeadCode.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1-DeadCode.py"
@@ -568,13 +492,13 @@ def run_smart_seed(db):
 
             # Assignment C 2: Expression Substitution
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
                 "filename": "TS-C_Level2.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2.py"
             },
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
                 "filename": "TS-C_Level2-Substitution.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2-Substitution.py"
@@ -582,13 +506,13 @@ def run_smart_seed(db):
 
             # Assignment C 3: Mixed Attack
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
                 "filename": "TS-C_Level3.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3.py"
             },
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
                 "filename": "TS-C_Level3-MixedAttack.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3-MixedAttack.py"
@@ -597,37 +521,37 @@ def run_smart_seed(db):
             # Java Assignments Submissions
             # Assignment 1 Submissions - Quick Sort Implementation (Java)
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "original.java",
                 "file_path": "datasets/java_source-code/quick_sort/original.java"
             },
             {
-                "student_username": "nicolo",
+                "student_username": "Nicolo",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_1_exact_of_copy.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_1_exact_of_copy.java"
             },
             {
-                "student_username": "dan",
+                "student_username": "Dan",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_2_renamed_of_renamed.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_2_renamed_of_renamed.java"
             },
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_2_renamed2.java"
             },
             {
-                "student_username": "ramon",
+                "student_username": "Ramon",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_3_structural.java"
             },
             {
-                "student_username": "jude",
+                "student_username": "Jude",
                 "assignment_title": "1. Quick Sort Implementation (Java)",
                 "filename": "type_3_structural2.java",
                 "file_path": "datasets/java_source-code/quick_sort/type_3_structural2.java"
@@ -635,31 +559,31 @@ def run_smart_seed(db):
 
             # Assignment 2 Submissions - Merge Sort Implementation (Java)
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
                 "filename": "original.java",
                 "file_path": "datasets/java_source-code/merge_sort/original.java"
             },
             {
-                "student_username": "nicolo",
+                "student_username": "Nicolo",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
                 "filename": "type_1_exact.java",
                 "file_path": "datasets/java_source-code/merge_sort/type_1_exact.java"
             },
             {
-                "student_username": "dan",
+                "student_username": "Dan",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
                 "filename": "type_2_renamed.java",
                 "file_path": "datasets/java_source-code/merge_sort/type_2_renamed.java"
             },
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/merge_sort/type_2_renamed2.java"
             },
             {
-                "student_username": "ramon",
+                "student_username": "Ramon",
                 "assignment_title": "2. Merge Sort Implementation (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/merge_sort/type_3_structural.java"
@@ -667,31 +591,31 @@ def run_smart_seed(db):
 
             # Assignment 3 Submissions - Singly Linked List (Java)
             {
-                "student_username": "jm",
+                "student_username": "Jm",
                 "assignment_title": "3. Singly Linked List (Java)",
                 "filename": "original.java",
                 "file_path": "datasets/java_source-code/linked_list/original.java"
             },
             {
-                "student_username": "patrick",
+                "student_username": "Patrick",
                 "assignment_title": "3. Singly Linked List (Java)",
                 "filename": "type_1_exact.java",
                 "file_path": "datasets/java_source-code/linked_list/type_1_exact.java"
             },
             {
-                "student_username": "rachel",
+                "student_username": "Rachel",
                 "assignment_title": "3. Singly Linked List (Java)",
                 "filename": "type_2_renamed.java",
                 "file_path": "datasets/java_source-code/linked_list/type_2_renamed.java"
             },
             {
-                "student_username": "karo",
+                "student_username": "Karo",
                 "assignment_title": "3. Singly Linked List (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/linked_list/type_2_renamed2.java"
             },
             {
-                "student_username": "sol",
+                "student_username": "Sol",
                 "assignment_title": "3. Singly Linked List (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/linked_list/type_3_structural.java"
@@ -699,31 +623,31 @@ def run_smart_seed(db):
 
             # Assignment 4 Submissions - Binary Tree Traversals
             {
-                "student_username": "charles",
+                "student_username": "Charles",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
                 "filename": "original..java",
                 "file_path": "datasets/java_source-code/binary_tree/original..java"
             },
             {
-                "student_username": "nicolo",
+                "student_username": "Nicolo",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
                 "filename": "type_2_renamed.java",
                 "file_path": "datasets/java_source-code/binary_tree/type_2_renamed.java"
             },
             {
-                "student_username": "dan",
+                "student_username": "Dan",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/binary_tree/type_2_renamed2.java"
             },
             {
-                "student_username": "mary",
+                "student_username": "Mary",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/binary_tree/type_3_structural.java"
             },
             {
-                "student_username": "ramon",
+                "student_username": "Ramon",
                 "assignment_title": "4. Binary Tree Traversals (Java)",
                 "filename": "type_3_structural2.java",
                 "file_path": "datasets/java_source-code/binary_tree/type_3_structural2.java"
@@ -731,37 +655,37 @@ def run_smart_seed(db):
 
             # Assignment 5 Submissions - Binary Search Tree (BST) Operations
             {
-                "student_username": "jude",
+                "student_username": "Jude",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "original.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/original.java"
             },
             {
-                "student_username": "jm",
+                "student_username": "Jm",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "type_1_exact.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/type_1_exact.java"
             },
             {
-                "student_username": "patrick",
+                "student_username": "Patrick",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "type_2_renamed.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/type_2_renamed.java"
             },
             {
-                "student_username": "rachel",
+                "student_username": "Rachel",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "type_2_renamed2.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/type_2_renamed2.java"
             },
             {
-                "student_username": "karo",
+                "student_username": "Karo",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "type_3_structural.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/type_3_structural.java"
             },
             {
-                "student_username": "sol",
+                "student_username": "Sol",
                 "assignment_title": "5. Binary Search Tree (BST) Operations (Java)",
                 "filename": "type_3_structural2.java",
                 "file_path": "datasets/java_source-code/binary_search_tree/type_3_structural2.java"

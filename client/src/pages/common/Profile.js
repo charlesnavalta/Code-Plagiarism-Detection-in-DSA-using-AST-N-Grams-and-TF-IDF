@@ -7,8 +7,13 @@ const Profile = () => {
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
 
+    // --- New Security States ---
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [otpCode, setOtpCode] = useState('');
+    const [sendingCode, setSendingCode] = useState(false);
+    
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -32,13 +37,30 @@ const Profile = () => {
         alert("System Notice: Email update functionality is currently being provisioned.");
     };
 
+    // --- Send OTP Logic ---
+    const handleSendCode = async () => {
+        setSendingCode(true);
+        setError('');
+        setMessage('');
+        
+        try {
+            const res = await api.post('/auth/profile/request-code');
+            setMessage(res.data.message);
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to trigger security email.");
+        } finally {
+            setSendingCode(false);
+        }
+    };
+
+    // --- Update Password Logic ---
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
         if (newPassword !== confirmPassword) {
-            return setError("Security protocol failed: Passwords do not match.");
+            return setError("Security protocol failed: New passwords do not match.");
         }
 
         if (newPassword.length < 6) {
@@ -47,10 +69,20 @@ const Profile = () => {
 
         setLoading(true);
         try {
-            const res = await api.put('/auth/profile', { new_password: newPassword });
-            setMessage(res.data.message || "Security credentials updated successfully.");
+            const res = await api.put('/auth/profile', { 
+                current_password: currentPassword,
+                new_password: newPassword,
+                code: otpCode
+            });
+            
+            setMessage(res.data.message);
+            
+            // Clear the form on success
+            setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
+            setOtpCode('');
+            
         } catch (err) {
             setError(err.response?.data?.error || "Critical failure: Unable to update security parameters.");
         } finally {
@@ -73,7 +105,6 @@ const Profile = () => {
 
     return (
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-primary"></div>
                 <div className="aurora-blob blob-secondary"></div>
@@ -143,7 +174,7 @@ const Profile = () => {
                                         <input 
                                             type="email" className="nexus-input-field with-icon"
                                             value={emailInput} onChange={(e) => setEmailInput(e.target.value)} 
-                                            placeholder="node@Falsicode.com"
+                                            placeholder="node@falsicode.com"
                                         />
                                     </div>
                                 </div>
@@ -165,6 +196,17 @@ const Profile = () => {
                                 {message && <div className="nexus-alert success">{message}</div>}
                                 {error && <div className="nexus-alert error">{error}</div>}
 
+                                {/* 1. Current Password */}
+                                <div className="dark-form-group">
+                                    <label>Current Password</label>
+                                    <input 
+                                        type="password" className="nexus-input-field"
+                                        value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} 
+                                        placeholder="Enter your current password" required
+                                    />
+                                </div>
+
+                                {/* 2. New Password Row */}
                                 <div className="form-group-row">
                                     <div className="dark-form-group w-50">
                                         <label>New Password</label>
@@ -184,10 +226,35 @@ const Profile = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-actions">
+                                {/* 3. 2FA Code Row */}
+                                <div className="form-group-row" style={{ alignItems: 'flex-end' }}>
+                                    <div className="dark-form-group w-50" style={{ marginBottom: 0 }}>
+                                        <label>Authorization Code</label>
+                                        <input 
+                                            type="text" className="nexus-input-field"
+                                            value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))} 
+                                            placeholder="000000" maxLength="6" required
+                                            style={{ letterSpacing: '4px' }}
+                                        />
+                                    </div>
+                                    <div className="w-50">
+                                        <button 
+                                            type="button" 
+                                            className="nexus-btn-secondary" 
+                                            onClick={handleSendCode}
+                                            disabled={sendingCode}
+                                            style={{ width: '100%', padding: '14px' }}
+                                        >
+                                            {sendingCode ? "Transmitting..." : "Send Code to Email"}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="form-actions" style={{ marginTop: '30px' }}>
                                     <button 
                                         type="submit" className="nexus-btn-primary" 
-                                        disabled={loading || !newPassword || !confirmPassword}
+                                        disabled={loading || !currentPassword || !newPassword || !confirmPassword || otpCode.length !== 6}
+                                        style={{ width: '100%' }}
                                     >
                                         {loading ? "Syncing..." : "Update Credentials"}
                                     </button>
