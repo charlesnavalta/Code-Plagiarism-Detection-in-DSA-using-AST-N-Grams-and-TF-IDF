@@ -69,14 +69,13 @@ const Navbar = () => {
                     {user.role === 'student' && (
                         <>
                             <Link to="/student" className={`nav-item-nexus ${isActive('/student')}`}>My Classes</Link>
-                            <Link to="/student/submissions" className={`nav-item-nexus ${isActive('/student/submissions')}`}>Submissions</Link>
                         </>
                     )}
                 </div>
             </div>
 
             <div className="navbar-right">
-                <button className="nav-icon-btn">🔔</button>
+                
                 
                 <div className="profile-menu">
                     <button className="profile-trigger-nexus" onClick={() => setDropdownOpen(!dropdownOpen)}>
@@ -102,7 +101,7 @@ const Navbar = () => {
                             </button>
 
                             <Link to={`/${user.role}/profile`} className="dropdown-item-nexus">
-                                <span className="item-icon">⚙️</span> Settings
+                                <span className="item-icon">👤</span> Account
                             </Link>
                             
                             <div className="dropdown-divider-nexus"></div>

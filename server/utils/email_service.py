@@ -8,14 +8,22 @@ def generate_6_digit_code():
     """Generates a random 6-digit string."""
     return str(random.randint(100000, 999999))
 
-def send_otp_email(to_email, code):
+# 🌟 FIX: Added the 'intent' parameter with a default fallback
+def send_otp_email(to_email, code, intent="registration"):
     """Sends a styled 6-digit HTML code via Google SMTP."""
     sender_email = os.environ.get('MAIL_USERNAME')
     sender_password = os.environ.get('MAIL_PASSWORD')
     
-    subject = "Falsicode: Your Verification Code"
+    # 🌟 FIX: Dynamic text based on what the user is doing
+    if intent == "password_update":
+        subject = "Falsicode: Security Verification Code"
+        header_text = "Security Authorization"
+        body_text = "Here is your authorization code to update your security credentials:"
+    else:
+        subject = "Falsicode: Your Verification Code"
+        header_text = "Sign-in Code"
+        body_text = "Here is your Falsicode registration code:"
     
-    # 🌟 NEW: The HTML Email Template with Inline CSS
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -40,9 +48,10 @@ def send_otp_email(to_email, code):
                         
                         <tr>
                             <td style="padding: 40px 30px; text-align: center;">
-                                <h2 style="margin: 0 0 15px 0; color: #1f2937; font-size: 22px; font-weight: 600;">Sign-in Code</h2>
+                                <h2 style="margin: 0 0 15px 0; color: #1f2937; font-size: 22px; font-weight: 600;">{header_text}</h2>
+                                
                                 <p style="margin: 0 0 35px 0; color: #6b7280; font-size: 15px; line-height: 1.5;">
-                                    Here is your Falsicode registration code:
+                                    {body_text}
                                 </p>
 
                                 <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 25px 15px; margin-bottom: 35px;">
@@ -79,17 +88,12 @@ def send_otp_email(to_email, code):
     """
 
     msg = MIMEMultipart()
-    # Format the sender so it says "Falsicode" instead of just the email address
     msg['From'] = f"Falsicode <{sender_email}>"
     msg['To'] = to_email
     msg['Subject'] = subject
 
-    # 🌟 NEW: The No-Reply Redirect Header
     msg.add_header('Reply-To', 'noreply@falsicode.com')
-    
-    # 🌟 CRITICAL FIX: Attach the body as 'html' so Gmail renders the design
     msg.attach(MIMEText(html_body, 'html'))
-    
 
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -97,10 +101,8 @@ def send_otp_email(to_email, code):
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-        # Ensure Docker prints this immediately
-        print(f"Falsicode Auth: HTML OTP successfully sent to {to_email}", flush=True)
+        print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email}", flush=True)
         return True
     except Exception as e:
-        # Ensure Docker prints the error immediately
         print(f"Falsicode Auth Error: SMTP failed. Details: {e}", flush=True)
         return False
