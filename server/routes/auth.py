@@ -25,13 +25,12 @@ def request_code():
     try:
         code = generate_6_digit_code()
         
-        # 🌟 THE FIX: We capture the True/False result!
+        # Falls back to intent="registration" automatically
         email_sent = send_otp_email(email, code)
         
         if email_sent:
             return jsonify({"message": "Verification code sent!", "code": code}), 200
         else:
-            # Force a 500 error if it failed
             return jsonify({"error": "Failed to connect to Gmail SMTP. Check Docker logs."}), 500
             
     except Exception as e:
@@ -64,7 +63,6 @@ def register():
     )
     new_user.set_password(data['password'])
     
-    # 🌟 NEW LOGIC: Because the frontend verified the code, we mark them as verified immediately!
     new_user.is_verified = True
     
     try:
@@ -86,24 +84,19 @@ def verify_otp():
     email = data.get('email')
     code = data.get('code')
     
-    # 2.1 Find the user
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"error": "User not found."}), 404
         
-    # 2.2 Check if already verified
     if user.is_verified:
         return jsonify({"message": "Account is already verified. You may log in."}), 200
 
-    # 2.3 SECURITY CHECK: Does the code match?
     if user.verification_code != code:
         return jsonify({"error": "Invalid verification code."}), 400
         
-    # 2.4 SECURITY CHECK: Is the code expired?
     if datetime.utcnow() > user.verification_expires:
         return jsonify({"error": "Verification code has expired. Please request a new one."}), 400
         
-    # 2.5 Success! Unlock the account and wipe the code data
     try:
         user.is_verified = True
         user.verification_code = None
@@ -122,24 +115,19 @@ def verify_otp():
 def login():
     data = request.get_json()
     
-    # 3.1 Flexible lookup: check by email or username
     login_id = data.get('username') or data.get('email')
     password = data.get('password')
 
     user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
 
-    # 3.2 Verify credentials
     if user and user.check_password(password):
         
-        # 🌟 NEW OTP LOGIC: Block login if they haven't verified their email
         if not user.is_verified:
             return jsonify({"error": "Please verify your email address before logging in."}), 403
 
-        # 3.3 Block login if the instructor is still 'pending' Admin approval
         if user.status == 'pending':
             return jsonify({"error": "Account pending Admin approval. Please check back later."}), 403
 
-        # 3.4 Generate the token and log them in
         access_token = create_access_token(identity=str(user.id))
         return jsonify({
             "access_token": access_token,
@@ -175,7 +163,7 @@ def get_all_users():
             "email": u.email,
             "role": u.role,
             "status": u.status,
-            "is_verified": u.is_verified # Exposing this so Admins can see if users verified
+            "is_verified": u.is_verified 
         })
         
     return jsonify(users_data), 200
@@ -237,7 +225,6 @@ def admin_create_user():
     )
     new_user.set_password(data['password'])
     
-    # 🌟 Admin-created accounts are automatically verified
     new_user.is_verified = True 
     
     try:
@@ -329,13 +316,12 @@ def request_profile_code():
     try:
         code = generate_6_digit_code()
         
-        # Save code to the user's database row
         user.verification_code = code
         user.verification_expires = datetime.utcnow() + timedelta(minutes=10)
         db.session.commit()
 
-        # Send the HTML email you just designed!
-        email_sent = send_otp_email(user.email, code)
+        # 🌟 FIX: Trigger the password update intent logic!
+        email_sent = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:
             return jsonify({"message": "Security code sent to your email!"}), 200
@@ -362,26 +348,21 @@ def update_profile():
     new_password = data.get('new_password')
     code = data.get('code')
 
-    # 1. Validate all fields are present
     if not current_password or not new_password or not code:
         return jsonify({"error": "All fields (current password, new password, and code) are required."}), 400
 
-    # 2. Verify the CURRENT password is correct
     if not user.check_password(current_password):
         return jsonify({"error": "Security protocol failed: Current password is incorrect."}), 403
 
-    # 3. Verify the OTP code matches
     if user.verification_code != code:
         return jsonify({"error": "Security protocol failed: Invalid verification code."}), 400
 
-    # 4. Verify the OTP code is not expired
     if user.verification_expires and datetime.utcnow() > user.verification_expires:
         return jsonify({"error": "Verification code has expired. Please request a new one."}), 400
 
     if len(new_password) < 6:
         return jsonify({"error": "New password must be at least 6 characters long."}), 400
 
-    # 5. Success! Update password and clear the OTP from the database
     try:
         user.set_password(new_password)
         user.verification_code = None
