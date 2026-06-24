@@ -31,14 +31,14 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         <div className="falsicode-hud-overlay">
             <div className="spatial-card hud-modal-content fade-in">
                 <div className="hud-header">
-                    <button className="btn-close-icon" onClick={onClose}>&times;</button>
-                    <h2>Deploy Task</h2>
-                    <p className="hud-subtitle">Create a new coding assignment for your students</p>
+                    <button type="button" className="btn-close-icon" onClick={onClose}>&times;</button>
+                    <h2>Create Assignment</h2>
                 </div>
                 
-                {/* ADDED SCROLLING FIX HERE: maxHeight and overflowY */}
-                <div className="hud-body" style={{ padding: '20px', maxHeight: '65vh', overflowY: 'auto' }}>
-                    <form onSubmit={handleCreateAssignment}>
+                {/* Form wraps both the scrolling body AND the pinned footer */}
+                <form onSubmit={handleCreateAssignment} className="hud-form-wrapper">
+                    
+                    <div className="hud-body custom-scrollbar">
                         <div className="input-group">
                             <label>Assignment Title</label>
                             <input 
@@ -49,44 +49,47 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                                 required 
                             />
                         </div>
+
                         <div className="input-group">
-                            <label>Task Description</label>
+                            <label>Assignment Description</label>
                             <textarea 
                                 name="description" 
                                 className="styled-input" 
-                                rows="3" 
+                                rows="4" 
                                 placeholder="Enter the algorithmic requirements..." 
                                 required 
-                                style={{ resize: 'vertical' }}
                             ></textarea>
                         </div>
                         
-                        <div className="input-group">
-                            <label>Maximum Score (Points)</label>
-                            <input 
-                                type="number" 
-                                name="max_score" 
-                                className="styled-input" 
-                                placeholder="e.g., 50" 
-                                defaultValue={100}
-                                min={1}
-                                required 
-                            />
-                        </div>
+                        <div className="input-row">
+                            <div className="input-group half-width">
+                                <label>Score</label>
+                                <input 
+                                    type="number" 
+                                    name="max_score" 
+                                    className="styled-input hide-arrows" 
+                                    placeholder="e.g., 100" 
+                                    defaultValue={100}
+                                    min={1}
+                                    required 
+                                />
+                            </div>
 
-                        <div className="input-group">
-                            <label>Target Language</label>
-                            <select name="language" className="styled-input" required>
-                                <option value="python">Python (.py)</option>
-                                <option value="java">Java (.java)</option>
-                            </select>
+                            <div className="input-group half-width">
+                                <label>Language</label>
+                                <select name="language" className="styled-input dropdown-fix" required>
+                                    <option value="python">Python (.py)</option>
+                                    <option value="java">Java (.java)</option>
+                                </select>
+                            </div>
                         </div>
-                        
-                        <div className="hud-footer-actions" style={{ marginTop: '20px' }}>
-                            <button type="submit" className="btn-hud-run">Deploy to Classroom</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    
+                    <div className="hud-footer-actions">
+                        <button type="submit" className="btn-hud-run">Create Assignment</button>
+                    </div>
+
+                </form>
             </div>
         </div>
     );

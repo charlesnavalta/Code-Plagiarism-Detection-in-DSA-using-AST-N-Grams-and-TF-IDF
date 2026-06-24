@@ -15,13 +15,12 @@
 .hud-modal-content {
     background: #0a0e17; 
     width: 90vw; 
-    max-width: 600px; /* Adjusted smaller for Create Modal compared to Audit */
+    max-width: 550px; 
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1); 
     overflow: hidden; 
     position: relative;
     box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    max-height: 90vh; 
     display: flex;
     flex-direction: column;
 }
@@ -36,10 +35,11 @@
     font-weight: 900; 
     margin: 0; 
     letter-spacing: -1px; 
+    color: white;
 }
 
 .hud-subtitle { 
-    color: var(--text-dim); 
+    color: #94a3b8; 
     margin-top: 5px; 
     font-size: 0.95rem; 
 }
@@ -50,7 +50,7 @@
     right: 30px;
     background: none; 
     border: none; 
-    color: var(--text-dim); 
+    color: #94a3b8; 
     font-size: 1.8rem; 
     cursor: pointer; 
     line-height: 1; 
@@ -63,60 +63,117 @@
 }
 
 /* =========================================
+   FORM STRUCTURE & SCROLLING
+   ========================================= */
+.hud-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+}
+
+.hud-body {
+    padding: 10px 40px 20px;
+    overflow-y: auto;
+}
+
+/* Custom Sleek Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================
    FORM ELEMENTS
    ========================================= */
+.input-row {
+    display: flex;
+    gap: 20px;
+}
+
 .input-group { 
     margin-bottom: 20px; 
     display: flex; 
     flex-direction: column; 
 }
 
+.half-width {
+    flex: 1;
+}
+
 .input-group label { 
     margin-bottom: 8px; 
-    font-size: 0.9rem; 
+    font-size: 0.85rem; 
     font-weight: 600; 
-    color: var(--text-dim); 
+    color: #94a3b8; 
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .styled-input {
     width: 100%; 
     padding: 14px 16px; 
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-glass); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
     border-radius: 8px; 
-    color: var(--text-hero);
+    color: white;
     font-size: 1rem; 
     font-family: 'Inter', sans-serif; 
     transition: border-color 0.2s, box-shadow 0.2s; 
     box-sizing: border-box;
+    resize: none;
 }
 
 .styled-input:focus {
     outline: none; 
-    border-color: var(--accent-blue); 
+    border-color: #8b5cf6; 
     background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+/* FIX: Dropdown Option Background */
+.dropdown-fix option {
+    background-color: #0f172a;
+    color: white;
+}
+
+/* FIX: Hide Number Input Arrows */
+.hide-arrows::-webkit-outer-spin-button,
+.hide-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.hide-arrows[type=number] {
+    -moz-appearance: textfield;
 }
 
 /* =========================================
    FOOTER & BUTTONS
    ========================================= */
 .hud-footer-actions { 
-    padding: 25px 40px; 
+    padding: 20px 40px; 
     display: flex; 
     justify-content: flex-end; 
-    align-items: center; 
     background: rgba(0,0,0,0.4); 
-    border-top: 1px solid rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    margin-top: auto; /* Pushes footer to the bottom */
 }
 
 .btn-hud-run { 
-    background: var(--accent-purple); 
+    background: #8b5cf6; 
     color: white; 
     border: none; 
     padding: 12px 28px; 
     border-radius: 30px; 
-    font-weight: 700; 
+    font-weight: 600; 
     cursor: pointer; 
     transition: 0.3s; 
     font-size: 0.95rem;
@@ -125,7 +182,7 @@
 .btn-hud-run:hover { 
     background: #7c3aed; 
     transform: translateY(-2px); 
-    box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2); 
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); 
 }
 
 /* =========================================

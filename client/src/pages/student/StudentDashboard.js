@@ -83,7 +83,12 @@ const StudentDashboard = () => {
             <div className="nexus-layout">
                 {/* --- Sidebar: Identity Node --- */}
                 <aside className="nexus-sidebar fade-in-left">
-                    <div className="spatial-card profile-card">
+                    {/* Added onClick and inline cursor style to make it act like a button */}
+                    <div 
+                        className="spatial-card profile-card" 
+                        onClick={() => navigate('profile')} 
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="card-glass-layer"></div>
                         <div className="card-content">
                             <div className="avatar-hologram">

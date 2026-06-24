@@ -39,8 +39,8 @@ function App() {
   useEffect(() => {
     let inactivityTimer;
     
-    // 3 Minutes in milliseconds
-    const INACTIVITY_LIMIT = 3 * 60 * 1000; 
+    // 10 Minutes in milliseconds
+    const INACTIVITY_LIMIT = 10 * 60 * 1000; 
 
     const handleLogout = () => {
       const user = localStorage.getItem('user');
@@ -55,7 +55,7 @@ function App() {
 
     const resetTimer = () => {
       clearTimeout(inactivityTimer);
-      // Restart the 3-minute countdown
+      // Restart the 10-minute countdown
       inactivityTimer = setTimeout(handleLogout, INACTIVITY_LIMIT);
     };
 

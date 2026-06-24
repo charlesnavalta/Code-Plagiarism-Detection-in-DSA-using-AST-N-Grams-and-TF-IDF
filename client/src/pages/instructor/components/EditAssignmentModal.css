@@ -21,21 +21,91 @@
     background: #11111a; /* Deep dark background */
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    padding: 40px;
     width: 100%;
     max-width: 550px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     color: white;
     transform: translateY(0);
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contains the scroll area */
 }
 
-.modal-content h2 {
+/* Header Sections */
+.modal-header {
+    padding: 35px 40px 20px;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h2 {
     margin-top: 0;
-    margin-bottom: 25px;
-    font-size: 1.8rem;
-    font-weight: 800;
+    margin-bottom: 10px !important;
+    font-size: 2.2rem !important; /* Increased from 1.8rem to match Create Modal */
+    font-weight: 900;  /* Increased from 800 for that heavy, bold look */
     letter-spacing: -1px;
+    color: white;
+}
+
+.modal-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.btn-close {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.btn-close:hover {
+    color: white;
+}
+
+/* Form Structure & Scrolling */
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+}
+
+.form-scroll-body {
+    padding: 10px 40px 20px;
+    overflow-y: auto;
+}
+
+/* Sleek Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Form Layout (Side-by-side) */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.half-width {
+    flex: 1;
 }
 
 /* Form Elements */
@@ -55,8 +125,10 @@
     letter-spacing: 0.5px;
 }
 
+/* Added 'select' here to style the dropdown identically */
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -65,6 +137,7 @@
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 1rem;
     transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .form-group textarea {
@@ -73,19 +146,39 @@
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
     border-color: #3b82f6; /* Accent blue */
     background: rgba(59, 130, 246, 0.05);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-/* Modal Actions (Buttons) */
+/* FIX: Dropdown Option Background */
+.dropdown-fix option {
+    background-color: #11111a;
+    color: white;
+}
+
+/* FIX: Hide Number Input Arrows */
+.hide-arrows::-webkit-outer-spin-button,
+.hide-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.hide-arrows[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Modal Actions (Buttons pinned to bottom) */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
-    margin-top: 30px;
+    padding: 25px 40px;
+    background: rgba(0, 0, 0, 0.3); /* Slightly darker footer area */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
 }
 
 .modal-actions button[type="button"] {
