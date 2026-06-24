@@ -111,7 +111,6 @@ const InstructorClassroomView = () => {
                         </div>
                         <h1 className="hero-title">{classroom?.name}</h1>
                         <div className="stat-badges">
-                            <span className="b-label">Total Submissions: {assignments.reduce((acc, curr) => acc + (curr.submission_count || 0), 0)}</span>
                             <span className="b-label status-active">Status: ACTIVE HUB</span>
                         </div>
                     </div>
@@ -120,11 +119,10 @@ const InstructorClassroomView = () => {
                 <main className="content-hub">
                     <div className="hub-header">
                         <div className="header-titles">
-                            <h2>Assignment Stream</h2>
-                            <p className="sub-text">Deploy coding tasks and run structural plagiarism scans on student submissions.</p>
+                            <h2>Assignment</h2>
                         </div>
                         <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>
-                            + Deploy New Task
+                            Add New Assignment
                         </button>
                     </div>
 

@@ -30,7 +30,7 @@ const InstructorDashboard = () => {
             const rawUser = localStorage.getItem('user');
             if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
         } catch (e) { console.error("Identity Sync Error", e); }
-        return { username: 'Instructor Node', role: 'instructor' }; 
+        return { username: 'Instructor', role: 'instructor' }; 
     };
 
     const currentUser = getUserData();
@@ -65,7 +65,7 @@ const InstructorDashboard = () => {
             setNewClassName('');
             fetchClassrooms(); 
         } catch (error) {
-            alert("Protocol failure: Unable to initialize classroom node.");
+            alert("Protocol failure: Unable to initialize classroom.");
         }
     };
 
@@ -128,8 +128,7 @@ const InstructorDashboard = () => {
                     <div className="action-banner-nexus spatial-card">
                         <div className="banner-content">
                             <div className="banner-text">
-                                <h1>Welcome Back, {displayName.split(' ')[0]}</h1>
-                                <p>Provision classrooms, deploy assignments, and review logic integrity.</p>
+                                <h1>Instructor Hub</h1>
                             </div>
                             
                             <form onSubmit={handleCreateClass} className="nexus-join-form">
@@ -147,18 +146,18 @@ const InstructorDashboard = () => {
                     <div className="workspace-section">
                         <div className="section-title-block">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            <h2>Active Managed Nodes</h2>
+                            <h2>My Classroom(s)</h2>
                         </div>
 
                         {loading ? (
                             <div className="spatial-card loading-card">
                                 <div className="quantum-spinner"></div>
-                                <p>Synchronizing nodes...</p>
+                                <p>Synchronizing Classrooms...</p>
                             </div>
                         ) : classrooms.length === 0 ? (
                             <div className="spatial-card empty-card">
                                 <div className="empty-icon">📁</div>
-                                <h3>No Nodes Connected</h3>
+                                <h3>No Classrooms Found</h3>
                                 <p>Provision a new classroom above to get started.</p>
                             </div>
                         ) : (
@@ -171,7 +170,7 @@ const InstructorDashboard = () => {
                                     >
                                         <div className="card-glass-layer"></div>
                                         <div className="card-content flex-col">
-                                            <span className="node-badge">Command Center</span>
+                                            <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
                                             
                                             {/* Reusing student tag CSS for Instructor data */}
@@ -183,7 +182,7 @@ const InstructorDashboard = () => {
                                             </div>
 
                                             <div className="course-footer-nexus">
-                                                <span>Access Node</span>
+                                                <span>Access Classroom</span>
                                                 <svg className="arrow-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                             </div>
                                         </div>

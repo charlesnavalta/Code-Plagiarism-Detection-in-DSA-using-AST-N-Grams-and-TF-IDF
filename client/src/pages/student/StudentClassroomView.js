@@ -100,8 +100,7 @@ const StudentClassroomView = () => {
                 <main className="content-hub">
                     <div className="hub-header">
                         <div className="header-titles">
-                            <h2>Assignment Queue</h2>
-                            <p className="sub-text">Review requirements and deploy your source code nodes.</p>
+                            <h2>Assignment(s)</h2>
                         </div>
                     </div>
 

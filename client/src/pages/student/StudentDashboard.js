@@ -44,7 +44,7 @@ const StudentDashboard = () => {
         try {
             const res = await api.get('/classrooms/enrolled');
             setEnrolledClasses(res.data);
-        } catch (error) { console.error("Critical error syncing nodes:", error); } 
+        } catch (error) { console.error("Critical error syncing classrooms:", error); } 
         finally { setLoading(false); }
     };
 
@@ -52,7 +52,7 @@ const StudentDashboard = () => {
 
     const handleJoinClass = async (e) => {
         e.preventDefault();
-        if (!inviteCode.trim() || inviteCode.length !== 6) return alert("Security Notice: Invalid node hash.");
+        if (!inviteCode.trim() || inviteCode.length !== 6) return alert("Security Notice: Invalid code.");
         try {
             const res = await api.post('/classrooms/join', { invite_code: inviteCode });
             alert(res.data.message);
@@ -120,8 +120,7 @@ const StudentDashboard = () => {
                     <div className="action-banner-nexus spatial-card">
                         <div className="banner-content">
                             <div className="banner-text">
-                                <h1>Welcome Back, {displayName.split(' ')[0]}</h1>
-                                <p>Provision your logic for analysis. Join a classroom to continue.</p>
+                                <h1>Student Hub</h1>
                             </div>
                             
                             <form onSubmit={handleJoinClass} className="nexus-join-form">
@@ -145,12 +144,12 @@ const StudentDashboard = () => {
                         {loading ? (
                             <div className="spatial-card loading-card">
                                 <div className="quantum-spinner"></div>
-                                <p>Synchronizing nodes...</p>
+                                <p>Synchronizing...</p>
                             </div>
                         ) : enrolledClasses.length === 0 ? (
                             <div className="spatial-card empty-card">
                                 <div className="empty-icon">📁</div>
-                                <h3>No Nodes Connected</h3>
+                                <h3>No Classrooms Found</h3>
                                 <p>Gain access by entering an instructor hash code above.</p>
                             </div>
                         ) : (
@@ -163,14 +162,14 @@ const StudentDashboard = () => {
                                     >
                                         <div className="card-glass-layer"></div>
                                         <div className="card-content flex-col">
-                                            <span className="node-badge">Classroom Node</span>
+                                            <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
                                             <div className="instructor-tag-nexus">
                                                 <div className="ins-mini-avatar">{cls.instructor.charAt(0)}</div>
                                                 <span className="ins-name">{cls.instructor}</span>
                                             </div>
                                             <div className="course-footer-nexus">
-                                                <span>Open Workspace</span>
+                                                <span>Open Classroom</span>
                                                 <svg className="arrow-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                             </div>
                                         </div>

@@ -84,16 +84,16 @@ const ForgotPassword = () => {
                         Your code will remain valid for exactly 15 minutes.
                     </p>
 
-                    <div className="graphic-cluster">
+                    <div className="graphic-cluster fp-cluster">
                         <div className="abstract-card card-back">
-                            <code>Match: 94.2%</code>
-                            <div className="match-indicator"></div>
+                            <code>Status: Re-securing</code>
+                            <div className="match-indicator" style={{ width: '60%', background: '#3b82f6' }}></div>
                         </div>
                         <div className="abstract-card card-front">
-                            <code>def quick_sort(arr):</code>
+                            <code> verify_otp(******)</code>
+                            <div className="dummy-code-line w-58"></div>
                             <div className="dummy-code-line w-75"></div>
-                            <div className="dummy-code-line w-50"></div>
-                            <div className="dummy-code-line w-100"></div>
+                            <code style={{ color: '#10b981' }}> Keys updated_</code>
                         </div>
                     </div>
                 </div>
