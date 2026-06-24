@@ -10,7 +10,7 @@ class Node {
     }
 }
 
-public class Main {
+public class type_2_renamed2 {
 
     public static ArrayList<Integer> inorder(Node node) {
         ArrayList<Integer> values = new ArrayList<>();

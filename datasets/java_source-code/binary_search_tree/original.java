@@ -42,7 +42,7 @@ class BinarySearchTree {
     }
 }
 
-public class Main {
+public class original {
     public static void main(String[] args) {
         BinarySearchTree bst = new BinarySearchTree();
 

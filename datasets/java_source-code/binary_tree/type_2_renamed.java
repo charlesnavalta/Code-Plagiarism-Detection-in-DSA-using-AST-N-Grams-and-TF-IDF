@@ -10,7 +10,7 @@ class TreeElement {
     }
 }
 
-public class Main {
+public class type_2_renamed {
 
     public static ArrayList<Integer> inorderWalk(TreeElement currentNode) {
         ArrayList<Integer> output = new ArrayList<>();

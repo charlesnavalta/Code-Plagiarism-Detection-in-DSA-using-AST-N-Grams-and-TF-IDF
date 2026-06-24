@@ -26,14 +26,17 @@ const StudentDashboard = () => {
     // --- Dynamic User Identity ---
     const getUserData = () => {
         try {
-            const rawUser = localStorage.getItem('user');
+            // 🌟 FIX: Check both vaults for the user string
+            const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
             if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
         } catch (e) { console.error("Identity Sync Error", e); }
+        
         return { username: 'Guest Student', role: 'student' }; 
     };
 
     const currentUser = getUserData();
-    const displayName = currentUser.name || currentUser.username || 'Student';
+    // 🌟 FIX: Prioritize the first_name over the username
+    const displayName = currentUser.first_name || currentUser.name || currentUser.username || 'Student';
     const userInitial = displayName.charAt(0).toUpperCase();
 
     // --- API Operations ---

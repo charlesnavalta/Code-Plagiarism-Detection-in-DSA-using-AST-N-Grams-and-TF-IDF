@@ -1,4 +1,4 @@
-public class Main {
+public class type_2_renamed2 {
 
     public static boolean linearSearch(int[] lst, int key) {
         for (int item : lst) {

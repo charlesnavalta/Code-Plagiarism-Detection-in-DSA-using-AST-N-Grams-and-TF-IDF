@@ -1,4 +1,4 @@
-public class Main {
+public class type_1_exact {
 
     public static boolean linearSearch(int[] arr, int target) {
         for (int i = 0; i < arr.length; i++) {

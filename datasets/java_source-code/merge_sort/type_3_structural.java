@@ -1,4 +1,4 @@
-public class Main {
+public class type_3_structural {
 
     public static int[] mergeSort(int[] arr) {
         int n = arr.length;

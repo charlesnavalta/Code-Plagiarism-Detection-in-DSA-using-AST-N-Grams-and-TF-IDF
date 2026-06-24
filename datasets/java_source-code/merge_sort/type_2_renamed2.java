@@ -1,4 +1,4 @@
-public class Main {
+public class type_2_renamed2 {
 
     public static int[] sortList(int[] values) {
         if (values.length <= 1) {

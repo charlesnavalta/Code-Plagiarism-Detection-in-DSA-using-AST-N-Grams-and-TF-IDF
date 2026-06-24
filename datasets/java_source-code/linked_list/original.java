@@ -1,4 +1,4 @@
-public class Main {
+public class original {
     
     public static boolean linearSearch(int[] arr, int target) {
         for (int num : arr) {

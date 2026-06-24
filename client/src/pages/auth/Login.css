@@ -75,55 +75,74 @@
     margin-bottom: 40px;
 }
 
-/* Decorative Graphic Cluster */
+/* =========================================
+   DECORATIVE GRAPHIC CLUSTER (Upgraded Placement)
+   ========================================= */
 .graphic-cluster {
     position: relative;
-    height: 200px;
-    margin-top: 40px;
+    height: 220px; 
+    max-width: 420px; /* Constrains the boundary so cards don't float away */
+    margin-top: 50px;
 }
 
+/* Base style shared by both cards */
 .abstract-card {
     position: absolute;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 24px;
+    /* Smooth transition for the new hover effect */
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 
-.card-front {
-    top: 20px; left: 0;
-    width: 260px;
-    z-index: 2;
-}
-
+/* 1. The Match Result (Back Layer) */
 .card-back {
-    top: 0; left: 180px;
-    width: 200px;
+    bottom: 0; 
+    right: 0; /* Anchors precisely to the top-right of the cluster */
+    width: 220px;
+    background: rgba(16, 185, 129, 0.08); /* Minty green to match the success metric */
+    border: 1px solid rgba(16, 185, 129, 0.3);
     z-index: 1;
-    background: rgba(59, 130, 246, 0.15);
-    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
+/* 2. The Code Block (Front Layer) */
+.card-front {
+    top: 0; /* Anchors precisely to the bottom-left */
+    left: 0;
+    width: 280px;
+    background: rgba(15, 23, 42, 0.85); /* Darker slate for high contrast */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    z-index: 2;
+    box-shadow: 15px 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* 3. The Magnetic Hover Interaction */
+.graphic-cluster:hover .card-front {
+    transform: translateY(-8px) translateX(-8px);
+    box-shadow: 20px 30px 50px rgba(0, 0, 0, 0.6);
+}
+
+.graphic-cluster:hover .card-back {
+    transform: translateY(8px) translateX(8px);
+}
+
+/* Keep your existing internal text/line styling */
 .abstract-card code {
     display: block;
     color: #60a5fa;
-    font-family: monospace;
-    margin-bottom: 12px;
-    font-size: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .dummy-code-line {
     height: 8px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 4px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
-
-.dummy-code-line:nth-child(2) { animation-delay: 0.2s; }
-.dummy-code-line:nth-child(3) { animation-delay: 0.4s; }
-.dummy-code-line:nth-child(4) { animation-delay: 0.6s; }
 
 .w-100 { width: 100%; }
 .w-75 { width: 75%; }
@@ -131,14 +150,11 @@
 
 .match-indicator {
     height: 8px;
-    width: 0%; 
+    width: 94.2%; /* Statically set to 94.2% since we removed the animation */
     background: #10b981; 
     border-radius: 4px;
-    /* Changed 'forwards' to 'both' below */
-    animation: fillBar 1.5s cubic-bezier(0.25, 1, 0.5, 1) both; 
-    animation-delay: 0.6s; 
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); /* Adds a nice neon glow */
 }
-
 
 /* =========================================
    RIGHT PANE: The Login Form
@@ -307,6 +323,17 @@
 @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(30px); }
     100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Mobile Responsiveness */

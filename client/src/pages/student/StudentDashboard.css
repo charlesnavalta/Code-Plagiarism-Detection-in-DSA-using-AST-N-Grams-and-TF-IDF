@@ -61,7 +61,7 @@
 .spatial-card:hover::after { opacity: 1; }
 .spatial-card:hover { transform: translateY(-4px); border-color: var(--accent); }
 
-.card-content { padding: 32px; position: relative; z-index: 2; }
+.card-content { padding: 24px; position: relative; z-index: 2; }
 .flex-col { display: flex; flex-direction: column; height: 100%; }
 
 /* SIDEBAR */
@@ -102,16 +102,16 @@
 .section-title-block { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
 .section-title-block h2 { font-size: 1.1rem; font-weight: 700; margin: 0; }
 
-.classroom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.classroom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
 .course-card { cursor: pointer; height: 100%; }
-.node-badge { background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; align-self: flex-start; margin-bottom: 16px; }
-.course-title { font-size: 1.6rem; font-weight: 800; margin: 0 0 24px; letter-spacing: -0.5px; }
+.node-badge { background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; align-self: flex-start; margin-bottom: 12px; }
+.course-title { font-size: 1.3rem; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
 
-.instructor-tag-nexus { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.instructor-tag-nexus { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
 .ins-mini-avatar { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
 .ins-name { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
 
-.course-footer-nexus { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.9rem; font-weight: 600; }
+.course-footer-nexus { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
 .course-card:hover .course-footer-nexus { color: var(--accent); }
 .arrow-icon { transition: transform 0.3s ease; }
 .course-card:hover .arrow-icon { transform: translateX(5px); }

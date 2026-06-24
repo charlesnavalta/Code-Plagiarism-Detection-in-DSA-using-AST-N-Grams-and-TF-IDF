@@ -1,4 +1,4 @@
-public class Main {
+public class type_1_exact {
 
     public static int[] mergeSort(int[] arr) {
         if (arr.length <= 1) {

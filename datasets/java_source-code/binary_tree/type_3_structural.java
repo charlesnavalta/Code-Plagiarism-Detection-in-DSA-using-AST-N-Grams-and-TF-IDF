@@ -11,7 +11,7 @@ class TreeNode {
     }
 }
 
-public class Main {
+public class type_3_structural {
 
     public static ArrayList<Integer> inorderIterative(TreeNode root) {
         ArrayList<Integer> output = new ArrayList<>();
