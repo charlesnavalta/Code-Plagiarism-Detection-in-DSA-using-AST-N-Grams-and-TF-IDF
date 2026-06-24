@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css'; 
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    
+    // Interactive State for the mockup demonstration
+    const [selectedVariant, setSelectedVariant] = useState('original'); // 'original' or 'obfuscated'
 
     return (
         <div className="landing-wrapper theme-dark">
+            {/* Background Aurora Engine */}
+            <div className="aurora-canvas">
+                <div className="aurora-blob blob-1"></div>
+                <div className="aurora-blob blob-2"></div>
+            </div>
+
             {/* Navigation Bar */}
             <nav className="landing-navbar">
                 <div className="landing-logo">
@@ -19,21 +28,17 @@ const LandingPage = () => {
                 </div>
             </nav>
 
-            {/* Hero Section - SPLIT LAYOUT */}
+            {/* Hero Section */}
             <main className="landing-hero split-layout">
-                <div className="hero-bg-glow blob-1"></div>
-                <div className="hero-bg-glow blob-2"></div>
                 
-                {/* LEFT COLUMN: Text Content */}
+                {/* LEFT COLUMN: Value Proposition */}
                 <div className="hero-text-column fade-in-up">
                     <h1 className="hero-title">
                         Beyond Text. <br/>
                         <span className="text-gradient">Analyze the Algorithm.</span>
                     </h1>
                     <p className="hero-subtitle">
-                        Falsicode is an advanced structural plagiarism detection system for Data Structures and Algorithms. 
-                        Powered by Abstract Syntax Trees (AST) and TF-IDF N-Grams, it detects logic-copying in Python and Java 
-                        even if variable names, comments, and spacing are completely changed.
+                        An advanced structural plagiarism engine for Python and Java. Falsicode uses AST and TF-IDF to expose copied logic—even when variables, comments, and formatting are completely disguised.
                     </p>
                     
                     <div className="hero-action-group">
@@ -47,32 +52,64 @@ const LandingPage = () => {
                     </div>
                 </div>
 
-                {/* RIGHT COLUMN: Mockup/Graphic */}
+                {/* RIGHT COLUMN: Interactive Structural Mockup */}
                 <div className="hero-graphic-column fade-in-up" style={{ animationDelay: '0.2s' }}>
                     <div className="glass-mockup">
-                        {/* Simulated UI Window */}
                         <div className="mockup-header">
                             <div className="mockup-dots">
                                 <span></span><span></span><span></span>
                             </div>
-                            <div className="mockup-url">falsicode.app/analysis</div>
+                            <div className="mockup-url">falsicode.app/sandbox</div>
                         </div>
+                        
+                        <div className="mockup-tabs">
+                            <button 
+                                className={`mockup-tab-btn ${selectedVariant === 'original' ? 'active' : ''}`}
+                                onClick={() => setSelectedVariant('original')}
+                            >
+                                submission_A.py
+                            </button>
+                            <button 
+                                className={`mockup-tab-btn ${selectedVariant === 'obfuscated' ? 'active' : ''}`}
+                                onClick={() => setSelectedVariant('obfuscated')}
+                            >
+                                submission_B_obfuscated.py
+                            </button>
+                        </div>
+
                         <div className="mockup-body">
-                            <div className="mockup-code-block">
-                                <span className="m-keyword">def</span> <span className="m-func">merge_sort</span>(arr):
-                                <br/>&nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(arr) {'>'} 1:
-                                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mid = len(arr)//2
-                            </div>
+                            {selectedVariant === 'original' ? (
+                                <div className="mockup-code-block">
+                                    <span className="m-keyword">def</span> <span className="m-func">merge_sort</span>(arr):<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(arr) &gt; 1:<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mid = len(arr) // 2<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;left = arr[:mid]
+                                </div>
+                            ) : (
+                                <div className="mockup-code-block">
+                                    <span className="m-keyword">def</span> <span className="m-func">executeSortProcess</span>(target_list):<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-comment"># Replaced labels and spacing entirely</span><br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(target_list) &gt; 1:<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pivot_point = len(target_list) // 2<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first_half = target_list[:pivot_point]
+                                </div>
+                            )}
+
                             <div className="mockup-ast-line">
-                                <span className="ast-node">FunctionDef</span> ➔ <span className="ast-node">If</span> ➔ <span className="ast-node">Assign</span>
+                                <span className="ast-label-text">Structural Hash Topology:</span>
+                                <div className="ast-nodes-flex">
+                                    <span className="ast-node">FunctionDef</span> ➔ <span className="ast-node">If</span> ➔ <span className="ast-node">Assign</span>
+                                </div>
                             </div>
+                            
                             <div className="mockup-match-box">
-                                <span className="match-label">Structural Match Found</span>
-                                <span className="match-percent text-gradient">92.4%</span>
+                                <span className="match-label">Structural Clone Identity Matrix</span>
+                                <span className="match-percent text-gradient">92.4% Match</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </main>
         </div>
     );

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class original {
+public class type_1_exact_of_copy {
 
     public static List<Integer> quickSort(List<Integer> arr) {
         // Base case: if the list has 1 or 0 elements, it is already sorted

@@ -7,7 +7,6 @@ from utils.email_service import generate_6_digit_code, send_otp_email
 
 auth_bp = Blueprint('auth', __name__)
 
-
 # ==============================================================================
 # NEW: REQUEST VERIFICATION CODE (Called before registration)
 # ==============================================================================
@@ -55,6 +54,7 @@ def register():
 
     user_status = 'pending' if requested_role == 'instructor' else 'active'
     
+    # 🌟 FIX: Removed first_name/last_name to prevent the 500 DB schema crash
     new_user = User(
         username=data['username'],
         email=data['email'],
@@ -71,6 +71,7 @@ def register():
         return jsonify({"message": "Registration Successful!", "status": user_status}), 201
     except Exception as e:
         db.session.rollback()
+        # You can print(e) here in development to see exact DB errors in your terminal
         return jsonify({"error": "An error occurred during registration."}), 500
 
 
@@ -135,12 +136,90 @@ def login():
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
-                "role": user.role 
+                "role": user.role,
+                # Safe fallback: Won't crash if the columns don't exist
+                "first_name": getattr(user, 'first_name', ''),
+                "last_name": getattr(user, 'last_name', '')
             }
         }), 200
 
     return jsonify({"error": "Invalid email or password"}), 401
 
+
+# ==============================================================================
+# 🌟 FORGOT PASSWORD ENDPOINT (Supports both Username and Email lookup)
+# ==============================================================================
+@auth_bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    """Initializes the verification code process for account recovery."""
+    data = request.get_json()
+    login_id = data.get('email') 
+
+    if not login_id:
+        return jsonify({"error": "An identifier field is required."}), 400
+
+    user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
+    
+    if not user:
+        return jsonify({"message": "If the account is valid, a recovery code has been sent."}), 200
+
+    try:
+        code = generate_6_digit_code()
+        
+        user.verification_code = code
+        user.verification_expires = datetime.utcnow() + timedelta(minutes=15)
+        db.session.commit()
+
+        email_sent = send_otp_email(user.email, code, intent="password_update")
+        
+        if email_sent:
+            return jsonify({"message": "If the account is valid, a recovery code has been sent."}), 200
+        else:
+            return jsonify({"error": "Failed to route notification through recovery channel."}), 500
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "A system fault occurred while generating recovery keys."}), 500
+
+
+# ==============================================================================
+# 🌟 RESET PASSWORD ENDPOINT (Supports both Username and Email lookup)
+# ==============================================================================
+@auth_bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    """Validates verification code and commits the new password configuration."""
+    data = request.get_json()
+    login_id = data.get('email') 
+    code = data.get('code')
+    new_password = data.get('new_password')
+
+    if not login_id or not code or not new_password:
+        return jsonify({"error": "All execution inputs are strictly required."}), 400
+
+    if len(new_password) < 6:
+        return jsonify({"error": "Security parameter failed: Password must be at least 6 characters."}), 400
+
+    user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
+    if not user:
+        return jsonify({"error": "Verification sequence invalid."}), 400
+
+    if user.verification_code != code:
+        return jsonify({"error": "Invalid code parameters provided."}), 400
+
+    if user.verification_expires and datetime.utcnow() > user.verification_expires:
+        return jsonify({"error": "Verification matrix has expired. Request a new sequence."}), 400
+
+    try:
+        user.set_password(new_password)
+        user.verification_code = None
+        user.verification_expires = None
+        db.session.commit()
+        return jsonify({"message": "Credentials updated successfully! Proceeding to entry portal."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to commit credential updates to database architecture."}), 500
+
+# ... (Admin and Profile routes remain exactly the same) ...
 
 # ==============================================================================
 # 4. ADMIN USER MANAGEMENT ROUTES (Protect with @jwt_required)
@@ -320,7 +399,6 @@ def request_profile_code():
         user.verification_expires = datetime.utcnow() + timedelta(minutes=10)
         db.session.commit()
 
-        # 🌟 FIX: Trigger the password update intent logic!
         email_sent = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:

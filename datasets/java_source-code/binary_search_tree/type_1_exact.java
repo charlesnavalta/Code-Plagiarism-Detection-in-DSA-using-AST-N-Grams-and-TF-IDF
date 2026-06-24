@@ -61,7 +61,7 @@ class BinarySearchTree {
     }
 }
 
-public class Main {
+public class type_1_exact {
     public static void main(String[] args) {
         BinarySearchTree bst = new BinarySearchTree();
 

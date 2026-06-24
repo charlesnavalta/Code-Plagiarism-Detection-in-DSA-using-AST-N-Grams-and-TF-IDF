@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class type_2_renamed_copy {
+public class type_2_renamed {
 
     public static List<Integer> sortSequence(List<Integer> inputList) {
         // Base case: if the list has 1 or 0 elements, it is already sorted

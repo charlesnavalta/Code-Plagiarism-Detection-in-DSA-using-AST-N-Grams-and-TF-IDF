@@ -66,7 +66,7 @@ class BinarySearchTree {
     }
 }
 
-public class Main {
+public class type_3_structural2 {
     public static void main(String[] args) {
         BinarySearchTree myTree = new BinarySearchTree();
 

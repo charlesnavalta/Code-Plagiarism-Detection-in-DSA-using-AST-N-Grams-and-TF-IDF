@@ -1,4 +1,5 @@
-public class Main {
+public class type_3_structural2
+ {
 
     public static int[] mergeSort(int[] arr) {
         if (arr.length < 2) {

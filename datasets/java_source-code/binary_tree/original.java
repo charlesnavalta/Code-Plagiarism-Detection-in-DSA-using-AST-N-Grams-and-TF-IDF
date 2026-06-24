@@ -10,7 +10,7 @@ class Node {
     }
 }
 
-public class Main {
+public class original {
 
     // Inorder traversal that returns a list
     public static ArrayList<Integer> inorderTraversal(Node root) {

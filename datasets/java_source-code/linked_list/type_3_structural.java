@@ -1,4 +1,4 @@
-public class Main {
+public class type_3_structural {
     public static boolean linearSearch(int[] arr, int target) {
         int index = 0;
         boolean found = false;

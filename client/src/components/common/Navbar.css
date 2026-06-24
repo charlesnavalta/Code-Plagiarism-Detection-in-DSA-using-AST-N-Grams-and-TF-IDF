@@ -8,6 +8,12 @@
     --nav-text-sub: #94a3b8;
     --nav-accent: #3b82f6;
     --nav-highlight: rgba(255, 255, 255, 0.1);
+
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
 }
 
 .navbar-nexus[data-theme='light'] {

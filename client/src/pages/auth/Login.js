@@ -7,6 +7,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -19,9 +20,18 @@ const Login = () => {
                 password 
             });
             
-            localStorage.setItem('user', JSON.stringify(res.data.user)); 
-            localStorage.setItem('token', res.data.access_token);
+            const userString = JSON.stringify(res.data.user);
+            const token = res.data.access_token;
 
+            // Clear out any old lingering data first to prevent conflicts
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Store the new session tokens securely in standard local storage
+            localStorage.setItem('user', userString); 
+            localStorage.setItem('token', token);
+
+            // Route the user to their dashboard
             const role = res.data.user.role;
             if (role === 'admin') navigate('/admin');
             else if (role === 'instructor') navigate('/instructor');
@@ -43,7 +53,6 @@ const Login = () => {
             
             {/* LEFT COLUMN: Illustrative & Branding */}
             <div className="split-left-pane">
-                {/* Background Ambient Animation from your previous step */}
                 <div className="aurora-canvas">
                     <div className="hero-bg-glow blob-1"></div>
                     <div className="hero-bg-glow blob-2"></div>
@@ -64,17 +73,16 @@ const Login = () => {
                         Detect logic-copying even when variables are changed.
                     </p>
 
-                    {/* Decorative abstract cards mimicking the FB graphic cluster */}
                     <div className="graphic-cluster">
+                        <div className="abstract-card card-back">
+                            <code>Match: 94.2%</code>
+                            <div className="match-indicator"></div>
+                        </div>
                         <div className="abstract-card card-front">
                             <code>def quick_sort(arr):</code>
                             <div className="dummy-code-line w-75"></div>
                             <div className="dummy-code-line w-50"></div>
                             <div className="dummy-code-line w-100"></div>
-                        </div>
-                        <div className="abstract-card card-back">
-                            <code>Match: 94.2%</code>
-                            <div className="match-indicator"></div>
                         </div>
                     </div>
                 </div>
@@ -97,6 +105,8 @@ const Login = () => {
                                 </svg>
                                 <input 
                                     type="text" 
+                                    name="email"
+                                    autoComplete="username"
                                     placeholder="Username or Email" 
                                     className="auth-styled-input"
                                     value={email}
@@ -114,6 +124,8 @@ const Login = () => {
                                 </svg>
                                 <input 
                                     type="password" 
+                                    name="password"
+                                    autoComplete="current-password"
                                     placeholder="Password" 
                                     className="auth-styled-input"
                                     value={password}
@@ -123,13 +135,8 @@ const Login = () => {
                             </div>
                         </div>
 
-                        <div className="auth-options-row">
-                            <label className="auth-checkbox-container">
-                                <input type="checkbox" />
-                                <span className="auth-checkmark"></span>
-                                Remember me
-                            </label>
-                            <a href="/forgot-password" className="auth-link">Forgot password?</a>
+                        <div className="auth-options-row" style={{ justifyContent: 'flex-end' }}>
+                            <Link to="/forgot-password" className="auth-link">Forgot password?</Link>
                         </div>
 
                         <button type="submit" className="auth-submit-btn" disabled={loading}>
