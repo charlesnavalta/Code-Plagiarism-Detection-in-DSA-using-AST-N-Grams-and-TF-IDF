@@ -1,31 +1,32 @@
 /* =========================================
    1. VIEW WRAPPERS & LOADING STATES
    ========================================= */
-.falsicode-wrapper {
-    background-color: var(--bg-main);
-    color: var(--text-hero);
+/* Inherits global nexus-wrapper styles from your main CSS */
+.nexus-wrapper {
+    background-color: var(--bg-app);
+    color: var(--text-main);
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     position: relative;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Page Loader Logic */
 .falsicode-loader {
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--bg-main);
+    background: var(--bg-app);
     gap: 20px;
 }
 
 .quantum-spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-top: 4px solid var(--accent-blue);
+    border: 4px solid var(--border-card);
+    border-top: 4px solid var(--accent);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -37,18 +38,22 @@
 /* =========================================
    2. CINEMATIC HEADER (THE PURPLE HUB)
    ========================================= */
-.classroom-layout { 
+/* 🌟 FIX: Scoped padding specifically for the instructor view */
+.nexus-content.instructor-layout { 
     max-width: 1100px; 
-    margin: 0 auto; 
-    padding: 40px 20px; 
+    margin: 0 auto;
+    padding-top: 50px; /* Clears the fixed navbar */
+    padding-bottom: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
     position: relative; 
     z-index: 10; 
 }
 
 .cinematic-header {
-    background: var(--nexus-grad) !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
     border: none !important;
-    box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.5) !important;
+    box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.4) !important;
     margin-bottom: 50px;
     border-radius: 24px;
 }
@@ -64,7 +69,6 @@
     margin-bottom: 25px; 
 }
 
-/* "Hub" Button Styles */
 .neo-back-btn { 
     background: rgba(0,0,0,0.25); 
     border: 1px solid rgba(255,255,255,0.2); 
@@ -81,7 +85,6 @@
     transform: translateX(-3px);
 }
 
-/* "Invite Code" Chip Styles */
 .glass-chip { 
     background: rgba(0,0,0,0.15); 
     padding: 8px 16px; 
@@ -104,7 +107,6 @@
     color: white;
 }
 
-/* Stat Badge Section */
 .stat-badges { 
     display: flex; 
     gap: 20px; 
@@ -121,7 +123,7 @@
 }
 
 .status-active {
-    color: var(--status-green);
+    color: #10b981;
     border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
@@ -144,11 +146,11 @@
     font-weight: 800;
     letter-spacing: -1px;
     margin: 0;
+    color: var(--text-main);
 }
 
-/* "New Assignment" Primary Button */
 .btn-primary-falsicode { 
-    background: var(--accent-blue); 
+    background: var(--accent); 
     color: white; 
     border: none; 
     padding: 12px 24px; 
@@ -162,10 +164,11 @@
 .btn-primary-falsicode:hover {
     transform: translateY(-2px);
     filter: brightness(1.1);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
 /* =========================================
-   4. ASSIGNMENT CARDS
+   4. ASSIGNMENT CARDS (THEME FIXED)
    ========================================= */
 .assignment-grid { 
     display: flex; 
@@ -175,15 +178,22 @@
 
 .assignment-item-row { 
     padding: 30px; 
-    background: rgba(255,255,255,0.02); 
+    background: var(--bg-card); 
     border-radius: 20px; 
-    border: 1px solid var(--border-glass); 
+    border: 1px solid var(--border-card); 
     position: relative;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
 
-.assignment-item-row:hover {
-    background: rgba(255,255,255,0.04);
+.assignment-item-row.clickable-row {
+    cursor: pointer;
+}
+
+.assignment-item-row.clickable-row:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .task-id { 
@@ -195,17 +205,10 @@
     margin-bottom: 8px;
 }
 
-.sub-count { 
-    position: absolute; 
-    right: 30px; 
-    top: 30px; 
-    font-size: 0.85rem; 
-    color: var(--text-dim); 
-}
-
 .assignment-item-row h3 {
     margin: 0 0 10px 0;
     font-size: 1.4rem;
+    color: var(--text-main);
 }
 
 .assignment-item-row p {
@@ -214,54 +217,9 @@
     margin-bottom: 20px;
 }
 
-/* "Audit Submissions" Glass Button */
-.btn-glass-action { 
-    background: rgba(255,255,255,0.05); 
-    color: white; 
-    border: 1px solid rgba(255,255,255,0.1); 
-    padding: 12px 24px; 
-    border-radius: 12px; 
-    cursor: pointer; 
-    font-weight: 600;
-    backdrop-filter: blur(5px);
-    transition: all 0.2s ease;
-}
-
-.btn-glass-action:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: var(--accent-blue);
-    transform: translateX(5px);
-}
-
 /* =========================================
-   5. PAGE ANIMATIONS
+   5. META LABELS & GLASS BUTTONS
    ========================================= */
-.fade-in-down { 
-    animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-}
-
-@keyframes fadeInDown { 
-    from { opacity: 0; transform: translateY(-20px); } 
-    to { opacity: 1; transform: translateY(0); } 
-}
-
-/* =========================================
-   UPDATES FOR ASSIGNMENT STREAM
-   ========================================= */
-
-.header-titles h2 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin: 0 0 5px 0;
-}
-
-.header-titles .sub-text {
-    margin: 0;
-    color: var(--text-dim);
-    font-size: 0.95rem;
-}
-
 .assignment-meta-top {
     display: flex;
     justify-content: space-between;
@@ -272,11 +230,11 @@
 .assignment-meta-top .task-id {
     font-family: 'Inter', system-ui, -apple-system, sans-serif; 
     font-size: 0.7rem; 
-    color: var(--accent-blue);
-    background: rgba(59, 130, 246, 0.1); /* Translucent blue tint */
-    border: 1px solid rgba(59, 130, 246, 0.2); /* Very subtle border */
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.1); 
+    border: 1px solid rgba(59, 130, 246, 0.2); 
     padding: 4px 10px;
-    border-radius: 6px; /* Soft, modern corners */
+    border-radius: 6px; 
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 1px;
@@ -286,7 +244,7 @@
 }
 
 .assignment-meta-top .sub-count {
-    position: static; /* Remove absolute positioning from old CSS */
+    position: static; 
     font-size: 0.85rem; 
     font-weight: 600;
     padding: 4px 10px;
@@ -294,34 +252,56 @@
 }
 
 .sub-count.no-subs {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0,0,0,0.05);
+    border: 1px solid var(--border-card);
     color: var(--text-dim);
 }
 
 .sub-count.has-subs {
-    background: rgba(16, 185, 129, 0.15); /* Subtle green background */
-    color: var(--status-green); /* Highlights when students start submitting */
+    background: rgba(16, 185, 129, 0.15); 
+    color: #10b981; 
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/* Subtle glow when submissions are ready to be audited */
+/* "Audit Submissions" Button */
+.btn-glass-action { 
+    background: transparent; 
+    color: var(--text-main); 
+    border: 1px solid var(--border-card); 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.btn-glass-action:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.05);
+}
+
 .btn-glass-action.ready-to-audit {
-    border-color: rgba(59, 130, 246, 0.4);
-    color: #fff;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff; /* Guaranteed white text for blue background */
 }
 
 .btn-glass-action.ready-to-audit:hover {
-    background: rgba(59, 130, 246, 0.15);
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    filter: brightness(1.15);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
 }
 
-.assignment-item-row.clickable-row {
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* =========================================
+   6. PAGE ANIMATIONS
+   ========================================= */
+.fade-in-down { 
+    animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
 }
 
-.assignment-item-row.clickable-row:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.2);
+@keyframes fadeInDown { 
+    from { opacity: 0; transform: translateY(-20px); } 
+    to { opacity: 1; transform: translateY(0); } 
 }

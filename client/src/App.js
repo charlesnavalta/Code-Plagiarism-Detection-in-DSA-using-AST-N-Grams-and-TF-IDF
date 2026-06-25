@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useTheme } from './hooks/useTheme';
 
 // ==========================================
 // 1. CORE COMPONENTS & COMMON UI
@@ -7,7 +8,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Navbar from './components/common/Navbar';
 import Profile from './pages/common/Profile';
-import LandingPage from './pages/common/LandingPage'; // <-- NEW: Imported Landing Page
+import LandingPage from './pages/common/LandingPage';
 
 // ==========================================
 // 2. AUTHENTICATION PAGES
@@ -32,6 +33,8 @@ import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 
 function App() {
+
+  useTheme();
 
   // ==========================================
   // GLOBAL INACTIVITY TIMER (AUTO-LOGOUT)

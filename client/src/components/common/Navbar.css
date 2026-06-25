@@ -1,7 +1,9 @@
 /* =========================================
    NEXUS NAVBAR (ANCHORED BRANDING)
    ========================================= */
+
 .navbar-nexus {
+    /* Variables */
     --nav-bg: rgba(21, 30, 50, 0.7);
     --nav-border: rgba(255, 255, 255, 0.06);
     --nav-text: #ffffff;
@@ -9,31 +11,19 @@
     --nav-accent: #3b82f6;
     --nav-highlight: rgba(255, 255, 255, 0.1);
 
+    /* Positioning - This makes it FIXED to the top! */
     position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 99999;
-}
+    z-index: 99999; 
 
-.navbar-nexus[data-theme='light'] {
-    --nav-bg: rgba(255, 255, 255, 0.8);
-    --nav-border: rgba(0, 0, 0, 0.05);
-    --nav-text: #0f172a;
-    --nav-text-sub: #64748b;
-    --nav-accent: #2563eb;
-    --nav-highlight: rgba(255, 255, 255, 1);
-}
-
-.navbar-nexus {
+    /* Layout & Styling */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 24px; /* Tighter padding for corner anchor */
+    padding: 0 24px;
     height: 65px;
-    position: sticky;
-    top: 0;
-    z-index: 2000;
     background: var(--nav-bg);
     backdrop-filter: blur(24px) saturate(150%);
     -webkit-backdrop-filter: blur(24px) saturate(150%);
@@ -41,6 +31,21 @@
     color: var(--nav-text);
     font-family: 'Inter', system-ui, sans-serif;
     transition: all 0.4s ease;
+}
+
+.navbar-hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
+}
+
+/* Light Theme overrides remain below it */
+.navbar-nexus[data-theme='light'] {
+    --nav-bg: rgba(255, 255, 255, 0.8);
+    --nav-border: rgba(0, 0, 0, 0.05);
+    --nav-text: #0f172a;
+    --nav-text-sub: #64748b;
+    --nav-accent: #2563eb;
+    --nav-highlight: rgba(255, 255, 255, 1);
 }
 
 /* LEFT SIDE */

@@ -8,48 +8,48 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px); /* The cinematic glass blur */
+    background: rgba(0, 0, 0, 0.6); /* Slightly dark overlay works for both themes */
+    backdrop-filter: blur(8px);
+    padding-top: 70px; /* Ensures modal is not flush with top of viewport */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Forces it to the very front */
+    z-index: 9999;
     animation: fadeIn 0.2s ease-out;
 }
 
 .modal-content {
-    background: #11111a; /* Deep dark background */
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-card); /* Adapts to theme */
+    border: 1px solid var(--border-glass); /* Adapts to theme */
     border-radius: 20px;
     width: 100%;
     max-width: 550px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    color: white;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Contains the scroll area */
+    overflow: hidden; 
 }
 
 /* Header Sections */
 .modal-header {
     padding: 35px 40px 20px;
     position: relative;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-glass); /* Adapts to theme */
 }
 
 .modal-header h2 {
     margin-top: 0;
     margin-bottom: 10px !important;
-    font-size: 2.2rem !important; /* Increased from 1.8rem to match Create Modal */
-    font-weight: 900;  /* Increased from 800 for that heavy, bold look */
+    font-size: 2.2rem !important; 
+    font-weight: 900;  
     letter-spacing: -1px;
-    color: white;
+    color: var(--text-hero); /* Adapts to theme */
 }
 
 .modal-subtitle {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-dim); /* Adapts to theme */
     margin: 0;
     font-size: 0.95rem;
 }
@@ -60,7 +60,7 @@
     right: 30px;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-dim); /* Adapts to theme */
     font-size: 1.8rem;
     cursor: pointer;
     line-height: 1;
@@ -68,7 +68,7 @@
 }
 
 .btn-close:hover {
-    color: white;
+    color: var(--text-hero);
 }
 
 /* Form Structure & Scrolling */
@@ -79,7 +79,7 @@
 }
 
 .form-scroll-body {
-    padding: 10px 40px 20px;
+    padding: 25px 40px 20px; /* Matched top padding with Create Modal */
     overflow-y: auto;
 }
 
@@ -91,11 +91,11 @@
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-glass);
     border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--text-dim);
 }
 
 /* Form Layout (Side-by-side) */
@@ -118,20 +118,19 @@
 
 .form-group label {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-dim); /* Adapts to theme */
     margin-bottom: 8px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* Added 'select' here to style the dropdown identically */
 .form-group input,
 .form-group textarea,
 .form-group select {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    background: var(--bg-main); /* Adapts to theme */
+    border: 1px solid var(--border-glass); /* Adapts to theme */
+    color: var(--text-main); /* Adapts to theme */
     padding: 14px;
     border-radius: 12px;
     font-family: 'Inter', system-ui, sans-serif;
@@ -149,15 +148,15 @@
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #3b82f6; /* Accent blue */
-    background: rgba(59, 130, 246, 0.05);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    border-color: var(--accent-blue);
+    background: var(--bg-card); /* Adapts to theme */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 /* FIX: Dropdown Option Background */
 .dropdown-fix option {
-    background-color: #11111a;
-    color: white;
+    background-color: var(--bg-card); /* Adapts to theme */
+    color: var(--text-main);
 }
 
 /* FIX: Hide Number Input Arrows */
@@ -176,15 +175,16 @@
     justify-content: flex-end;
     gap: 15px;
     padding: 25px 40px;
-    background: rgba(0, 0, 0, 0.3); /* Slightly darker footer area */
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-main); /* Adapts to theme */
+    border-top: 1px solid var(--border-glass); /* Adapts to theme */
     margin-top: auto;
 }
 
+/* Cancel Button */
 .modal-actions button[type="button"] {
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-dim); /* Adapts to theme */
+    border: 1px solid var(--border-glass); /* Adapts to theme */
     padding: 12px 24px;
     border-radius: 12px;
     font-weight: 600;
@@ -193,13 +193,15 @@
 }
 
 .modal-actions button[type="button"]:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: var(--bg-card); /* Adapts to theme */
+    color: var(--text-hero);
+    border-color: var(--text-dim);
 }
 
+/* Primary Submit Button */
 .modal-actions button[type="submit"] {
-    background: #3b82f6; /* Accent blue */
-    color: white;
+    background: var(--accent-blue);
+    color: white; /* Keep explicit white so text stays readable on blue */
     border: none;
     padding: 12px 24px;
     border-radius: 12px;

@@ -45,7 +45,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                     <p className="hud-subtitle">
                         {selectedPair 
                             ? `Detailed logic analysis between ${selectedPair.file1} and ${selectedPair.file2}`
-                            : "Reviewing student logic submissions"}
+                            : ""}
                     </p>
                 </div>
                 

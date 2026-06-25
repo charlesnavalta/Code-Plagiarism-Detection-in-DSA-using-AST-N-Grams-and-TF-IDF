@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api'; 
 import './StudentDashboard.css';
 
@@ -9,19 +10,8 @@ const StudentDashboard = () => {
     const [loading, setLoading] = useState(true);
     const dashboardRef = useRef(null);
     const navigate = useNavigate();
+    const [theme] = useTheme();
 
-    // --- Nexus Theme Synchronization ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
 
     // --- Dynamic User Identity ---
     const getUserData = () => {

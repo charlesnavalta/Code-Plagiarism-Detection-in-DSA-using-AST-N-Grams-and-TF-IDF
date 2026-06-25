@@ -1,7 +1,7 @@
 /* =========================================
-   CORE THEME VARIABLES
+   CORE THEME VARIABLES (DARK MODE DEFAULT)
    ========================================= */
-:root {
+:root, [data-theme="dark"] {
     /* Main Branding */
     --bg-main: #030712;
     --bg-app: #030712;
@@ -28,6 +28,36 @@
     /* Aurora Blobs */
     --blob-1: rgba(59, 130, 246, 0.12);
     --blob-2: rgba(139, 92, 246, 0.12);
+
+    /* White glow for dark mode */
+    --spotlight-color: rgba(255, 255, 255, 0.06);
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (FUTURE-PROOF)
+   ========================================= */
+/* 🌟 CHANGED: Now targets the global HTML attribute instead of a specific wrapper class */
+[data-theme="light"] {
+    --bg-main: #f8fafc; /* Light grey/white background */
+    --bg-app: #f8fafc;
+    --text-hero: #0f172a; /* Dark slate text for readability */
+    --text-main: #334155;
+    --text-dim: #64748b;
+    
+    /* Clean white cards instead of glassmorphism */
+    --card-glass: #ffffff; 
+    --bg-card: #ffffff;
+    
+    /* Subtle dark borders for contrast against white */
+    --border-glass: rgba(0, 0, 0, 0.08);
+    --border-card: rgba(0, 0, 0, 0.05);
+
+    /* Softer background blobs */
+    --blob-1: rgba(59, 130, 246, 0.05);
+    --blob-2: rgba(139, 92, 246, 0.05);
+
+    /* Soft blue glow for light mode */
+    --spotlight-color: rgba(59, 130, 246, 0.12);
 }
 
 /* =========================================
@@ -42,6 +72,8 @@ body {
     padding: 0;
     background-color: var(--bg-main);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Added smooth transition so switching themes feels native */
+    transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
 /* =========================================
@@ -99,15 +131,16 @@ body {
     pointer-events: none;
     background: radial-gradient(
         600px circle at var(--mouse-x) var(--mouse-y), 
-        rgba(255, 255, 255, 0.06), 
+        var(--spotlight-color), 
         transparent 40%
     );
     opacity: 0;
     transition: opacity 0.3s;
+    z-index: 1;
 }
 
 .spatial-card:hover::after {
-    opacity: 1;
+    opacity: 1 !important;
 }
 
 .spatial-card:hover {

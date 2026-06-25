@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
 import SubmitFileModal from './components/SubmitFileModal';
-import ViewAssignmentModal from './components/ViewAssignmentModal'; // <-- 1. Import new modal
+import ViewAssignmentModal from './components/ViewAssignmentModal';
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
@@ -13,12 +14,12 @@ const StudentClassroomView = () => {
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [theme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+    const [theme] = useTheme();
 
     // Modal States
     const [showSubmitModal, setShowSubmitModal] = useState(false);
     const [activeAssignment, setActiveAssignment] = useState(null);
-    const [viewAssignment, setViewAssignment] = useState(null); // <-- 2. New state for viewing
+    const [viewAssignment, setViewAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,13 +68,14 @@ const StudentClassroomView = () => {
     const progressPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     return (
-        <div className={`falsicode-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-1"></div>
                 <div className="aurora-blob blob-2"></div>
             </div>
 
-            <div className="classroom-layout">
+            {/* 🌟 FIX: Updated to nexus-content and added student-layout scoping */}
+            <div className="nexus-content student-layout">
                 <header className="spatial-card cinematic-header fade-in-down">
                     <div className="header-inner">
                         <div className="top-meta">
@@ -110,7 +112,6 @@ const StudentClassroomView = () => {
                             const language = assignment.language ? assignment.language.toUpperCase() : 'PYTHON';
 
                             return (
-                                /* 3. Added clickable-row class and onClick to open the View modal */
                                 <div 
                                     key={assignment.id} 
                                     className={`assignment-item-row clickable-row ${isLocked ? 'locked-card' : ''}`}
@@ -146,7 +147,6 @@ const StudentClassroomView = () => {
                                         <button 
                                             className={`btn-glass-action ${isLocked ? 'btn-disabled' : 'btn-active'}`} 
                                             onClick={(e) => {
-                                                /* 4. Stop propagation so clicking the button doesn't open the View modal */
                                                 e.stopPropagation();
                                                 handleOpenSubmission(assignment);
                                             }}
@@ -171,7 +171,6 @@ const StudentClassroomView = () => {
                 onSuccess={handleSubmissionSuccess}
             />
 
-            {/* 5. Inject the View Modal */}
             <ViewAssignmentModal 
                 isOpen={!!viewAssignment}
                 onClose={() => setViewAssignment(null)}

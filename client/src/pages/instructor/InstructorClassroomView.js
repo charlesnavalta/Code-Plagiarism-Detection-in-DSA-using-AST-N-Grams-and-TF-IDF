@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../../hooks/useTheme';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 import './InstructorTheme.css'; 
@@ -7,7 +8,7 @@ import './InstructorClassroomView.css';
 // Import our isolated components
 import CreateAssignmentModal from './components/CreateAssignmentModal';
 import SubmissionsAuditModal from './components/SubmissionsAuditModal';
-import EditAssignmentModal from './components/EditAssignmentModal'; // <-- Newly added modal
+import EditAssignmentModal from './components/EditAssignmentModal';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -17,7 +18,7 @@ const InstructorClassroomView = () => {
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [theme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+    const [theme] = useTheme();
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
@@ -26,7 +27,6 @@ const InstructorClassroomView = () => {
     const [analysisResults, setAnalysisResults] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     
-    // NEW: State to track which assignment is currently being edited
     const [editingAssignment, setEditingAssignment] = useState(null);
 
     useEffect(() => {
@@ -83,7 +83,6 @@ const InstructorClassroomView = () => {
         }
     };
 
-    // NEW: Function to handle the successful update from the modal
     const handleAssignmentUpdated = (updatedAssignment) => {
         const updatedList = assignments.map(a => 
             a.id === updatedAssignment.id ? updatedAssignment : a
@@ -94,13 +93,15 @@ const InstructorClassroomView = () => {
     if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
 
     return (
-        <div className={`falsicode-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+        // 🌟 FIX: Changed falsicode-wrapper to nexus-wrapper so Light Mode triggers correctly
+        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-1"></div>
                 <div className="aurora-blob blob-2"></div>
             </div>
 
-            <div className="classroom-layout">
+            {/* 🌟 FIX: Updated layout wrapper for precise padding control */}
+            <div className="nexus-content instructor-layout">
                 <header className="spatial-card cinematic-header fade-in-down">
                     <div className="header-inner">
                         <div className="top-meta">
@@ -119,7 +120,7 @@ const InstructorClassroomView = () => {
                 <main className="content-hub">
                     <div className="hub-header">
                         <div className="header-titles">
-                            <h2>Assignment</h2>
+                            <h2>Assignment(s)</h2>
                         </div>
                         <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>
                             Add New Assignment
@@ -132,12 +133,10 @@ const InstructorClassroomView = () => {
                             const hasSubmissions = subCount > 0;
 
                             return (
-                                /* 🌟 NEW: Added clickable-row class and onClick handler */
                                 <div 
                                     key={assignment.id} 
                                     className="assignment-item-row clickable-row"
                                     onClick={() => {
-                                        console.log("Card clicked! Assignment:", assignment);
                                         setEditingAssignment(assignment);
                                     }}
                                 >
@@ -156,7 +155,6 @@ const InstructorClassroomView = () => {
                                     <button 
                                         className={`btn-glass-action ${hasSubmissions ? 'ready-to-audit' : ''}`} 
                                         onClick={(e) => {
-                                            /* 🌟 NEW: Stops the click from opening the edit modal */
                                             e.stopPropagation(); 
                                             handleViewSubmissions(assignment);
                                         }}
@@ -170,7 +168,6 @@ const InstructorClassroomView = () => {
                 </main>
             </div>
 
-            {/* Injected Modals */}
             <CreateAssignmentModal 
                 isOpen={showCreateModal} 
                 onClose={() => setShowCreateModal(false)} 
@@ -189,7 +186,6 @@ const InstructorClassroomView = () => {
                 assignmentId={selectedAssignment?.id} 
             />
 
-            {/* 🌟 NEW: Pass the classroomId prop here */}
             <EditAssignmentModal
                 isOpen={!!editingAssignment}
                 assignment={editingAssignment}

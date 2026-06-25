@@ -104,7 +104,7 @@ const LandingPage = () => {
                             
                             <div className="mockup-match-box">
                                 <span className="match-label">Structural Clone Identity Matrix</span>
-                                <span className="match-percent text-gradient">92.4% Match</span>
+                                <span className="match-percent text-gradient">100% Match</span>
                             </div>
                         </div>
                     </div>

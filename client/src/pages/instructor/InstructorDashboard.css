@@ -4,7 +4,7 @@
 .nexus-layout {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px;
+    padding-top: 40px;
     display: flex;
     gap: 32px;
     position: relative;

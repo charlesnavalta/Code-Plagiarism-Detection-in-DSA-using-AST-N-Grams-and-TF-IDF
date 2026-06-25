@@ -4,8 +4,8 @@
 .falsicode-hud-overlay {
     position: fixed; 
     inset: 0; 
-    background: rgba(0, 0, 0, 0.8); 
-    backdrop-filter: blur(20px);
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(8px);
     z-index: 5000; 
     display: flex; 
     align-items: center; 
@@ -13,21 +13,44 @@
 }
 
 .hud-modal-content {
-    background: #0a0e17; 
+    background: var(--bg-card); 
     width: 90vw; 
     max-width: 550px; 
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border: 1px solid var(--border-glass); 
     overflow: hidden; 
     position: relative;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
+}
+
+/* Force the spotlight to stay inside the border-radius */
+.hud-modal-content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 20px; /* IMPORTANT: matches the modal corners */
+    background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y), 
+        var(--spotlight-color), 
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10; /* Ensures it sits above everything */
+}
+
+/* Trigger the glow */
+.hud-modal-content:hover::after {
+    opacity: 1 !important;
 }
 
 .hud-header { 
     padding: 35px 40px 20px; 
     position: relative; 
+    border-bottom: 1px solid var(--border-glass); 
 }
 
 .hud-header h2 { 
@@ -35,11 +58,12 @@
     font-weight: 900; 
     margin: 0; 
     letter-spacing: -1px; 
-    color: white;
+    /* CHANGED: Fixed the invisible white text */
+    color: var(--text-hero);
 }
 
 .hud-subtitle { 
-    color: #94a3b8; 
+    color: var(--text-dim); 
     margin-top: 5px; 
     font-size: 0.95rem; 
 }
@@ -50,7 +74,7 @@
     right: 30px;
     background: none; 
     border: none; 
-    color: #94a3b8; 
+    color: var(--text-dim); 
     font-size: 1.8rem; 
     cursor: pointer; 
     line-height: 1; 
@@ -59,7 +83,8 @@
 }
 
 .btn-close-icon:hover { 
-    color: white; 
+    /* CHANGED: Replaced white with theme variable */
+    color: var(--text-hero); 
 }
 
 /* =========================================
@@ -72,7 +97,7 @@
 }
 
 .hud-body {
-    padding: 10px 40px 20px;
+    padding: 25px 40px 20px; 
     overflow-y: auto;
 }
 
@@ -81,14 +106,14 @@
     width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
+    background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-glass);
     border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--text-dim);
 }
 
 /* =========================================
@@ -113,7 +138,7 @@
     margin-bottom: 8px; 
     font-size: 0.85rem; 
     font-weight: 600; 
-    color: #94a3b8; 
+    color: var(--text-dim); 
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -121,10 +146,10 @@
 .styled-input {
     width: 100%; 
     padding: 14px 16px; 
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1); 
+    background-color: var(--bg-main) !important; 
+    border: 1px solid var(--border-glass) !important; 
     border-radius: 8px; 
-    color: white;
+    color: var(--text-main) !important;
     font-size: 1rem; 
     font-family: 'Inter', sans-serif; 
     transition: border-color 0.2s, box-shadow 0.2s; 
@@ -134,15 +159,14 @@
 
 .styled-input:focus {
     outline: none; 
-    border-color: #8b5cf6; 
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    border-color: var(--accent-blue); 
+    background: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-/* FIX: Dropdown Option Background */
 .dropdown-fix option {
-    background-color: #0f172a;
-    color: white;
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
 }
 
 /* FIX: Hide Number Input Arrows */
@@ -162,13 +186,14 @@
     padding: 20px 40px; 
     display: flex; 
     justify-content: flex-end; 
-    background: rgba(0,0,0,0.4); 
-    border-top: 1px solid rgba(255,255,255,0.05);
-    margin-top: auto; /* Pushes footer to the bottom */
+    background: var(--bg-main); 
+    border-top: 1px solid var(--border-glass);
+    margin-top: auto; 
 }
 
 .btn-hud-run { 
-    background: #8b5cf6; 
+    background: var(--accent-purple); 
+    /* We KEEP this one white, because it sits on top of the purple button! */
     color: white; 
     border: none; 
     padding: 12px 28px; 
@@ -180,7 +205,7 @@
 }
 
 .btn-hud-run:hover { 
-    background: #7c3aed; 
+    filter: brightness(1.1);
     transform: translateY(-2px); 
     box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); 
 }

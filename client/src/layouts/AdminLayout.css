@@ -50,6 +50,7 @@
 .sidebar-nav-list {
     display: flex;
     flex-direction: column;
+    padding-top: 40px;
     gap: 8px;
     flex-grow: 1;
 }

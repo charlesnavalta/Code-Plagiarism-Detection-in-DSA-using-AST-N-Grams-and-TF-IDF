@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'; 
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import './Navbar.css'; 
 
 const Navbar = () => {
@@ -7,8 +8,21 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation(); 
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
+    const [theme, setTheme] = useTheme();
+    
+    // NEW: States for the Smart Scroll Navbar
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
 
+    const rawUser = localStorage.getItem('user');
+    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
+    const displayName = user?.name || user?.username || 'User';
+
+    // 2. DYNAMIC ROUTING LOGIC
+    const targetDashboard = user ? `/${user.role}` : '/';
+    const isAlreadyOnDashboard = location.pathname === targetDashboard;
+
+    // --- EFFECTS ---
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
@@ -21,7 +35,26 @@ const Navbar = () => {
         return () => window.removeEventListener('click', closeDropdown);
     }, []);
 
-    // 2. STANDARD LOGIC
+    // NEW: Scroll detection effect
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Hide if scrolling down past 65px, show if scrolling up
+            if (currentScrollY > lastScrollY && currentScrollY > 65) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
+
+    // 3. STANDARD LOGIC
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
@@ -36,11 +69,7 @@ const Navbar = () => {
         window.location.href = '/login'; 
     };
 
-    const rawUser = localStorage.getItem('user');
-    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
-    const displayName = user?.name || user?.username || 'User';
-
-    // 3. EARLY RETURNS MUST GO LAST (Before the JSX)
+    // 4. EARLY RETURNS MUST GO LAST (Before the JSX)
     const hiddenRoutes = ['/login', '/register', '/'];
     if (hiddenRoutes.includes(location.pathname)) return null;
     if (!user) return null;
@@ -48,9 +77,10 @@ const Navbar = () => {
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
     return (
-        <nav className="navbar-nexus" data-theme={theme}>
+        // NEW: Conditionally add the 'navbar-hidden' class based on the isVisible state
+        <nav className={`navbar-nexus ${!isVisible ? 'navbar-hidden' : ''}`} data-theme={theme}>
             <div className="navbar-left">
-                <Link to={`/${user.role}`} className="brand-anchor">
+                <Link to={targetDashboard} className="brand-anchor">
                     <div className="brand-logo-nexus">
                         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
@@ -61,22 +91,23 @@ const Navbar = () => {
                 </Link>
                 
                 <span className="brand-divider-nexus">/</span>
-                <span className="brand-panel-nexus">  
-                    {user.role === 'admin' ? 'Root' : user.role === 'instructor' ? 'Instructor' : 'Student'}
+                
+                {/* STATIC BREADCRUMB */}
+                <span className="brand-panel-nexus">
+                    {user.role === 'admin' ? 'Admin' : user.role === 'instructor' ? 'Instructor' : 'Student'}
                 </span>
 
                 <div className="nav-links-nexus">
-                    {user.role === 'student' && (
-                        <>
-                            <Link to="/student" className={`nav-item-nexus ${isActive('/student')}`}>My Classes</Link>
-                        </>
+                    {/* FIXED: Correctly checks for either role and uses dynamic link/text */}
+                    {(user.role === 'student' || user.role === 'instructor') && (
+                        <Link to={targetDashboard} className={`nav-item-nexus ${isActive(targetDashboard)}`}>
+                            {user.role === 'instructor' ? 'Classroom Hub' : 'My Classes'}
+                        </Link>
                     )}
                 </div>
             </div>
 
             <div className="navbar-right">
-                
-                
                 <div className="profile-menu">
                     <button className="profile-trigger-nexus" onClick={() => setDropdownOpen(!dropdownOpen)}>
                         <div className="user-avatar-mini">

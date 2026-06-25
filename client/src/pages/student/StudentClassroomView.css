@@ -1,3 +1,6 @@
+/* =========================================
+   1. VARIABLES & THEMING
+   ========================================= */
 .nexus-wrapper {
     --bg-app: #030712;
     --bg-card: rgba(17, 24, 39, 0.5);
@@ -17,36 +20,104 @@
     --accent: #2563eb;
 }
 
+/* =========================================
+   2. BASE LAYOUT & WRAPPERS
+   ========================================= */
 .nexus-wrapper {
-    background-color: var(--bg-app); color: var(--text-main); min-height: 100vh;
-    font-family: 'Inter', system-ui, sans-serif; position: relative; overflow-x: hidden;
+    background-color: var(--bg-app); 
+    color: var(--text-main); 
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif; 
+    position: relative; 
+    overflow-x: hidden;
     transition: background-color 0.5s ease;
 }
 
-/* Background Aurora */
-.aurora-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.aurora-blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: drift 20s infinite alternate; }
-.blob-primary { width: 60vw; height: 60vw; background: rgba(59, 130, 246, 0.1); top: -10%; left: -10%; }
-.blob-secondary { width: 50vw; height: 50vw; background: rgba(139, 92, 246, 0.1); bottom: -10%; right: -10%; }
-@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
-
-.nexus-content { max-width: 1100px; margin: 0 auto; padding: 60px 40px; position: relative; z-index: 10; }
-
-/* SPATIAL ENGINE */
-.spatial-card {
-    background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-card);
-    backdrop-filter: blur(30px); position: relative; overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Shared Main Content Layout */
+.nexus-content { 
+    max-width: 1100px; 
+    margin: 0 auto; 
+    padding-bottom: 60px;
+    padding-left: 40px;
+    padding-right: 40px; 
+    position: relative; 
+    z-index: 10; 
 }
-.spatial-card::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.05), transparent 40%);
-    opacity: 0; transition: opacity 0.3s;
+
+/* 🌟 SPECIFIC SCOPING: Fixes the Instructor vs Student Padding issue */
+.nexus-content.student-layout {
+    padding-top: 50px; /* Adjust this specific value to clear the navbar perfectly */
 }
-.spatial-card:hover::after { opacity: 1; }
 
 /* =========================================
-    HEADER BOX: DASHBOARD MATCH
+   3. BACKGROUND AURORA
+   ========================================= */
+.aurora-canvas { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 0; 
+    pointer-events: none; 
+    overflow: hidden; 
+}
+
+.aurora-blob { 
+    position: absolute; 
+    border-radius: 50%; 
+    filter: blur(100px); 
+    animation: drift 20s infinite alternate; 
+}
+
+.blob-primary { 
+    width: 60vw; 
+    height: 60vw; 
+    background: rgba(59, 130, 246, 0.1); 
+    top: -10%; 
+    left: -10%; 
+}
+
+.blob-secondary { 
+    width: 50vw; 
+    height: 50vw; 
+    background: rgba(139, 92, 246, 0.1); 
+    bottom: -10%; 
+    right: -10%; 
+}
+
+@keyframes drift { 
+    100% { 
+        transform: translate(5%, 10%) scale(1.1); 
+    } 
+}
+
+/* =========================================
+   4. SPATIAL ENGINE (Cards)
+   ========================================= */
+.spatial-card {
+    background: var(--bg-card); 
+    border-radius: 24px; 
+    border: 1px solid var(--border-card);
+    backdrop-filter: blur(30px); 
+    position: relative; 
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spatial-card::after {
+    content: ''; 
+    position: absolute; 
+    inset: 0; 
+    pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.05), transparent 40%);
+    opacity: 0; 
+    transition: opacity 0.3s;
+}
+
+.spatial-card:hover::after { 
+    opacity: 1; 
+}
+
+/* =========================================
+   5. HEADER COMPONENTS
    ========================================= */
 .nexus-action-header {
     background: var(--banner-gradient) !important;
@@ -55,55 +126,192 @@
     margin-bottom: 60px;
 }
 
-.header-box-content { padding: 48px; display: flex; flex-direction: column; gap: 40px; }
-
-.back-pill-nexus {
-    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff; padding: 8px 20px; border-radius: 100px; cursor: pointer;
-    display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 700;
+.header-box-content { 
+    padding: 48px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 40px; 
 }
-.back-pill-nexus:hover { background: #ffffff; color: #4f46e5; transform: translateX(-4px); }
 
 .header-top-row {
     display: flex;
-    justify-content: flex-start; /* Aligned left now that badge is gone */
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
 }
 
 .nexus-title-main {
-    color: #ffffff !important; font-size: 4rem; font-weight: 900; margin: 0;
-    letter-spacing: -3px; line-height: 1;
+    color: #ffffff !important; 
+    font-size: 4rem; 
+    font-weight: 900; 
+    margin: 0;
+    letter-spacing: -3px; 
+    line-height: 1;
 }
 
-.instructor-row-nexus { display: flex; align-items: center; gap: 16px; margin-top: 10px;}
-.ins-label { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.7); letter-spacing: 2px; font-weight: 800; }
-.ins-name-pill { background: rgba(255, 255, 255, 0.15); padding: 8px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); }
-.ins-name-text { color: #ffffff; font-weight: 700; font-size: 1rem; }
+/* Back Button Pill */
+.back-pill-nexus {
+    background: rgba(255, 255, 255, 0.15); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff; 
+    padding: 8px 20px; 
+    border-radius: 100px; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    font-size: 0.85rem; 
+    font-weight: 700;
+}
+
+.back-pill-nexus:hover { 
+    background: #ffffff; 
+    color: #4f46e5; 
+    transform: translateX(-4px); 
+}
+
+/* Instructor Information */
+.instructor-row-nexus { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+    margin-top: 10px;
+}
+
+.ins-label { 
+    font-size: 0.7rem; 
+    text-transform: uppercase; 
+    color: rgba(255,255,255,0.7); 
+    letter-spacing: 2px; 
+    font-weight: 800; 
+}
+
+.ins-name-pill { 
+    background: rgba(255, 255, 255, 0.15); 
+    padding: 8px 20px; 
+    border-radius: 10px; 
+    border: 1px solid rgba(255,255,255,0.2); 
+}
+
+.ins-name-text { 
+    color: #ffffff; 
+    font-weight: 700; 
+    font-size: 1rem; 
+}
 
 /* =========================================
-    ASSIGNMENT QUEUE
+   6. ASSIGNMENT QUEUE
    ========================================= */
-.stream-header-nexus { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
-.stream-header-nexus h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-dim); margin: 0; }
-.label-line-nexus { flex-grow: 1; height: 1px; background: var(--border-card); }
+.stream-header-nexus { 
+    display: flex; 
+    align-items: center; 
+    gap: 30px; 
+    margin-bottom: 40px; 
+}
 
-.assignment-stack { display: flex; flex-direction: column; gap: 20px; }
-.assignment-row-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.stream-header-nexus h2 { 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    letter-spacing: 5px; 
+    color: var(--text-dim); 
+    margin: 0; 
+}
 
-.row-grid-content { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: center; padding: 40px; position: relative; z-index: 2; }
-.row-op-tag { color: var(--accent); font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 12px; display: block; }
-.row-info-nexus h3 { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.5px; }
-.row-info-nexus p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0; }
+.label-line-nexus { 
+    flex-grow: 1; 
+    height: 1px; 
+    background: var(--border-card); 
+}
 
+.assignment-stack { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+}
 
-/* LOADING */
-.nexus-loader { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.quantum-spinner { width: 40px; height: 40px; border: 3px solid var(--border-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+.assignment-row-card:hover { 
+    transform: translateY(-4px); 
+    border-color: var(--accent); 
+}
 
-@keyframes spin { to { transform: rotate(360deg); } }
+.row-grid-content { 
+    display: grid; 
+    grid-template-columns: 1fr 320px; 
+    gap: 40px; 
+    align-items: center; 
+    padding: 40px; 
+    position: relative; 
+    z-index: 2; 
+}
 
-/* --- SUBMITTED STATE & SCORE UI --- */
+.row-op-tag { 
+    color: var(--accent); 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    letter-spacing: 2px; 
+    margin-bottom: 12px; 
+    display: block; 
+}
+
+.row-info-nexus h3 { 
+    font-size: 1.6rem; 
+    font-weight: 800; 
+    margin: 0 0 10px; 
+    letter-spacing: -0.5px; 
+}
+
+.row-info-nexus p { 
+    color: var(--text-dim); 
+    font-size: 1rem; 
+    line-height: 1.6; 
+    margin: 0; 
+}
+
+.assignment-item-row.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.assignment-item-row.clickable-row:not(.locked-card):hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.locked-card {
+    opacity: 0.75;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.locked-card:hover {
+    background: rgba(0, 0, 0, 0.2); 
+    transform: none;
+}
+
+/* =========================================
+   7. STATUS BADGES & SCORES
+   ========================================= */
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b; /* Amber */
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981; /* Green */
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
 .submitted-status-group {
     display: flex;
     align-items: center;
@@ -154,45 +362,28 @@
     padding-top: 2px;
 }
 
-/* Student Specific UI Additions */
-.status-badge {
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* =========================================
+   8. LOADING STATES
+   ========================================= */
+.nexus-loader { 
+    height: 80vh; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
 }
 
-.badge-pending {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b; /* Amber */
-    border: 1px solid rgba(245, 158, 11, 0.3);
+.quantum-spinner { 
+    width: 40px; 
+    height: 40px; 
+    border: 3px solid var(--border-card); 
+    border-top-color: var(--accent); 
+    border-radius: 50%; 
+    animation: spin 1s linear infinite; 
 }
 
-.badge-completed {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981; /* Green */
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.locked-card {
-    opacity: 0.75;
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.locked-card:hover {
-    background: rgba(0, 0, 0, 0.2); /* Remove hover highlight if locked */
-    transform: none;
-}
-
-.assignment-item-row.clickable-row {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.assignment-item-row.clickable-row:not(.locked-card):hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.2);
+@keyframes spin { 
+    to { 
+        transform: rotate(360deg); 
+    } 
 }

@@ -46,7 +46,7 @@
 .premium-profile-container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 105px 20px 40px;
     position: relative;
     z-index: 10;
 }

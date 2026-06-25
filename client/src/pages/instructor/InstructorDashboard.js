@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
+import { useTheme } from '../../hooks/useTheme';
 import './InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
 import './InstructorDashboard.css';
 
@@ -11,18 +12,7 @@ const InstructorDashboard = () => {
     const dashboardRef = useRef(null);
     const navigate = useNavigate();
 
-    // --- Nexus Theme Synchronization ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
+    const [theme] = useTheme();
 
     // --- Dynamic User Identity ---
     const getUserData = () => {
@@ -81,6 +71,8 @@ const InstructorDashboard = () => {
     };
 
     return (
+
+        
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             {/* Background Aurora Engine */}
             <div className="aurora-canvas">

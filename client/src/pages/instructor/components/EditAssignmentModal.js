@@ -42,7 +42,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content">
+            <div className="modal-content spatial-card">
                 <div className="modal-header">
                     <button type="button" className="btn-close" onClick={onClose} disabled={isSaving}>&times;</button>
                     <h2 >Edit Task</h2>
