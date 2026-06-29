@@ -66,6 +66,12 @@
     border: 1px solid rgba(139, 92, 246, 0.4);
 }
 
+.toggle-btn.raw-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
 /* --- SPLIT SCREEN PANES --- */
 .split-screen-container { 
     display: flex; 
@@ -351,4 +357,37 @@
     align-items: center;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+/* --- ENHANCED EXPORT BUTTON (Deep Engine Purple) --- */
+.btn-export-pdf {
+    background: rgba(139, 92, 246, 0.1);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', 'Inter', monospace;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-export-pdf:hover:not(:disabled) {
+    background: rgba(139, 92, 246, 0.25);
+    border-color: rgba(139, 92, 246, 0.6);
+    color: #ddd6fe;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(139, 92, 246, 0.2), 0 0 0 1px rgba(139, 92, 246, 0.3);
+}
+
+.btn-export-pdf:disabled {
+    background: rgba(100, 116, 139, 0.1);
+    color: #64748b;
+    border: 1px dashed rgba(100, 116, 139, 0.3);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }

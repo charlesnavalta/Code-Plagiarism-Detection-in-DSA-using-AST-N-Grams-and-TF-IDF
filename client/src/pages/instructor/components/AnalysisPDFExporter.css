@@ -1,0 +1,414 @@
+/* =========================================================================
+   BULLETPROOF HIDDEN WRAPPER
+   ========================================================================= */
+.pdf-hidden-wrapper {
+    position: fixed;
+    top: 0;
+    left: 200vw; /* Safely out of sight */
+    width: 0;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: -9999;
+}
+
+/* =========================================================================
+   FORENSIC PDF AUDIT TEMPLATE (A4 Dimension Precision)
+   ========================================================================= */
+.pdf-export-container {
+    width: 794px;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    padding: 45px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+
+/* Header Elements */
+.pdf-header-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #111827;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.pdf-brand-title {
+    margin: 0;
+    color: #1f2937 !important;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.pdf-brand-sub {
+    margin: 4px 0 0;
+    color: #4b5563 !important;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.pdf-meta-block {
+    text-align: right;
+    font-size: 11px;
+    color: #374151 !important;
+    line-height: 1.5;
+}
+
+.pdf-meta-block p {
+    margin: 0;
+}
+
+/* Title Block */
+.pdf-main-title-section {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+}
+
+.pdf-main-title-section h1 {
+    margin: 0 0 5px 0;
+    font-size: 17px;
+    color: #111827 !important;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.pdf-main-title-section p {
+    margin: 0;
+    color: #6b7280 !important;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Audited File Context Box */
+.pdf-entity-box {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.pdf-entity-box h4 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: #374151 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-entity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.pdf-entity-item {
+    color: #111827 !important;
+}
+
+.pdf-entity-label {
+    color: #6b7280 !important;
+    font-weight: 600;
+    display: inline-block;
+    width: 90px;
+}
+
+/* Verdict Callout Banner */
+.pdf-verdict-banner-container {
+    display: flex;
+    background-color: #fdfdfd !important;
+    box-shadow: inset 0 0 0 1px #e5e7eb;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.pdf-score-column {
+    text-align: center;
+    padding-right: 20px;
+    margin-right: 20px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.pdf-score-number {
+    display: block;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.pdf-score-subtext {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #4b5563 !important;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+
+.pdf-verdict-class-title {
+    display: block;
+    font-size: 14px;
+    color: #111827 !important;
+    margin-bottom: 4px;
+}
+
+.pdf-verdict-description {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #374151 !important;
+}
+
+/* Base Document Blocks */
+.pdf-block-container {
+    border: 1px solid #cbccd0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.pdf-block-container-large {
+    border: 1px solid #cbccd0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.pdf-block-header {
+    background-color: #f3f4f6 !important;
+    font-weight: bold;
+    font-size: 11px;
+    color: #111827 !important;
+    border-bottom: 1px solid #cbccd0;
+    display: flex;
+}
+
+.pdf-block-header-title {
+    padding: 10px 12px;
+}
+
+.pdf-block-header-split {
+    flex: 1;
+    padding: 10px 12px;
+}
+
+.pdf-block-header-split:first-child {
+    border-right: 1px solid #cbccd0;
+}
+
+.pdf-block-subheader {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #4b5563 !important;
+    border-bottom: 1px solid #cbccd0;
+    background-color: #ffffff !important;
+    line-height: 1.4;
+}
+
+.pdf-block-content-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #374151 !important;
+    margin: 0 0 15px 0;
+}
+
+/* Vector Visualization Mechanics */
+.pdf-vector-wrapper {
+    border: 1px solid #cbccd0;
+    border-radius: 4px;
+    padding: 15px;
+    background-color: #ffffff !important;
+    margin-bottom: 20px;
+}
+
+.pdf-vector-wrapper h3 {
+    font-size: 12px;
+    margin: 0 0 10px 0;
+    color: #111827 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-vector-wrapper p {
+    font-size: 11px;
+    color: #4b5563 !important;
+    line-height: 1.5;
+    margin: 0 0 12px 0;
+}
+
+.pdf-vector-graph-canvas {
+    display: flex;
+    height: 100px;
+    border-left: 2px solid #4b5563;
+    border-bottom: 2px solid #4b5563;
+    position: relative;
+    margin: 10px 30px 20px 30px;
+    padding: 10px;
+}
+
+.pdf-vector-grid-line {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.pdf-vector-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    transform-origin: bottom left;
+}
+
+.pdf-vector-tag-a {
+    position: absolute; right: -45px; top: -12px; font-size: 9px; color: #3b82f6; font-weight: bold; font-family: monospace;
+}
+
+.pdf-vector-tag-b {
+    position: absolute; right: -45px; top: 2px; font-size: 9px; font-weight: bold; font-family: monospace;
+}
+
+.pdf-vector-angle-arc {
+    position: absolute;
+    bottom: 10px;
+    left: 45px;
+    font-size: 10px;
+    color: #4b5563 !important;
+    font-family: monospace;
+    font-style: italic;
+}
+
+/* Data Tables */
+.pdf-forensic-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    text-align: left;
+    background-color: #ffffff !important;
+}
+
+.pdf-table-th-row {
+    background-color: #f9fafb !important;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151 !important;
+    font-weight: bold;
+}
+
+.pdf-forensic-table th, .pdf-forensic-table td {
+    padding: 8px 12px;
+}
+
+.pdf-table-tr-data {
+    border-bottom: 1px solid #e5e7eb;
+    color: #111827 !important;
+}
+
+.pdf-table-td-num {
+    fontWeight: 600;
+    color: #6b7280 !important;
+}
+
+.pdf-table-td-fam {
+    font-family: monospace;
+    font-size: 10.5px;
+    color: #4f46e5 !important;
+}
+
+.pdf-table-td-seq {
+    font-family: monospace;
+    font-size: 10px;
+    color: #374151 !important;
+    word-break: break-all;
+}
+
+.pdf-table-td-weight {
+    textAlign: right;
+    fontWeight: 700;
+    font-family: monospace;
+}
+
+.pdf-split-row-body {
+    display: flex;
+    font-size: 12px;
+    color: #374151 !important;
+}
+
+.pdf-split-col-cell {
+    flex: 1;
+    padding: 12px;
+    background-color: #ffffff !important;
+}
+
+.pdf-split-col-cell:first-child {
+    border-right: 1px solid #cbccd0;
+}
+
+.pdf-evidence-cards-row {
+    display: flex;
+    gap: 15px;
+    marginTop: 15px;
+}
+
+.pdf-evidence-mini-card {
+    flex: 1;
+    background-color: #fdfdfd !important;
+    border: 1px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 4px;
+}
+
+.pdf-evidence-mini-card h5 {
+    margin: 0 0 6px 0;
+    font-size: 11px;
+    color: #4f46e5 !important;
+    text-transform: uppercase;
+}
+
+.pdf-evidence-mini-card p {
+    margin: 0;
+    font-size: 11px;
+    color: #4b5563 !important;
+    line-height: 1.5;
+}
+
+/* Footnotes & Sign-off */
+.pdf-footnote-annotation {
+    margin: 0 0 25px 0;
+    font-size: 10px;
+    color: #6b7280 !important;
+    line-height: 1.4;
+}
+
+.pdf-signature-block {
+    margin-top: auto;
+    padding-top: 20px;
+    width: 220px;
+}
+
+.pdf-signature-line {
+    border-top: 1px solid #111827;
+    margin-bottom: 6px;
+}
+
+.pdf-signature-name {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827 !important;
+}
+
+.pdf-signature-sub {
+    margin: 2px 0 0 0;
+    font-size: 10px;
+    color: #6b7280 !important;
+}
