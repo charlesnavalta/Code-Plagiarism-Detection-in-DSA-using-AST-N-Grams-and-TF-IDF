@@ -1,6 +1,7 @@
 import React from 'react';
 import api from '../../../services/api';
 import './CreateAssignmentModal.css';
+import DateTimePicker from './DateTimePicker';
 
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
     if (!isOpen) return null;
@@ -11,13 +12,15 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         const description = e.target.description.value;
         const max_score = e.target.max_score.value;
         const language = e.target.language.value; 
+        const deadline = e.target.deadline.value; // 🌟 Capture the deadline
 
         try {
             const res = await api.post(`/classrooms/${classroomId}/assignments`, { 
                 title, 
                 description, 
                 max_score: parseInt(max_score),
-                language: language 
+                language: language,
+                deadline: deadline || null // 🌟 Send to backend (null if left blank)
             });
             onAssignmentCreated(res.data.assignment); 
             onClose(); 
@@ -35,7 +38,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                     <h2>Create Assignment</h2>
                 </div>
                 
-                {/* Form wraps both the scrolling body AND the pinned footer */}
                 <form onSubmit={handleCreateAssignment} className="hud-form-wrapper">
                     
                     <div className="hud-body custom-scrollbar">
@@ -59,6 +61,15 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                                 placeholder="Enter the algorithmic requirements..." 
                                 required 
                             ></textarea>
+                        </div>
+                        
+                        {/* 🌟 NEW: Deadline Input */}
+                        <div className="input-group">
+                                {/* The New Component */}
+                            <DateTimePicker 
+                                label="Deadline" 
+                                name="deadline" 
+                            />
                         </div>
                         
                         <div className="input-row">

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime
 
 # Create a dedicated Blueprint for assignments
 assignments_bp = Blueprint('assignments', __name__)
@@ -24,13 +25,22 @@ def create_assignment(class_id):
     if not data or 'title' not in data:
         return jsonify({"error": "Assignment title is required."}), 400
 
+    # 🌟 NEW: Parse the incoming deadline string securely
+    parsed_deadline = None
+    if data.get('deadline'):
+        try:
+            # Assumes format like "2026-07-15T23:59" from the React input type="datetime-local"
+            parsed_deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+        except ValueError:
+            return jsonify({"error": "Invalid deadline format provided."}), 400
+
     new_assignment = Assignment(
         title=data['title'],
         description=data.get('description', ''),
         max_score=data.get('max_score', 100),
         classroom_id=classroom.id,
-        # 🌟 NEW: Capture the language from the request (default to python if missing)
-        language=data.get('language', 'python').lower()
+        language=data.get('language', 'python').lower(),
+        deadline=parsed_deadline # 🌟 Insert deadline into model
     )
     
     try:
@@ -38,13 +48,7 @@ def create_assignment(class_id):
         db.session.commit()
         return jsonify({
             "message": "Assignment created successfully!",
-            "assignment": {
-                "id": new_assignment.id,
-                "title": new_assignment.title,
-                "description": new_assignment.description,
-                "max_score": new_assignment.max_score,
-                "language": new_assignment.language # 🌟 Include in response
-            }
+            "assignment": new_assignment.to_dict() # Uses the handy to_dict() we made
         }), 201
     except Exception as e:
         db.session.rollback()
@@ -73,7 +77,6 @@ def get_assignments(class_id):
     
     assignments_data = []
     for a in assignments:
-        # 🌟 THE FIX 1: Safely count the submissions directly from the database
         sub_count = Submission.query.filter_by(assignment_id=a.id).count()
 
         assignment_info = {
@@ -82,26 +85,24 @@ def get_assignments(class_id):
             "description": a.description,
             "max_score": a.max_score,
             "language": a.language,
-            "submission_count": sub_count, # 🌟 THE FIX 2: Expose the count to React
+            "deadline": a.deadline.isoformat() if a.deadline else None, # 🌟 Send deadline to UI
+            "submission_count": sub_count, 
             "has_submitted": False,
-            "score": None
+            "score": None,
+            "submitted_at": None # 🌟 Send when they submitted it
         }
 
-        # If student, see if they already uploaded a file
         if user.role == 'student':
             submission = Submission.query.filter_by(assignment_id=a.id, student_id=user.id).first()
             if submission:
                 assignment_info["has_submitted"] = True
                 assignment_info["score"] = getattr(submission, 'score', 'Pending')
+                assignment_info["submitted_at"] = submission.submitted_at.isoformat() if submission.submitted_at else None
                 
         assignments_data.append(assignment_info)
         
     return jsonify(assignments_data), 200
 
-
-# ==============================================================================
-# 🌟 UPDATED ROUTE: UPDATE ASSIGNMENT (Matches Blueprint Structure)
-# ==============================================================================
 @assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['PUT'])
 @jwt_required()
 def update_assignment(class_id, assignment_id):
@@ -112,20 +113,16 @@ def update_assignment(class_id, assignment_id):
     if not user or user.role != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
-    # 1. Find the assignment
     assignment = Assignment.query.get(assignment_id)
     if not assignment or assignment.classroom_id != class_id:
         return jsonify({"error": "Assignment not found in this classroom"}), 404
 
-    # 2. Security Check: Verify this instructor actually owns the classroom
     classroom = Classroom.query.get(class_id)
     if not classroom or classroom.instructor_id != user.id:
         return jsonify({"error": "Unauthorized to edit this assignment"}), 403
 
-    # 3. Get the new data from the React frontend
     data = request.get_json()
 
-    # 4. Update the fields
     if 'title' in data:
         assignment.title = data['title']
     if 'description' in data:
@@ -134,18 +131,24 @@ def update_assignment(class_id, assignment_id):
         assignment.max_score = data['max_score']
     if 'language' in data:
         assignment.language = data['language'].lower()
+    
+    # 🌟 NEW: Update the deadline if provided
+    if 'deadline' in data:
+        if data['deadline']:
+            try:
+                assignment.deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+            except ValueError:
+                return jsonify({"error": "Invalid deadline format provided."}), 400
+        else:
+            assignment.deadline = None # Clear the deadline if empty string
 
-    # 5. Save changes
     try:
         db.session.commit()
+        response_data = assignment.to_dict()
+        response_data['submission_count'] = len(assignment.submissions) if hasattr(assignment, 'submissions') else 0
         return jsonify({
             "message": "Assignment updated successfully",
-            "id": assignment.id,
-            "title": assignment.title,
-            "description": assignment.description,
-            "max_score": assignment.max_score,
-            "language": assignment.language,
-            "submission_count": len(assignment.submissions) if hasattr(assignment, 'submissions') else 0
+            **response_data
         }), 200
 
     except Exception as e:

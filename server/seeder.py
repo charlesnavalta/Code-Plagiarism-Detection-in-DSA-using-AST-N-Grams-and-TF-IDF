@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta, timezone
+import random
+
 from models import User, Classroom, Enrollment, Assignment, Submission
 from flask_bcrypt import generate_password_hash 
 
@@ -176,143 +179,172 @@ def run_smart_seed(db):
                 "description": "Write a Python script that implements the Quick Sort algorithm. You must include a partition helper function.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59) # Dec 31, 2027, 11:59:59 PM
             },
             {
                 "title": "2. Merge Sort Implementation",
                 "description": "Implement the Merge Sort algorithm using a recursive divide-and-conquer approach. Ensure your code handles lists of both even and odd lengths.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "3. Singly Linked List",
                 "description": "Develop a Node class and a LinkedList class. Implement methods to append a node, prepend a node, and reverse the entire linked list in place.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "4. Basic Binary Tree Traversals",
                 "description": "Construct a basic Binary Tree. Implement and print the results of pre-order, in-order, and post-order traversals for a tree with at least 7 nodes.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "5. Binary Search Tree (BST) Operations",
                 "description": "Implement a fully functional Binary Search Tree. Your script must include methods to insert a new value, search for an existing value, and delete a leaf node.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
-            #Sir Janus Assignment
-            #Part 1 
-            #TS-A Part: Lexical Obfuscation
+
+            # ==============================================================================
+            # SIR JANUS ASSIGNMENT: PART 1
+            # TS-A Part: Lexical Obfuscation
+            # ==============================================================================
             {
                 "title": "TS-A Level 1: Merge Sort (Exact Copy)",
                 "description": "Implement the Merge Sort algorithm. This assignment serves as the baseline for Type I (Exact Copy) plagiarism detection testing.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
                 "description": "Implement the Quick Sort algorithm. This assignment tests Type II plagiarism detection, specifically evaluating the Java parser's resilience against variable renaming and comment alteration.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
                 "description": "Write a Python script that implements the Binary Search algorithm. This assignment evaluates the system's ability to ignore whitespace manipulation, line condensing, and formatting changes.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
-            #Part2
-            #TS-B Part: Structural Obfuscation
+
+            # ==============================================================================
+            # SIR JANUS ASSIGNMENT: PART 2
+            # TS-B Part: Structural Obfuscation
+            # ==============================================================================
             {
                 "title": "TS-B Level 1: Fibonacci (Statement Reordering)",
                 "description": "Write a Python script to calculate the Fibonacci sequence. This assignment serves as the baseline for Type III (Structural) plagiarism detection, specifically testing resilience against independent variable swapping.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
                 "description": "Implement a sorting algorithm in Java. This assignment evaluates the TF-IDF engine's ability to detect structural copying even when core loop logic is extracted into a completely separate helper method.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-B Level 3: Iteration (Control Flow Replacement)",
                 "description": "Implement an iterative algorithm in Python. This is a high-level Type III obfuscation test designed to evaluate if the AST N-Gram engine can still detect underlying logic similarities when a 'for' loop is rewritten as a 'while' loop.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
-            #Part 3 (Additional Assignments for More Submissions)
-            # TS-C Part: Advanced Logic & Noise Injection
+
+            # ==============================================================================
+            # SIR JANUS ASSIGNMENT: PART 3
+            # TS-C Part: Advanced Logic & Noise Injection (More Submissions)
+            # ==============================================================================
             {
                 "title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
                 "description": "Implement Quick Sort. This test evaluates if the system can ignore 'Dead Code'—functions and variables that are defined but never used to alter the algorithm's output.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-C Level 2: Linked List (Expression Substitution)",
                 "description": "Implement a Singly Linked List. This test checks if the AST engine recognizes equivalent logic, such as replacing 'if not x < y' with 'if x >= y'.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
                 "description": "The Ultimate Test: A combination of renaming, reordering, and dead code injection within a Binary Search Tree implementation.",
                 "max_score": 100,
                 "classroom_name": "Advanced Database Systems",
-                "language": "python"
+                "language": "python",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
-            # Assignement for Web Development 101 Java
+
+            # ==============================================================================
+            # WEB DEVELOPMENT 101: JAVA ASSIGNMENTS
+            # ==============================================================================
             {
                 "title": "1. Quick Sort Implementation (Java)",
                 "description": "Develop a Java program that implements the Quick Sort algorithm. Your class must include a separate partition method and utilize a recursive approach to sort an array of integers.",
                 "max_score": 100,
                 "classroom_name": "Web Development 101",
-                "language": "java"
+                "language": "java",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "2. Merge Sort Implementation (Java)",
                 "description": "Create a Java class to implement the Merge Sort algorithm using a divide-and-conquer strategy. The implementation must handle the recursive splitting of arrays and a merge helper method for reconstruction.",
                 "max_score": 100,
                 "classroom_name": "Web Development 101",
-                "language": "java"
+                "language": "java",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "3. Singly Linked List (Java)",
                 "description": "Implement a Singly Linked List in Java. You must define a Node class and include methods for append(), prepend(), and an in-place reverse() method to flip the list structure without creating a new list.",
                 "max_score": 100,
                 "classroom_name": "Web Development 101",
-                "language": "java"
+                "language": "java",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "4. Binary Tree Traversals (Java)",
                 "description": "Construct a Binary Tree structure in Java. Write recursive methods to perform Pre-order, In-order, and Post-order traversals, demonstrating the output on a tree containing at least 7 nodes.",
                 "max_score": 100,
                 "classroom_name": "Web Development 101",
-                "language": "java"
+                "language": "java",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
                 "title": "5. Binary Search Tree (BST) Operations (Java)",
                 "description": "Develop a Binary Search Tree (BST) in Java. Your implementation must successfully handle the insertion of new elements, searching for specific values, and the logic required to delete a leaf node.",
                 "max_score": 100,
                 "classroom_name": "Web Development 101",
-                "language": "java"
-            },
-
+                "language": "java",
+                "deadline": datetime(2027, 12, 31, 23, 59, 59)
+            }
         ]
 
         # D. Explicit Submission Data (Pointing to Physical Files in the Datasets Folder)
@@ -778,7 +810,8 @@ def run_smart_seed(db):
                         description=assign_data["description"],
                         max_score=assign_data["max_score"],
                         classroom_id=classroom.id,
-                        language=assign_data.get("language", "python") # <--- ADDED THIS LINE!
+                        language=assign_data.get("language", "python"),
+                        deadline=assign_data.get("deadline")
                     )
                     db.session.add(new_assignment)
             else:
@@ -787,29 +820,41 @@ def run_smart_seed(db):
         db.session.commit()
 
         # 5. SMART SUBMISSION SEEDING (NEW SECTION)
+        print("--- 🚀 FALSICODE: SEEDER IS RUNNING ---") # ADD THIS!
         for sub_data in submissions_to_seed:
-            # Look up the student and assignment
             student = User.query.filter_by(username=sub_data["student_username"]).first()
             assignment = Assignment.query.filter_by(title=sub_data["assignment_title"]).first()
 
             if student and assignment:
-                # Check if this student already submitted a file for this exact assignment
                 existing_sub = Submission.query.filter_by(
                     student_id=student.id, 
                     assignment_id=assignment.id
                 ).first()
 
                 if not existing_sub:
-                    print(f"FALSICODE: Seeding Submission '{sub_data['filename']}' for {student.username}")
                     new_submission = Submission(
                         assignment_id=assignment.id,
                         student_id=student.id,
                         filename=sub_data["filename"],
                         file_path=sub_data["file_path"]
                     )
+                    
+                    # 🌟 AUTOMATION: If no specific date is provided, generate a random one 
+                    # from the last 14 days so they don't all show up as "today"
+                    if "submitted_at" in sub_data:
+                        new_submission.submitted_at = sub_data["submitted_at"]
+                    else:
+                        random_days = random.randint(1, 14)
+                        random_hours = random.randint(0, 23)
+                        new_submission.submitted_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=random_days, hours=random_hours)
+
+                    if "score" in sub_data:
+                        new_submission.score = sub_data["score"]
+                        
                     db.session.add(new_submission)
             else:
-                print(f"FALSICODE WARNING: Could not find Student or Assignment for '{sub_data['filename']}'")
+                print(f"FALSICODE WARNING: Could not find Student/Assignment for '{sub_data['filename']}'")
+                print(f"--- 📊 FALSICODE: Attempting to seed {len(submissions_to_seed)} submissions ---")
         
         db.session.commit()
 

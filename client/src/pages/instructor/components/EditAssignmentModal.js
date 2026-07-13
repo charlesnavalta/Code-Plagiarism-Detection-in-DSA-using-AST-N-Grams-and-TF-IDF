@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api'; 
 import './EditAssignmentModal.css'; 
+import DateTimePicker from './DateTimePicker';
 
 const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated, classroomId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [maxScore, setMaxScore] = useState(100);
     const [language, setLanguage] = useState('python');
+    const [deadline, setDeadline] = useState(''); // 🌟 NEW: State for deadline
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
@@ -15,6 +17,14 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             setDescription(assignment.description || '');
             setMaxScore(assignment.max_score || 100);
             setLanguage(assignment.language || 'python');
+            
+            // 🌟 FORMATTING FIX: HTML datetime-local needs 'YYYY-MM-DDThh:mm'
+            // We slice the ISO string to 16 chars to remove the seconds and 'Z' timezone indicator
+            if (assignment.deadline) {
+                setDeadline(assignment.deadline.substring(0, 16));
+            } else {
+                setDeadline('');
+            }
         }
     }, [assignment]);
 
@@ -28,7 +38,8 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
                 title,
                 description,
                 max_score: parseInt(maxScore),
-                language
+                language,
+                deadline: deadline || null // 🌟 Send to backend
             });
             onAssignmentUpdated(res.data);
             onClose();
@@ -45,10 +56,9 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             <div className="modal-content spatial-card">
                 <div className="modal-header">
                     <button type="button" className="btn-close" onClick={onClose} disabled={isSaving}>&times;</button>
-                    <h2 >Edit Task</h2>
+                    <h2>Edit Task</h2>
                 </div>
                 
-                {/* Form wraps both the scrolling body AND the pinned footer */}
                 <form onSubmit={handleSubmit} className="form-wrapper">
                     
                     <div className="form-scroll-body custom-scrollbar">
@@ -70,6 +80,16 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
                                 rows="3" 
                                 required 
                             ></textarea>
+                        </div>
+
+                        {/* 🌟 NEW: Deadline Input */}
+                        <div className="form-group">
+                            {/* The New Component */}
+                                <DateTimePicker 
+                                    label="Deadline" 
+                                    value={deadline}
+                                    onChange={(e) => setDeadline(e.target.value)}
+                                />
                         </div>
                         
                         <div className="form-row">

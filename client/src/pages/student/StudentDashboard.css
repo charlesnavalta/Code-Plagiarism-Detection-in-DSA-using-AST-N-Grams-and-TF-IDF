@@ -129,3 +129,70 @@
     .nexus-join-form { width: 100%; }
 }
 
+/* --- Recent Submissions History Feed --- */
+.history-card {
+    min-height: 200px;
+}
+
+.submission-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px); /* Slight nudge effect */
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.history-title {
+    font-size: 13px;
+    color: #f3f4f6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.history-date {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* Light mode overrides for the history list */
+.light .history-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+.light .history-item:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+.light .history-title {
+    color: #1f2937;
+}
+.light .history-date {
+    color: #6b7280;
+}

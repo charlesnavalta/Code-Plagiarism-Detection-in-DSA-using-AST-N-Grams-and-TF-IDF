@@ -17,17 +17,12 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     
     # --- Roles & Status ---
-    # User's permission level ('student', 'instructor', 'admin')
     role = db.Column(db.String(20), nullable=False, default='student') 
-    # Tracks if the user is allowed to log in ('active' or 'pending')
     status = db.Column(db.String(20), nullable=False, default='active') 
     
-    # --- 🌟 NEW: OTP Verification Columns ---
-    # Tracks if the user has successfully entered their 6-digit code
+    # --- OTP Verification Columns ---
     is_verified = db.Column(db.Boolean, default=False)
-    # Stores the currently active 6-digit code (e.g., '592841')
     verification_code = db.Column(db.String(6), nullable=True)
-    # Stores the exact exact time the code expires (10 minutes after generation)
     verification_expires = db.Column(db.DateTime, nullable=True)
 
     # --- Timestamps ---
@@ -74,13 +69,20 @@ class Classroom(db.Model):
     def generate_invite_code(self):
         """Generates a random 6-character alphanumeric code and ensures it is completely unique."""
         while True:
-            # Picks 6 random uppercase letters and numbers 
             code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-            
-            # Check the database to make sure no other class is currently using this exact code
             existing_class = Classroom.query.filter_by(invite_code=code).first()
             if not existing_class:
                 return code
+
+    def to_dict(self):
+        """Helper to easily send classroom data to the React frontend."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'invite_code': self.invite_code,
+            'instructor_id': self.instructor_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
     def __repr__(self):
         return f'<Classroom {self.name} | Code: {self.invite_code}>'
@@ -97,26 +99,41 @@ class Assignment(db.Model):
     description = db.Column(db.Text, nullable=True)
     max_score = db.Column(db.Integer, nullable=False, default=100)
     
-    # Target language for the Falsicode Engine (e.g., 'python')
+    # --- 🌟 NEW: Deadline Column ---
+    # Stores the exact date and time the assignment is due. 
+    # Nullable=True allows for assignments with no strict deadline.
+    deadline = db.Column(db.DateTime, nullable=True)
+    
     language = db.Column(db.String(50), nullable=False, default='python')
-    
-    # Foreign Key: Links this assignment strictly to one specific classroom
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
-    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationship: If a classroom is deleted, all its assignments are removed
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
 
-    def __init__(self, title, description, classroom_id, max_score=100, language='python'):
+    # Updated init to accept the new deadline parameter
+    def __init__(self, title, description, classroom_id, max_score=100, language='python', deadline=None):
         self.title = title
         self.description = description
         self.classroom_id = classroom_id
         self.max_score = max_score
         self.language = language
+        self.deadline = deadline
+
+    def to_dict(self):
+        """Formats assignment data, explicitly converting dates to ISO strings for React."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'max_score': self.max_score,
+            'language': self.language,
+            'classroom_id': self.classroom_id,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
     def __repr__(self):
-        return f'<Assignment {self.title} | Lang: {self.language} | Classroom: {self.classroom_id}>'
+        return f'<Assignment {self.title} | Deadline: {self.deadline}>'
 
 
 # ==============================================================================
@@ -126,15 +143,10 @@ class Enrollment(db.Model):
     __tablename__ = 'enrollments'
 
     id = db.Column(db.Integer, primary_key=True)
-    
-    # Links to the Student
     student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # Links to the Classroom
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
-    
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships: If a student is deleted, their enrollments disappear cleanly
     student = db.relationship('User', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
     classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True))
 
@@ -163,12 +175,14 @@ class Submission(db.Model):
     max_score = db.Column(db.Integer, nullable=True, default=100)
     
     # File Storage Data
-    filename = db.Column(db.String(255), nullable=False)  # Original name (e.g., 'dijkstra.py')
-    file_path = db.Column(db.String(255), nullable=False) # Server path (e.g., 'uploads/...')
+    filename = db.Column(db.String(255), nullable=False)  
+    file_path = db.Column(db.String(255), nullable=False) 
     
+    # --- 🌟 EXISTING: Submission Timestamp ---
+    # This automatically records the exact UTC time the row is created in the database.
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships: If a student or assignment is deleted, wipe the submission record
+    # Relationships
     assignment = db.relationship('Assignment', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
     student = db.relationship('User', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
 
@@ -178,5 +192,17 @@ class Submission(db.Model):
         self.filename = filename
         self.file_path = file_path
 
+    def to_dict(self):
+        """Helper to serialize submission data, including the exact timestamp of submission."""
+        return {
+            'id': self.id,
+            'assignment_id': self.assignment_id,
+            'student_id': self.student_id,
+            'score': self.score,
+            'filename': self.filename,
+            # Format the datetime object to a string format React can parse easily
+            'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
+        }
+
     def __repr__(self):
-        return f'<Submission {self.filename} | Student: {self.student_id} | Assignment: {self.assignment_id}>'
+        return f'<Submission {self.filename} | Time: {self.submitted_at}>'

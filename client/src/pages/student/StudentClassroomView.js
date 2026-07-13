@@ -49,8 +49,21 @@ const StudentClassroomView = () => {
         }
     };
 
+    // 🌟 HELPER: Format Deadline
+    const formatDeadline = (isoString) => {
+        if (!isoString) return 'No Deadline Specified';
+        const date = new Date(isoString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    };
+
     const handleOpenSubmission = (assignment) => {
-        if (assignment.has_submitted) return; 
+        // 🌟 LOGIC CHECK: Double check before opening modal
+        const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
+        if (assignment.has_submitted || isOverdue) return; 
+        
         setActiveAssignment(assignment);
         setShowSubmitModal(true);
     };
@@ -74,7 +87,6 @@ const StudentClassroomView = () => {
                 <div className="aurora-blob blob-2"></div>
             </div>
 
-            {/* 🌟 FIX: Updated to nexus-content and added student-layout scoping */}
             <div className="nexus-content student-layout">
                 <header className="spatial-card cinematic-header fade-in-down">
                     <div className="header-inner">
@@ -108,30 +120,49 @@ const StudentClassroomView = () => {
 
                     <div className="assignment-grid">
                         {assignments.map((assignment, idx) => {
-                            const isLocked = assignment.has_submitted;
+                            // 🌟 CORE LOCK LOGIC
+                            const isSubmitted = assignment.has_submitted;
+                            const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
+                            const isDisabled = isSubmitted || isOverdue; // Lock if either condition is met
                             const language = assignment.language ? assignment.language.toUpperCase() : 'PYTHON';
 
                             return (
                                 <div 
                                     key={assignment.id} 
-                                    className={`assignment-item-row clickable-row ${isLocked ? 'locked-card' : ''}`}
+                                    className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''}`}
                                     onClick={() => setViewAssignment(assignment)}
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
                                             TASK {String(idx + 1).padStart(2, '0')} • {language}
                                         </span>
-                                        <span className={`status-badge ${isLocked ? 'badge-completed' : 'badge-pending'}`}>
-                                            {isLocked ? '✓ Turned In' : 'Pending'}
+                                        {/* 🌟 DYNAMIC STATUS BADGE */}
+                                        <span 
+                                            className="status-badge" 
+                                            style={{
+                                                backgroundColor: isSubmitted ? 'rgba(16, 185, 129, 0.2)' : isOverdue ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                                                color: isSubmitted ? '#34d399' : isOverdue ? '#f87171' : '#fbbf24',
+                                                padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold'
+                                            }}
+                                        >
+                                            {isSubmitted ? 'Turned In' : isOverdue ? 'Overdue' : 'Pending'}
                                         </span>
                                     </div>
                                     
                                     <h3>{assignment.title}</h3>
                                     <p>{assignment.description}</p>
                                     
+                                    {/* 🌟 DEADLINE DISPLAY */}
+                                    <div style={{ marginTop: '12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <svg width="14" height="14" fill="none" stroke={isOverdue && !isSubmitted ? "#ef4444" : "#9ca3af"} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <span style={{ color: isOverdue && !isSubmitted ? '#ef4444' : '#9ca3af', fontWeight: '500' }}>
+                                            Due: {formatDeadline(assignment.deadline)}
+                                        </span>
+                                    </div>
+                                    
                                     <div className="card-footer-split" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                                         <div className="score-display">
-                                            {isLocked ? (
+                                            {isSubmitted ? (
                                                 <>
                                                     <span style={{ fontSize: '0.75rem', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>FALSICODE SCORE</span>
                                                     <span style={{ fontWeight: 'bold', color: assignment.score === 'Pending' ? '#f59e0b' : 'white' }}>{assignment.score}</span>
@@ -144,16 +175,17 @@ const StudentClassroomView = () => {
                                             )}
                                         </div>
 
+                                        {/* 🌟 DYNAMIC BUTTON TEXT */}
                                         <button 
-                                            className={`btn-glass-action ${isLocked ? 'btn-disabled' : 'btn-active'}`} 
+                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'}`} 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenSubmission(assignment);
                                             }}
-                                            disabled={isLocked}
-                                            style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                                            disabled={isDisabled}
+                                            style={isDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                                         >
-                                            {isLocked ? '🔒 Node Locked' : 'Initialize Source File →'}
+                                            {isSubmitted ? 'Node Locked' : isOverdue ? 'Deadline Passed' : 'Initialize Source File →'}
                                         </button>
                                     </div>
                                 </div>
