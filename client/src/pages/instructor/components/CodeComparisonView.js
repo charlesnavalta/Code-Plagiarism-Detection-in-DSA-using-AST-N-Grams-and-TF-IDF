@@ -33,18 +33,17 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
 
                 if (matchType === 1) {
                     highlightClass = 'match-type-1';
-                    hoverText = 'Exact copy (Matches block in opposing file)';
+                    hoverText = 'Type 1: Exact / Near-identical copy';
                 } else if (matchType === 2) {
                     highlightClass = 'match-type-2';
-                    hoverText = 'Renamed-variable match (Matches block in opposing file)';
+                    hoverText = 'Type 2: Renamed variables / Literals altered';
                 } else if (matchType === 3) {
                     highlightClass = 'match-type-3';
-                    hoverText = 'Rearranged match (Matches block in opposing file)';
+                    hoverText = 'Type 3: Rearranged structure / Reordered statements';
                 }
             }
             
             return (
-                // 🌟 FIX: Removed 'title' and added conditionally rendered 'data-tooltip'
                 <div 
                     key={index} 
                     className={`code-line ${highlightClass}`} 
@@ -146,20 +145,49 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     </button>
                     
                     <button 
-                    className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
-                    onClick={() => setViewMode('ast')}
+                        className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
+                        onClick={() => setViewMode('ast')}
                     >
-                        AST N-Grams (XAI)</button>
+                        AST N-Grams (XAI)
+                    </button>
                 </div>
 
                 <AnalysisPDFExporter selectedPair={selectedPair} />
             </div>
 
-            {viewMode === 'code' && (
-                <div className="plagiarism-legend spatial-card" style={{ display: 'flex', gap: '20px', padding: '12px 20px', background: 'rgba(255, 255, 255, 0.03)', marginBottom: '15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ef4444' }}></div> Type 1: Exact Copy</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#f97316' }}></div> Type 2: Variables Changed</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#eab308' }}></div> Type 3: Structure Rearranged</span>
+            {/* Classification & Scores Breakdown Banner */}
+            {selectedPair && (
+                <div className="classification-summary-bar" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 20px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    marginBottom: '15px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                        <div>
+                            <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Overall Similarity</span>
+                            <div style={{ fontSize: '18px', fontWeight: '700', color: selectedPair.score > 80 ? '#ef4444' : selectedPair.score >= 50 ? '#f97316' : '#10b981' }}>
+                                {selectedPair.score}%
+                            </div>
+                        </div>
+                        <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '20px' }}>
+                            <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Classification</span>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#f3f4f6', marginTop: '2px' }}>
+                                {selectedPair.plagiarism_type || 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+
+                    {selectedPair.plagiarism_type && selectedPair.plagiarism_type !== 'N/A' && (
+                        <div style={{ display: 'flex', gap: '20px', fontSize: '13px', color: '#d1d5db' }}>
+                            <span><strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%</span>
+                            <span><strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%</span>
+                        </div>
+                    )}
                 </div>
             )}
 
