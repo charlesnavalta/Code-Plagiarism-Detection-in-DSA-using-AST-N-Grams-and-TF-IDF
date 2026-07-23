@@ -143,13 +143,106 @@
     word-break: break-all;
 }
 
-.highlight-plagiarism {
-    background-color: rgba(220, 38, 38, 0.15); 
-    border-left: 3px solid #ef4444; 
+/* =========================================
+   XAI PLAGIARISM MINIMAL HIGHLIGHTS
+========================================= */
+
+.code-line {
+    display: flex;
+    padding: 2px 16px;
+    transition: background 0.2s ease;
+    position: relative; /* Required for the absolute positioned dot */
 }
 
-.highlight-plagiarism .line-number {
-    color: #ef4444; 
+.code-line:hover {
+    background: rgba(255, 255, 255, 0.05); /* Slight hover effect to show interactivity */
+    cursor: help; /* Changes cursor to a question mark to indicate hover details */
+}
+
+/* Base style for the small dot indicator */
+.code-line[class*="match-type-"] .line-number::before {
+    content: '';
+    position: absolute;
+    left: 8px; /* Position dot on the far left */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+/* Base style for the underline */
+.code-line[class*="match-type-"] .line-content {
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+    text-decoration-style: dashed; /* Dashed underline looks cleaner on code */
+}
+
+/* --- Type 1: Red (Exact Copy) --- */
+.match-type-1 .line-number::before { 
+    background-color: #ef4444; 
+    box-shadow: 0 0 6px #ef4444; 
+}
+.match-type-1 .line-content { 
+    text-decoration-color: rgba(239, 68, 68, 0.8); 
+}
+
+/* --- Type 2: Orange (Variable Changes) --- */
+.match-type-2 .line-number::before { 
+    background-color: #f97316; 
+    box-shadow: 0 0 6px #f97316; 
+}
+.match-type-2 .line-content { 
+    text-decoration-color: rgba(249, 115, 22, 0.8); 
+}
+
+/* --- Type 3: Yellow (Structural Changes) --- */
+.match-type-3 .line-number::before { 
+    background-color: #eab308; 
+    box-shadow: 0 0 6px #eab308; 
+}
+.match-type-3 .line-content { 
+    text-decoration-color: rgba(234, 179, 8, 0.8); 
+}
+
+/* =========================================
+   CUSTOM INSTANT TOOLTIPS
+========================================= */
+
+.code-line[data-tooltip] {
+    position: relative;
+}
+
+.code-line[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%; /* Positions it right above the code line */
+    left: 45px; /* Pushes it just past the line numbers */
+    
+    /* Styling to match your dark theme */
+    background: rgba(15, 23, 42, 0.95);
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    
+    /* Visuals and positioning */
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    pointer-events: none; /* Prevents the tooltip from blocking the mouse */
+    
+    /* Small animation */
+    animation: quickFadeIn 0.15s ease-out forwards;
+}
+
+@keyframes quickFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(-2px); }
 }
 
 /* --- EXPLAINABLE AI (AST N-GRAM PATTERN STREAM) STYLING --- */

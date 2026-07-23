@@ -163,8 +163,8 @@ def run_smart_seed(db):
                 "instructor_username": "Renz"
             },
             {
-                "name": "Advanced Database Systems", 
-                "instructor_username": "Janus"
+                "name": "3CSC - DSA", 
+                "instructor_username": "Renz"
             },
             {
                 "name": "Web Development 101", 
@@ -175,16 +175,16 @@ def run_smart_seed(db):
         # C. Explicit Assignment Data
         assignments_to_seed = [
             {
-                "title": "1. Quick Sort Implementation",
-                "description": "Write a Python script that implements the Quick Sort algorithm. You must include a partition helper function.",
+                "title": "1. Quick Sort Program",
+                "description": "Write a Python program that uses the Quick Sort method. You need to include a helper function that divides the list into smaller pieces.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59) # Dec 31, 2027, 11:59:59 PM
             },
             {
-                "title": "2. Merge Sort Implementation",
-                "description": "Implement the Merge Sort algorithm using a recursive divide-and-conquer approach. Ensure your code handles lists of both even and odd lengths.",
+                "title": "2. Merge Sort Program",
+                "description": "Write a Merge Sort program that repeatedly splits the list in half to sort it. Make sure it works perfectly whether the list has an even or odd number of items.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
                 "language": "python",
@@ -192,23 +192,23 @@ def run_smart_seed(db):
             },
             {
                 "title": "3. Singly Linked List",
-                "description": "Develop a Node class and a LinkedList class. Implement methods to append a node, prepend a node, and reverse the entire linked list in place.",
+                "description": "Create a basic Linked List program. Write code to add an item to the front, add an item to the back, and flip the entire list around.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "4. Basic Binary Tree Traversals",
-                "description": "Construct a basic Binary Tree. Implement and print the results of pre-order, in-order, and post-order traversals for a tree with at least 7 nodes.",
+                "title": "4. Binary Tree Basics",
+                "description": "Build a basic Binary Tree with at least 7 items. Write code to visit and print the items in three different ways: pre-order, in-order, and post-order.",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "5. Binary Search Tree (BST) Operations",
-                "description": "Implement a fully functional Binary Search Tree. Your script must include methods to insert a new value, search for an existing value, and delete a leaf node.",
+                "title": "5. Binary Search Tree Tools",
+                "description": "Write a working Binary Search Tree. Your program must be able to add a new item, find a specific item, and delete an item that sits at the very bottom of the tree (a leaf).",
                 "max_score": 100,
                 "classroom_name": "3CSB - DSA",
                 "language": "python",
@@ -216,88 +216,85 @@ def run_smart_seed(db):
             },
 
             # ==============================================================================
-            # SIR JANUS ASSIGNMENT: PART 1
-            # TS-A Part: Lexical Obfuscation
+            # TS-A Part: Lexical Obfuscation (Changing Words and Text)
             # ==============================================================================
             {
-                "title": "TS-A Level 1: Merge Sort (Exact Copy)",
-                "description": "Implement the Merge Sort algorithm. This assignment serves as the baseline for Type I (Exact Copy) plagiarism detection testing.",
+                "title": "TS-A 1: Merge Sort (Exact Copy)",
+                "description": "Write a Merge Sort program. This is a basic test to see if the system can catch exact, copy-pasted code.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
-                "description": "Implement the Quick Sort algorithm. This assignment tests Type II plagiarism detection, specifically evaluating the Java parser's resilience against variable renaming and comment alteration.",
+                "title": "TS-A 2: Quick Sort (Renaming Variables)",
+                "description": "Write a Quick Sort program. This tests if the system can still catch cheating when students change variable names and comments.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
-                "description": "Write a Python script that implements the Binary Search algorithm. This assignment evaluates the system's ability to ignore whitespace manipulation, line condensing, and formatting changes.",
+                "title": "TS-A 3: Binary Search (Changing Spacing)",
+                "description": "Write a Binary Search program in Python. This checks if the system can ignore tricks like adding extra spaces, blank lines, or changing how the code is formatted.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
 
             # ==============================================================================
-            # SIR JANUS ASSIGNMENT: PART 2
-            # TS-B Part: Structural Obfuscation
+            # TS-B Part: Structural Obfuscation (Changing How Code is Organized)
             # ==============================================================================
             {
-                "title": "TS-B Level 1: Fibonacci (Statement Reordering)",
-                "description": "Write a Python script to calculate the Fibonacci sequence. This assignment serves as the baseline for Type III (Structural) plagiarism detection, specifically testing resilience against independent variable swapping.",
+                "title": "TS-B 1: Fibonacci (Swapping Lines)",
+                "description": "Write a Python program to find the Fibonacci sequence. This tests if the system can catch cheating when code lines or variables are swapped around.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
-                "description": "Implement a sorting algorithm in Java. This assignment evaluates the TF-IDF engine's ability to detect structural copying even when core loop logic is extracted into a completely separate helper method.",
+                "title": "TS-B 2: Sorting (Breaking into Functions)",
+                "description": "Write a sorting program. This checks if the system can catch copying even when a student moves a chunk of the code into a separate helper function.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-B Level 3: Iteration (Control Flow Replacement)",
-                "description": "Implement an iterative algorithm in Python. This is a high-level Type III obfuscation test designed to evaluate if the AST N-Gram engine can still detect underlying logic similarities when a 'for' loop is rewritten as a 'while' loop.",
+                "title": "TS-B 3: Loops (Swapping Loop Types)",
+                "description": "Write a program using loops in Python. This tests if the system can tell that a 'for' loop and a 'while' loop are doing the exact same logic.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
 
             # ==============================================================================
-            # SIR JANUS ASSIGNMENT: PART 3
-            # TS-C Part: Advanced Logic & Noise Injection (More Submissions)
+            # TS-C Part: Advanced Logic & Noise Injection (Adding Fake Code and Math Tricks)
             # ==============================================================================
             {
-                "title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
-                "description": "Implement Quick Sort. This test evaluates if the system can ignore 'Dead Code'—functions and variables that are defined but never used to alter the algorithm's output.",
+                "title": "TS-C 1: Quick Sort (Adding Fake Code)",
+                "description": "Write a Quick Sort program. This tests if the system can ignore extra 'dead code'—fake variables and functions that don't actually do anything.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-C Level 2: Linked List (Expression Substitution)",
-                "description": "Implement a Singly Linked List. This test checks if the AST engine recognizes equivalent logic, such as replacing 'if not x < y' with 'if x >= y'.",
+                "title": "TS-C 2: Linked List (Swapping Math Logic)",
+                "description": "Write a Singly Linked List program. This checks if the system knows when math logic is written differently but means the same thing (like changing 'not less than' to 'greater than or equal to').",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
             {
-                "title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
-                "description": "The Ultimate Test: A combination of renaming, reordering, and dead code injection within a Binary Search Tree implementation.",
+                "title": "TS-C 3: Binary Search Tree (Mixed Cheating Tricks)",
+                "description": "The Final Test: Write a Binary Search Tree program. This combines all cheating tricks at once—changing names, mixing up line order, and adding fake code.",
                 "max_score": 100,
-                "classroom_name": "Advanced Database Systems",
+                "classroom_name": "3CSC - DSA",
                 "language": "python",
                 "deadline": datetime(2027, 12, 31, 23, 59, 59)
             },
@@ -354,19 +351,19 @@ def run_smart_seed(db):
             # Note: These files are intentionally crafted to represent different levels of plagiarism (Exact Copy and Renamed Variables) for robust testing.
             {
                 "student_username": "charles",
-                "assignment_title": "1. Quick Sort Implementation",
+                "assignment_title": "1. Quick Sort Program",
                 "filename": "original.py",
                 "file_path": "datasets/python_source-code/quick_sort/original.py"
             },
             {
                 "student_username": "nicolo",
-                "assignment_title": "1. Quick Sort Implementation",
+                "assignment_title": "1. Quick Sort Program",
                 "filename": "type_1_exact_copy.py",
                 "file_path": "datasets/python_source-code/quick_sort/type_1_exact_copy.py"
             },
             {
                 "student_username": "dan",
-                "assignment_title": "1. Quick Sort Implementation",
+                "assignment_title": "1. Quick Sort Program",
                 "filename": "type_2_renamed.py",
                 "file_path": "datasets/python_source-code/quick_sort/type_2_renamed.py"
             },
@@ -376,19 +373,19 @@ def run_smart_seed(db):
 
             {
                 "student_username": "charles",
-                "assignment_title": "2. Merge Sort Implementation",
+                "assignment_title": "2. Merge Sort Program",
                 "filename": "original.py",
                 "file_path": "datasets/python_source-code/merge_sort/original.py"
             },
             {
                 "student_username": "nicolo",
-                "assignment_title": "2. Merge Sort Implementation",
+                "assignment_title": "2. Merge Sort Program",
                 "filename": "type_3_structural.py",
                 "file_path": "datasets/python_source-code/merge_sort/type_3_structural.py"
             },
             {
                 "student_username": "dan",
-                "assignment_title": "2. Merge Sort Implementation",
+                "assignment_title": "2. Merge Sort Program",
                 "filename": "type_3_structural2.py",
                 "file_path": "datasets/python_source-code/merge_sort/type_3_structural2.py"
             },
@@ -430,52 +427,52 @@ def run_smart_seed(db):
             #Assignment A 1 TS-A Level 1: Merge Sort (Exact Copy)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-A Level 1: Merge Sort (Exact Copy)",
+                "assignment_title": "TS-A 1: Merge Sort (Exact Copy)",
                 "filename": "TS-A_Level1.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level1.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-A Level 1: Merge Sort (Exact Copy)",
+                "assignment_title": "TS-A 1: Merge Sort (Exact Copy)",
                 "filename": "TS-A_Level1-ExactCopy.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level1-ExactCopy.py"
             },
             #Assignment A 2 TS-A Level 2: Quick Sort (Lexical Obfuscation)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
+                "assignment_title": "TS-A 2: Quick Sort (Renaming Variables)",
                 "filename": "TS-A_Level2.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level2.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-A Level 2: Quick Sort (Lexical Obfuscation)",
+                "assignment_title": "TS-A 2: Quick Sort (Renaming Variables)",
                 "filename": "TS-A_Level2-LexicalObfuscation.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level2-LexicalObfuscation.py"
             },
             #Assignment A 3 TS-A Level 3: Binary Search (Formatting Manipulation)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
+                "assignment_title": "TS-A 3: Binary Search (Changing Spacing)",
                 "filename": "TS-A_Level3.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level3.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-A Level 3: Binary Search (Formatting Manipulation)",
+                "assignment_title": "TS-A 3: Binary Search (Changing Spacing)",
                 "filename": "TS-A_Level3-FormattingManipulation.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-A_Level3-FormattingManipulation.py"
             },
             #Assignment B 1 TS-B Level 1: Fibonacci (Statement Reordering)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-B Level 1: Fibonacci (Statement Reordering)",
+                "assignment_title": "TS-B 1: Fibonacci (Swapping Lines)",
                 "filename": "TS-B_Level1.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level1.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-B Level 1: Fibonacci (Statement Reordering)",
+                "assignment_title": "TS-B 1: Fibonacci (Swapping Lines)",
                 "filename": "TS-B_Level1-StatementReordering.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level1-StatementReordering.py"
             },
@@ -483,13 +480,13 @@ def run_smart_seed(db):
             #Assignment B 2 TS-B Level 2: Monolithic Sort (Method Extraction)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
+                "assignment_title": "TS-B 2: Sorting (Breaking into Functions)",
                 "filename": "TS-B_Level2.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level2.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-B Level 2: Monolithic Sort (Method Extraction)",
+                "assignment_title": "TS-B 2: Sorting (Breaking into Functions)",
                 "filename": "TS-B_Level2-MethodExtraction.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level2-MethodExtraction.py"
             },
@@ -497,13 +494,13 @@ def run_smart_seed(db):
             #Assignment B 3 TS-B Level 3: Iteration (Control Flow Replacement)
             {
                 "student_username": "mary",
-                "assignment_title": "TS-B Level 3: Iteration (Control Flow Replacement)",
+                "assignment_title": "TS-B 3: Loops (Swapping Loop Types)",
                 "filename": "TS-B_Level3.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level3.py"
             },
             {
                 "student_username": "charles",
-                "assignment_title": "TS-B Level 3: Iteration (Control Flow Replacement)",
+                "assignment_title": "TS-B 3: Loops (Swapping Loop Types)",
                 "filename": "TS-B_Level3-ControlFlowReplacement.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-B_Level3-ControlFlowReplacement.py"
             },
@@ -511,13 +508,13 @@ def run_smart_seed(db):
             # Assignment C 1: Dead Code Injection
             {
                 "student_username": "Mary",
-                "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
+                "assignment_title": "TS-C 1: Quick Sort (Adding Fake Code)",
                 "filename": "TS-C_Level1.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1.py"
             },
             {
                 "student_username": "Charles",
-                "assignment_title": "TS-C Level 1: Quick Sort (Dead Code Injection)",
+                "assignment_title": "TS-C 1: Quick Sort (Adding Fake Code)",
                 "filename": "TS-C_Level1-DeadCode.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level1-DeadCode.py"
             },
@@ -525,13 +522,13 @@ def run_smart_seed(db):
             # Assignment C 2: Expression Substitution
             {
                 "student_username": "Mary",
-                "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
+                "assignment_title": "TS-C 2: Linked List (Swapping Math Logic)",
                 "filename": "TS-C_Level2.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2.py"
             },
             {
                 "student_username": "Charles",
-                "assignment_title": "TS-C Level 2: Linked List (Expression Substitution)",
+                "assignment_title": "TS-C 2: Linked List (Swapping Math Logic)",
                 "filename": "TS-C_Level2-Substitution.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level2-Substitution.py"
             },
@@ -539,13 +536,13 @@ def run_smart_seed(db):
             # Assignment C 3: Mixed Attack
             {
                 "student_username": "Mary",
-                "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
+                "assignment_title": "TS-C 3: Binary Search Tree (Mixed Cheating Tricks)",
                 "filename": "TS-C_Level3.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3.py"
             },
             {
                 "student_username": "Charles",
-                "assignment_title": "TS-C Level 3: BST (Mixed Sophisticated Attack)",
+                "assignment_title": "TS-C 3: Binary Search Tree (Mixed Cheating Tricks)",
                 "filename": "TS-C_Level3-MixedAttack.py",
                 "file_path": "datasets/python_source-code/sirjanus-testcases/TS-C_Level3-MixedAttack.py"
             },

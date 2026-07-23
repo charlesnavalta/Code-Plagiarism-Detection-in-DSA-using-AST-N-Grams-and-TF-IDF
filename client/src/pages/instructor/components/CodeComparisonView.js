@@ -19,10 +19,37 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         const lines = code.split('\n');
         return lines.map((line, index) => {
             const lineNumber = index + 1;
-            const isHighlighted = highlightedLines.includes(lineNumber);
+            
+            const match = highlightedLines.find(m => {
+                if (typeof m === 'number') return m === lineNumber; 
+                return m.line === lineNumber; 
+            });
+            
+            let highlightClass = '';
+            let hoverText = '';
+
+            if (match) {
+                const matchType = typeof match === 'number' ? 1 : match.type;
+
+                if (matchType === 1) {
+                    highlightClass = 'match-type-1';
+                    hoverText = 'Exact copy (Matches block in opposing file)';
+                } else if (matchType === 2) {
+                    highlightClass = 'match-type-2';
+                    hoverText = 'Renamed-variable match (Matches block in opposing file)';
+                } else if (matchType === 3) {
+                    highlightClass = 'match-type-3';
+                    hoverText = 'Rearranged match (Matches block in opposing file)';
+                }
+            }
             
             return (
-                <div key={index} className={`code-line ${isHighlighted ? 'highlight-plagiarism' : ''}`}>
+                // 🌟 FIX: Removed 'title' and added conditionally rendered 'data-tooltip'
+                <div 
+                    key={index} 
+                    className={`code-line ${highlightClass}`} 
+                    data-tooltip={hoverText ? hoverText : undefined}
+                >
                     <span className="line-number">{lineNumber}</span>
                     <span className="line-content">{line || ' '}</span>
                 </div>
@@ -72,7 +99,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                                         {categoryLabel}
                                     </div>
                                 </div>
-                                <div className="pattern-weight-badge" style={{ color: badgeColor, backgroundColor: badgeBg, borderColor: badgeBg }} title="Term Frequency - Inverse Document Frequency Score">
+                                <div className="pattern-weight-badge" style={{ color: badgeColor, backgroundColor: badgeBg, borderColor: badgeBg }}>
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '6px'}}>
                                         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                     </svg>
@@ -125,9 +152,16 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         AST N-Grams (XAI)</button>
                 </div>
 
-                {/* We only pass selectedPair now. It handles its own classification internally! */}
                 <AnalysisPDFExporter selectedPair={selectedPair} />
             </div>
+
+            {viewMode === 'code' && (
+                <div className="plagiarism-legend spatial-card" style={{ display: 'flex', gap: '20px', padding: '12px 20px', background: 'rgba(255, 255, 255, 0.03)', marginBottom: '15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ef4444' }}></div> Type 1: Exact Copy</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#f97316' }}></div> Type 2: Variables Changed</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#d1d5db' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#eab308' }}></div> Type 3: Structure Rearranged</span>
+                </div>
+            )}
 
             <div className="split-screen-container">
                 <div className="code-pane">
