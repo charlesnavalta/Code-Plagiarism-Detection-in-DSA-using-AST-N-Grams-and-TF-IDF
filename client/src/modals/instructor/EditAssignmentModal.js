@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../../services/api'; 
+import api from '../../services/api'; 
 import './EditAssignmentModal.css'; 
-import DateTimePicker from '../components/DateTimePicker';
+import DateTimePicker from '../../components/common/DateTimePicker';
+
+// 🌟 Import your DRY validation helper!
+import { validateAssignmentDescription } from '../../utils/validation';
 
 const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated, onAssignmentDeleted, classroomId }) => {
     const [title, setTitle] = useState('');
@@ -11,7 +14,6 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
     const [deadline, setDeadline] = useState(''); 
     const [isSaving, setIsSaving] = useState(false);
     
-    // 🌟 NEW: State for validation and deletion errors
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
@@ -38,23 +40,12 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         e.preventDefault();
         setErrorMessage(''); // Clear previous errors
 
-        // ==========================================
-        // 🌟 GIBBERISH / DUMMY TEXT VALIDATION
-        // ==========================================
-        const descTrimmed = description.trim();
-        const words = descTrimmed.split(/\s+/); 
-
-        if (descTrimmed.length < 20 || words.length < 4) {
-            setErrorMessage("Description is too short. Please provide a detailed, meaningful explanation.");
+        // 🌟 Look how clean this is now! We just use the helper function.
+        const validationError = validateAssignmentDescription(description);
+        if (validationError) {
+            setErrorMessage(validationError);
             return;
         }
-
-        const hasMashedKeys = words.some(word => word.length > 25 && !word.startsWith('http'));
-        if (hasMashedKeys) {
-            setErrorMessage("Invalid input detected. Please write a proper description without keyboard mashing.");
-            return;
-        }
-        // ==========================================
 
         setIsSaving(true);
         try {
@@ -75,7 +66,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         }
     };
 
-    // 🌟 NEW: Handle Assignment Deletion
+    // 🌟 Handle Assignment Deletion
     const handleDelete = async () => {
         const confirmDelete = window.confirm(`Are you sure you want to delete "${assignment.title}"? This action cannot be undone.`);
         if (!confirmDelete) return;
@@ -176,7 +167,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
                     </div>
                     
                     <div className="modal-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        {/* 🌟 NEW: Delete Button on the left */}
+                        {/* 🌟 Delete Button on the left */}
                         <button 
                             type="button" 
                             onClick={handleDelete} 

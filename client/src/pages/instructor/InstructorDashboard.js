@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../services/api'; 
-import { useTheme } from '../../../hooks/useTheme';
-import '../styles/InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
-import '../pages/InstructorDashboard.css';
+import api from '../../services/api'; 
+import { useTheme } from '../../hooks/useTheme';
+import '../../style/InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
+import './InstructorDashboard.css';
+
+// 🌟 IMPORT DRY UTILITIES & HOOKS
+import { getUserData } from '../../utils/authUtils';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 
 const InstructorDashboard = () => {
     const [classrooms, setClassrooms] = useState([]);
@@ -14,18 +18,13 @@ const InstructorDashboard = () => {
 
     const [theme] = useTheme();
 
-    // --- Dynamic User Identity ---
-    const getUserData = () => {
-        try {
-            const rawUser = localStorage.getItem('user');
-            if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
-        } catch (e) { console.error("Identity Sync Error", e); }
-        return { username: 'Instructor', role: 'instructor' }; 
-    };
-
+    // 🌟 1. Extracted to Auth Utility
     const currentUser = getUserData();
     const displayName = currentUser.name || currentUser.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
+
+    // 🌟 2. Extracted to Custom Hook! 
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     // --- API Operations ---
     const fetchClassrooms = async () => {
@@ -59,20 +58,7 @@ const InstructorDashboard = () => {
         }
     };
 
-    // --- Spatial Spotlight Logic ---
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        }
-    };
-
     return (
-
-        
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             {/* Background Aurora Engine */}
             <div className="aurora-canvas">

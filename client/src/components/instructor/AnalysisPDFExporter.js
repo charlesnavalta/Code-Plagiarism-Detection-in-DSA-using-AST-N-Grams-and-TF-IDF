@@ -4,34 +4,25 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import './AnalysisPDFExporter.css';
 
+// 🌟 IMPORT THE DRY UTILITY HERE
+import { getPlagiarismDisplayData } from '../../utils/theme';
+
 const AnalysisPDFExporter = ({ selectedPair }) => {
     const [isGenerating, setIsGenerating] = useState(false);
 
-    // SYNCHRONIZED WITH BACKEND CLASSIFICATION - Removed generic descriptions
-    const getPlagiarismType = (pair) => {
-        const backendType = pair.plagiarism_type || "";
+    // 🌟 1. Fetch base color and type from the centralized theme utility
+    const themeData = getPlagiarismDisplayData(selectedPair?.plagiarism_type);
 
-        if (backendType.includes("Type 1")) return { 
-            label: "Type I: Exact Structural Copying", 
-            color: "#dc2626"
-        };
-        if (backendType.includes("Type 2")) return { 
-            label: "Type II: Renamed Identifiers & Obfuscation", 
-            color: "#ea580c"
-        };
-        if (backendType.includes("Type 3")) return { 
-            label: "Type III: Structural Sequence Modification", 
-            color: "#ca8a04"
-        };
-        
-        // Fallback for "N/A" or low similarity
-        return { 
-            label: "Low Similarity Profile", 
-            color: "#16a34a"
-        };
+    // 🌟 2. Map the short labels to the formal, verbose titles specifically required for the PDF report
+    const pdfVerboseLabels = {
+        "Type I": "Type I: Exact Structural Copying",
+        "Type II": "Type II: Renamed Identifiers & Obfuscation",
+        "Type III": "Type III: Structural Sequence Modification",
+        "Safe": "Low Similarity Profile"
     };
+    
+    const reportLabel = pdfVerboseLabels[themeData.shortLabel] || "Unknown Profile";
 
-    const typeData = getPlagiarismType(selectedPair);
     const generatedReportId = `FC-${Math.floor(10000 + Math.random() * 90000)}-${new Date().getFullYear()}`;
 
     const topPatternsA = (!selectedPair.ast_xai_1 || !Array.isArray(selectedPair.ast_xai_1))
@@ -44,23 +35,19 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
         
         try {
             const canvas = await html2canvas(reportElement, { 
-                scale: 1.5, // Reduced from 2 to 1.5 (keeps it crisp but reduces pixels by 40%)
+                scale: 1.5, 
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
                 windowWidth: 850
             });
             
-            // Switch from PNG (lossless/huge) to JPEG (compressed/tiny) at 80% quality
             const imgData = canvas.toDataURL('image/jpeg', 0.80);
-            
-            // Add 'compress: true' to the document creation
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
             
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             
-            // Add 'JPEG' and the 'FAST' compression alias
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
             pdf.save(`FALSICODE-AUDIT-LOG-${generatedReportId}.pdf`);
             
@@ -103,14 +90,14 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                     </div>
                 </div>
 
-                {/* Verdict Section - NOW FEATURING HARD DATA INSTEAD OF DESCRIPTIONS */}
-                <div className="pdf-verdict-banner-container" style={{ borderLeft: `6px solid ${typeData.color}` }}>
+                {/* Verdict Section - USING DRY THEME DATA */}
+                <div className="pdf-verdict-banner-container" style={{ borderLeft: `6px solid ${themeData.color}` }}>
                     <div className="pdf-score-column">
-                        <span className="pdf-score-number" style={{ color: typeData.color }}>{selectedPair.score}%</span>
+                        <span className="pdf-score-number" style={{ color: themeData.color }}>{selectedPair.score}%</span>
                         <small className="pdf-score-subtext">STRUCTURAL MATCH</small>
                     </div>
                     <div style={{ flex: 1 }}>
-                        <strong className="pdf-verdict-class-title">METRIC ANALYSIS: {typeData.label}</strong>
+                        <strong className="pdf-verdict-class-title">METRIC ANALYSIS: {reportLabel}</strong>
                         
                         {/* Evidence-Based Metrics Row */}
                         <div style={{ marginTop: '6px', fontSize: '13px', color: '#4b5563' }}>
@@ -192,8 +179,8 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                         <text x={ax + 6} y={ay + 3} fill="#3b82f6" fontSize="10" fontFamily="monospace" fontWeight="bold">Vector_A (File1)</text>
                                         
                                         {/* Vector B Arc Line */}
-                                        <line x1="40" y1="110" x2={bx} y2={by} stroke={typeData.color} strokeWidth="2.5" strokeLinecap="round" />
-                                        <text x={bx + 6} y={by - 2} fill={typeData.color} fontSize="10" fontFamily="monospace" fontWeight="bold">Vector_B (File2)</text>
+                                        <line x1="40" y1="110" x2={bx} y2={by} stroke={themeData.color} strokeWidth="2.5" strokeLinecap="round" />
+                                        <text x={bx + 6} y={by - 2} fill={themeData.color} fontSize="10" fontFamily="monospace" fontWeight="bold">Vector_B (File2)</text>
                                         
                                         {/* Angular Matrix Context Distance */}
                                         <text x="95" y="102" fill="#6b7280" fontSize="10" fontFamily="monospace" fontStyle="italic">
@@ -233,7 +220,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                         <td className="pdf-table-td-seq">
                                             {pattern.sequence ? pattern.sequence.join(' → ') : 'N/A'}
                                         </td>
-                                        <td className="pdf-table-td-weight" style={{ color: typeData.color }}>
+                                        <td className="pdf-table-td-weight" style={{ color: themeData.color }}>
                                             {Number(pattern.weight).toFixed(4)}
                                         </td>
                                     </tr>
@@ -244,19 +231,19 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                         <td className="pdf-table-td-num">01</td>
                                         <td className="pdf-table-td-fam">AST-NGRAM-P1</td>
                                         <td className="pdf-table-td-seq">FunctionDef → arguments → For → If → Compare</td>
-                                        <td className="pdf-table-td-weight" style={{ color: typeData.color }}>84.3210</td>
+                                        <td className="pdf-table-td-weight" style={{ color: themeData.color }}>84.3210</td>
                                     </tr>
                                     <tr className="pdf-table-tr-data">
                                         <td className="pdf-table-td-num">02</td>
                                         <td className="pdf-table-td-fam">AST-NGRAM-P2</td>
                                         <td className="pdf-table-td-seq">While → Assign → BinOp → Subscript → Call</td>
-                                        <td className="pdf-table-td-weight" style={{ color: typeData.color }}>76.1954</td>
+                                        <td className="pdf-table-td-weight" style={{ color: themeData.color }}>76.1954</td>
                                     </tr>
                                     <tr className="pdf-table-tr-data">
                                         <td className="pdf-table-td-num">03</td>
                                         <td className="pdf-table-td-fam">AST-NGRAM-P3</td>
                                         <td className="pdf-table-td-seq">ListComp → comprehension → Name → Compare</td>
-                                        <td className="pdf-table-td-weight" style={{ color: typeData.color }}>69.8402</td>
+                                        <td className="pdf-table-td-weight" style={{ color: themeData.color }}>69.8402</td>
                                     </tr>
                                 </>
                             )}

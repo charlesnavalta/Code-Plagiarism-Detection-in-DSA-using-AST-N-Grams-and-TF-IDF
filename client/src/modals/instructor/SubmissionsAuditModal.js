@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import api from '../../../services/api'; 
-// IMPORT THE NEW COMPONENT
-import CodeComparisonView from '../components/CodeComparisonView'; 
-import './SubmissionsAuditModal.css'; // Add this line
+import api from '../../services/api'; 
+import CodeComparisonView from '../../components/instructor/CodeComparisonView'; 
+import './SubmissionsAuditModal.css'; 
+
+// 🌟 Import your new DRY utility
+import { getPlagiarismDisplayData } from '../../utils/theme';
 
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {
     const [selectedPair, setSelectedPair] = useState(null);
@@ -12,14 +14,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
         if (selectedPair) setSelectedPair(null);
         return null;
     }
-
-    // --- Dynamic Color for the List View ---
-    const getScoreColor = (score) => {
-        if (score >= 95) return "#ef4444"; // Type I: Red
-        if (score >= 80) return "#f97316"; // Type II: Orange
-        if (score >= 50) return "#eab308"; // Type III: Yellow
-        return "#10b981";                  // Safe: Green
-    };
 
     const handleSaveGrade = async (submissionId) => {
         const scoreToSave = gradeInputs[submissionId];
@@ -104,16 +98,27 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                         </thead>
                                         <tbody>
                                             {analysisResults.length > 0 ? (
-                                                analysisResults.map((res, i) => (
-                                                    <tr key={i} onClick={() => setSelectedPair(res)} className="clickable-row">
-                                                        <td className="comparison-text">
-                                                            {res.file1} <span className="arrow-icon">↔</span> {res.file2}
-                                                            <span className="view-details-text">Click to view comparison</span>
-                                                        </td>
-                                                        {/* DYNAMIC COLOR APPLIED HERE */}
-                                                        <td className="sim-score" style={{ color: getScoreColor(res.score) }}>{res.score}%</td>
-                                                    </tr>
-                                                ))
+                                                analysisResults.map((res, i) => {
+                                                    // 🌟 Call the DRY utility using the smart backend data
+                                                    const displayData = getPlagiarismDisplayData(res.plagiarism_type);
+                                                    
+                                                    return (
+                                                        <tr key={i} onClick={() => setSelectedPair(res)} className="clickable-row">
+                                                            <td className="comparison-text">
+                                                                {res.file1} <span className="arrow-icon">↔</span> {res.file2}
+                                                                <span className="view-details-text">Click to view comparison</span>
+                                                            </td>
+                                                            
+                                                            {/* 🌟 Apply the smart color and add the Type label */}
+                                                            <td className="sim-score" style={{ color: displayData.color }}>
+                                                                <span style={{ fontSize: '11px', display: 'block', marginBottom: '2px', fontWeight: 'bold' }}>
+                                                                    {displayData.shortLabel}
+                                                                </span>
+                                                                {res.score}%
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
                                             ) : (
                                                 <tr>
                                                     <td colSpan="2" style={{ textAlign: 'center', padding: '30px', color: 'var(--status-green)' }}>
@@ -127,7 +132,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                             )}
                         </>
                     ) : (
-                        // USE THE NEW COMPONENT HERE
                         <CodeComparisonView 
                             selectedPair={selectedPair} 
                             submissions={submissions} 

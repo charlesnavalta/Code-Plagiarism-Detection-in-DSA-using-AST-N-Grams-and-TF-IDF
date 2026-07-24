@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import api from '../../../services/api';
+import api from '../../services/api';
 import './CreateAssignmentModal.css';
-import DateTimePicker from '../components/DateTimePicker';
+import DateTimePicker from '../../components/common/DateTimePicker';
+
+// 🌟 Import your new DRY validation helper!
+import { validateAssignmentDescription } from '../../utils/validation';
 
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
-    // 🌟 Added state to handle our new error messages
     const [errorMessage, setErrorMessage] = useState("");
 
     if (!isOpen) return null;
 
     const handleCreateAssignment = async (e) => {
         e.preventDefault();
-        setErrorMessage(""); // Clear previous errors
+        setErrorMessage(""); 
 
         const title = e.target.title.value;
         const description = e.target.description.value;
@@ -19,26 +21,12 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         const language = e.target.language.value; 
         const deadline = e.target.deadline.value;
 
-        // ==========================================
-        // 🌟 GIBBERISH / DUMMY TEXT VALIDATION
-        // ==========================================
-        const descTrimmed = description.trim();
-        const words = descTrimmed.split(/\s+/); // Split by spaces to count words
-
-        // 1. Check for minimum length and word count
-        if (descTrimmed.length < 20 || words.length < 4) {
-            setErrorMessage("Description is too short. Please provide a detailed, meaningful explanation.");
+        // 🌟 Look how clean this is now! One line of code to check everything.
+        const validationError = validateAssignmentDescription(description);
+        if (validationError) {
+            setErrorMessage(validationError);
             return;
         }
-
-        // 2. Check for keyboard mashing (unnaturally long words without spaces)
-        // We ignore URLs (which are naturally long) just in case they link to an external resource.
-        const hasMashedKeys = words.some(word => word.length > 25 && !word.startsWith('http'));
-        if (hasMashedKeys) {
-            setErrorMessage("Invalid input detected. Please write a proper description without keyboard mashing.");
-            return;
-        }
-        // ==========================================
 
         try {
             const res = await api.post(`/classrooms/${classroomId}/assignments`, { 
@@ -50,7 +38,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
             });
             onAssignmentCreated(res.data.assignment); 
             
-            // Clear the form and close
             setErrorMessage("");
             e.target.reset();
             onClose(); 
@@ -61,7 +48,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     };
 
     const handleClose = () => {
-        setErrorMessage(""); // Clear errors if user cancels
+        setErrorMessage(""); 
         onClose();
     };
 
@@ -76,7 +63,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                 <form onSubmit={handleCreateAssignment} className="hud-form-wrapper">
                     
                     <div className="hud-body custom-scrollbar">
-                        {/* 🌟 Display validation errors here */}
                         {errorMessage && (
                             <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '10px 15px', borderRadius: '6px', marginBottom: '15px', fontSize: '13px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                                 <strong>Error:</strong> {errorMessage}

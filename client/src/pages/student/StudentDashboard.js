@@ -4,51 +4,35 @@ import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api'; 
 import './StudentDashboard.css';
 
+// 🌟 IMPORT DRY UTILITIES & HOOKS
+import { getUserData } from '../../utils/authUtils';
+import { formatTimestamp } from '../../utils/dateUtils';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
+
 const StudentDashboard = () => {
     const [enrolledClasses, setEnrolledClasses] = useState([]);
-    const [submissions, setSubmissions] = useState([]); // 🌟 State for history feed
+    const [submissions, setSubmissions] = useState([]); 
     const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState(true);
     const dashboardRef = useRef(null);
     const navigate = useNavigate();
     const [theme] = useTheme();
 
-    // --- Dynamic User Identity ---
-    const getUserData = () => {
-        try {
-            const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-            if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
-        } catch (e) { console.error("Identity Sync Error", e); }
-        
-        return { username: 'Guest Student', role: 'student' }; 
-    };
-
+    // 🌟 1. Extracted to Auth Utility
     const currentUser = getUserData();
     const displayName = currentUser.first_name || currentUser.name || currentUser.username || 'Student';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    // --- Helper: Format Timestamp ---
-    const formatTimestamp = (isoString) => {
-        if (!isoString) return 'Pending...';
-        const date = new Date(isoString);
-        return date.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-    };
+    // 🌟 2. Extracted to Custom Hook! 
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     // --- API Operations ---
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
-            // 1. Fetch Classrooms
             const classRes = await api.get('/classrooms/enrolled');
             setEnrolledClasses(classRes.data);
 
-            // 2. Fetch Submission History 
-            // (Ensure this matches the endpoint we added in the backend!)
             const subRes = await api.get('/classrooms/student/history'); 
             setSubmissions(subRes.data);
         } catch (error) { 
@@ -69,17 +53,6 @@ const StudentDashboard = () => {
             setInviteCode('');
             fetchDashboardData();
         } catch (error) { alert("Protocol failure: Unable to join classroom."); }
-    };
-
-    // --- Senior UI: Spatial Spotlight Logic ---
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        }
     };
 
     return (
@@ -119,7 +92,6 @@ const StudentDashboard = () => {
                         </div>
                     </div>
 
-                    {/* 🌟 REPLACED: Submission History Panel */}
                     <div className="spatial-card history-card delay-2">
                         <div className="card-glass-layer"></div>
                         <div className="card-content">
@@ -133,7 +105,6 @@ const StudentDashboard = () => {
                                 </p>
                             ) : (
                                 <ul className="submission-history-list">
-                                    {/* Show max 5 items to keep the sidebar clean */}
                                     {submissions.slice(0, 5).map((sub) => (
                                         <li key={sub.id} className="history-item">
                                             <div className="history-info">
@@ -141,6 +112,7 @@ const StudentDashboard = () => {
                                                     {sub.assignment_name}
                                                 </strong>
                                                 <span className="history-date">
+                                                    {/* 🌟 3. Extracted to Date Utility */}
                                                     {formatTimestamp(sub.date || sub.submitted_at)}
                                                 </span>
                                             </div>

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import api from '../../../services/api';
+import api from '../../services/api';
 import './SubmitFileModal.css';
+
+// 🌟 Import the new DRY utilities
+import { getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
 
 const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -8,8 +11,9 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
 
     if (!isOpen || !assignment) return null;
 
-    const isJava = assignment.language?.toLowerCase() === 'java';
-    const fileExtension = isJava ? '.java' : '.py';
+    // 🌟 1. Let the utility handle the language mapping
+    const fileExtension = getFileExtension(assignment.language);
+    const displayLanguage = assignment.language ? assignment.language.charAt(0).toUpperCase() + assignment.language.slice(1) : 'Unknown';
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -18,7 +22,13 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
 
     const handleFileUpload = async (e) => {
         e.preventDefault();
-        if (!selectedFile) return alert("Please select a file to deploy.");
+
+        // 🌟 2. Strict validation before wasting backend resources
+        const validationError = validateUploadedFile(selectedFile, fileExtension);
+        if (validationError) {
+            alert(validationError);
+            return;
+        }
 
         setIsDeploying(true);
         const formData = new FormData();
@@ -43,7 +53,7 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
                 <div className="hud-header">
                     <button type="button" className="btn-close-icon" onClick={onClose} disabled={isDeploying}>&times;</button>
                     <h2>Initialize Source File</h2>
-                    <p className="hud-subtitle">Upload your {isJava ? 'Java' : 'Python'} implementation for TASK {String(assignment.id).padStart(2, '0')}</p>
+                    <p className="hud-subtitle">Upload your {displayLanguage} implementation for TASK {String(assignment.id).padStart(2, '0')}</p>
                 </div>
                 
                 <div className="hud-body" style={{ padding: '20px' }}>

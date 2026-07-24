@@ -3,8 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
-import SubmitFileModal from './components/SubmitFileModal';
-import ViewAssignmentModal from './components/ViewAssignmentModal';
+import SubmitFileModal from '../../modals/student/SubmitFileModal';
+import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
+
+// 🌟 Import our DRY utilities!
+import { formatLanguageDisplay } from '../../utils/fileUtils';
+import { formatDeadline } from '../../utils/dateUtils';
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
@@ -16,7 +20,6 @@ const StudentClassroomView = () => {
     const [loading, setLoading] = useState(true);
     const [theme] = useTheme();
 
-    // Modal States
     const [showSubmitModal, setShowSubmitModal] = useState(false);
     const [activeAssignment, setActiveAssignment] = useState(null);
     const [viewAssignment, setViewAssignment] = useState(null);
@@ -49,18 +52,9 @@ const StudentClassroomView = () => {
         }
     };
 
-    // 🌟 HELPER: Format Deadline
-    const formatDeadline = (isoString) => {
-        if (!isoString) return 'No Deadline Specified';
-        const date = new Date(isoString);
-        return date.toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-    };
+    // 🌟 formatDeadline was removed from here and moved to dateUtils.js!
 
     const handleOpenSubmission = (assignment) => {
-        // 🌟 LOGIC CHECK: Double check before opening modal
         const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
         if (assignment.has_submitted || isOverdue) return; 
         
@@ -120,11 +114,12 @@ const StudentClassroomView = () => {
 
                     <div className="assignment-grid">
                         {assignments.map((assignment, idx) => {
-                            // 🌟 CORE LOCK LOGIC
                             const isSubmitted = assignment.has_submitted;
                             const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
-                            const isDisabled = isSubmitted || isOverdue; // Lock if either condition is met
-                            const language = assignment.language ? assignment.language.toUpperCase() : 'PYTHON';
+                            const isDisabled = isSubmitted || isOverdue; 
+                            
+                            // 🌟 Use the DRY fileUtils formatter here
+                            const language = formatLanguageDisplay(assignment.language);
 
                             return (
                                 <div 
@@ -136,7 +131,6 @@ const StudentClassroomView = () => {
                                         <span className="task-id">
                                             TASK {String(idx + 1).padStart(2, '0')} • {language}
                                         </span>
-                                        {/* 🌟 DYNAMIC STATUS BADGE */}
                                         <span 
                                             className="status-badge" 
                                             style={{
@@ -152,10 +146,10 @@ const StudentClassroomView = () => {
                                     <h3>{assignment.title}</h3>
                                     <p>{assignment.description}</p>
                                     
-                                    {/* 🌟 DEADLINE DISPLAY */}
                                     <div style={{ marginTop: '12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <svg width="14" height="14" fill="none" stroke={isOverdue && !isSubmitted ? "#ef4444" : "#9ca3af"} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         <span style={{ color: isOverdue && !isSubmitted ? '#ef4444' : '#9ca3af', fontWeight: '500' }}>
+                                            {/* 🌟 Use the DRY dateUtils formatter here */}
                                             Due: {formatDeadline(assignment.deadline)}
                                         </span>
                                     </div>
@@ -175,7 +169,6 @@ const StudentClassroomView = () => {
                                             )}
                                         </div>
 
-                                        {/* 🌟 DYNAMIC BUTTON TEXT */}
                                         <button 
                                             className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'}`} 
                                             onClick={(e) => {

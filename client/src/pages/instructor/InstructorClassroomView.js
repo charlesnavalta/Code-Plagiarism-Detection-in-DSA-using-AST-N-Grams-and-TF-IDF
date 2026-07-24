@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../../../hooks/useTheme';
+import { useTheme } from '../../hooks/useTheme';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../../services/api'; 
-import '../styles/InstructorTheme.css'; 
-import '../pages/InstructorClassroomView.css';
+import api from '../../services/api'; 
+import '../../style/InstructorTheme.css'; 
+import './InstructorClassroomView.css';
+
+// 🌟 IMPORT DRY UTILITIES & HOOKS
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
+import { formatLanguageDisplay } from '../../utils/fileUtils';
 
 // Import our isolated components
-import CreateAssignmentModal from '../modals/CreateAssignmentModal';
-import SubmissionsAuditModal from '../modals/SubmissionsAuditModal';
-import EditAssignmentModal from '../modals/EditAssignmentModal';
+import CreateAssignmentModal from '../../modals/instructor/CreateAssignmentModal';
+import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
+import EditAssignmentModal from '../../modals/instructor/EditAssignmentModal';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -29,6 +33,9 @@ const InstructorClassroomView = () => {
     
     const [editingAssignment, setEditingAssignment] = useState(null);
 
+    // 🌟 1. Extracted to Custom Hook! 
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -46,16 +53,6 @@ const InstructorClassroomView = () => {
         };
         fetchData();
     }, [id, navigate]);
-
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        }
-    };
 
     const handleViewSubmissions = async (assignment) => {
         try {
@@ -90,7 +87,6 @@ const InstructorClassroomView = () => {
         setAssignments(updatedList);
     };
 
-    // 🌟 NEW: Instantly removes the deleted assignment from the UI
     const handleAssignmentDeleted = (deletedAssignmentId) => {
         setAssignments(currentAssignments => 
             currentAssignments.filter(assignment => assignment.id !== deletedAssignmentId)
@@ -136,6 +132,9 @@ const InstructorClassroomView = () => {
                         {assignments.map((assignment, idx) => {
                             const subCount = assignment.submission_count || 0;
                             const hasSubmissions = subCount > 0;
+                            
+                            // 🌟 2. Use the fileUtils formatter for the language
+                            const languageLabel = formatLanguageDisplay(assignment.language);
 
                             return (
                                 <div 
@@ -147,7 +146,7 @@ const InstructorClassroomView = () => {
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
-                                            TASK {String(idx + 1).padStart(2, '0')} • {assignment.language ? assignment.language.toUpperCase() : 'PYTHON'}
+                                            TASK {String(idx + 1).padStart(2, '0')} • {languageLabel}
                                         </span>
                                         <span className={`sub-count ${hasSubmissions ? 'has-subs' : 'no-subs'}`}>
                                             {subCount} {subCount === 1 ? 'Submission' : 'Submissions'}
@@ -196,7 +195,7 @@ const InstructorClassroomView = () => {
                 assignment={editingAssignment}
                 onClose={() => setEditingAssignment(null)}
                 onAssignmentUpdated={handleAssignmentUpdated}
-                onAssignmentDeleted={handleAssignmentDeleted} /* 🌟 NEW: Connected the delete handler */
+                onAssignmentDeleted={handleAssignmentDeleted} 
                 classroomId={id} 
             />
         </div>

@@ -1,0 +1,87 @@
+/* ViewAssignmentModal.css */
+.view-modal-body {
+    padding: 30px;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.view-modal-title-group {
+    margin-bottom: 20px;
+}
+
+.view-modal-title {
+    margin: 0 0 10px 0;
+    font-size: 1.4rem;
+}
+
+.view-modal-badges {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.badge-target {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.badge-score {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #9ca3af;
+}
+
+.view-modal-desc-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-modal-desc-title {
+    margin: 0 0 10px 0;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.view-modal-desc-text {
+    margin: 0;
+    color: #e2e8f0;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.view-modal-locked-banner {
+    margin-top: 20px;
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 3px solid #10b981;
+    padding: 12px 15px;
+    border-radius: 4px;
+}
+
+.locked-text-strong {
+    color: #10b981;
+    font-size: 0.85rem;
+}
+
+.locked-text-sub {
+    color: #a7f3d0;
+    font-size: 0.85rem;
+    margin-left: 8px;
+}
+
+.view-modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: flex-end;
+}

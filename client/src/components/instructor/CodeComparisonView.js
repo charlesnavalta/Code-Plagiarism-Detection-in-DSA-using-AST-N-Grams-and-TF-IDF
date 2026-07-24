@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import './CodeComparisonView.css'; 
 import AnalysisPDFExporter from './AnalysisPDFExporter'; 
 
+// 🌟 IMPORT DRY UTILITIES
+import { getPlagiarismDisplayData, getASTBadgeStyle } from '../../utils/theme';
+
 const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     const [viewMode, setViewMode] = useState('code'); 
+
+    // Get smart theme data for the banner
+    const themeData = selectedPair ? getPlagiarismDisplayData(selectedPair.plagiarism_type) : null;
 
     const getCodeByFilename = (label) => {
         const sub = submissions.find(s => `${s.student_name} (${s.filename})` === label);
         return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
     };
 
-    // --- RENDER HELPERS ---
     const renderCodeWithHighlights = (code, highlightedLines = []) => {
         if (!code || code.startsWith("Code content not available")) {
             return <code>{code}</code>;
@@ -63,31 +68,9 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
             <div className="ast-pattern-stream">
                 {xaiData.map((patternData, patternIndex) => {
                     const realWeight = patternData.weight;
-                    let categoryLabel = "High Suspicion (Copied Logic)";
-                    let badgeColor = "#ef4444"; 
-                    let badgeBg = "rgba(239, 68, 68, 0.1)";
-
-                    if (xaiData.length === 30) {
-                        if (patternIndex >= 20 && patternIndex <= 24) {
-                            categoryLabel = "Average Structural Overlap";
-                            badgeColor = "#f97316"; 
-                            badgeBg = "rgba(249, 115, 22, 0.1)";
-                        } else if (patternIndex >= 25) {
-                            categoryLabel = "Common Boilerplate (Ignored)";
-                            badgeColor = "#10b981"; 
-                            badgeBg = "rgba(16, 185, 129, 0.1)";
-                        }
-                    } else {
-                        if (realWeight < 65 && realWeight >= 30) {
-                            categoryLabel = "Average Structural Overlap";
-                            badgeColor = "#f97316"; 
-                            badgeBg = "rgba(249, 115, 22, 0.1)";
-                        } else if (realWeight < 30) {
-                            categoryLabel = "Common Boilerplate (Ignored)";
-                            badgeColor = "#10b981"; 
-                            badgeBg = "rgba(16, 185, 129, 0.1)";
-                        }
-                    }
+                    
+                    // 🌟 CLEAN UI: Logic is now handled by the utility hook!
+                    const { categoryLabel, badgeColor, badgeBg } = getASTBadgeStyle(realWeight, patternIndex, xaiData.length);
 
                     return (
                         <div key={`pattern-${patternIndex}`} className="ngram-pattern-box" style={{ borderLeft: `3px solid ${badgeColor}` }}>
@@ -155,8 +138,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                 <AnalysisPDFExporter selectedPair={selectedPair} />
             </div>
 
-            {/* Classification & Scores Breakdown Banner */}
-            {selectedPair && (
+            {selectedPair && themeData && (
                 <div className="classification-summary-bar" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -170,7 +152,8 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
                         <div>
                             <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Overall Similarity</span>
-                            <div style={{ fontSize: '18px', fontWeight: '700', color: selectedPair.score > 80 ? '#ef4444' : selectedPair.score >= 50 ? '#f97316' : '#10b981' }}>
+                            {/* 🌟 DRY FIX: Replaced inline threshold math with themeData.color */}
+                            <div style={{ fontSize: '18px', fontWeight: '700', color: themeData.color }}>
                                 {selectedPair.score}%
                             </div>
                         </div>
