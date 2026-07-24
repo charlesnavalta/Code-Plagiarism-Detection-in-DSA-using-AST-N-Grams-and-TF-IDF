@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api'; 
-import { useTheme } from '../../hooks/useTheme';
-import './InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
-import './InstructorDashboard.css';
+import api from '../../../services/api'; 
+import { useTheme } from '../../../hooks/useTheme';
+import '../styles/InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
+import '../pages/InstructorDashboard.css';
 
 const InstructorDashboard = () => {
     const [classrooms, setClassrooms] = useState([]);

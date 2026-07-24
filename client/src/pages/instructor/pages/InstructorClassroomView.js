@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../../hooks/useTheme';
+import { useTheme } from '../../../hooks/useTheme';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../services/api'; 
-import './InstructorTheme.css'; 
-import './InstructorClassroomView.css';
+import api from '../../../services/api'; 
+import '../styles/InstructorTheme.css'; 
+import '../pages/InstructorClassroomView.css';
 
 // Import our isolated components
-import CreateAssignmentModal from './components/CreateAssignmentModal';
-import SubmissionsAuditModal from './components/SubmissionsAuditModal';
-import EditAssignmentModal from './components/EditAssignmentModal';
+import CreateAssignmentModal from '../modals/CreateAssignmentModal';
+import SubmissionsAuditModal from '../modals/SubmissionsAuditModal';
+import EditAssignmentModal from '../modals/EditAssignmentModal';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -90,17 +90,22 @@ const InstructorClassroomView = () => {
         setAssignments(updatedList);
     };
 
+    // 🌟 NEW: Instantly removes the deleted assignment from the UI
+    const handleAssignmentDeleted = (deletedAssignmentId) => {
+        setAssignments(currentAssignments => 
+            currentAssignments.filter(assignment => assignment.id !== deletedAssignmentId)
+        );
+    };
+
     if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
 
     return (
-        // 🌟 FIX: Changed falsicode-wrapper to nexus-wrapper so Light Mode triggers correctly
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-1"></div>
                 <div className="aurora-blob blob-2"></div>
             </div>
 
-            {/* 🌟 FIX: Updated layout wrapper for precise padding control */}
             <div className="nexus-content instructor-layout">
                 <header className="spatial-card cinematic-header fade-in-down">
                     <div className="header-inner">
@@ -191,6 +196,7 @@ const InstructorClassroomView = () => {
                 assignment={editingAssignment}
                 onClose={() => setEditingAssignment(null)}
                 onAssignmentUpdated={handleAssignmentUpdated}
+                onAssignmentDeleted={handleAssignmentDeleted} /* 🌟 NEW: Connected the delete handler */
                 classroomId={id} 
             />
         </div>

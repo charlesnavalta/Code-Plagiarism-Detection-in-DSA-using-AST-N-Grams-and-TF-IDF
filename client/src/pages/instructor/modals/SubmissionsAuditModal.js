@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import api from '../../../services/api'; 
 // IMPORT THE NEW COMPONENT
-import CodeComparisonView from './CodeComparisonView'; 
+import CodeComparisonView from '../components/CodeComparisonView'; 
 import './SubmissionsAuditModal.css'; // Add this line
 
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {

@@ -14,6 +14,12 @@ services:
       - "${DB_PORT}:3306"
     volumes:
       - db_data:/var/lib/mysql
+    # 🌟 NEW: Tells Docker how to check if MySQL is actually ready to accept connections
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ----------------------------
   # 2. PYTHON BACKEND (Flask)
@@ -32,9 +38,12 @@ services:
       # 🌟 Ensures Docker reads the env file from the same folder as this yaml file
       - .env 
     depends_on:
-      - db
+      # 🌟 NEW: Forces the backend to wait until the DB healthcheck passes
+      db:
+        condition: service_healthy
     environment:
       - FLASK_ENV=development
+      - FLASK_DEBUG=1 # 🌟 NEW: Forces Flask to auto-reload when you save a .py file!
 
   # ----------------------------
   # 3. REACT FRONTEND

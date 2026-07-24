@@ -103,6 +103,7 @@ def get_assignments(class_id):
         
     return jsonify(assignments_data), 200
 
+
 @assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['PUT'])
 @jwt_required()
 def update_assignment(class_id, assignment_id):
@@ -155,3 +156,42 @@ def update_assignment(class_id, assignment_id):
         db.session.rollback()
         print(f"Error updating assignment: {str(e)}")
         return jsonify({"error": "Database error occurred while updating"}), 500
+
+
+# ==========================================
+# 🌟 NEW: Delete Assignment Route
+# ==========================================
+@assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['DELETE'])
+@jwt_required()
+def delete_assignment(class_id, assignment_id):
+    """Allows an instructor to delete an existing assignment"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    # 1. Verify User Role
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # 2. Verify Assignment Exists and belongs to this classroom
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment or assignment.classroom_id != class_id:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
+    # 3. Verify Instructor owns this classroom
+    classroom = Classroom.query.get(class_id)
+    if not classroom or classroom.instructor_id != user.id:
+        return jsonify({"error": "Unauthorized to delete this assignment"}), 403
+
+    # 4. Delete and Commit
+    try:
+        db.session.delete(assignment)
+        db.session.commit()
+        return jsonify({
+            "message": "Assignment deleted successfully",
+            "id": assignment_id
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting assignment: {str(e)}")
+        return jsonify({"error": "Database error occurred while deleting"}), 500

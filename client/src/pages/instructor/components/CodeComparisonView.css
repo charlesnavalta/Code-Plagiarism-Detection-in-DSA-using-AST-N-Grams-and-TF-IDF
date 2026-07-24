@@ -171,14 +171,6 @@
     border-radius: 50%;
 }
 
-/* Base style for the underline */
-.code-line[class*="match-type-"] .line-content {
-    text-decoration: underline;
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 4px;
-    text-decoration-style: dashed; /* Dashed underline looks cleaner on code */
-}
-
 /* --- Type 1: Red (Exact Copy) --- */
 .match-type-1 .line-number::before { 
     background-color: #ef4444; 

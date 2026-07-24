@@ -27,8 +27,8 @@ import AdminLayout from './layouts/AdminLayout';
 // ==========================================
 import StudentDash from './pages/student/StudentDashboard';
 import StudentClassroomView from './pages/student/StudentClassroomView';
-import InstructorDash from './pages/instructor/InstructorDashboard';
-import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
+import InstructorDash from './pages/instructor/pages/InstructorDashboard';
+import InstructorClassroomView from './pages/instructor/pages/InstructorClassroomView';
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 
