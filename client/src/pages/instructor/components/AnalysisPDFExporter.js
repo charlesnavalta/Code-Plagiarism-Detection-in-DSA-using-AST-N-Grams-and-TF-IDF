@@ -2,32 +2,32 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import './AnalysisPDFExporter.css'; // Linked your clean print stylesheet!
+import './AnalysisPDFExporter.css';
 
 const AnalysisPDFExporter = ({ selectedPair }) => {
     const [isGenerating, setIsGenerating] = useState(false);
 
+    // SYNCHRONIZED WITH BACKEND CLASSIFICATION - Removed generic descriptions
     const getPlagiarismType = (pair) => {
-        const score = pair.score;
-        if (score === 100) return { 
+        const backendType = pair.plagiarism_type || "";
+
+        if (backendType.includes("Type 1")) return { 
             label: "Type I: Exact Structural Copying", 
-            color: "#dc2626",
-            description: "The Abstract Syntax Tree (AST) token tracking engine identified an absolute structural match. This signifies that the structural sequence, data pipelines, and control configurations are mathematically identical, indicating direct duplication of the underlying algorithmic logic."
+            color: "#dc2626"
         };
-        if (score >= 80) return { 
+        if (backendType.includes("Type 2")) return { 
             label: "Type II: Renamed Identifiers & Obfuscation", 
-            color: "#ea580c",
-            description: "The AST engine detected systemic logic cloning despite superficial source code modifications. Variable mappings, function identifiers, and syntax layout were intentionally or systematically altered, but the sequential logic flow remains structurally identical."
+            color: "#ea580c"
         };
-        if (score >= 50) return { 
+        if (backendType.includes("Type 3")) return { 
             label: "Type III: Structural Sequence Modification", 
-            color: "#ca8a04",
-            description: "The analysis engine detected significant overlapping logic sequences. This profile indicates restructuring control loops (e.g., swapping while/for conditions) or statement order manipulation intended to disrupt basic text matchers while keeping the core algorithm intact."
+            color: "#ca8a04"
         };
+        
+        // Fallback for "N/A" or low similarity
         return { 
             label: "Low Similarity Profile", 
-            color: "#16a34a",
-            description: "The structural sequence baseline falls within acceptable thresholds for independent implementation. The structural variations present match the expected deviation of independent programming."
+            color: "#16a34a"
         };
     };
 
@@ -44,20 +44,24 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
         
         try {
             const canvas = await html2canvas(reportElement, { 
-                scale: 2, 
+                scale: 1.5, // Reduced from 2 to 1.5 (keeps it crisp but reduces pixels by 40%)
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
                 windowWidth: 850
             });
             
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            // Switch from PNG (lossless/huge) to JPEG (compressed/tiny) at 80% quality
+            const imgData = canvas.toDataURL('image/jpeg', 0.80);
+            
+            // Add 'compress: true' to the document creation
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
             
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            // Add 'JPEG' and the 'FAST' compression alias
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
             pdf.save(`FALSICODE-AUDIT-LOG-${generatedReportId}.pdf`);
             
         } catch (error) {
@@ -99,7 +103,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                     </div>
                 </div>
 
-                {/* Verdict Section */}
+                {/* Verdict Section - NOW FEATURING HARD DATA INSTEAD OF DESCRIPTIONS */}
                 <div className="pdf-verdict-banner-container" style={{ borderLeft: `6px solid ${typeData.color}` }}>
                     <div className="pdf-score-column">
                         <span className="pdf-score-number" style={{ color: typeData.color }}>{selectedPair.score}%</span>
@@ -107,7 +111,22 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                     </div>
                     <div style={{ flex: 1 }}>
                         <strong className="pdf-verdict-class-title">METRIC ANALYSIS: {typeData.label}</strong>
-                        <p className="pdf-verdict-description">{typeData.description}</p>
+                        
+                        {/* Evidence-Based Metrics Row */}
+                        <div style={{ marginTop: '6px', fontSize: '13px', color: '#4b5563' }}>
+                            {selectedPair.plagiarism_type && selectedPair.plagiarism_type !== 'N/A' ? (
+                                <>
+                                    <span style={{ marginRight: '24px' }}>
+                                        <strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%
+                                    </span>
+                                    <span>
+                                        <strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%
+                                    </span>
+                                </>
+                            ) : (
+                                <span><strong>Analysis:</strong> No significant structural manipulation detected.</span>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -153,38 +172,30 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                             
                             {/* Mathematical Calculation Definitions */}
                             {(() => {
-                                // Baseline geometric coordinates for Vector A (Blue)
-                                // Standardized trajectory running upward at ~20 degrees
                                 const ax = 265;
                                 const ay = 30; 
                                 
-                                // Calculate rotational distance for Vector B dynamically
                                 const score = selectedPair.score;
-                                
-                                // Base orientation in radians matching Vector A
                                 const baseAngleRad = Math.atan2(110 - ay, ax - 40); 
                                 
-                                // Add spatial distance if the match trends downward from 100%
-                                // If score is 100, deviation is 0 (lines lock together perfectly)
-                                const maxDeviationRad = 40 * (Math.PI / 180); // Maximum 40-degree fan out
+                                const maxDeviationRad = 40 * (Math.PI / 180); 
                                 const deviationRad = (100 - score) * 0.01 * maxDeviationRad;
                                 const targetAngleRad = baseAngleRad + deviationRad;
                                 
-                                // Compute absolute trigonometric vector lengths (240px magnitude)
                                 const bx = 40 + (240 * Math.cos(targetAngleRad));
                                 const by = 110 - (240 * Math.sin(targetAngleRad));
                                 
                                 return (
                                     <>
-                                        {/* Vector A Arc Line (Blue - Primary Baseline Target) */}
+                                        {/* Vector A Arc Line */}
                                         <line x1="40" y1="110" x2={ax} y2={ay} stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
                                         <text x={ax + 6} y={ay + 3} fill="#3b82f6" fontSize="10" fontFamily="monospace" fontWeight="bold">Vector_A (File1)</text>
                                         
-                                        {/* Vector B Arc Line (Red/Orange - Slopes based on structural deviation profiles) */}
+                                        {/* Vector B Arc Line */}
                                         <line x1="40" y1="110" x2={bx} y2={by} stroke={typeData.color} strokeWidth="2.5" strokeLinecap="round" />
                                         <text x={bx + 6} y={by - 2} fill={typeData.color} fontSize="10" fontFamily="monospace" fontWeight="bold">Vector_B (File2)</text>
                                         
-                                        {/* Angular Matrix Context Distance Arc Notation Text */}
+                                        {/* Angular Matrix Context Distance */}
                                         <text x="95" y="102" fill="#6b7280" fontSize="10" fontFamily="monospace" fontStyle="italic">
                                             θ spatial distance = {((100 - score) * 0.4).toFixed(2)}°
                                         </text>
