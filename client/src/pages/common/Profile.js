@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import api from '../../services/api'; 
 
@@ -6,8 +7,8 @@ const Profile = () => {
     const rawUser = localStorage.getItem('user');
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
+    const navigate = useNavigate();
 
-    // --- New Security States ---
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,7 +20,6 @@ const Profile = () => {
     const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState(user.email || '');
 
-    // --- Nexus Theme Synchronization ---
     const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
     useEffect(() => {
@@ -37,12 +37,10 @@ const Profile = () => {
         alert("System Notice: Email update functionality is currently being provisioned.");
     };
 
-    // --- Send OTP Logic ---
     const handleSendCode = async () => {
         setSendingCode(true);
         setError('');
         setMessage('');
-        
         try {
             const res = await api.post('/auth/profile/request-code');
             setMessage(res.data.message);
@@ -53,19 +51,12 @@ const Profile = () => {
         }
     };
 
-    // --- Update Password Logic ---
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
-
-        if (newPassword !== confirmPassword) {
-            return setError("Security protocol failed: New passwords do not match.");
-        }
-
-        if (newPassword.length < 6) {
-            return setError("Security protocol failed: Password must be at least 6 characters.");
-        }
+        if (newPassword !== confirmPassword) return setError("Security protocol failed: New passwords do not match.");
+        if (newPassword.length < 6) return setError("Security protocol failed: Password must be at least 6 characters.");
 
         setLoading(true);
         try {
@@ -74,15 +65,8 @@ const Profile = () => {
                 new_password: newPassword,
                 code: otpCode
             });
-            
             setMessage(res.data.message);
-            
-            // Clear the form on success
-            setCurrentPassword('');
-            setNewPassword('');
-            setConfirmPassword('');
-            setOtpCode('');
-            
+            setCurrentPassword(''); setNewPassword(''); setConfirmPassword(''); setOtpCode('');
         } catch (err) {
             setError(err.response?.data?.error || "Critical failure: Unable to update security parameters.");
         } finally {
@@ -90,7 +74,6 @@ const Profile = () => {
         }
     };
 
-    // --- Spatial Spotlight Logic ---
     const handleMouseMove = (e) => {
         if (!dashboardRef.current) return;
         const cards = dashboardRef.current.querySelectorAll('.spatial-card');
@@ -158,6 +141,7 @@ const Profile = () => {
                     {/* RIGHT COLUMN: Settings */}
                     <div className="spatial-card profile-settings-card">
                         <div className="card-glass-layer"></div>
+                        
                         <div className="settings-section relative-z">
                             <div className="settings-header">
                                 <h3>Email Preferences</h3>
@@ -196,7 +180,6 @@ const Profile = () => {
                                 {message && <div className="nexus-alert success">{message}</div>}
                                 {error && <div className="nexus-alert error">{error}</div>}
 
-                                {/* 1. Current Password */}
                                 <div className="dark-form-group">
                                     <label>Current Password</label>
                                     <input 
@@ -206,7 +189,6 @@ const Profile = () => {
                                     />
                                 </div>
 
-                                {/* 2. New Password Row */}
                                 <div className="form-group-row">
                                     <div className="dark-form-group w-50">
                                         <label>New Password</label>
@@ -226,24 +208,19 @@ const Profile = () => {
                                     </div>
                                 </div>
 
-                                {/* 3. 2FA Code Row */}
-                                <div className="form-group-row" style={{ alignItems: 'flex-end' }}>
-                                    <div className="dark-form-group w-50" style={{ marginBottom: 0 }}>
+                                <div className="form-group-row code-row">
+                                    <div className="dark-form-group w-50">
                                         <label>Authorization Code</label>
                                         <input 
-                                            type="text" className="nexus-input-field"
+                                            type="text" className="nexus-input-field code-input"
                                             value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))} 
                                             placeholder="000000" maxLength="6" required
-                                            style={{ letterSpacing: '4px' }}
                                         />
                                     </div>
-                                    <div className="w-50">
+                                    <div className="w-50 code-btn-wrapper">
                                         <button 
-                                            type="button" 
-                                            className="nexus-btn-secondary" 
-                                            onClick={handleSendCode}
-                                            disabled={sendingCode}
-                                            style={{ width: '100%', padding: '14px' }}
+                                            type="button" className="nexus-btn-secondary full-width-btn" 
+                                            onClick={handleSendCode} disabled={sendingCode}
                                         >
                                             {sendingCode ? "Transmitting..." : "Send Code to Email"}
                                         </button>
@@ -252,9 +229,8 @@ const Profile = () => {
 
                                 <div className="form-actions" style={{ marginTop: '30px' }}>
                                     <button 
-                                        type="submit" className="nexus-btn-primary" 
+                                        type="submit" className="nexus-btn-primary full-width-btn" 
                                         disabled={loading || !currentPassword || !newPassword || !confirmPassword || otpCode.length !== 6}
-                                        style={{ width: '100%' }}
                                     >
                                         {loading ? "Syncing..." : "Update Credentials"}
                                     </button>

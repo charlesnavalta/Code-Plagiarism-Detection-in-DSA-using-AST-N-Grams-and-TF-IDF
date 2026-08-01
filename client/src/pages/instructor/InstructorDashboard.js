@@ -1,32 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
-import { useTheme } from '../../hooks/useTheme';
-import '../../style/InstructorTheme.css';     // Borrowed logic (Aurora, Spatial Card)
 import './InstructorDashboard.css';
 
-// 🌟 IMPORT DRY UTILITIES & HOOKS
+// Utilities & Shared Components
 import { getUserData } from '../../utils/authUtils';
-import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
+import InstructorWrapper from './components/InstructorWrapper';
+import QuantumLoader from './components/QuantumLoader';
 
 const InstructorDashboard = () => {
     const [classrooms, setClassrooms] = useState([]);
     const [newClassName, setNewClassName] = useState('');
     const [loading, setLoading] = useState(true);
-    const dashboardRef = useRef(null);
     const navigate = useNavigate();
 
-    const [theme] = useTheme();
-
-    // 🌟 1. Extracted to Auth Utility
     const currentUser = getUserData();
     const displayName = currentUser.name || currentUser.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    // 🌟 2. Extracted to Custom Hook! 
-    const handleMouseMove = useSpatialSpotlight(dashboardRef);
-
-    // --- API Operations ---
     const fetchClassrooms = async () => {
         try {
             const res = await api.get('/classrooms/');
@@ -38,14 +29,10 @@ const InstructorDashboard = () => {
         }
     };
 
-    useEffect(() => {
-        fetchClassrooms();
-    }, []);
+    useEffect(() => { fetchClassrooms(); }, []);
 
-    // Logic: Aggregating total student density
     const totalStudents = classrooms.reduce((acc, cls) => acc + (cls.student_count || 0), 0);
 
-    // --- CREATE: Initialize New Classroom Node ---
     const handleCreateClass = async (e) => {
         e.preventDefault();
         if (!newClassName.trim()) return alert("Security Notice: Please enter a valid class identifier.");
@@ -59,13 +46,7 @@ const InstructorDashboard = () => {
     };
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-primary"></div>
-                <div className="aurora-blob blob-secondary"></div>
-            </div>
-
+        <InstructorWrapper>
             <div className="nexus-layout">
                 {/* --- Sidebar: Identity Node --- */}
                 <aside className="nexus-sidebar fade-in-left">
@@ -102,8 +83,8 @@ const InstructorDashboard = () => {
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
                     
-                    {/* Action Banner */}
-                    <div className="action-banner-nexus spatial-card">
+                    {/* 🌟 FIX: Removed inline styles, added 'instructor-hero-banner' class */}
+                    <div className="cinematic-banner-shared spatial-card instructor-hero-banner">
                         <div className="banner-content">
                             <div className="banner-text">
                                 <h1>Instructor Hub</h1>
@@ -115,7 +96,7 @@ const InstructorDashboard = () => {
                                     value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
                                     className="nexus-input"
                                 />
-                                <button type="submit" className="nexus-btn-primary">Create Class </button>
+                                <button type="submit" className="nexus-btn-primary">Create Class</button>
                             </form>
                         </div>
                     </div>
@@ -128,10 +109,7 @@ const InstructorDashboard = () => {
                         </div>
 
                         {loading ? (
-                            <div className="spatial-card loading-card">
-                                <div className="quantum-spinner"></div>
-                                <p>Synchronizing Classrooms...</p>
-                            </div>
+                            <div className="spatial-card"><QuantumLoader fullScreen={false} /></div>
                         ) : classrooms.length === 0 ? (
                             <div className="spatial-card empty-card">
                                 <div className="empty-icon">📁</div>
@@ -151,7 +129,6 @@ const InstructorDashboard = () => {
                                             <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
                                             
-                                            {/* Reusing student tag CSS for Instructor data */}
                                             <div className="instructor-tag-nexus">
                                                 <div className="ins-mini-avatar">🔑</div>
                                                 <span className="ins-name">
@@ -171,7 +148,7 @@ const InstructorDashboard = () => {
                     </div>
                 </main>
             </div>
-        </div>
+        </InstructorWrapper>
     );
 };
 

@@ -1,4 +1,17 @@
-/* --- Core Reset & Canvas --- */
+/* src/pages/LandingPage.css */
+
+/* --- Core Reset & App-like Foundations --- */
+* {
+    /* Removes the blue flash when tapping on mobile */
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    /* Prevents users from accidentally selecting button text while tapping */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 .landing-wrapper {
     min-height: 100vh;
     background-color: #0f172a; 
@@ -16,454 +29,172 @@
 .blob-1 { background: #3b82f6; top: -10%; left: -10%; }
 .blob-2 { background: #8b5cf6; bottom: -10%; right: -10%; }
 
-/* Navbar Responsiveness */
+/* Navbar */
 .landing-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 4rem;
-    position: relative;
-    z-index: 10;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem; position: relative; z-index: 10;
 }
 
-.landing-logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+.landing-logo { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
 .logo-icon { color: #3b82f6; }
 
 .btn-nav-login {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    background: transparent; border: 1px solid rgba(255, 255, 255, 0.15); color: white;
+    padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
 }
 .btn-nav-login:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.3); }
 
+/* App-like tactile feedback for buttons */
+.btn-nav-login:active, .btn-primary-large:active, .mockup-tab-btn:active {
+    transform: scale(0.95) !important;
+}
+
 /* Grid Layout & Scaling */
 .landing-hero.split-layout {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4rem;
-    padding: 4rem 6rem;
-    flex-grow: 1;
-    position: relative;
-    z-index: 10;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+    gap: 4rem; padding: 4rem 6rem; flex-grow: 1; position: relative; z-index: 10;
+    max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box;
 }
 
 /* Left Typography Node */
-.hero-text-column {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    flex: 1;
-    min-width: 300px;
-}
-
-.hero-title {
-    font-size: clamp(2.5rem, 4.5vw, 4rem); 
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    letter-spacing: -1.5px;
-}
-
-.text-gradient {
-    background: linear-gradient(to right, #60a5fa, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.hero-subtitle {
-    font-size: clamp(1rem, 1.2vw, 1.25rem);
-    color: #94a3b8;
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-    max-width: 520px;
-}
-
-.hero-action-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 360px;
-}
+.hero-text-column { display: flex; flex-direction: column; align-items: flex-start; text-align: left; flex: 1; min-width: 300px; }
+.hero-title { font-size: clamp(2.5rem, 4.5vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1.5px; }
+.text-gradient { background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-subtitle { font-size: clamp(1rem, 1.2vw, 1.25rem); color: #94a3b8; line-height: 1.6; margin-bottom: 2.5rem; max-width: 520px; }
+.hero-action-group { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 360px; }
 
 .btn-primary-large {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+    background: #3b82f6; color: white; border: none; padding: 1rem 2rem; border-radius: 12px; /* Smoother radius for apps */
+    font-size: 1.1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.25s ease; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25); min-height: 48px; /* Touch target minimum */
 }
-.btn-primary-large:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
-}
+.btn-primary-large:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4); }
 .hero-microcopy { font-size: 0.85rem; color: #64748b; text-align: left; }
 
 /* Right Mockup Node */
-.hero-graphic-column {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-    width: 100%;
-}
-
+.hero-graphic-column { display: flex; justify-content: center; align-items: center; flex: 1; width: 100%; }
 .glass-mockup {
-    width: 100%;
-    max-width: 520px;
-    background: rgba(15, 23, 42, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(12px);
+    width: 100%; max-width: 520px; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px; box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6); backdrop-filter: blur(12px);
     transition: transform 0.4s ease, border-color 0.4s ease;
 }
 
-/* Interactive Tabs */
-.mockup-tabs {
-    display: flex;
-    background: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0 8px;
+/* App-like Native Swiping (Hiding Scrollbars) */
+.swipe-container {
     overflow-x: auto;
-    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
 }
-.mockup-tab-btn {
-    background: transparent;
-    border: none;
-    color: #64748b;
-    padding: 12px 16px;
-    font-size: 0.85rem;
-    font-family: monospace;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
-}
-.mockup-tab-btn.active {
-    color: #3b82f6;
-    border-bottom-color: #3b82f6;
-    background: rgba(255, 255, 255, 0.02);
+.swipe-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
 }
 
-.mockup-header {
-    background: rgba(15, 23, 42, 0.4);
-    padding: 12px 16px;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* Interactive Tabs */
+.mockup-tabs { display: flex; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 0 8px; white-space: nowrap; }
+.mockup-tab-btn {
+    background: transparent; border: none; color: #64748b; padding: 14px 16px; /* Increased padding for thumb target */
+    font-size: 0.85rem; font-family: monospace; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s ease;
 }
-.mockup-dots span {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 6px;
-}
+.mockup-tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(255, 255, 255, 0.02); }
+
+.mockup-header { background: rgba(15, 23, 42, 0.4); padding: 12px 16px; border-top-left-radius: 16px; border-top-right-radius: 16px; display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.mockup-dots span { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
 .mockup-dots span:nth-child(1) { background: #ef4444; }
 .mockup-dots span:nth-child(2) { background: #eab308; }
 .mockup-dots span:nth-child(3) { background: #22c55e; }
-.mockup-url {
-    background: rgba(255, 255, 255, 0.04);
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    color: #64748b;
-    margin-left: 16px;
-    font-family: monospace;
-}
+.mockup-url { background: rgba(255, 255, 255, 0.04); padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; color: #64748b; margin-left: 16px; font-family: monospace; }
 
 .mockup-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 .mockup-code-block {
-    background: #090d16;
-    padding: 16px;
-    border-radius: 10px;
-    font-family: 'JetBrains Mono', 'Consolas', monospace;
-    font-size: 0.85rem;
-    color: #e2e8f0;
-    line-height: 1.6;
-    border: 1px solid rgba(255, 255, 255, 0.02);
-    overflow-x: auto;
+    background: #090d16; padding: 16px; border-radius: 10px; font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.85rem; color: #e2e8f0; line-height: 1.6; border: 1px solid rgba(255, 255, 255, 0.02);
 }
-.m-keyword { color: #f472b6; }
-.m-func { color: #60a5fa; }
-.m-comment { color: #475569; font-style: italic; }
+.m-keyword { color: #f472b6; } .m-func { color: #60a5fa; } .m-comment { color: #475569; font-style: italic; }
 
-.mockup-ast-line {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: #94a3b8;
-}
+.mockup-ast-line { display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; color: #94a3b8; }
 .ast-label-text { font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
-.ast-nodes-flex { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.ast-node {
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    font-family: monospace;
-    font-size: 0.75rem;
-}
+.ast-nodes-flex { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; padding-bottom: 4px; }
+.ast-node { background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.2); font-family: monospace; font-size: 0.75rem; white-space: nowrap; }
 
-.mockup-match-box {
-    background: rgba(16, 185, 129, 0.06);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    border-radius: 12px;
-    padding: 14px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+.mockup-match-box { background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
 .match-label { font-weight: 600; color: #94a3b8; font-size: 0.85rem; }
 .match-percent { font-size: 1.2rem; font-weight: 800; color: #10b981; }
 
-/* --- 🌟 3-TIER RESPONSIVE ADAPTATION --- */
+.fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 
-/* 1. DESKTOP SCREENS (> 1024px) */
+/* Base state for mobile action bar (Hidden on desktop) */
+.mobile-sticky-action-bar { display: none; }
+.desktop-only { display: flex; }
+
+/* --- 🌟 RESPONSIVE DESIGN ARCHITECTURE --- */
+
 @media (min-width: 1025px) {
     .hero-graphic-column { perspective: 1000px; }
     .glass-mockup { transform: rotateY(-6deg) rotateX(6deg); }
     .glass-mockup:hover { transform: rotateY(0deg) rotateX(0deg); border-color: rgba(59, 130, 246, 0.3); }
 }
 
-/* 2. TABLET SCREENS (601px to 1024px - e.g., iPad Pro) */
 @media (max-width: 1024px) {
-    .landing-navbar { 
-        padding: 1.25rem 2.5rem; 
-    }
-
-    .landing-hero.split-layout {
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 3.5rem;
-        padding: 3rem 2.5rem 5rem;
-    }
-
-    .hero-text-column { 
-        align-items: center; 
-        text-align: center; 
-    }
-    
-    /* Smoothly scales the giant text down for tablets */
-    .hero-title {
-        font-size: clamp(3rem, 6vw, 4rem); 
-    }
-
-    .hero-subtitle { 
-        max-width: 650px; /* Keeps text readable without stretching edge-to-edge */
-    }
-    
-    .hero-action-group { 
-        margin: 0 auto; 
-    }
-    
-    .hero-microcopy { 
-        text-align: center; 
-    }
-
-    .glass-mockup { 
-        transform: none; 
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        max-width: 650px; /* Allows the mockup to breathe on tablets */
-        margin: 0 auto;
-    }
+    .landing-navbar { padding: 1.25rem 2.5rem; }
+    .landing-hero.split-layout { flex-direction: column; justify-content: flex-start; gap: 3rem; padding: 3rem 2.5rem 5rem; text-align: center; }
+    .hero-text-column { align-items: center; text-align: center; }
+    .hero-subtitle { max-width: 650px; font-size: 1.1rem; }
+    .hero-action-group { margin: 0 auto; align-items: center; }
+    .hero-microcopy { text-align: center; margin-top: 8px; }
+    .glass-mockup { transform: none; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); max-width: 700px; margin: 0 auto; }
 }
 
-/* 3. MOBILE SCREENS (0px to 600px - e.g., iPhones/Androids) */
+/* 📱 NATIVE APP FEEL FOR PHONES */
 @media (max-width: 600px) {
-    /* Tighter Navbar */
-    .landing-navbar {
-        padding: 1rem 1.25rem;
-    }
-
-    .landing-logo {
-        font-size: 1.25rem;
-    }
-
-    .btn-nav-login {
-        padding: 0.4rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    /* Stack layout tighter to save vertical space */
-    .landing-hero.split-layout {
-        gap: 2rem;
-        padding: 1.5rem 1rem 4rem;
-    }
-
-    /* Hard override to shrink text so it fits the screen width */
-    .hero-title {
-        font-size: 2.2rem; 
-        letter-spacing: -1px;
-        margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
-        padding: 0 10px;
-    }
-
-    /* Scale down the button */
-    .btn-primary-large {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-    }
-
-    /* Shrink the mockup components to prevent horizontal scrolling */
-    .glass-mockup {
-        border-radius: 12px;
-    }
-
-    .mockup-header {
-        padding: 10px 12px;
-    }
-
-    .mockup-url {
-        font-size: 0.65rem;
-    }
-
-    .mockup-tabs {
-        padding: 0 4px;
-    }
+    /* Hide desktop actions, enable mobile bottom bar */
+    .desktop-only { display: none !important; }
     
-    .mockup-tab-btn {
-        padding: 10px 12px;
-        font-size: 0.75rem;
-    }
-
-    /* Shrink the code block text heavily so it doesn't break boundaries */
-    .mockup-code-block {
-        font-size: 0.7rem;
-        padding: 12px;
-    }
-
-    .ast-node {
-        font-size: 0.65rem;
-        padding: 3px 6px;
-    }
-
-    .match-percent {
-        font-size: 1rem;
-    }
-}
-
-/* --- 🌟 ENHANCED TABLET ADAPTATION (e.g., iPad, Surface) --- */
-@media (max-width: 1024px) {
-    /* 1. Navbar Spacing */
-    .landing-navbar { 
-        padding: 1.25rem 2.5rem; 
-    }
-
-    /* 2. Core Layout Flow */
-    .landing-hero.split-layout {
+    .mobile-sticky-action-bar {
+        display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Prevents weird vertical centering issues on tall screens */
-        gap: 3rem; 
-        padding: 3rem 2.5rem 5rem;
-        text-align: center;
-    }
-
-    .hero-text-column { 
-        align-items: center; 
-        text-align: center; 
-    }
-    
-    /* 3. Fluid Typography */
-    .hero-title {
-        /* Smoothly scales down from 4rem to 3rem based on screen width */
-        font-size: clamp(3rem, 6vw, 4rem); 
-        line-height: 1.15;
-        margin-bottom: 1.25rem;
-    }
-
-    .hero-subtitle { 
-        max-width: 650px; /* The perfect optical reading width for tablets */
-        font-size: 1.1rem; /* Slightly reduced for better proportion */
-        margin-bottom: 2rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.85); /* Frosted glass */
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 16px 20px;
+        /* Padding environment variables handle the swipe bar on modern iPhones */
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 20px));
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 50;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
     }
     
-    .hero-action-group { 
-        margin: 0 auto; 
-        align-items: center; /* Centers the button perfectly */
-    }
-    
-    .hero-microcopy { 
-        text-align: center; 
-        margin-top: 8px;
-    }
-
-    /* 4. Mockup Window Polish */
-    .glass-mockup { 
-        transform: translateY(0); /* Completely neutralizes the 3D tilt */
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); /* Softer, deeper shadow */
-        max-width: 700px; /* Allows the mockup to utilize the iPad width */
-        margin: 0 auto;
+    .mobile-full-width {
         width: 100%;
-    }
-    
-    /* 5. Touch-Friendly Interactive Elements */
-    .mockup-tabs {
-        -webkit-overflow-scrolling: touch; /* Enables buttery-smooth horizontal swiping on iOS */
+        padding: 1.1rem; /* Extremely easy to hit with a thumb */
     }
 
-    .mockup-tab-btn {
-        padding: 14px 20px; /* Larger tap targets for fingers */
-        font-size: 0.9rem;
+    /* Adjust page padding so the sticky bar doesn't overlap content */
+    .landing-wrapper {
+        padding-bottom: 120px; 
     }
 
-    .mockup-code-block {
-        font-size: 0.85rem; /* Crisper sizing on retina tablet displays */
-        padding: 20px;
-    }
-}
+    /* Tighter UI flow for mobile */
+    .landing-navbar { padding: 1rem 1.25rem; }
+    .landing-logo { font-size: 1.25rem; }
+    .landing-hero.split-layout { gap: 2rem; padding: 1.5rem 1rem 2rem; }
 
-/* 🌟 FIX 3: Extra small adjustments for actual mobile phones */
-@media (max-width: 600px) {
-    .landing-hero.split-layout {
-        gap: 2.5rem;
-        padding: 1rem 1rem 3rem;
-    }
-    .mockup-code-block {
-        font-size: 0.7rem; /* Shrinks the code text so it fits on narrow phone screens */
-    }
-    .mockup-tabs {
-        padding: 0 4px;
-    }
-    .mockup-tab-btn {
-        padding: 10px 12px;
-        font-size: 0.75rem;
-    }
+    .hero-title { font-size: 2.2rem; letter-spacing: -1px; margin-bottom: 1rem; }
+    .hero-subtitle { font-size: 0.95rem; margin-bottom: 2rem; padding: 0 10px; }
+
+    .glass-mockup { border-radius: 12px; }
+    .mockup-header { padding: 10px 12px; }
+    .mockup-url { font-size: 0.65rem; }
+    .mockup-tabs { padding: 0 4px; }
+    .mockup-tab-btn { font-size: 0.75rem; }
+
+    .mockup-code-block { font-size: 0.7rem; padding: 12px; }
+    .ast-node { font-size: 0.65rem; padding: 6px 8px; }
+    .match-percent { font-size: 1rem; }
+    .match-label { font-size: 0.75rem; }
 }

@@ -1,206 +1,92 @@
-/* =========================================
-   1. DASHBOARD LAYOUT (NEXUS)
-   ========================================= */
-.nexus-layout {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding-top: 40px;
-    display: flex;
-    gap: 32px;
-    position: relative;
-    z-index: 10;
-}
+/* src/instructor/components/InstructorDashboard.css */
 
-/* =========================================
-   2. SIDEBAR IDENTITY NODE
-   ========================================= */
-.nexus-sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
+.nexus-layout { max-width: 1400px; margin: 0 auto; padding-top: 40px; display: flex; gap: 32px; position: relative; z-index: 10; }
+.nexus-sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; }
 
-/* Avatar Hologram & Pulsing Ring */
-.avatar-hologram {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 20px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.avatar-hologram { width: 70px; height: 70px; margin: 0 auto 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+.avatar-core { width: 56px; height: 56px; background: var(--accent-blue, #3b82f6); border-radius: 50%; color: white; font-weight: 800; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
+.avatar-ring-1 { position: absolute; inset: 0; border: 1px solid var(--accent-blue, #3b82f6); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.4); opacity: 0; } }
 
-.avatar-core {
-    width: 56px;
-    height: 56px;
-    background: var(--accent-blue);
-    border-radius: 50%;
-    color: white;
-    font-weight: 800;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 2;
-}
+.user-display-name { font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; text-align: center; }
+.user-role-text { font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-bottom: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.system-status { font-size: 0.7rem; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 8px; justify-content: center; }
 
-.avatar-ring-1 {
-    position: absolute;
-    inset: 0;
-    border: 1px solid var(--accent-blue);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
+.nexus-main { flex-grow: 1; display: flex; flex-direction: column; gap: 40px; }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.4); opacity: 0; }
-}
+/* 🌟 UPDATED: Hero Banner Specifics */
+.instructor-hero-banner { padding: 48px; border-radius: 30px; }
+.banner-content { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.banner-text h1 { color: #ffffff; font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 900; margin: 0; letter-spacing: -2px; }
 
-.user-display-name {
-    font-size: 1.2rem;
-    font-weight: 800;
-    margin: 0 0 4px;
-    text-align: center;
-}
-
-.user-role-text {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.system-status {
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: #10b981;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-}
-
-/* =========================================
-   3. ACTION BANNER (CREATE CLASS)
-   ========================================= */
-.nexus-main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-.action-banner-nexus {
-    background: var(--nexus-grad) !important;
-    border: none !important;
-    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
-}
-
-.banner-content {
-    padding: 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.banner-text h1 {
-    color: #ffffff;
-    font-size: 2.8rem;
-    font-weight: 900;
-    letter-spacing: -2px;
-    margin: 0 0 10px;
-}
-
-.nexus-join-form {
-    display: flex;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.15);
-    padding: 8px;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
-}
-
-.nexus-input {
-    background: transparent !important;
-    border: none !important;
-    color: #ffffff !important;
-    padding: 12px 24px;
-    outline: none !important;
-    width: 180px;
-}
-
-.nexus-btn-primary {
-    background: #ffffff !important;
-    color: #4f46e5 !important;
-    border: none !important;
-    padding: 12px 28px;
-    border-radius: 40px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
+/* The Form */
+.nexus-join-form { display: flex; gap: 12px; background: rgba(0, 0, 0, 0.15); padding: 8px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(20px); align-items: center; }
+.nexus-input { background: transparent !important; border: none !important; color: #ffffff !important; padding: 12px 24px; outline: none !important; width: 220px; font-size: 1rem; }
+.nexus-input::placeholder { color: rgba(255, 255, 255, 0.6); }
+.nexus-btn-primary { background: #ffffff !important; color: #4f46e5 !important; border: none !important; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; transition: 0.3s ease; white-space: nowrap; }
 .nexus-btn-primary:hover { transform: scale(1.05); }
 
-/* =========================================
-   4. CLASSROOM GRID
-   ========================================= */
-.classroom-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-}
+/* Titles & Cards */
+.section-title-block { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.section-title-block h2 { margin: 0; font-size: 1.5rem; }
 
-.course-card { cursor: pointer; height: 100%; }
-
-.node-badge {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--accent-blue);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-    display: inline-block;
-}
-
-.course-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 24px;
-}
-
-.instructor-tag-nexus {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 32px;
-}
-
-.course-footer-nexus {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-glass);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-dim);
-}
-
+.classroom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.course-card { cursor: pointer; height: 100%; display: flex; flex-direction: column; }
+.node-badge { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; margin-bottom: 16px; display: inline-block; }
+.course-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 24px; }
+.instructor-tag-nexus { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.course-footer-nexus { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); }
 .course-card:hover .course-footer-nexus { color: var(--accent-blue); }
 
-/* Animations */
 .fade-in-left { animation: slideRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
-@keyframes slideRight {
-    from { opacity: 0; transform: translateX(-30px); }
-    to { opacity: 1; transform: translateX(0); }
+@keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+/* =========================================
+   📱 RESPONSIVE ADAPTATIONS
+   ========================================= */
+
+/* Tablets & Small Laptops (Max Width: 1024px) */
+@media (max-width: 1024px) {
+    .nexus-layout { flex-direction: column; padding-top: 40px; }
+    
+    /* Sidebar goes horizontal */
+    .nexus-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .profile-card { flex: 1 1 100%; }
+    .stat-card { flex: 1 1 calc(50% - 12px); } /* Perfect side-by-side split */
+
+    /* Adapt Banner for Tablet */
+    .instructor-hero-banner { padding: 40px 30px; }
+    .banner-content { flex-direction: column; text-align: center; align-items: stretch; gap: 24px; }
+    .banner-text h1 { text-align: center; }
+    
+    .nexus-join-form { width: 100%; justify-content: space-between; }
+    .nexus-input { flex-grow: 1; }
+}
+
+/* Mobile Devices (Max Width: 768px) */
+@media (max-width: 768px) {
+    .nexus-layout { 
+        padding-top: 20px;
+        padding-bottom: 110px; /* Clears mobile bottom dock */
+        gap: 20px;
+    }
+    
+    .nexus-sidebar { flex-direction: column; gap: 16px; }
+    .nexus-main { gap: 24px; }
+    
+    /* Adapt Banner for Phone */
+    .instructor-hero-banner { padding: 30px 20px; border-radius: 24px; }
+    .banner-text h1 { font-size: 2.2rem; }
+
+    /* Break the form pill into stacked elements on small phones */
+    .nexus-join-form { flex-direction: column; border-radius: 16px; padding: 12px; gap: 12px; }
+    .nexus-input { width: 100%; text-align: center; font-size: 16px; /* Fixes iOS Auto-Zoom */ }
+    .nexus-btn-primary { width: 100%; padding: 14px; }
+
+    /* Tactile Active States */
+    .nexus-btn-primary:active { transform: scale(0.96); }
+    .course-card:active { transform: scale(0.98); border-color: var(--accent); }
+
+    .stat-card { flex: 1 1 100%; }
+    .classroom-grid { grid-template-columns: 1fr; }
 }

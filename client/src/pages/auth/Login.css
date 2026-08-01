@@ -1,5 +1,3 @@
-/* src/pages/auth/Login.css */
-
 .login-split-wrapper {
     display: flex;
     min-height: 100vh;
@@ -7,12 +5,10 @@
     background-color: #ffffff;
 }
 
-/* =========================================
-   LEFT PANE: Illustration & Branding
-   ========================================= */
+/* Left Pane Layout */
 .split-left-pane {
-    flex: 1.9; /* Left side takes up much more space */
-    background-color: #0f172a; /* Deep slate */
+    flex: 1.9;
+    background-color: #0f172a;
     color: white;
     position: relative;
     overflow: hidden;
@@ -22,145 +18,15 @@
     padding: 40px;
 }
 
-/* Ambient Background Animations */
-.aurora-canvas {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 0;
-}
-
-.hero-bg-glow {
-    position: absolute;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.2;
-}
-
-.blob-1 { background: #3b82f6; top: -20%; left: -10%; }
-.blob-2 { background: #8b5cf6; bottom: -20%; right: -10%; }
-
-/* Left Content */
 .left-pane-content {
     position: relative;
     z-index: 10;
     max-width: 500px;
 }
 
-.brand-logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 40px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.logo-icon { color: #3b82f6; }
-
-.hero-heading {
-    font-size: 3.5rem;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 20px;
-    letter-spacing: -1px;
-}
-
-.text-blue { color: #3b82f6; }
-
-.hero-subtitle {
-    font-size: 1.1rem;
-    color: #94a3b8;
-    line-height: 1.6;
-    margin-bottom: 40px;
-}
-
-/* =========================================
-   DECORATIVE GRAPHIC CLUSTER (Upgraded Placement)
-   ========================================= */
-.graphic-cluster {
-    position: relative;
-    height: 220px; 
-    max-width: 420px; /* Constrains the boundary so cards don't float away */
-    margin-top: 50px;
-}
-
-/* Base style shared by both cards */
-.abstract-card {
-    position: absolute;
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 24px;
-    /* Smooth transition for the new hover effect */
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-}
-
-/* 1. The Match Result (Back Layer) */
-.card-back {
-    bottom: 0; 
-    right: 0; /* Anchors precisely to the top-right of the cluster */
-    width: 220px;
-    background: rgba(16, 185, 129, 0.08); /* Minty green to match the success metric */
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    z-index: 1;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-}
-
-/* 2. The Code Block (Front Layer) */
-.card-front {
-    top: 0; /* Anchors precisely to the bottom-left */
-    left: 0;
-    width: 280px;
-    background: rgba(15, 23, 42, 0.85); /* Darker slate for high contrast */
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    z-index: 2;
-    box-shadow: 15px 20px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* 3. The Magnetic Hover Interaction */
-.graphic-cluster:hover .card-front {
-    transform: translateY(-8px) translateX(-8px);
-    box-shadow: 20px 30px 50px rgba(0, 0, 0, 0.6);
-}
-
-.graphic-cluster:hover .card-back {
-    transform: translateY(8px) translateX(8px);
-}
-
-/* Keep your existing internal text/line styling */
-.abstract-card code {
-    display: block;
-    color: #60a5fa;
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.dummy-code-line {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
-
-.w-100 { width: 100%; }
-.w-75 { width: 75%; }
-.w-50 { width: 50%; }
-
-.match-indicator {
-    height: 8px;
-    width: 94.2%; /* Statically set to 94.2% since we removed the animation */
-    background: #10b981; 
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); /* Adds a nice neon glow */
-}
-
-/* =========================================
-   RIGHT PANE: The Login Form
-   ========================================= */
+/* Right Pane Layout */
 .split-right-pane {
-    flex: 1; /* Right side takes up remaining space */
+    flex: 1;
     background-color: #ffffff;
     display: flex;
     align-items: center;
@@ -172,183 +38,50 @@
 
 .form-container {
     width: 100%;
-    max-width: 380px; /* Constrains the form width to look tight and clean */
+    max-width: 380px;
 }
 
-.auth-title {
-    font-size: 20px; /* SCALED DOWN */
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 6px 0;
-}
+/* Typography & Links */
+.brand-logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; gap: 8px; }
+.logo-icon { color: #3b82f6; }
+.hero-heading { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+.text-blue { color: #3b82f6; }
+.hero-subtitle { font-size: 1.1rem; color: #94a3b8; line-height: 1.6; margin-bottom: 40px; }
 
-.auth-subtitle {
-    color: #6b7280;
-    font-size: 13px; /* SCALED DOWN */
-    margin: 0 0 24px 0;
-}
+.auth-title { font-size: 20px; font-weight: 700; color: #111827; margin: 0 0 6px 0; }
+.auth-subtitle { color: #6b7280; font-size: 13px; margin: 0 0 24px 0; }
 
-.auth-input-group {
-    margin-bottom: 16px;
-}
-
-.auth-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.auth-input-icon {
-    position: absolute;
-    left: 14px;
-    color: #9ca3af;
-    pointer-events: none;
-}
-
-.auth-styled-input {
-    width: 100%;
-    padding: 12px 12px 12px 40px; 
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    font-size: 13px; /* SCALED DOWN */
-    color: #1f2937;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    background-color: #f9fafb;
-}
-
-.auth-styled-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.auth-options-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    font-size: 13px; /* SCALED DOWN */
-}
-
-.auth-checkbox-container {
-    display: flex;
-    align-items: center;
-    color: #4b5563;
-    cursor: pointer;
-}
-
-.auth-checkbox-container input {
-    margin-right: 8px;
-    accent-color: #3b82f6;
-}
-
-.auth-link {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
-}
-
+.auth-options-row { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; font-size: 13px; }
+.auth-link { color: #3b82f6; text-decoration: none; font-weight: 500; }
 .auth-link:hover { text-decoration: underline; }
 
-.auth-submit-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #1877f2; 
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px; /* SCALED DOWN */
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.auth-submit-btn:hover:not(:disabled) {
-    background-color: #166fe5;
-}
-
-.auth-divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 20px 0;
-    color: #9ca3af;
-    font-size: 13px; /* SCALED DOWN */
-}
-
-.auth-divider::before,
-.auth-divider::after {
-    content: ''; flex: 1; border-bottom: 1px solid #e5e7eb;
-}
-
+.auth-divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #9ca3af; font-size: 13px; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid #e5e7eb; }
 .auth-divider span { padding: 0 10px; }
 
-/* Create Account Button */
-.register-container {
-    text-align: center;
-}
+.register-container { text-align: center; }
+.btn-create-account { display: inline-block; padding: 10px 20px; background-color: #ffffff; color: #1877f2; border: 1px solid #1877f2; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.btn-create-account:hover { background-color: #f0fdf4; border-color: #166fe5; }
+.auth-page-footer { text-align: center; margin-top: 30px; color: #9ca3af; font-size: 11px; }
 
-.btn-create-account {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: #1877f2;
-    border: 1px solid #1877f2;
-    border-radius: 6px;
-    font-size: 14px; /* SCALED DOWN */
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-}
+/* Custom Falsicode Graphics */
+.graphic-cluster { position: relative; height: 220px; max-width: 420px; margin-top: 50px; }
+.abstract-card { position: absolute; backdrop-filter: blur(12px); border-radius: 16px; padding: 24px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease; }
+.card-back { bottom: 0; right: 0; width: 220px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); z-index: 1; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); }
+.card-front { top: 0; left: 0; width: 280px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); z-index: 2; box-shadow: 15px 20px 40px rgba(0, 0, 0, 0.5); }
+.graphic-cluster:hover .card-front { transform: translateY(-8px) translateX(-8px); box-shadow: 20px 30px 50px rgba(0, 0, 0, 0.6); }
+.graphic-cluster:hover .card-back { transform: translateY(8px) translateX(8px); }
+.abstract-card code { display: block; color: #60a5fa; font-family: 'JetBrains Mono', monospace; margin-bottom: 16px; font-size: 0.95rem; font-weight: 600; }
+.dummy-code-line { height: 8px; background: rgba(255, 255, 255, 0.15); border-radius: 4px; margin-bottom: 10px; }
+.w-100 { width: 100%; } .w-75 { width: 75%; } .w-50 { width: 50%; }
+.match-indicator { height: 8px; width: 94.2%; background: #10b981; border-radius: 4px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
 
-.btn-create-account:hover {
-    background-color: #f0fdf4;
-    border-color: #166fe5;
-}
+.fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 
-.auth-page-footer {
-    text-align: center;
-    margin-top: 30px;
-    color: #9ca3af;
-    font-size: 11px; /* SCALED DOWN */
-}
-
-/* Simple animation */
-.fade-in-up {
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Mobile Responsiveness */
 @media (max-width: 900px) {
-    .login-split-wrapper {
-        flex-direction: column;
-    }
-    .split-left-pane {
-        padding: 40px 20px;
-        flex: none;
-    }
-    .graphic-cluster {
-        display: none; 
-    }
-    .split-right-pane {
-        padding: 40px 20px;
-    }
+    .login-split-wrapper { flex-direction: column; }
+    .split-left-pane { padding: 40px 20px; flex: none; }
+    .graphic-cluster { display: none; }
+    .split-right-pane { padding: 40px 20px; }
 }

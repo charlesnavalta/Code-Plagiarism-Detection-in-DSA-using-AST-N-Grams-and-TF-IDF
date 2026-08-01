@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../../hooks/useTheme';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
-import '../../style/InstructorTheme.css'; 
 import './InstructorClassroomView.css';
 
-// 🌟 IMPORT DRY UTILITIES & HOOKS
-import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
+// Utilities & Shared Components
 import { formatLanguageDisplay } from '../../utils/fileUtils';
+import InstructorWrapper from './components/InstructorWrapper';
+import QuantumLoader from './components/QuantumLoader';
 
-// Import our isolated components
+// Modals
 import CreateAssignmentModal from '../../modals/instructor/CreateAssignmentModal';
 import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
 import EditAssignmentModal from '../../modals/instructor/EditAssignmentModal';
@@ -17,12 +16,10 @@ import EditAssignmentModal from '../../modals/instructor/EditAssignmentModal';
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
-    const dashboardRef = useRef(null);
     
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [theme] = useTheme();
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
@@ -32,9 +29,6 @@ const InstructorClassroomView = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     
     const [editingAssignment, setEditingAssignment] = useState(null);
-
-    // 🌟 1. Extracted to Custom Hook! 
-    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,7 +67,6 @@ const InstructorClassroomView = () => {
             const res = await api.post(`/analyze/${selectedAssignment.id}`, {});
             setAnalysisResults(res.data.results);
         } catch (error) {
-            console.error("Full Backend Error:", error);
             alert("Analysis failed: " + (error.response?.data?.error || error.message));
         } finally {
             setIsAnalyzing(false);
@@ -81,29 +74,20 @@ const InstructorClassroomView = () => {
     };
 
     const handleAssignmentUpdated = (updatedAssignment) => {
-        const updatedList = assignments.map(a => 
-            a.id === updatedAssignment.id ? updatedAssignment : a
-        );
-        setAssignments(updatedList);
+        setAssignments(assignments.map(a => a.id === updatedAssignment.id ? updatedAssignment : a));
     };
 
     const handleAssignmentDeleted = (deletedAssignmentId) => {
-        setAssignments(currentAssignments => 
-            currentAssignments.filter(assignment => assignment.id !== deletedAssignmentId)
-        );
+        setAssignments(currentAssignments => currentAssignments.filter(a => a.id !== deletedAssignmentId));
     };
 
-    if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
+    if (loading) return <QuantumLoader fullScreen={true} />;
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-1"></div>
-                <div className="aurora-blob blob-2"></div>
-            </div>
-
+        <InstructorWrapper>
             <div className="nexus-content instructor-layout">
-                <header className="spatial-card cinematic-header fade-in-down">
+                {/* 🌟 FIX: Removed inline styles, added 'classroom-hero-banner' class */}
+                <header className="cinematic-banner-shared spatial-card fade-in-down classroom-hero-banner">
                     <div className="header-inner">
                         <div className="top-meta">
                             <button onClick={() => navigate('/instructor')} className="neo-back-btn">Hub</button>
@@ -132,17 +116,13 @@ const InstructorClassroomView = () => {
                         {assignments.map((assignment, idx) => {
                             const subCount = assignment.submission_count || 0;
                             const hasSubmissions = subCount > 0;
-                            
-                            // 🌟 2. Use the fileUtils formatter for the language
                             const languageLabel = formatLanguageDisplay(assignment.language);
 
                             return (
                                 <div 
                                     key={assignment.id} 
                                     className="assignment-item-row clickable-row"
-                                    onClick={() => {
-                                        setEditingAssignment(assignment);
-                                    }}
+                                    onClick={() => setEditingAssignment(assignment)}
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
@@ -198,7 +178,7 @@ const InstructorClassroomView = () => {
                 onAssignmentDeleted={handleAssignmentDeleted} 
                 classroomId={id} 
             />
-        </div>
+        </InstructorWrapper>
     );
 };
 

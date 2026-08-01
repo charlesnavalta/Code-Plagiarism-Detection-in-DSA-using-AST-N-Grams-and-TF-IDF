@@ -196,3 +196,10 @@
 .light .history-date {
     color: #6b7280;
 }
+
+/* Add this to your Dashboard's main wrapper CSS */
+@media (max-width: 768px) {
+    .your-dashboard-wrapper-class { /* Replace with your actual dashboard container class */
+        padding-bottom: 110px; /* Forces content to stop above the floating dock */
+    }
+}

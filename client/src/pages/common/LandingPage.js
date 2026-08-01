@@ -21,7 +21,7 @@ const LandingPage = () => {
                 <div className="landing-logo">
                     <span className="logo-icon">⎔</span> Falsicode.
                 </div>
-                <div className="nav-actions">
+                <div className="nav-actions desktop-only">
                     <button className="btn-nav-login" onClick={() => navigate('/login')}>
                         Sign In
                     </button>
@@ -41,7 +41,7 @@ const LandingPage = () => {
                         An advanced structural plagiarism engine for Python and Java. Falsicode uses AST and TF-IDF to expose copied logic—even when variables, comments, and formatting are completely disguised.
                     </p>
                     
-                    <div className="hero-action-group">
+                    <div className="hero-action-group desktop-only">
                         <button className="btn-primary-large" onClick={() => navigate('/login')}>
                             Access Dashboard
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginLeft: '8px'}}>
@@ -62,7 +62,7 @@ const LandingPage = () => {
                             <div className="mockup-url">falsicode.app/sandbox</div>
                         </div>
                         
-                        <div className="mockup-tabs">
+                        <div className="mockup-tabs swipe-container">
                             <button 
                                 className={`mockup-tab-btn ${selectedVariant === 'original' ? 'active' : ''}`}
                                 onClick={() => setSelectedVariant('original')}
@@ -79,14 +79,14 @@ const LandingPage = () => {
 
                         <div className="mockup-body">
                             {selectedVariant === 'original' ? (
-                                <div className="mockup-code-block">
+                                <div className="mockup-code-block swipe-container">
                                     <span className="m-keyword">def</span> <span className="m-func">merge_sort</span>(arr):<br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(arr) &gt; 1:<br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mid = len(arr) // 2<br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;left = arr[:mid]
                                 </div>
                             ) : (
-                                <div className="mockup-code-block">
+                                <div className="mockup-code-block swipe-container">
                                     <span className="m-keyword">def</span> <span className="m-func">executeSortProcess</span>(target_list):<br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-comment"># Replaced labels and spacing entirely</span><br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;<span className="m-keyword">if</span> len(target_list) &gt; 1:<br/>
@@ -97,20 +97,30 @@ const LandingPage = () => {
 
                             <div className="mockup-ast-line">
                                 <span className="ast-label-text">Structural Hash Topology:</span>
-                                <div className="ast-nodes-flex">
+                                <div className="ast-nodes-flex swipe-container">
                                     <span className="ast-node">FunctionDef</span> ➔ <span className="ast-node">If</span> ➔ <span className="ast-node">Assign</span>
                                 </div>
                             </div>
                             
                             <div className="mockup-match-box">
-                                <span className="match-label">Structural Clone Identity Matrix</span>
+                                <span className="match-label">Structural Clone Matrix</span>
                                 <span className="match-percent text-gradient">100% Match</span>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </main>
+
+            {/* 📱 APP-LIKE MOBILE BOTTOM BAR 📱 */}
+            <div className="mobile-sticky-action-bar fade-in-up" style={{ animationDelay: '0.4s' }}>
+                <button className="btn-primary-large mobile-full-width" onClick={() => navigate('/login')}>
+                    Access Dashboard
+                </button>
+                <span className="hero-microcopy" style={{ textAlign: 'center', marginTop: '8px' }}>
+                    Secure platform for instructors and students.
+                </span>
+            </div>
+            
         </div>
     );
 };
