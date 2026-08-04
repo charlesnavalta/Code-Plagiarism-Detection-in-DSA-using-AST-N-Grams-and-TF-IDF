@@ -83,20 +83,28 @@ const InstructorDashboard = () => {
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
                     
-                    {/* 🌟 FIX: Removed inline styles, added 'instructor-hero-banner' class */}
+                    {/* 🌟 PREMIUM INSTRUCTOR BANNER */}
                     <div className="cinematic-banner-shared spatial-card instructor-hero-banner">
                         <div className="banner-content">
                             <div className="banner-text">
                                 <h1>Instructor Hub</h1>
+                                <p className="banner-subtitle desktop-only">Provision and manage your digital classrooms.</p>
                             </div>
                             
                             <form onSubmit={handleCreateClass} className="nexus-join-form">
-                                <input 
-                                    type="text" placeholder="Class Name" 
-                                    value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
-                                    className="nexus-input"
-                                />
-                                <button type="submit" className="nexus-btn-primary">Create Class</button>
+                                <div className="input-with-icon">
+                                    <input 
+                                        type="text" placeholder="Class Name" 
+                                        value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
+                                        className="nexus-input"
+                                    />
+                                </div>
+                                <button type="submit" className="nexus-btn-primary">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Create Class
+                                </button>
                             </form>
                         </div>
                     </div>

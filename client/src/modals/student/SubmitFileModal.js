@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import api from '../../services/api';
 import './SubmitFileModal.css';
 
-// 🌟 Import the new DRY utilities
+// 🌟 Import our new Base Skeleton
+import BaseModal from '../shared/BaseModal';
 import { getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
 
 const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }) => {
@@ -11,7 +12,6 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
 
     if (!isOpen || !assignment) return null;
 
-    // 🌟 1. Let the utility handle the language mapping
     const fileExtension = getFileExtension(assignment.language);
     const displayLanguage = assignment.language ? assignment.language.charAt(0).toUpperCase() + assignment.language.slice(1) : 'Unknown';
 
@@ -23,12 +23,8 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
     const handleFileUpload = async (e) => {
         e.preventDefault();
 
-        // 🌟 2. Strict validation before wasting backend resources
         const validationError = validateUploadedFile(selectedFile, fileExtension);
-        if (validationError) {
-            alert(validationError);
-            return;
-        }
+        if (validationError) { alert(validationError); return; }
 
         setIsDeploying(true);
         const formData = new FormData();
@@ -40,7 +36,6 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
             setSelectedFile(null);
             onClose();
         } catch (error) {
-            console.error(error);
             alert("Upload failed: " + (error.response?.data?.error || error.message));
         } finally {
             setIsDeploying(false);
@@ -48,57 +43,51 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
     };
 
     return (
-        <div className="falsicode-hud-overlay">
-            <div className="spatial-card hud-modal-content fade-in">
-                <div className="hud-header">
-                    <button type="button" className="btn-close-icon" onClick={onClose} disabled={isDeploying}>&times;</button>
-                    <h2>Initialize Source File</h2>
-                    <p className="hud-subtitle">Upload your {displayLanguage} implementation for TASK {String(assignment.id).padStart(2, '0')}</p>
-                </div>
+        <BaseModal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            title="Initialize Source File" 
+            subtitle={`Upload your ${displayLanguage} implementation for TASK ${String(assignment.id).padStart(2, '0')}`}
+            isDeploying={isDeploying}
+        >
+            {/* The form wrapper maintains the flexbox layout */}
+            <form onSubmit={handleFileUpload} className="hud-form-wrapper">
                 
-                <div className="hud-body" style={{ padding: '20px' }}>
-                    <div className="warning-banner" style={{ background: 'rgba(239, 68, 68, 0.1)', borderLeft: '3px solid #ef4444', color: '#fca5a5', padding: '12px 15px', borderRadius: '4px', fontSize: '0.85rem', marginBottom: '20px' }}>
+                <div className="hud-modal-body">
+                    <div className="warning-banner">
                         <strong>Warning:</strong> This system enforces a One-Time Lock. Once deployed, your file will be structurally analyzed and locked for grading.
                     </div>
 
-                    <form onSubmit={handleFileUpload}>
-                        <div className="input-group" style={{ textAlign: 'center', padding: '30px', border: '1px dashed rgba(255,255,255,0.2)', borderRadius: '12px', background: 'rgba(0,0,0,0.2)' }}>
-                            <input 
-                                type="file" 
-                                accept={fileExtension} 
-                                id="file-upload" 
-                                style={{ display: 'none' }} 
-                                onChange={handleFileChange} 
-                            />
-                            
-                            {!selectedFile ? (
-                                <label htmlFor="file-upload" className="btn-glass-action" style={{ display: 'inline-block', cursor: 'pointer' }}>
-                                    Select {fileExtension} File
-                                </label>
-                            ) : (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                                    <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid #3b82f6', padding: '10px 20px', borderRadius: '8px', color: '#3b82f6', fontFamily: 'monospace' }}>
-                                        {selectedFile.name}
-                                    </div>
-                                    <label htmlFor="file-upload" style={{ fontSize: '0.8rem', color: '#9ca3af', cursor: 'pointer', textDecoration: 'underline' }}>
-                                        Change File
-                                    </label>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="hud-footer-actions" style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                            <button type="button" className="btn-glass-action" onClick={onClose} disabled={isDeploying}>
-                                Cancel
-                            </button>
-                            <button type="submit" className="btn-hud-run" disabled={isDeploying || !selectedFile}>
-                                {isDeploying ? 'Securing Node...' : 'Deploy Node'}
-                            </button>
-                        </div>
-                    </form>
+                    <div className="upload-dropzone">
+                        <input type="file" accept={fileExtension} id="file-upload" style={{ display: 'none' }} onChange={handleFileChange} />
+                        
+                        {!selectedFile ? (
+                            <label htmlFor="file-upload" className="btn-glass-action file-select-btn">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                Select {fileExtension} File
+                            </label>
+                        ) : (
+                            <div className="selected-file-display">
+                                <div className="file-name-badge">{selectedFile.name}</div>
+                                <label htmlFor="file-upload" className="change-file-label">Change File</label>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <div className="hud-modal-footer">
+                    <button type="button" className="btn-glass-action" onClick={onClose} disabled={isDeploying}>
+                        Cancel
+                    </button>
+                    <button type="submit" className="btn-hud-run" disabled={isDeploying || !selectedFile}>
+                        {isDeploying ? 'Securing Node...' : 'Deploy Node'}
+                    </button>
+                </div>
+                
+            </form>
+        </BaseModal>
     );
 };
 

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import api from '../../services/api'; 
 import CodeComparisonView from '../../components/instructor/CodeComparisonView'; 
 import './SubmissionsAuditModal.css'; 
-
-// 🌟 Import your new DRY utility
 import { getPlagiarismDisplayData } from '../../utils/theme';
+
+// 🌟 Import the Base Skeleton
+import BaseModal from '../shared/BaseModal';
 
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {
     const [selectedPair, setSelectedPair] = useState(null);
@@ -26,30 +27,26 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
             if (subToUpdate) subToUpdate.score = scoreToSave;
         } catch (error) {
             alert("Failed to save grade.");
-            console.error(error);
         }
     };
 
     return (
-        <div className="falsicode-hud-overlay">
-            <div className="spatial-card hud-modal-content wide-hud fade-in">
-                <div className="hud-header">
-                    <button className="btn-close-icon" onClick={onClose}>&times;</button>
-                    <h2>{selectedPair ? "Code Comparison" : "Submission Tree"}</h2>
-                    <p className="hud-subtitle">
-                        {selectedPair 
-                            ? `Detailed logic analysis between ${selectedPair.file1} and ${selectedPair.file2}`
-                            : ""}
-                    </p>
-                </div>
-                
-                <div className="hud-body-scroll">
-                    {!selectedPair ? (
-                        <>
-                            <table className="falsicode-table-hud">
+        <BaseModal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            title={selectedPair ? "Code Comparison" : "Submission Tree"} 
+            subtitle={selectedPair ? `Detailed logic analysis between ${selectedPair.file1} and ${selectedPair.file2}` : ""}
+            customClass="wide-hud"
+        >
+            <div className="hud-modal-body audit-body-override">
+                {!selectedPair ? (
+                    <>
+                        <div className="table-responsive-wrapper">
+                            {/* 🌟 Added 'responsive-card-table' class here */}
+                            <table className="falsicode-table-hud responsive-card-table">
                                 <thead>
                                     <tr>
-                                        <th style={{width: '40px'}}></th>
+                                        <th style={{width: '40px'}} className="hide-mobile"></th>
                                         <th>STUDENT IDENTITY</th>
                                         <th>SOURCE FILE</th>
                                         <th style={{width: '180px'}}>ASSIGN GRADE</th>
@@ -58,19 +55,22 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                 <tbody>
                                     {submissions.map(sub => (
                                         <tr key={sub.id}>
-                                            <td className="status-cell"><div className="status-dot yellow"></div></td>
-                                            <td>
+                                            <td className="status-cell hide-mobile">
+                                                <div className="status-dot yellow"></div>
+                                            </td>
+                                            <td className="td-student">
                                                 <div className="hud-stu-cell">
                                                     <div className="stu-icon">{sub.student_name.charAt(0)}</div>
                                                     <strong>{sub.student_name}</strong>
                                                 </div>
                                             </td>
-                                            <td><code className="code-box">{sub.filename}</code></td>
-                                            <td>
+                                            <td className="td-file">
+                                                <code className="code-box">{sub.filename}</code>
+                                            </td>
+                                            <td className="td-action">
                                                 <div className="grade-input-group">
                                                     <input 
-                                                        type="text" 
-                                                        className="grade-input-small" 
+                                                        type="text" className="grade-input-small" 
                                                         placeholder={sub.score && sub.score !== 'Pending' ? sub.score : "e.g. 45/50"}
                                                         value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
                                                         onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
@@ -82,35 +82,35 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
 
-                            {analysisResults && (
-                                <div className="analysis-report-section">
-                                    <div className="report-header">
-                                        <h3>Falsicode Analysis Report</h3>
-                                        <span className="scan-badge">SCAN COMPLETE</span>
-                                    </div>
-                                    <table className="falsicode-table-hud report-table hoverable-table">
+                        {analysisResults && (
+                            <div className="analysis-report-section">
+                                <div className="report-header">
+                                    <h3>Falsicode Analysis Report</h3>
+                                    <span className="scan-badge">SCAN COMPLETE</span>
+                                </div>
+                                <div className="table-responsive-wrapper">
+                                    <table className="falsicode-table-hud report-table hoverable-table responsive-card-table">
                                         <thead>
                                             <tr>
                                                 <th>MATCHED PAIR</th>
-                                                <th style={{textAlign: 'right'}}>SIM</th>
+                                                <th style={{textAlign: 'right'}} className="align-left-mobile">SIM</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {analysisResults.length > 0 ? (
                                                 analysisResults.map((res, i) => {
-                                                    // 🌟 Call the DRY utility using the smart backend data
                                                     const displayData = getPlagiarismDisplayData(res.plagiarism_type);
-                                                    
                                                     return (
                                                         <tr key={i} onClick={() => setSelectedPair(res)} className="clickable-row">
-                                                            <td className="comparison-text">
-                                                                {res.file1} <span className="arrow-icon">↔</span> {res.file2}
+                                                            <td className="comparison-text td-file">
+                                                                <div className="pair-wrap">
+                                                                    {res.file1} <span className="arrow-icon">↔</span> {res.file2}
+                                                                </div>
                                                                 <span className="view-details-text">Click to view comparison</span>
                                                             </td>
-                                                            
-                                                            {/* 🌟 Apply the smart color and add the Type label */}
-                                                            <td className="sim-score" style={{ color: displayData.color }}>
+                                                            <td className="sim-score td-action" style={{ color: displayData.color }}>
                                                                 <span style={{ fontSize: '11px', display: 'block', marginBottom: '2px', fontWeight: 'bold' }}>
                                                                     {displayData.shortLabel}
                                                                 </span>
@@ -129,26 +129,30 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                                         </tbody>
                                     </table>
                                 </div>
-                            )}
-                        </>
-                    ) : (
-                        <CodeComparisonView 
-                            selectedPair={selectedPair} 
-                            submissions={submissions} 
-                            onBack={() => setSelectedPair(null)} 
-                        />
-                    )}
-                </div>
-
-                <div className="hud-footer-actions">
-                    {!selectedPair && (
-                        <button className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} onClick={onRunAnalysis} disabled={isAnalyzing}>
-                            {isAnalyzing ? "Processing..." : "Run Falsicode Analysis"}
-                        </button>
-                    )}
-                </div>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <CodeComparisonView 
+                        selectedPair={selectedPair} 
+                        submissions={submissions} 
+                        onBack={() => setSelectedPair(null)} 
+                    />
+                )}
             </div>
-        </div>
+
+            {!selectedPair && (
+                <div className="hud-modal-footer">
+                    <button 
+                        className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} 
+                        onClick={onRunAnalysis} 
+                        disabled={isAnalyzing}
+                    >
+                        {isAnalyzing ? "Processing..." : "Run Falsicode Analysis"}
+                    </button>
+                </div>
+            )}
+        </BaseModal>
     );
 };
 

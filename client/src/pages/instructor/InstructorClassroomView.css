@@ -5,16 +5,16 @@
     padding-left: 20px; padding-right: 20px; position: relative; z-index: 10; 
 }
 
-/* 🌟 FIX: Transferred Header styling here */
-.classroom-hero-banner { margin-bottom: 50px; border-radius: 24px; }
+/* Header styling */
+.classroom-hero-banner { margin-bottom: 40px; border-radius: 24px; }
 .header-inner { padding: 45px; }
 
 .top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 
 .neo-back-btn { 
     background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.2); 
-    color: white; padding: 8px 20px; border-radius: 12px; font-weight: 700; 
-    cursor: pointer; transition: all 0.2s ease;
+    color: white; padding: 8px 16px; border-radius: 12px; font-weight: 700; 
+    cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center;
 }
 .neo-back-btn:hover { background: rgba(0,0,0,0.4); transform: translateX(-3px); }
 
@@ -33,7 +33,7 @@
 .btn-primary-falsicode { 
     background: var(--accent); color: white; border: none; padding: 12px 24px; 
     border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); display: inline-flex; align-items: center; justify-content: center;
 }
 .btn-primary-falsicode:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
 
@@ -66,30 +66,55 @@
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =========================================
+   💻 TABLETS (Max Width: 1024px)
+   ========================================= */
+@media (max-width: 1024px) {
+    .nexus-content.instructor-layout { padding-top: 30px; }
+    .header-inner { padding: 30px 24px; }
+    .hub-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+
+/* =========================================
    📱 MOBILE RESPONSIVENESS (App-like Fixes)
    ========================================= */
 @media (max-width: 768px) {
     .nexus-content.instructor-layout {
         padding-top: 20px;
-        padding-bottom: 110px; /* 🌟 Crucial: Clears mobile bottom dock */
+        padding-bottom: 110px; /* Clears mobile bottom dock */
+        padding-left: 16px;
+        padding-right: 16px;
     }
 
     /* Compress the cinematic header */
-    .classroom-hero-banner { margin-bottom: 30px; border-radius: 20px; }
-    .header-inner { padding: 30px 20px; }
-    .top-meta { flex-direction: column; gap: 15px; align-items: flex-start; }
+    .classroom-hero-banner { margin-bottom: 24px; border-radius: 20px; }
+    .header-inner { padding: 24px 20px; }
     
-    /* Stack Hub Actions */
-    .hub-header { flex-direction: column; align-items: stretch; gap: 16px; }
-    .btn-primary-falsicode { width: 100%; text-align: center; padding: 16px; }
+    /* 🌟 Keep top meta on a single row to save vertical space! */
+    .top-meta { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; gap: 10px;}
+    .hero-title { font-size: 1.8rem; }
+    
+    /* Shrink the glass chip slightly so it fits next to the back button */
+    .glass-chip { padding: 6px 12px; }
+    .mono-label { font-size: 0.65rem; }
+
+    /* Stack Hub Actions cleanly */
+    .hub-header { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 20px; }
+    .hub-header h2 { font-size: 1.5rem; text-align: left; }
+    
+    /* Fix bloated button - much tighter padding */
+    .btn-primary-falsicode { width: 100%; padding: 12px; font-size: 0.95rem; border-radius: 10px; }
 
     /* Adjust Assignment Cards */
-    .assignment-item-row { padding: 20px; }
-    .assignment-meta-top { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .assignment-item-row h3 { font-size: 1.2rem; }
+    .assignment-grid { gap: 16px; }
+    .assignment-item-row { padding: 20px; border-radius: 16px; }
+    
+    /* Allow meta tags to wrap cleanly instead of strictly stacking */
+    .assignment-meta-top { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .assignment-item-row h3 { font-size: 1.25rem; }
+    .assignment-item-row p { font-size: 0.9rem; margin-bottom: 16px; }
 
-    /* Full-width audit button */
-    .btn-glass-action { width: 100%; padding: 14px; text-align: center; }
+    /* Fix bloated audit button */
+    .btn-glass-action { width: 100%; padding: 12px; font-size: 0.9rem; text-align: center; border-radius: 10px;}
 
     /* Tactile Interactions */
     .neo-back-btn:active, 

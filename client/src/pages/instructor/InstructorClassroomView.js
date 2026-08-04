@@ -86,11 +86,15 @@ const InstructorClassroomView = () => {
     return (
         <InstructorWrapper>
             <div className="nexus-content instructor-layout">
-                {/* 🌟 FIX: Removed inline styles, added 'classroom-hero-banner' class */}
                 <header className="cinematic-banner-shared spatial-card fade-in-down classroom-hero-banner">
                     <div className="header-inner">
                         <div className="top-meta">
-                            <button onClick={() => navigate('/instructor')} className="neo-back-btn">Hub</button>
+                            <button onClick={() => navigate('/instructor')} className="neo-back-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '4px', verticalAlign: 'middle', marginTop: '-2px' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Hub
+                            </button>
                             <div className="glass-chip">
                                 <span className="mono-label">INVITE CODE: {classroom?.invite_code}</span>
                             </div>
@@ -108,6 +112,10 @@ const InstructorClassroomView = () => {
                             <h2>Assignment(s)</h2>
                         </div>
                         <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>
+                            {/* 🌟 ADDED: The Plus Icon for the primary action */}
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
+                            </svg>
                             Add New Assignment
                         </button>
                     </div>

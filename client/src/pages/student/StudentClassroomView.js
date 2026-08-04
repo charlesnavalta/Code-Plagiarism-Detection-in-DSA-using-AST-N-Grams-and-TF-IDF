@@ -6,9 +6,11 @@ import './StudentClassroomView.css';
 import SubmitFileModal from '../../modals/student/SubmitFileModal';
 import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
 
-// 🌟 Import our DRY utilities!
+// Shared Utilities & Components
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 import { formatDeadline } from '../../utils/dateUtils';
+import InstructorWrapper from '../instructor/components/InstructorWrapper';
+import QuantumLoader from '../instructor/components/QuantumLoader';
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
@@ -52,8 +54,6 @@ const StudentClassroomView = () => {
         }
     };
 
-    // 🌟 formatDeadline was removed from here and moved to dateUtils.js!
-
     const handleOpenSubmission = (assignment) => {
         const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
         if (assignment.has_submitted || isOverdue) return; 
@@ -68,43 +68,49 @@ const StudentClassroomView = () => {
         ));
     };
 
-    if (loading) return <div className="falsicode-loader"><div className="quantum-spinner"></div></div>;
+    if (loading) return <QuantumLoader fullScreen={true} />;
 
     const completedTasks = assignments.filter(a => a.has_submitted).length;
     const totalTasks = assignments.length;
     const progressPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-1"></div>
-                <div className="aurora-blob blob-2"></div>
-            </div>
-
-            <div className="nexus-content student-layout">
-                <header className="spatial-card cinematic-header fade-in-down">
+        <InstructorWrapper>
+            <div className={`nexus-content student-layout ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+                
+                {/* --- CINEMATIC CLASSROOM HEADER --- */}
+                <header className="cinematic-banner-shared spatial-card fade-in-down classroom-hero-banner">
                     <div className="header-inner">
                         <div className="top-meta">
-                            <button onClick={() => navigate('/student')} className="neo-back-btn">Hub</button>
+                            <button onClick={() => navigate('/student')} className="neo-back-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="back-icon">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Hub
+                            </button>
                             <div className="glass-chip">
                                 <span className="mono-label">STUDENT WORKSPACE</span>
                             </div>
                         </div>
+                        
                         <h1 className="hero-title">{classroom?.name}</h1>
+                        
                         <div className="instructor-badge">
-                            <span className="ins-label" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textTransform: 'uppercase', marginRight: '10px' }}>Instructor:</span>
-                            <span className="ins-name" style={{ fontWeight: 'bold' }}>{classroom?.instructor}</span>
+                            <span className="ins-label">Instructor:</span>
+                            <span className="ins-name">{classroom?.instructor}</span>
                         </div>
                         
-                        <div className="student-stats-row" style={{ marginTop: '20px', maxWidth: '400px' }}>
-                            <div style={{ height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', overflow: 'hidden', marginBottom: '8px' }}>
-                                <div style={{ height: '100%', width: `${progressPercentage}%`, background: '#10b981', borderRadius: '10px', transition: 'width 0.5s ease-out', boxShadow: '0 0 10px rgba(16, 185, 129, 0.5)' }}></div>
+                        <div className="student-stats-row">
+                            <div className="progress-track">
+                                {/* The dynamic width MUST stay inline, everything else is in CSS */}
+                                <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
                             </div>
-                            <span style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.8)', fontWeight: '600' }}>{completedTasks} / {totalTasks} Tasks Completed</span>
+                            <span className="progress-text">{completedTasks} / {totalTasks} Tasks Completed</span>
                         </div>
                     </div>
                 </header>
 
+                {/* --- ASSIGNMENT STREAM --- */}
                 <main className="content-hub">
                     <div className="hub-header">
                         <div className="header-titles">
@@ -118,8 +124,18 @@ const StudentClassroomView = () => {
                             const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
                             const isDisabled = isSubmitted || isOverdue; 
                             
-                            // 🌟 Use the DRY fileUtils formatter here
                             const language = formatLanguageDisplay(assignment.language);
+                            
+                            // Determine dynamic status classes
+                            let statusClass = 'badge-pending';
+                            let statusText = 'Pending';
+                            if (isSubmitted) {
+                                statusClass = 'badge-submitted';
+                                statusText = 'Turned In';
+                            } else if (isOverdue) {
+                                statusClass = 'badge-overdue';
+                                statusText = 'Overdue';
+                            }
 
                             return (
                                 <div 
@@ -131,40 +147,34 @@ const StudentClassroomView = () => {
                                         <span className="task-id">
                                             TASK {String(idx + 1).padStart(2, '0')} • {language}
                                         </span>
-                                        <span 
-                                            className="status-badge" 
-                                            style={{
-                                                backgroundColor: isSubmitted ? 'rgba(16, 185, 129, 0.2)' : isOverdue ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                                                color: isSubmitted ? '#34d399' : isOverdue ? '#f87171' : '#fbbf24',
-                                                padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold'
-                                            }}
-                                        >
-                                            {isSubmitted ? 'Turned In' : isOverdue ? 'Overdue' : 'Pending'}
+                                        <span className={`status-badge ${statusClass}`}>
+                                            {statusText}
                                         </span>
                                     </div>
                                     
                                     <h3>{assignment.title}</h3>
                                     <p>{assignment.description}</p>
                                     
-                                    <div style={{ marginTop: '12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <svg width="14" height="14" fill="none" stroke={isOverdue && !isSubmitted ? "#ef4444" : "#9ca3af"} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        <span style={{ color: isOverdue && !isSubmitted ? '#ef4444' : '#9ca3af', fontWeight: '500' }}>
-                                            {/* 🌟 Use the DRY dateUtils formatter here */}
-                                            Due: {formatDeadline(assignment.deadline)}
-                                        </span>
+                                    <div className={`deadline-row ${isOverdue && !isSubmitted ? 'deadline-missed' : ''}`}>
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>Due: {formatDeadline(assignment.deadline)}</span>
                                     </div>
                                     
-                                    <div className="card-footer-split" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <div className="card-footer-split">
                                         <div className="score-display">
                                             {isSubmitted ? (
                                                 <>
-                                                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>FALSICODE SCORE</span>
-                                                    <span style={{ fontWeight: 'bold', color: assignment.score === 'Pending' ? '#f59e0b' : 'white' }}>{assignment.score}</span>
+                                                    <span className="score-label">FALSICODE SCORE</span>
+                                                    <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
+                                                        {assignment.score}
+                                                    </span>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', display: 'block', marginBottom: '4px' }}>MAX SCORE</span>
-                                                    <span style={{ fontWeight: 'bold' }}>{assignment.max_score} pts</span>
+                                                    <span className="score-label">MAX SCORE</span>
+                                                    <span className="score-value">{assignment.max_score} pts</span>
                                                 </>
                                             )}
                                         </div>
@@ -176,7 +186,6 @@ const StudentClassroomView = () => {
                                                 handleOpenSubmission(assignment);
                                             }}
                                             disabled={isDisabled}
-                                            style={isDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                                         >
                                             {isSubmitted ? 'Node Locked' : isOverdue ? 'Deadline Passed' : 'Initialize Source File →'}
                                         </button>
@@ -201,7 +210,7 @@ const StudentClassroomView = () => {
                 onClose={() => setViewAssignment(null)}
                 assignment={viewAssignment}
             />
-        </div>
+        </InstructorWrapper>
     );
 };
 

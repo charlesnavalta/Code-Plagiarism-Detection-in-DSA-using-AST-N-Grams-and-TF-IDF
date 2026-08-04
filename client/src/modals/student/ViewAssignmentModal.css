@@ -1,87 +1,40 @@
-/* ViewAssignmentModal.css */
-.view-modal-body {
-    padding: 30px;
-    max-height: 65vh;
-    overflow-y: auto;
-}
+/* src/modals/student/ViewAssignmentModal.css */
 
-.view-modal-title-group {
-    margin-bottom: 20px;
-}
+.view-modal-title-group { margin-bottom: 20px; }
+.view-modal-title { margin: 0 0 12px 0; font-size: 1.3rem !important; color: #ffffff; font-weight: 800; line-height: 1.3; }
 
-.view-modal-title {
-    margin: 0 0 10px 0;
-    font-size: 1.4rem;
-}
-
-.view-modal-badges {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
+.view-modal-badges { display: flex; gap: 10px; margin-bottom: 20px; }
 .badge-target {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: bold;
+    background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 6px 12px;
+    border-radius: 8px; font-size: 0.75rem; font-weight: bold; letter-spacing: 0.5px;
 }
-
 .badge-score {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: #9ca3af;
+    background: rgba(255, 255, 255, 0.05); padding: 6px 12px;
+    border-radius: 8px; font-size: 0.75rem; font-weight: bold; color: #9ca3af;
 }
 
 .view-modal-desc-box {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 .view-modal-desc-title {
-    margin: 0 0 10px 0;
-    font-size: 0.85rem;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin: 0 0 12px 0; font-size: 0.75rem; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
 }
-
 .view-modal-desc-text {
-    margin: 0;
-    color: #e2e8f0;
-    line-height: 1.6;
-    white-space: pre-wrap;
+    margin: 0; color: #e2e8f0; line-height: 1.6; white-space: pre-wrap; font-size: 0.95rem;
 }
 
 .view-modal-locked-banner {
-    margin-top: 20px;
-    background: rgba(16, 185, 129, 0.1);
-    border-left: 3px solid #10b981;
-    padding: 12px 15px;
-    border-radius: 4px;
+    margin-top: 20px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981;
+    padding: 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px;
 }
+.locked-text-strong { color: #10b981; font-size: 0.9rem; font-weight: 800; white-space: nowrap;}
+.locked-text-sub { color: #a7f3d0; font-size: 0.85rem; line-height: 1.4; }
 
-.locked-text-strong {
-    color: #10b981;
-    font-size: 0.85rem;
-}
-
-.locked-text-sub {
-    color: #a7f3d0;
-    font-size: 0.85rem;
-    margin-left: 8px;
-}
-
-.view-modal-footer {
-    padding: 20px 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    justify-content: flex-end;
+@media (max-width: 768px) {
+    .view-modal-title { font-size: 1.2rem !important; }
+    .view-modal-badges { flex-wrap: wrap; }
+    .view-modal-desc-box { padding: 16px; }
+    .view-modal-locked-banner { flex-direction: column; align-items: flex-start; gap: 6px; }
 }

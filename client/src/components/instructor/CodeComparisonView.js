@@ -68,16 +68,14 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
             <div className="ast-pattern-stream">
                 {xaiData.map((patternData, patternIndex) => {
                     const realWeight = patternData.weight;
-                    
-                    // 🌟 CLEAN UI: Logic is now handled by the utility hook!
                     const { categoryLabel, badgeColor, badgeBg } = getASTBadgeStyle(realWeight, patternIndex, xaiData.length);
 
                     return (
                         <div key={`pattern-${patternIndex}`} className="ngram-pattern-box" style={{ borderLeft: `3px solid ${badgeColor}` }}>
                             <div className="pattern-header-row">
-                                <div>
+                                <div className="pattern-title-wrap">
                                     <div className="pattern-header">Logical Sequence {patternIndex + 1}</div>
-                                    <div style={{ fontSize: '11px', color: badgeColor, marginTop: '4px', fontWeight: '600', letterSpacing: '0.5px' }}>
+                                    <div className="pattern-subtitle" style={{ color: badgeColor }}>
                                         {categoryLabel}
                                     </div>
                                 </div>
@@ -114,9 +112,13 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
 
     return (
         <div className="code-comparison-view fade-in">
+            {/* 🌟 1. Responsive Header Controls */}
             <div className="comparison-header-flex">
                 <button className="btn-back-link" onClick={onBack}>
-                    ← Back to Analysis Report
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px', verticalAlign: 'middle', marginTop: '-2px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Analysis Report
                 </button>
                 
                 <div className="view-toggle-group">
@@ -135,45 +137,40 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     </button>
                 </div>
 
-                <AnalysisPDFExporter selectedPair={selectedPair} />
+                <div className="pdf-export-wrapper">
+                    <AnalysisPDFExporter selectedPair={selectedPair} />
+                </div>
             </div>
 
+            {/* 🌟 2. Responsive Summary Bar */}
             {selectedPair && themeData && (
-                <div className="classification-summary-bar" style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 20px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    marginBottom: '15px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)'
-                }}>
-                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                        <div>
-                            <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Overall Similarity</span>
-                            {/* 🌟 DRY FIX: Replaced inline threshold math with themeData.color */}
-                            <div style={{ fontSize: '18px', fontWeight: '700', color: themeData.color }}>
+                <div className="classification-summary-bar">
+                    <div className="summary-main-metrics">
+                        <div className="metric-block">
+                            <span className="metric-label">Overall Similarity</span>
+                            <div className="metric-score" style={{ color: themeData.color }}>
                                 {selectedPair.score}%
                             </div>
                         </div>
-                        <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '20px' }}>
-                            <span style={{ fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Classification</span>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#f3f4f6', marginTop: '2px' }}>
+                        <div className="metric-divider"></div>
+                        <div className="metric-block">
+                            <span className="metric-label">Classification</span>
+                            <div className="metric-classification">
                                 {selectedPair.plagiarism_type || 'N/A'}
                             </div>
                         </div>
                     </div>
 
                     {selectedPair.plagiarism_type && selectedPair.plagiarism_type !== 'N/A' && (
-                        <div style={{ display: 'flex', gap: '20px', fontSize: '13px', color: '#d1d5db' }}>
-                            <span><strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%</span>
-                            <span><strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%</span>
+                        <div className="summary-sub-metrics">
+                            <span className="sub-metric-item"><strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%</span>
+                            <span className="sub-metric-item"><strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%</span>
                         </div>
                     )}
                 </div>
             )}
 
+            {/* 🌟 3. Responsive Split Screen Container */}
             <div className="split-screen-container">
                 <div className="code-pane">
                     <div className="code-pane-header">

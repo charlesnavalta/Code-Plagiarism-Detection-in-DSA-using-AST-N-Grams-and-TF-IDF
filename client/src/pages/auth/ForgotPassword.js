@@ -62,19 +62,23 @@ const ForgotPassword = () => {
                 <AuroraBackground />
 
                 <div className="left-pane-content fade-in-up">
-                    <div className="brand-logo">
-                        <span className="logo-icon">⎔</span> Falsicode.
+                    
+                    {/* 🌟 ADDED: The wrapper required by Login.css to center text on mobile/tablet */}
+                    <div className="mobile-center-content">
+                        <div className="brand-logo">
+                            <span className="logo-icon">⎔</span> Falsicode.
+                        </div>
+                        
+                        <h1 className="hero-heading">
+                            Account Recovery <br/>
+                            <span className="text-blue">Protocol.</span>
+                        </h1>
+                        
+                        <p className="hero-subtitle">
+                            Provision an authorization token to re-secure your workspace endpoints. 
+                            Your code will remain valid for exactly 15 minutes.
+                        </p>
                     </div>
-                    
-                    <h1 className="hero-heading">
-                        Account Recovery <br/>
-                        <span className="text-blue">Protocol.</span>
-                    </h1>
-                    
-                    <p className="hero-subtitle">
-                        Provision an authorization token to re-secure your workspace endpoints. 
-                        Your code will remain valid for exactly 15 minutes.
-                    </p>
 
                     <div className="graphic-cluster fp-cluster">
                         <div className="abstract-card card-back">
@@ -167,6 +171,7 @@ const ForgotPassword = () => {
                     </div>
                 </div>
             </div>
+            
         </div>
     );
 };

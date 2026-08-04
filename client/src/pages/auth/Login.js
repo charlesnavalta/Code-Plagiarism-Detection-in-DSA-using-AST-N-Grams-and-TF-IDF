@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api'; 
 import './Login.css';
 
-// Import our new extracted components
+// Import our extracted components
 import AuroraBackground from '../../components/auth/shared/AuroraBackground';
 import AuthInput from '../../components/auth/shared/AuthInput';
 import AuthButton from '../../components/auth/shared/AuthButton';
@@ -50,23 +50,26 @@ const Login = () => {
     return (
         <div className="login-split-wrapper">
             
+            {/* LEFT PANE (Top Header on Mobile) */}
             <div className="split-left-pane">
                 <AuroraBackground />
 
                 <div className="left-pane-content fade-in-up">
-                    <div className="brand-logo">
-                        <span className="logo-icon">⎔</span> Falsicode.
+                    <div className="mobile-center-content">
+                        <div className="brand-logo">
+                            <span className="logo-icon">⎔</span> Falsicode.
+                        </div>
+                        
+                        <h1 className="hero-heading">
+                            Analyze the logic <br/>
+                            <span className="text-blue">you build.</span>
+                        </h1>
+                        
+                        <p className="hero-subtitle">
+                            Advanced structural plagiarism detection for Data Structures and Algorithms. 
+                            Detect logic-copying even when variables are changed.
+                        </p>
                     </div>
-                    
-                    <h1 className="hero-heading">
-                        Analyze the logic <br/>
-                        <span className="text-blue">you build.</span>
-                    </h1>
-                    
-                    <p className="hero-subtitle">
-                        Advanced structural plagiarism detection for Data Structures and Algorithms. 
-                        Detect logic-copying even when variables are changed.
-                    </p>
 
                     <div className="graphic-cluster">
                         <div className="abstract-card card-back">
@@ -83,6 +86,7 @@ const Login = () => {
                 </div>
             </div>
 
+            {/* RIGHT PANE (Bottom Sheet on Mobile) */}
             <div className="split-right-pane">
                 <div className="form-container fade-in-up">
                     

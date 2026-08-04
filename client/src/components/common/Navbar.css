@@ -217,6 +217,12 @@
    ========================================= */
 
 @media (max-width: 768px) {
+
+    .brand-divider-nexus, 
+    .brand-panel-nexus {
+        display: none;
+    }
+    
     /* Simplify Top Navbar */
     .desktop-only { display: none !important; }
     

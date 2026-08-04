@@ -1,223 +1,35 @@
-/* =========================================
-   MODAL OVERLAY & LAYOUT
-   ========================================= */
-.falsicode-hud-overlay {
-    position: fixed; 
-    inset: 0; 
-    background: rgba(0, 0, 0, 0.6); 
-    backdrop-filter: blur(8px);
-    z-index: 5000; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
+/* src/modals/instructor/CreateAssignmentModal.css */
+
+.error-banner {
+    background-color: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px 15px; 
+    border-radius: 6px; margin-bottom: 15px; font-size: 13px; border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.hud-modal-content {
-    background: var(--bg-card); 
-    width: 90vw; 
-    max-width: 550px; 
-    border-radius: 20px;
-    border: 1px solid var(--border-glass); 
-    overflow: hidden; 
-    position: relative;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-}
-
-/* Force the spotlight to stay inside the border-radius */
-.hud-modal-content::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border-radius: 20px; /* IMPORTANT: matches the modal corners */
-    background: radial-gradient(
-        600px circle at var(--mouse-x) var(--mouse-y), 
-        var(--spotlight-color), 
-        transparent 40%
-    );
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 10; /* Ensures it sits above everything */
-}
-
-/* Trigger the glow */
-.hud-modal-content:hover::after {
-    opacity: 1 !important;
-}
-
-.hud-header { 
-    padding: 35px 40px 20px; 
-    position: relative; 
-    border-bottom: 1px solid var(--border-glass); 
-}
-
-.hud-header h2 { 
-    font-size: 2.2rem; 
-    font-weight: 900; 
-    margin: 0; 
-    letter-spacing: -1px; 
-    /* CHANGED: Fixed the invisible white text */
-    color: var(--text-hero);
-}
-
-.hud-subtitle { 
-    color: var(--text-dim); 
-    margin-top: 5px; 
-    font-size: 0.95rem; 
-}
-
-.btn-close-icon { 
-    position: absolute; 
-    top: 25px; 
-    right: 30px;
-    background: none; 
-    border: none; 
-    color: var(--text-dim); 
-    font-size: 1.8rem; 
-    cursor: pointer; 
-    line-height: 1; 
-    transition: color 0.2s;
-    z-index: 10;
-}
-
-.btn-close-icon:hover { 
-    /* CHANGED: Replaced white with theme variable */
-    color: var(--text-hero); 
-}
-
-/* =========================================
-   FORM STRUCTURE & SCROLLING
-   ========================================= */
-.hud-form-wrapper {
-    display: flex;
-    flex-direction: column;
-    max-height: 75vh;
-}
-
-.hud-body {
-    padding: 25px 40px 20px; 
-    overflow-y: auto;
-}
-
-/* Custom Sleek Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--border-glass);
-    border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--text-dim);
-}
-
-/* =========================================
-   FORM ELEMENTS
-   ========================================= */
-.input-row {
-    display: flex;
-    gap: 20px;
-}
-
-.input-group { 
-    margin-bottom: 20px; 
-    display: flex; 
-    flex-direction: column; 
-}
-
-.half-width {
-    flex: 1;
-}
+.input-row { display: flex; gap: 20px; }
+.input-group { margin-bottom: 20px; display: flex; flex-direction: column; }
+.half-width { flex: 1; }
 
 .input-group label { 
-    margin-bottom: 8px; 
-    font-size: 0.85rem; 
-    font-weight: 600; 
-    color: var(--text-dim); 
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; 
+    color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; 
 }
 
 .styled-input {
-    width: 100%; 
-    padding: 14px 16px; 
-    background-color: var(--bg-main) !important; 
-    border: 1px solid var(--border-glass) !important; 
-    border-radius: 8px; 
-    color: var(--text-main) !important;
-    font-size: 1rem; 
-    font-family: 'Inter', sans-serif; 
-    transition: border-color 0.2s, box-shadow 0.2s; 
-    box-sizing: border-box;
-    resize: none;
+    width: 100%; padding: 14px 16px; background-color: var(--bg-main) !important; 
+    border: 1px solid var(--border-glass) !important; border-radius: 12px; 
+    color: var(--text-main) !important; font-size: 1rem; font-family: 'Inter', sans-serif; 
+    transition: all 0.2s ease; box-sizing: border-box; resize: vertical;
 }
 
-.styled-input:focus {
-    outline: none; 
-    border-color: var(--accent-blue); 
-    background: var(--bg-card);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.styled-input:focus { 
+    outline: none; border-color: var(--accent-blue); background: var(--bg-card); 
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
 }
 
-.dropdown-fix option {
-    background-color: var(--bg-card) !important;
-    color: var(--text-main) !important;
-}
+.dropdown-fix option { background-color: var(--bg-card) !important; color: var(--text-main) !important; }
+.hide-arrows::-webkit-outer-spin-button, .hide-arrows::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hide-arrows[type=number] { -moz-appearance: textfield; }
 
-/* FIX: Hide Number Input Arrows */
-.hide-arrows::-webkit-outer-spin-button,
-.hide-arrows::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.hide-arrows[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* =========================================
-   FOOTER & BUTTONS
-   ========================================= */
-.hud-footer-actions { 
-    padding: 20px 40px; 
-    display: flex; 
-    justify-content: flex-end; 
-    background: var(--bg-main); 
-    border-top: 1px solid var(--border-glass);
-    margin-top: auto; 
-}
-
-.btn-hud-run { 
-    background: var(--accent-purple); 
-    /* We KEEP this one white, because it sits on top of the purple button! */
-    color: white; 
-    border: none; 
-    padding: 12px 28px; 
-    border-radius: 30px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    transition: 0.3s; 
-    font-size: 0.95rem;
-}
-
-.btn-hud-run:hover { 
-    filter: brightness(1.1);
-    transform: translateY(-2px); 
-    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); 
-}
-
-/* =========================================
-   ANIMATIONS
-   ========================================= */
-.fade-in { 
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-}
-
-@keyframes fadeIn { 
-    from { opacity: 0; transform: scale(0.95); } 
-    to { opacity: 1; transform: scale(1); } 
+@media (max-width: 768px) {
+    .input-row { flex-direction: column; gap: 0; }
 }

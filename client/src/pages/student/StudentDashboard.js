@@ -18,15 +18,12 @@ const StudentDashboard = () => {
     const navigate = useNavigate();
     const [theme] = useTheme();
 
-    // 🌟 1. Extracted to Auth Utility
     const currentUser = getUserData();
     const displayName = currentUser.first_name || currentUser.name || currentUser.username || 'Student';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    // 🌟 2. Extracted to Custom Hook! 
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
-    // --- API Operations ---
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
@@ -52,7 +49,9 @@ const StudentDashboard = () => {
             alert(res.data.message);
             setInviteCode('');
             fetchDashboardData();
-        } catch (error) { alert("Protocol failure: Unable to join classroom."); }
+        } catch (error) { 
+            alert("Protocol failure: Unable to join classroom."); 
+        }
     };
 
     return (
@@ -67,7 +66,7 @@ const StudentDashboard = () => {
                 <aside className="nexus-sidebar fade-in-left">
                     <div 
                         className="spatial-card profile-card" 
-                        onClick={() => navigate('profile')} 
+                        onClick={() => navigate('/student/profile')} 
                         style={{ cursor: 'pointer' }}
                     >
                         <div className="card-glass-layer"></div>
@@ -112,7 +111,6 @@ const StudentDashboard = () => {
                                                     {sub.assignment_name}
                                                 </strong>
                                                 <span className="history-date">
-                                                    {/* 🌟 3. Extracted to Date Utility */}
                                                     {formatTimestamp(sub.date || sub.submitted_at)}
                                                 </span>
                                             </div>
@@ -129,19 +127,29 @@ const StudentDashboard = () => {
 
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
-                    <div className="action-banner-nexus spatial-card">
+                    
+                    {/* 🌟 PREMIUM STUDENT BANNER */}
+                    <div className="cinematic-banner-shared spatial-card student-hero-banner">
                         <div className="banner-content">
                             <div className="banner-text">
                                 <h1>Student Hub</h1>
+                                <p className="banner-subtitle desktop-only">Join classrooms and access your assignments.</p>
                             </div>
                             
                             <form onSubmit={handleJoinClass} className="nexus-join-form">
-                                <input 
-                                    type="text" placeholder="Invite Code" maxLength={6}
-                                    value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                                    className="nexus-input"
-                                />
-                                <button type="submit" className="nexus-btn-primary">Join Class</button>
+                                <div className="input-with-icon">
+                                    <input 
+                                        type="text" placeholder="Enter Invite Code" maxLength={6}
+                                        value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                        className="nexus-input code-input"
+                                    />
+                                </div>
+                                <button type="submit" className="nexus-btn-primary">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Join Class
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -153,15 +161,15 @@ const StudentDashboard = () => {
                         </div>
 
                         {loading ? (
-                            <div className="spatial-card loading-card">
+                            <div className="spatial-card loading-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
                                 <div className="quantum-spinner"></div>
                                 <p>Synchronizing...</p>
                             </div>
                         ) : enrolledClasses.length === 0 ? (
-                            <div className="spatial-card empty-card">
-                                <div className="empty-icon">📁</div>
+                            <div className="spatial-card empty-card" style={{ padding: '40px', textAlign: 'center' }}>
+                                <div className="empty-icon" style={{ fontSize: '3rem', marginBottom: '10px' }}>📁</div>
                                 <h3>No Classrooms Found</h3>
-                                <p>Gain access by entering an instructor hash code above.</p>
+                                <p style={{ color: 'var(--text-dim)' }}>Gain access by entering an instructor hash code above.</p>
                             </div>
                         ) : (
                             <div className="classroom-grid">

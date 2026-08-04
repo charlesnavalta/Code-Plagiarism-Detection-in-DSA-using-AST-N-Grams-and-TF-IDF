@@ -1,59 +1,54 @@
 import React from 'react';
-import './ViewAssignmentModal.css'; // 🌟 Clean, dedicated CSS import
-
-// 🌟 Import the DRY utility
+// We keep the CSS import, though unique footer styles will be unused now
+import './ViewAssignmentModal.css'; 
+// Shared Foundation Skeleton
+import BaseModal from '../shared/BaseModal';
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 
 const ViewAssignmentModal = ({ isOpen, onClose, assignment }) => {
+    // Basic guard clause: render nothing if modal shouldn't be visible
     if (!isOpen || !assignment) return null;
 
-    // 🌟 Utility handles the formatting
+    // Formatting utilities
     const languageLabel = formatLanguageDisplay(assignment.language);
     const isLocked = assignment.has_submitted;
 
     return (
-        <div className="falsicode-hud-overlay">
-            <div className="spatial-card hud-modal-content fade-in">
-                <div className="hud-header">
-                    <button type="button" className="btn-close-icon" onClick={onClose}>&times;</button>
-                    <h2>Task Parameters</h2>
-                    <p className="hud-subtitle">Viewing details for TASK {String(assignment.id).padStart(2, '0')}</p>
-                </div>
-                
-                {/* 🌟 Notice how much cleaner the HTML structure is now! */}
-                <div className="hud-body view-modal-body custom-scrollbar">
-                    <div className="view-modal-title-group">
-                        <h3 className="view-modal-title">{assignment.title}</h3>
-                        <div className="view-modal-badges">
-                            <span className="badge-target">
-                                TARGET: {languageLabel}
-                            </span>
-                            <span className="badge-score">
-                                MAX SCORE: {assignment.max_score}
-                            </span>
-                        </div>
+        <BaseModal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            // Header configuration
+            title="Task Parameters" 
+            subtitle={`Viewing details for TASK ${String(assignment.id).padStart(2, '0')}`}
+        >
+            {/* Main scrollable body area */}
+            <div className="hud-modal-body">
+                {/* Assignment Title and Badges */}
+                <div className="view-modal-title-group">
+                    <h3 className="view-modal-title">{assignment.title}</h3>
+                    <div className="view-modal-badges">
+                        <span className="badge-target">TARGET: {languageLabel}</span>
+                        <span className="badge-score">MAX SCORE: {assignment.max_score}</span>
                     </div>
+                </div>
 
-                    <div className="view-modal-desc-box">
-                        <h4 className="view-modal-desc-title">Description & Requirements</h4>
-                        <p className="view-modal-desc-text">
-                            {assignment.description}
-                        </p>
+                {/* Primary Description Area */}
+                <div className="view-modal-desc-box">
+                    <h4 className="view-modal-desc-title">Description & Requirements</h4>
+                    <p className="view-modal-desc-text">{assignment.description}</p>
+                </div>
+
+                {/* Warning Banner - only shown if already submitted */}
+                {isLocked && (
+                    <div className="view-modal-locked-banner">
+                        <strong className="locked-text-strong">✓ Submission Locked:</strong>
+                        <span className="locked-text-sub">Your code has been deployed and is currently evaluating.</span>
                     </div>
-
-                    {isLocked && (
-                        <div className="view-modal-locked-banner">
-                            <strong className="locked-text-strong">✓ Submission Locked:</strong>
-                            <span className="locked-text-sub">Your code has been deployed and is currently evaluating.</span>
-                        </div>
-                    )}
-                </div>
-                
-                <div className="view-modal-footer">
-                    <button className="btn-glass-action" onClick={onClose}>Close Viewer</button>
-                </div>
+                )}
             </div>
-        </div>
+            
+            {/* 🌟 FOOTER REMOVED from here for a cleaner, non-redundant UI */}
+        </BaseModal>
     );
 };
 

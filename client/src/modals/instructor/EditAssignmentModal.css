@@ -1,233 +1,42 @@
-/* =========================================
-   EDIT ASSIGNMENT MODAL (FALSICODE THEME)
-   ========================================= */
+/* src/modals/instructor/EditAssignmentModal.css */
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6); /* Slightly dark overlay works for both themes */
-    backdrop-filter: blur(8px);
-    padding-top: 70px; /* Ensures modal is not flush with top of viewport */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: fadeIn 0.2s ease-out;
+.error-banner {
+    background-color: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px 15px; 
+    border-radius: 6px; margin-bottom: 15px; font-size: 13px; border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.modal-content {
-    background: var(--bg-card); /* Adapts to theme */
-    border: 1px solid var(--border-glass); /* Adapts to theme */
-    border-radius: 20px;
-    width: 100%;
-    max-width: 550px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-    transform: translateY(0);
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; 
-}
+.input-row { display: flex; gap: 20px; }
+.input-group { margin-bottom: 20px; display: flex; flex-direction: column; text-align: left; }
+.half-width { flex: 1; }
 
-/* Header Sections */
-.modal-header {
-    padding: 35px 40px 20px;
-    position: relative;
-    border-bottom: 1px solid var(--border-glass); /* Adapts to theme */
-}
+.input-group label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.modal-header h2 {
-    margin-top: 0;
-    margin-bottom: 10px !important;
-    font-size: 2.2rem !important; 
-    font-weight: 900;  
-    letter-spacing: -1px;
-    color: var(--text-hero); /* Adapts to theme */
+.styled-input {
+    width: 100%; padding: 14px; background: var(--bg-main); border: 1px solid var(--border-glass); 
+    color: var(--text-main); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 1rem; 
+    transition: all 0.2s ease; box-sizing: border-box; resize: vertical;
 }
+.styled-input:focus { outline: none; border-color: var(--accent-blue); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
 
-.modal-subtitle {
-    color: var(--text-dim); /* Adapts to theme */
-    margin: 0;
-    font-size: 0.95rem;
-}
+.dropdown-fix option { background-color: var(--bg-card); color: var(--text-main); }
+.hide-arrows::-webkit-outer-spin-button, .hide-arrows::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hide-arrows[type=number] { -moz-appearance: textfield; }
 
-.btn-close {
-    position: absolute;
-    top: 25px;
-    right: 30px;
-    background: none;
-    border: none;
-    color: var(--text-dim); /* Adapts to theme */
-    font-size: 1.8rem;
-    cursor: pointer;
-    line-height: 1;
-    transition: color 0.2s ease;
-}
+/* Edit Specific Footer Overrides */
+.edit-footer { justify-content: space-between !important; align-items: center; }
+.footer-right-actions { display: flex; gap: 12px; }
 
-.btn-close:hover {
-    color: var(--text-hero);
+.btn-delete {
+    background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); 
+    padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
+.btn-delete:hover:not(:disabled) { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
 
-/* Form Structure & Scrolling */
-.form-wrapper {
-    display: flex;
-    flex-direction: column;
-    max-height: 75vh;
-}
-
-.form-scroll-body {
-    padding: 25px 40px 20px; /* Matched top padding with Create Modal */
-    overflow-y: auto;
-}
-
-/* Sleek Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--border-glass);
-    border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--text-dim);
-}
-
-/* Form Layout (Side-by-side) */
-.form-row {
-    display: flex;
-    gap: 20px;
-}
-
-.half-width {
-    flex: 1;
-}
-
-/* Form Elements */
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.form-group label {
-    font-size: 0.85rem;
-    color: var(--text-dim); /* Adapts to theme */
-    margin-bottom: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    background: var(--bg-main); /* Adapts to theme */
-    border: 1px solid var(--border-glass); /* Adapts to theme */
-    color: var(--text-main); /* Adapts to theme */
-    padding: 14px;
-    border-radius: 12px;
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-}
-
-.form-group textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: var(--accent-blue);
-    background: var(--bg-card); /* Adapts to theme */
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-/* FIX: Dropdown Option Background */
-.dropdown-fix option {
-    background-color: var(--bg-card); /* Adapts to theme */
-    color: var(--text-main);
-}
-
-/* FIX: Hide Number Input Arrows */
-.hide-arrows::-webkit-outer-spin-button,
-.hide-arrows::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.hide-arrows[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* Modal Actions (Buttons pinned to bottom) */
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    padding: 25px 40px;
-    background: var(--bg-main); /* Adapts to theme */
-    border-top: 1px solid var(--border-glass); /* Adapts to theme */
-    margin-top: auto;
-}
-
-/* Cancel Button */
-.modal-actions button[type="button"] {
-    background: transparent;
-    color: var(--text-dim); /* Adapts to theme */
-    border: 1px solid var(--border-glass); /* Adapts to theme */
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.modal-actions button[type="button"]:hover {
-    background: var(--bg-card); /* Adapts to theme */
-    color: var(--text-hero);
-    border-color: var(--text-dim);
-}
-
-/* Primary Submit Button */
-.modal-actions button[type="submit"] {
-    background: var(--accent-blue);
-    color: white; /* Keep explicit white so text stays readable on blue */
-    border: none;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    transition: all 0.2s ease;
-}
-
-.modal-actions button[type="submit"]:hover:not(:disabled) {
-    background: #2563eb;
-    transform: translateY(-2px);
-}
-
-.modal-actions button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) {
+    .input-row { flex-direction: column; gap: 0; }
+    
+    /* Optimize the 3 buttons for mobile thumbs */
+    .edit-footer { flex-direction: column-reverse !important; gap: 12px; }
+    .footer-right-actions { display: flex; flex-direction: column-reverse; width: 100%; gap: 12px; }
+    .btn-delete, .footer-right-actions button { width: 100%; text-align: center; }
 }
