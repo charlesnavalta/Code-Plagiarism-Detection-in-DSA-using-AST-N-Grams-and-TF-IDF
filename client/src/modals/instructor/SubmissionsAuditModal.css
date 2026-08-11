@@ -21,11 +21,17 @@
 .stu-icon { width: 32px; height: 32px; background: var(--bg-main); color: var(--accent-blue); border: 1px solid var(--border-glass); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
 .code-box { background: var(--bg-main); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-glass); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-dim); display: inline-block; }
 
-.grade-input-group { display: flex; gap: 8px; align-items: center; }
+.grade-input-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .grade-input-small { width: 100px; padding: 10px; background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; transition: all 0.2s; }
 .grade-input-small:focus { outline: none; border-color: var(--status-green); background: rgba(16, 185, 129, 0.05); }
+
 .btn-save-grade { background: rgba(16, 185, 129, 0.1); color: var(--status-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; transition: all 0.2s; }
 .btn-save-grade:hover { background: var(--status-green); color: white; }
+
+/* 🌟 NEW: Resubmit Button Styles */
+.btn-allow-resubmit { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; transition: all 0.2s; }
+.btn-allow-resubmit:hover:not(:disabled) { background: #f59e0b; color: white; }
+.btn-allow-resubmit.unlocked, .btn-allow-resubmit:disabled { background: rgba(255, 255, 255, 0.05); color: var(--text-dim); border-color: var(--border-glass); cursor: not-allowed; }
 
 /* Analysis Report */
 .analysis-report-section { background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border-glass); padding-bottom: 20px; margin-top: 30px; overflow: hidden; }
@@ -78,7 +84,7 @@
         border: 1px solid var(--border-glass);
         border-radius: 14px;
         margin-bottom: 12px;
-        padding: 12px 16px; /* Reduced padding */
+        padding: 12px 16px; 
         box-sizing: border-box;
         position: relative;
     }
@@ -108,18 +114,21 @@
     .td-file { margin-bottom: 12px; }
     .code-box { padding: 4px 8px; font-size: 0.75rem; }
     
-    /* Tighter Input Group */
+    /* 🌟 ADJUSTED FOR 3 ITEMS ON MOBILE */
     .grade-input-group { 
         display: flex; 
         flex-direction: row;
+        flex-wrap: wrap; /* Allows the unlock button to drop to a new line if needed */
         width: 100%; 
         border-top: 1px solid rgba(255,255,255,0.05);
         padding-top: 12px;
         margin-top: 0;
+        gap: 8px;
     }
     
-    .grade-input-small { flex: 1; padding: 8px 12px; font-size: 0.8rem; } 
+    .grade-input-small { flex: 1; padding: 8px 12px; font-size: 0.8rem; min-width: 80px; } 
     .btn-save-grade { flex-shrink: 0; padding: 8px 16px; font-size: 0.7rem; }
+    .btn-allow-resubmit { flex-grow: 1; padding: 8px 16px; font-size: 0.7rem; text-align: center; }
 
     /* Fix Analysis Report Cards */
     .align-left-mobile { text-align: left !important; display: block; }

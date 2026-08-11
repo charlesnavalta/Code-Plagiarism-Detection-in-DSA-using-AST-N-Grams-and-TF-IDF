@@ -45,9 +45,22 @@ def get_instructor_classrooms():
     if not user or user.role != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
+    # Fetch all classrooms owned by this instructor
     classes = Classroom.query.filter_by(instructor_id=user.id).all()
-    class_list = [{"id": c.id, "name": c.name, "invite_code": c.invite_code} for c in classes]
-    return jsonify(class_list), 200 
+    
+    class_list = []
+    for c in classes:
+        # 🌟 THE FIX: Count the number of enrollments for this specific classroom
+        student_count = Enrollment.query.filter_by(classroom_id=c.id).count()
+        
+        class_list.append({
+            "id": c.id, 
+            "name": c.name, 
+            "invite_code": c.invite_code,
+            "student_count": student_count  # 🌟 Inject the count into the JSON payload
+        })
+        
+    return jsonify(class_list), 200
 
 @classrooms_bp.route('/<int:class_id>', methods=['GET'])
 @jwt_required()

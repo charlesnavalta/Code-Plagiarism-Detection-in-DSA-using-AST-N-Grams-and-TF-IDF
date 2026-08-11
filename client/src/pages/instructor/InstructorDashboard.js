@@ -48,9 +48,13 @@ const InstructorDashboard = () => {
     return (
         <InstructorWrapper>
             <div className="nexus-layout">
-                {/* --- Sidebar: Identity Node --- */}
+                {/* --- Sidebar: Identity --- */}
                 <aside className="nexus-sidebar fade-in-left">
-                    <div className="spatial-card profile-card">
+                    <div 
+                        className="spatial-card profile-card"
+                        onClick={() => navigate('/instructor/profile')} 
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="card-glass-layer"></div>
                         <div className="card-content">
                             <div className="avatar-hologram">
@@ -69,13 +73,6 @@ const InstructorDashboard = () => {
                         <div className="card-content">
                             <span className="stat-label">Active Classes</span>
                             <span className="stat-value">{classrooms.length}</span>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card stat-card delay-2">
-                        <div className="card-content">
-                            <span className="stat-label">Total Students</span>
-                            <span className="stat-value">{totalStudents}</span>
                         </div>
                     </div>
                 </aside>

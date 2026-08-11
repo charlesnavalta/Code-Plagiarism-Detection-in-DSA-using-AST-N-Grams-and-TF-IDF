@@ -38,7 +38,7 @@ const LandingPage = () => {
                         <span className="text-gradient">Analyze the Algorithm.</span>
                     </h1>
                     <p className="hero-subtitle">
-                        An advanced structural plagiarism engine for Python and Java. Falsicode uses AST and TF-IDF to expose copied logic—even when variables, comments, and formatting are completely disguised.
+                        An advanced structural plagiarism engine for Python and Java. Falsicode uses AST and TF-IDF to expose copied logic even when variables, comments, and formatting are completely disguised.
                     </p>
                     
                     <div className="hero-action-group desktop-only">
@@ -48,7 +48,6 @@ const LandingPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>
                         </button>
-                        <span className="hero-microcopy">Secure platform for instructors and students.</span>
                     </div>
                 </div>
 

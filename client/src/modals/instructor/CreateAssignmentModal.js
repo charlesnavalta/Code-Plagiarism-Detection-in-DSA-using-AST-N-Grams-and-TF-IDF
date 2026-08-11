@@ -9,12 +9,27 @@ import BaseModal from '../shared/BaseModal';
 
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
     const [errorMessage, setErrorMessage] = useState("");
+    const [guideFiles, setGuideFiles] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!isOpen) return null;
+
+    // 🌟 Strict File Limit Handler
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length > 3) {
+            alert("You can only upload a maximum of 3 guide files.");
+            e.target.value = null; // Reset the input field
+            setGuideFiles([]);
+            return;
+        }
+        setGuideFiles(selectedFiles);
+    };
 
     const handleCreateAssignment = async (e) => {
         e.preventDefault();
         setErrorMessage(""); 
+        setIsSubmitting(true);
 
         const title = e.target.title.value;
         const description = e.target.description.value;
@@ -25,24 +40,43 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         const validationError = validateAssignmentDescription(description);
         if (validationError) {
             setErrorMessage(validationError);
+            setIsSubmitting(false);
             return;
         }
 
+        // 🌟 Construct FormData to handle multipart/form-data file uploads
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('max_score', max_score);
+        formData.append('language', language);
+        if (deadline) formData.append('deadline', deadline);
+
+        // Append each file safely to the array
+        guideFiles.forEach((file) => {
+            formData.append('files', file);
+        });
+
         try {
-            const res = await api.post(`/classrooms/${classroomId}/assignments`, { 
-                title, description, max_score: parseInt(max_score), language, deadline: deadline || null 
-            });
+            // Axios will automatically configure the multipart boundaries
+            const res = await api.post(`/classrooms/${classroomId}/assignments`, formData);
             onAssignmentCreated(res.data.assignment); 
+            
+            // Cleanup state and UI
             setErrorMessage("");
+            setGuideFiles([]);
             e.target.reset();
             onClose(); 
         } catch (error) {
-            setErrorMessage("Failed to create assignment. Please try again.");
+            setErrorMessage(error.response?.data?.error || "Failed to create assignment. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     const handleClose = () => {
         setErrorMessage(""); 
+        setGuideFiles([]);
         onClose();
     };
 
@@ -85,10 +119,28 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                             </select>
                         </div>
                     </div>
+
+                    {/* 🌟 File Upload Input */}
+                    <div className="input-group" style={{ marginTop: '16px' }}>
+                        <label>Guide Files (Max 3)</label>
+                        <input 
+                            type="file" 
+                            multiple 
+                            onChange={handleFileChange} 
+                            className="styled-input file-input"
+                            accept=".pdf,.txt,.docx,.zip,.png,.jpg,.py,.java" 
+                            style={{ padding: '10px' }}
+                        />
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '6px', display: 'block' }}>
+                            Upload rubrics, templates, or instructions to guide the students.
+                        </span>
+                    </div>
                 </div>
                 
                 <div className="hud-modal-footer">
-                    <button type="submit" className="btn-hud-run">Create Assignment</button>
+                    <button type="submit" className="btn-hud-run" disabled={isSubmitting}>
+                        {isSubmitting ? "Creating..." : "Create Assignment"}
+                    </button>
                 </div>
             </form>
         </BaseModal>

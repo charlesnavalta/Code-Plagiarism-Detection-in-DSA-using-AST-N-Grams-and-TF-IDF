@@ -174,12 +174,13 @@ class Submission(db.Model):
     score = db.Column(db.String(20), nullable=True)
     max_score = db.Column(db.Integer, nullable=True, default=100)
     
+    # 🌟 NEW: The Resubmission Gatekeeper
+    allow_resubmit = db.Column(db.Boolean, default=False)
+    
     # File Storage Data
     filename = db.Column(db.String(255), nullable=False)  
     file_path = db.Column(db.String(255), nullable=False) 
     
-    # --- 🌟 EXISTING: Submission Timestamp ---
-    # This automatically records the exact UTC time the row is created in the database.
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -193,16 +194,43 @@ class Submission(db.Model):
         self.file_path = file_path
 
     def to_dict(self):
-        """Helper to serialize submission data, including the exact timestamp of submission."""
+        """Helper to serialize submission data."""
         return {
             'id': self.id,
             'assignment_id': self.assignment_id,
             'student_id': self.student_id,
             'score': self.score,
             'filename': self.filename,
-            # Format the datetime object to a string format React can parse easily
+            'allow_resubmit': self.allow_resubmit, # 🌟 Send this state to React
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
         }
 
     def __repr__(self):
-        return f'<Submission {self.filename} | Time: {self.submitted_at}>'
+        return f'<Submission {self.filename} | Time: {self.submitted_at} | Resubmit: {self.allow_resubmit}>'
+
+# ==============================================================================
+# 🌟 NEW: ASSIGNMENT ATTACHMENT MODEL (Instructor Guide Files)
+# ==============================================================================
+class AssignmentAttachment(db.Model):
+    __tablename__ = 'assignment_attachments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
+    
+    filename = db.Column(db.String(255), nullable=False)  
+    file_path = db.Column(db.String(255), nullable=False) 
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'filename': self.filename,
+            'url': f"/api/files/attachments/{self.id}" # We will create this route later to serve the file
+        }
+
+# --- Inside your existing Assignment class ---
+# Add this relationship line right below the classroom relationship:
+# attachments = db.relationship('AssignmentAttachment', backref='assignment', lazy=True, cascade="all, delete-orphan")
+
+# Also, update the to_dict() method in the Assignment class to include the files:
+# 'attachments': [att.to_dict() for att in self.attachments] if hasattr(self, 'attachments') else []

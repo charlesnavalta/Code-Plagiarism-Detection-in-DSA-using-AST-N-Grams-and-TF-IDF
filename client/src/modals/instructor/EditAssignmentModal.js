@@ -29,6 +29,19 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
 
     if (!isOpen || !assignment) return null;
 
+    // 🌟 SECURE OPEN IN NEW TAB HANDLER FOR INSTRUCTORS
+    const handleOpenInNewTab = async (attachment) => {
+        try {
+            const response = await api.get(attachment.url, { responseType: 'blob' });
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const blobUrl = window.URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
+        } catch (error) {
+            console.error("Failed to open file:", error);
+            alert("Failed to securely open the file preview.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage(''); 
@@ -92,6 +105,34 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
                         <label>Task Description</label>
                         <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="styled-input" rows="3" required></textarea>
                     </div>
+
+                    {/* 🌟 EXISTING ATTACHMENTS VIEW AREA */}
+                    {assignment.attachments && assignment.attachments.length > 0 && (
+                        <div className="input-group">
+                            <label>Current Guide Files</label>
+                            <div className="attachments-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px' }}>
+                                {assignment.attachments.map(att => (
+                                    <button 
+                                        type="button"
+                                        key={att.id} 
+                                        className="attachment-pill" 
+                                        onClick={() => handleOpenInNewTab(att)}
+                                        title={`View ${att.filename} in new tab`}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: '6px',
+                                            background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)',
+                                            padding: '6px 12px', borderRadius: '6px', color: '#e2e8f0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600
+                                        }}
+                                    >
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                        <span>{att.filename}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="input-group">
                         <DateTimePicker label="Deadline" value={deadline} onChange={(e) => setDeadline(e.target.value)} />

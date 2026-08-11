@@ -56,15 +56,19 @@ const StudentClassroomView = () => {
 
     const handleOpenSubmission = (assignment) => {
         const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
-        if (assignment.has_submitted || isOverdue) return; 
+        const isUnlocked = assignment.allow_resubmit;
+        
+        // 🌟 THE FIX: Only block the modal if they are NOT allowed to resubmit
+        if ((assignment.has_submitted && !isUnlocked) || (isOverdue && !isUnlocked)) return; 
         
         setActiveAssignment(assignment);
         setShowSubmitModal(true);
     };
 
     const handleSubmissionSuccess = (assignmentId) => {
+        // 🌟 THE FIX: Instantly lock the assignment again locally after a successful resubmit
         setAssignments(assignments.map(a => 
-            a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
+            a.id === assignmentId ? { ...a, has_submitted: true, allow_resubmit: false, score: 'Pending' } : a
         ));
     };
 
@@ -122,14 +126,23 @@ const StudentClassroomView = () => {
                         {assignments.map((assignment, idx) => {
                             const isSubmitted = assignment.has_submitted;
                             const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
-                            const isDisabled = isSubmitted || isOverdue; 
+                            
+                            // 🌟 THE FIX: Read the flag from the backend
+                            const isUnlocked = assignment.allow_resubmit; 
+                            
+                            // Only disable the card if they are completely locked out
+                            const isDisabled = (isSubmitted && !isUnlocked) || (isOverdue && !isUnlocked); 
                             
                             const language = formatLanguageDisplay(assignment.language);
                             
                             // Determine dynamic status classes
                             let statusClass = 'badge-pending';
                             let statusText = 'Pending';
-                            if (isSubmitted) {
+                            
+                            if (isUnlocked) {
+                                statusClass = 'badge-unlocked'; // Custom styling for unlocked state
+                                statusText = 'Resubmit Requested';
+                            } else if (isSubmitted) {
                                 statusClass = 'badge-submitted';
                                 statusText = 'Turned In';
                             } else if (isOverdue) {
@@ -137,10 +150,16 @@ const StudentClassroomView = () => {
                                 statusText = 'Overdue';
                             }
 
+                            // Dynamic Button Text
+                            let buttonText = 'Initialize Source File →';
+                            if (isUnlocked) buttonText = 'Resubmit Source File →';
+                            else if (isSubmitted) buttonText = 'Your work has been submitted.';
+                            else if (isOverdue) buttonText = 'Deadline Passed';
+
                             return (
                                 <div 
                                     key={assignment.id} 
-                                    className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''}`}
+                                    className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''} ${isUnlocked ? 'unlocked-card' : ''}`}
                                     onClick={() => setViewAssignment(assignment)}
                                 >
                                     <div className="assignment-meta-top">
@@ -155,7 +174,7 @@ const StudentClassroomView = () => {
                                     <h3>{assignment.title}</h3>
                                     <p>{assignment.description}</p>
                                     
-                                    <div className={`deadline-row ${isOverdue && !isSubmitted ? 'deadline-missed' : ''}`}>
+                                    <div className={`deadline-row ${isOverdue && !isSubmitted && !isUnlocked ? 'deadline-missed' : ''}`}>
                                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
@@ -166,7 +185,7 @@ const StudentClassroomView = () => {
                                         <div className="score-display">
                                             {isSubmitted ? (
                                                 <>
-                                                    <span className="score-label">FALSICODE SCORE</span>
+                                                    <span className="score-label">SCORE</span>
                                                     <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
                                                         {assignment.score}
                                                     </span>
@@ -180,14 +199,14 @@ const StudentClassroomView = () => {
                                         </div>
 
                                         <button 
-                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'}`} 
+                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'} ${isUnlocked ? 'btn-pulse' : ''}`} 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenSubmission(assignment);
                                             }}
                                             disabled={isDisabled}
                                         >
-                                            {isSubmitted ? 'Node Locked' : isOverdue ? 'Deadline Passed' : 'Initialize Source File →'}
+                                            {buttonText}
                                         </button>
                                     </div>
                                 </div>

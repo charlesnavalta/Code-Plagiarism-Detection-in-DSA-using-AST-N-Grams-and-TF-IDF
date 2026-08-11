@@ -89,6 +89,36 @@
 .btn-glass-action.btn-active:hover { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.05); }
 .btn-disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* 🌟 Resubmission Alert Styles */
+.badge-unlocked {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    animation: pulse-border 2s infinite;
+}
+
+.unlocked-card {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+.btn-pulse {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+.btn-pulse:hover {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+
 /* =========================================
    💻 TABLETS (Max Width: 1024px)
    ========================================= */

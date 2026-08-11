@@ -1,16 +1,5 @@
-/* src/student/components/StudentDashboard.css */
-
-/* --- CORE APP-LIKE RESETS --- */
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-button {
-    user-select: none;
-    -webkit-user-select: none;
-}
-
 /* =========================================
-   NEXUS CORE THEME
+   NEXUS CORE THEME (Clean & Premium)
    ========================================= */
 .nexus-wrapper {
     --bg-app: #030712;
@@ -21,14 +10,6 @@ button {
     --accent: #3b82f6;
     --blob-1: rgba(59, 130, 246, 0.1);
     --blob-2: rgba(139, 92, 246, 0.1);
-    
-    background-color: var(--bg-app);
-    color: var(--text-main);
-    min-height: 100vh;
-    font-family: 'Inter', system-ui, sans-serif;
-    position: relative;
-    overflow-x: hidden;
-    transition: background-color 0.5s ease;
 }
 
 .nexus-wrapper.light {
@@ -40,6 +21,16 @@ button {
     --accent: #2563eb;
     --blob-1: rgba(59, 130, 246, 0.1);
     --blob-2: rgba(139, 92, 246, 0.1);
+}
+
+.nexus-wrapper {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    min-height: calc(100vh - 65px);
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease;
 }
 
 /* Background Aurora Blobs */
@@ -61,6 +52,7 @@ button {
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .spatial-card::after {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.05), transparent 40%);
@@ -87,31 +79,24 @@ button {
 .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; display: block; }
 .stat-value { font-size: 2rem; font-weight: 900; line-height: 1; }
 
+/* FIX: ACTION BANNER (Gradients & Visibility) */
 .nexus-main { flex-grow: 1; display: flex; flex-direction: column; gap: 40px; }
 
-/* =========================================
-   🌟 STUDENT HERO BANNER & FORM
-   ========================================= */
-.cinematic-banner-shared {
+.action-banner-nexus {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
     border: none !important;
     box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
 }
 
-.student-hero-banner { padding: 48px; border-radius: 30px; }
-.banner-content { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.banner-text h1 { color: #ffffff; font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 900; margin: 0 0 4px 0; letter-spacing: -1.5px; }
-.banner-subtitle { color: rgba(255, 255, 255, 0.8); font-size: 0.95rem; margin: 0; }
+.banner-content { padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+.banner-text h1 { color: #ffffff !important; font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; margin: 0 0 10px; }
+.banner-text p { color: rgba(255, 255, 255, 0.8) !important; margin: 0; font-size: 1.1rem; }
 
-.nexus-join-form { display: flex; gap: 8px; background: rgba(0, 0, 0, 0.15); padding: 8px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(20px); align-items: center; }
-.input-with-icon { position: relative; display: flex; align-items: center; }
-.nexus-input { background: transparent !important; border: none !important; color: #ffffff !important; padding: 12px 20px; outline: none !important; width: 240px; font-size: 1rem; }
-.code-input { font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; text-transform: uppercase; }
-.nexus-input::placeholder { color: rgba(255, 255, 255, 0.5) !important; letter-spacing: normal; text-transform: none; }
-
-.nexus-btn-primary { background: #ffffff !important; color: #4f46e5 !important; border: none !important; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
-.nexus-btn-primary:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-.desktop-only { display: block; }
+.nexus-join-form { display: flex; gap: 12px; background: rgba(0, 0, 0, 0.15); padding: 8px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(20px); }
+.nexus-input { background: transparent !important; border: none !important; color: #ffffff !important; padding: 12px 24px; outline: none !important; width: 160px; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
+.nexus-input::placeholder { color: rgba(255, 255, 255, 0.5) !important; letter-spacing: 0; }
+.nexus-btn-primary { background: #ffffff !important; color: #4f46e5 !important; border: none !important; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.nexus-btn-primary:hover { transform: scale(1.05); }
 
 /* COURSE CARDS */
 .section-title-block { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
@@ -123,7 +108,7 @@ button {
 .course-title { font-size: 1.3rem; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
 
 .instructor-tag-nexus { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-.ins-mini-avatar { width: 28px; height: 28px; background: rgba(125, 125, 125, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+.ins-mini-avatar { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
 .ins-name { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
 
 .course-footer-nexus { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
@@ -131,140 +116,90 @@ button {
 .arrow-icon { transition: transform 0.3s ease; }
 .course-card:hover .arrow-icon { transform: translateX(5px); }
 
-/* --- Recent Submissions History Feed --- */
-.history-card { min-height: 200px; }
-.submission-history-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-.history-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s ease; }
-.history-item:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); transform: translateX(2px); }
-.history-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-.history-title { font-size: 13px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-.history-date { font-size: 11px; color: var(--text-dim); }
-
-.light .history-item { background: #f9fafb; border: 1px solid #e5e7eb; }
-.light .history-item:hover { background: #f3f4f6; border-color: #d1d5db; }
-
 /* ANIMATIONS */
 .fade-in-left { animation: slideRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
 .fade-in-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
 @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
 
-/* =========================================
-   📱 TABLET & MOBILE RESPONSIVE ENGINE
-   ========================================= */
-
-/* Tablets & Small Laptops (Max Width: 1024px) */
 @media (max-width: 1024px) {
-    .nexus-layout { flex-direction: column; padding-top: 40px; }
-    
-    /* Student Sidebar goes horizontal: Profile takes full top width, Stats/History go side-by-side */
-    .nexus-sidebar { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .profile-card { grid-column: 1 / -1; }
-    
-    /* Adapt Banner for Tablet */
-    .student-hero-banner { padding: 40px 30px; }
-    .banner-content { flex-direction: column; text-align: center; align-items: center; gap: 24px; }
-    .banner-text h1 { text-align: center; }
-    .desktop-only { display: none; }
-    
-    .nexus-join-form { width: 100%; justify-content: space-between; }
-    .nexus-input { flex-grow: 1; }
+    .nexus-layout { flex-direction: column; }
+    .nexus-sidebar { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+    .banner-content { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .nexus-join-form { width: 100%; }
 }
 
-/* =========================================
-   📱 TABLET & MOBILE RESPONSIVE ENGINE
-   ========================================= */
-
-/* Tablets & Small Laptops (Max Width: 1024px) */
-@media (max-width: 1024px) {
-    .nexus-layout { flex-direction: column; padding-top: 40px; }
-    
-    /* Tablet Sidebar: Profile spans top, Stat & History sit side-by-side */
-    .nexus-sidebar { 
-        width: 100%; 
-        display: grid; 
-        grid-template-columns: 1fr 1.5fr; 
-        gap: 20px; 
-        align-items: start; 
-    }
-    .profile-card { grid-column: 1 / -1; }
-    .stat-card { height: 100%; }
-    .history-card { height: 100%; }
-    
-    /* Adapt Banner for Tablet */
-    .student-hero-banner { padding: 40px 30px; }
-    .banner-content { flex-direction: column; text-align: center; align-items: stretch; gap: 24px; }
-    .banner-text h1 { text-align: center; }
-    .desktop-only { display: none; }
-    
-    .nexus-join-form { width: 100%; justify-content: space-between; }
-    .nexus-input { flex-grow: 1; }
+/* --- Recent Submissions History Feed --- */
+.history-card {
+    min-height: 200px;
 }
 
-/* Mobile Devices (Max Width: 768px) */
+.submission-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px); /* Slight nudge effect */
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.history-title {
+    font-size: 13px;
+    color: #f3f4f6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.history-date {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* Light mode overrides for the history list */
+.light .history-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+.light .history-item:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+.light .history-title {
+    color: #1f2937;
+}
+.light .history-date {
+    color: #6b7280;
+}
+
+/* Add this to your Dashboard's main wrapper CSS */
 @media (max-width: 768px) {
-    .nexus-layout { 
-        display: flex;
-        flex-direction: column;
-        padding-top: 20px;
-        padding-bottom: 110px; /* 🌟 Crucial: Clears mobile bottom dock */
-        gap: 16px;
-        padding-left: 16px;
-        padding-right: 16px;
+    .your-dashboard-wrapper-class { /* Replace with your actual dashboard container class */
+        padding-bottom: 110px; /* Forces content to stop above the floating dock */
     }
-    
-    /* 🌟 THE MAGIC BULLET: Break the sidebar wrapper so we can reorder the items! */
-    .nexus-sidebar { display: contents; }
-
-    /* Visual Hierarchy Reordering */
-    .profile-card { order: 1; }
-    .stat-card    { order: 2; }
-    .nexus-main   { order: 3; display: flex; flex-direction: column; gap: 20px; width: 100%; }
-    .history-card { order: 4; margin-top: 10px; } /* Pushed completely below the main workspace */
-
-    /* 1. Profile Card: Sleek CSS Grid Horizontal Layout */
-    .profile-card .card-content { 
-        display: grid; 
-        grid-template-columns: auto 1fr; 
-        grid-template-areas: 
-            "avatar name"
-            "avatar role"
-            "avatar status";
-        column-gap: 16px; 
-        align-items: center; 
-        padding: 16px; 
-    }
-    .avatar-hologram { grid-area: avatar; margin: 0; width: 50px; height: 50px; }
-    .avatar-core { width: 42px; height: 42px; font-size: 1.1rem; }
-    .profile-card .user-display-name { grid-area: name; margin: 0; font-size: 1.1rem; text-align: left; }
-    .profile-card .user-role-text { grid-area: role; margin: 0; font-size: 0.75rem; text-align: left; }
-    .profile-card .system-status { grid-area: status; justify-content: flex-start; margin-top: 4px; }
-    
-    /* 2. Stat Card: Compressed Horizontal Row */
-    .stat-card .card-content { 
-        display: flex; 
-        flex-direction: row; 
-        justify-content: space-between; 
-        align-items: center; 
-        padding: 16px 20px; 
-    }
-    .stat-label { margin-bottom: 0; font-size: 0.75rem; text-align: left; border: none; padding: 0; }
-    .stat-value { font-size: 1.5rem; }
-
-    /* 3. HERO BANNER OVERHAUL */
-    .student-hero-banner { padding: 24px 20px; border-radius: 20px; }
-    .banner-content { gap: 16px; }
-    .banner-text h1 { font-size: 1.8rem; margin-bottom: 0; }
-
-    /* Transform the form from a Pill to a Stacked Card */
-    .nexus-join-form { flex-direction: column; width: 100%; border-radius: 16px; padding: 12px; gap: 8px; background: rgba(0, 0, 0, 0.2); }
-    .input-with-icon { width: 100%; }
-    .nexus-input { width: 100%; text-align: center; font-size: 16px; background: rgba(0, 0, 0, 0.2) !important; border-radius: 10px !important; padding: 12px 16px; }
-    .nexus-btn-primary { width: 100%; padding: 14px; border-radius: 10px; font-size: 1rem; }
-
-    /* Tactile native feedback */
-    .nexus-btn-primary:active { transform: scale(0.96); }
-    .course-card:active { transform: scale(0.98); border-color: var(--accent); }
-
-    .classroom-grid { grid-template-columns: 1fr; }
 }

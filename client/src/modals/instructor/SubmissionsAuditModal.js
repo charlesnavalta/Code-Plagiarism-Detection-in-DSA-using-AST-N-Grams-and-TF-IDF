@@ -10,6 +10,7 @@ import BaseModal from '../shared/BaseModal';
 const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, isAnalyzing, onRunAnalysis, classroomId, assignmentId }) => {
     const [selectedPair, setSelectedPair] = useState(null);
     const [gradeInputs, setGradeInputs] = useState({}); 
+    const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
 
     if (!isOpen) {
         if (selectedPair) setSelectedPair(null);
@@ -30,6 +31,16 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
         }
     };
 
+    // Handler for the Resubmit Button
+    const handleAllowResubmit = async (submissionId) => {
+        try {
+            await api.patch(`/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${submissionId}/allow-resubmit`);
+            setUnlockedIds(prev => [...prev, submissionId]); // Instantly updates the UI
+        } catch (error) {
+            alert("Failed to unlock resubmission. Please check your connection.");
+        }
+    };
+
     return (
         <BaseModal 
             isOpen={isOpen} 
@@ -42,44 +53,59 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
                 {!selectedPair ? (
                     <>
                         <div className="table-responsive-wrapper">
-                            {/* 🌟 Added 'responsive-card-table' class here */}
                             <table className="falsicode-table-hud responsive-card-table">
                                 <thead>
                                     <tr>
                                         <th style={{width: '40px'}} className="hide-mobile"></th>
                                         <th>STUDENT IDENTITY</th>
                                         <th>SOURCE FILE</th>
-                                        <th style={{width: '180px'}}>ASSIGN GRADE</th>
+                                        {/* 🌟 Widened from 280px to 380px to fit everything on one line */}
+                                        <th style={{width: '380px'}}>ACTIONS</th> 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {submissions.map(sub => (
-                                        <tr key={sub.id}>
-                                            <td className="status-cell hide-mobile">
-                                                <div className="status-dot yellow"></div>
-                                            </td>
-                                            <td className="td-student">
-                                                <div className="hud-stu-cell">
-                                                    <div className="stu-icon">{sub.student_name.charAt(0)}</div>
-                                                    <strong>{sub.student_name}</strong>
-                                                </div>
-                                            </td>
-                                            <td className="td-file">
-                                                <code className="code-box">{sub.filename}</code>
-                                            </td>
-                                            <td className="td-action">
-                                                <div className="grade-input-group">
-                                                    <input 
-                                                        type="text" className="grade-input-small" 
-                                                        placeholder={sub.score && sub.score !== 'Pending' ? sub.score : "e.g. 45/50"}
-                                                        value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
-                                                        onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
-                                                    />
-                                                    <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>Save</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {submissions.map(sub => {
+                                        const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
+                                        
+                                        return (
+                                            <tr key={sub.id}>
+                                                <td className="status-cell hide-mobile">
+                                                    <div className="status-dot yellow"></div>
+                                                </td>
+                                                <td className="td-student">
+                                                    <div className="hud-stu-cell">
+                                                        <div className="stu-icon">{sub.student_name.charAt(0)}</div>
+                                                        <strong>{sub.student_name}</strong>
+                                                    </div>
+                                                </td>
+                                                <td className="td-file">
+                                                    <code className="code-box">{sub.filename}</code>
+                                                </td>
+                                                <td className="td-action">
+                                                    <div className="grade-input-group">
+                                                        <input 
+                                                            type="text" className="grade-input-small" 
+                                                            placeholder={sub.score && sub.score !== 'Pending' ? sub.score : "e.g. 45/50"}
+                                                            value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
+                                                            onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
+                                                        />
+                                                        <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>Save</button>
+                                                        
+                                                        {/* 🌟 Updated Button Text & Added whiteSpace nowrap */}
+                                                        <button 
+                                                            className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                            onClick={() => handleAllowResubmit(sub.id)}
+                                                            disabled={isUnlocked}
+                                                            title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
+                                                            style={{ whiteSpace: 'nowrap' }}
+                                                        >
+                                                            {isUnlocked ? 'Waiting' : 'Allow Resubmit'}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>

@@ -44,13 +44,21 @@ const StudentDashboard = () => {
     const handleJoinClass = async (e) => {
         e.preventDefault();
         if (!inviteCode.trim() || inviteCode.length !== 6) return alert("Security Notice: Invalid code.");
+        
         try {
             const res = await api.post('/classrooms/join', { invite_code: inviteCode });
-            alert(res.data.message);
+            alert(res.data.message || "Successfully joined the classroom!");
             setInviteCode('');
             fetchDashboardData();
         } catch (error) { 
-            alert("Protocol failure: Unable to join classroom."); 
+            // 🌟 Extract the specific error message from the backend (e.g., "Already enrolled")
+            const backendError = error.response?.data?.error || error.response?.data?.message;
+            
+            if (backendError) {
+                alert(`Notice: ${backendError}`);
+            } else {
+                alert("Protocol failure: Unable to join classroom. Please check the code and try again."); 
+            }
         }
     };
 

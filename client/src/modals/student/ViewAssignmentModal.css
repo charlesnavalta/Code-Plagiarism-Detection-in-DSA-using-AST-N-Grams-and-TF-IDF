@@ -25,6 +25,61 @@
     margin: 0; color: #e2e8f0; line-height: 1.6; white-space: pre-wrap; font-size: 0.95rem;
 }
 
+/* 🌟 NEW: ATTACHMENTS STYLES */
+.view-modal-attachments-box {
+    background: rgba(0, 0, 0, 0.2); 
+    padding: 20px; 
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 16px;
+}
+
+.attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.attachment-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.attachment-pill:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.attachment-pill:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.attachment-icon {
+    color: #3b82f6;
+}
+
+.attachment-name {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .view-modal-locked-banner {
     margin-top: 20px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981;
     padding: 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px;
@@ -32,9 +87,116 @@
 .locked-text-strong { color: #10b981; font-size: 0.9rem; font-weight: 800; white-space: nowrap;}
 .locked-text-sub { color: #a7f3d0; font-size: 0.85rem; line-height: 1.4; }
 
+/* 🌟 Optional: Widen the modal slightly if a preview is open to give the document room */
+.wide-preview-modal { max-width: 900px !important; transition: max-width 0.3s ease; }
+
+.attachment-pill.active {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.attachment-pill.active .attachment-icon {
+    color: #10b981;
+}
+
+/* 🌟 Preview Container Styles */
+.preview-container {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-glass, rgba(255,255,255,0.1));
+    border-radius: 12px;
+    overflow: hidden;
+    animation: slideDown 0.3s ease;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preview-filename {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-preview-dl {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-preview-dl:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-preview-close {
+    background: transparent;
+    color: #9ca3af;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.btn-preview-close:hover {
+    color: #ef4444;
+}
+
+.preview-content-box {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000; /* Contrast for documents */
+}
+
+.preview-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white; /* Forces PDFs and text files to have a readable background */
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .preview-content-box { height: 350px; }
+}
+
 @media (max-width: 768px) {
     .view-modal-title { font-size: 1.2rem !important; }
     .view-modal-badges { flex-wrap: wrap; }
-    .view-modal-desc-box { padding: 16px; }
+    .view-modal-desc-box, .view-modal-attachments-box { padding: 16px; }
     .view-modal-locked-banner { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .attachment-name { max-width: 150px; }
 }
+
