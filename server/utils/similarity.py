@@ -1,4 +1,5 @@
 import difflib
+from collections import Counter
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -17,8 +18,21 @@ import numpy as np
 # RAW_IDENTITY_TYPE1_THRESHOLD: how similar the actual variable names/literals
 # must be (in the matched region) before we call it verbatim copying (Type 1)
 # rather than renamed (Type 2).
+#
+# STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD: how much the AST *node-type* skeleton
+# (control flow, calls, subscripts, etc - excluding identifier/literal names)
+# is allowed to differ between the two files before we call it a structural
+# rewrite (Type 3) rather than a same-shape rename (Type 2). Calibrated
+# against labeled pairs: a pure rename produces ~0% divergence; a for->while
+# rewrite or an added range()/subscript indirection produces 20-50%+.
 ORDER_SIMILARITY_THRESHOLD = 80
 RAW_IDENTITY_TYPE1_THRESHOLD = 75
+STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD = 10
+
+# Token types that encode identifier/literal identity rather than code
+# structure. These are excluded when building a structural skeleton, since
+# renaming a variable should never by itself count as a structural change.
+STRUCTURAL_IGNORE_TYPES = {"Name_ID", "Constant_CONST"}
 
 
 def _get_raw_value(token):
@@ -61,19 +75,69 @@ def get_ordered_shared_sequence(tokens, shared_set, n):
     return seq
 
 
-def classify_plagiarism_type(status, raw_identity_score, order_similarity_score):
+def get_structural_skeleton(tokens, flagged_lines=None):
+    """Builds the ordered sequence of AST node TYPES (e.g. For, While, Call_CALL,
+    Subscript) restricted to the flagged/matched lines, with identifier and
+    literal tokens stripped out.
+
+    This is the counterpart to get_raw_identity_signature: that function looks
+    at *what the names/values are* (Type 1 vs Type 2), this one looks at *what
+    shape the code takes* (Type 2 vs Type 3). Unlike get_ordered_shared_sequence,
+    this is NOT filtered down to only shared n-grams first - it keeps every
+    structural token, including ones that only appear in one file. That's
+    deliberate: an inserted range()/subscript/while-loop that only exists in
+    one file is exactly the signal we need, and pre-filtering to shared n-grams
+    (as the order-similarity signal does) throws that signal away before we
+    ever get to look at it.
+    """
+    if flagged_lines is not None:
+        tokens = [t for t in tokens if t[1] in flagged_lines]
+    return [t[0] for t in tokens if t[0] not in STRUCTURAL_IGNORE_TYPES]
+
+
+def structural_divergence(skeleton_i, skeleton_j):
+    """Compares two structural skeletons using a type/count fingerprint
+    (a multiset difference) rather than a sequence-alignment ratio.
+
+    Why not just diff the sequences? Because difflib's ratio is forgiving of
+    insertions in short files - two skeletons that share a long common
+    subsequence can score 85-90% "similar" even when one of them has extra
+    control-flow nodes (an added while-loop, an added subscript/range() call)
+    that the other doesn't have at all. Counting *how many* of each node type
+    exist in each file and comparing the multisets catches that directly:
+    a pure rename produces a perfect type/count match (0% divergence), while
+    any added/removed/swapped control-flow construct shows up immediately as
+    a count mismatch, regardless of where in the sequence it sits.
+    """
+    fp_i, fp_j = Counter(skeleton_i), Counter(skeleton_j)
+    all_types = set(fp_i) | set(fp_j)
+    total = sum(max(fp_i.get(t, 0), fp_j.get(t, 0)) for t in all_types)
+    if total == 0:
+        return 0.0
+    diff = sum(abs(fp_i.get(t, 0) - fp_j.get(t, 0)) for t in all_types)
+    return round((diff / total) * 100, 2)
+
+
+def classify_plagiarism_type(status, raw_identity_score, order_similarity_score, struct_divergence_score):
     """Exclusive single-label classification: every pair gets exactly one
     of Type 1, Type 2, Type 3, or N/A.
 
-    Order matters here: we check structural reordering FIRST. If the shared
-    content has been reordered, split up, or interleaved with inserted/deleted
-    statements, that's a stronger/more specific signal than naming similarity,
-    so it takes precedence over the Type 1 vs Type 2 distinction.
+    Order matters here: we check structural reordering/rewriting FIRST. If
+    the shared content has been reordered, split up, interleaved with
+    inserted/deleted statements (order_similarity_score), OR the AST
+    skeleton itself has diverged - control flow added/removed/swapped, like
+    for-loop -> while-loop, or a direct iteration rewritten with an added
+    range()/subscript indirection (struct_divergence_score) - that's a
+    stronger/more specific signal than naming similarity, so it takes
+    precedence over the Type 1 vs Type 2 distinction.
     """
     if status == "Low":
         return "N/A"
 
     if order_similarity_score < ORDER_SIMILARITY_THRESHOLD:
+        return "Type 3 (Reordered / Structurally Modified)"
+
+    if struct_divergence_score > STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD:
         return "Type 3 (Reordered / Structurally Modified)"
 
     if raw_identity_score >= RAW_IDENTITY_TYPE1_THRESHOLD:
@@ -201,6 +265,7 @@ def compare_all_files(file_data, ngram_bounds):
                     plagiarism_type = "N/A"
                     raw_identity_score = 0.0
                     order_similarity_score = 0.0
+                    struct_divergence_score = 0.0
 
                     if status in ("High", "Medium"):
                         # --- Raw identity signal (Type 1 vs Type 2) ---
@@ -227,7 +292,7 @@ def compare_all_files(file_data, ngram_bounds):
                                 difflib.SequenceMatcher(None, sig_i, sig_j).ratio() * 100, 2
                             )
 
-                        # --- Order/sequence signal (Type 3) ---
+                        # --- Order/sequence signal (Type 3, catches reordering/interleaving) ---
                         # Use the finest n-gram granularity for the most sensitive
                         # reordering signal.
                         order_n = ngram_bounds[0]
@@ -244,8 +309,22 @@ def compare_all_files(file_data, ngram_bounds):
                             # falsely trigger Type 3 on a data quirk.
                             order_similarity_score = 100.0
 
+                        # --- Structural skeleton signal (Type 3, catches control-flow rewrites) ---
+                        # Unlike order_similarity_score, this is NOT restricted to shared
+                        # n-grams first, so it can see structural tokens (an inserted
+                        # while-loop, an added range()/subscript) that exist in only one
+                        # file - exactly the case order_similarity_score alone misses.
+                        skeleton_i = get_structural_skeleton(tokens_i, flagged_lines_i)
+                        skeleton_j = get_structural_skeleton(tokens_j, flagged_lines_j)
+
+                        if not skeleton_i and not skeleton_j:
+                            skeleton_i = get_structural_skeleton(tokens_i)
+                            skeleton_j = get_structural_skeleton(tokens_j)
+
+                        struct_divergence_score = structural_divergence(skeleton_i, skeleton_j)
+
                         plagiarism_type = classify_plagiarism_type(
-                            status, raw_identity_score, order_similarity_score
+                            status, raw_identity_score, order_similarity_score, struct_divergence_score
                         )
 
                     # --- Format numeric match type for the frontend ---
@@ -309,6 +388,7 @@ def compare_all_files(file_data, ngram_bounds):
                         "plagiarism_type": plagiarism_type,
                         "raw_identity_score": raw_identity_score,
                         "order_similarity_score": order_similarity_score,
+                        "struct_divergence_score": struct_divergence_score,
                         "lines1": formatted_lines_i,
                         "lines2": formatted_lines_j,
                         "ast_xai_1": top_shared_patterns,

@@ -21,7 +21,7 @@ from routes.submissions import submissions_bp
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, supports_credentials=True, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
 
     # 1. Load configurations
     app.config.from_object('config.Config')
