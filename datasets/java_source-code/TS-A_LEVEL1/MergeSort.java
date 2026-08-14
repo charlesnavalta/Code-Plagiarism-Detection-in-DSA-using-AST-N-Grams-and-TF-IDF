@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class TS{
+public class MergeSort {
 
     public static int[] mergeSort(int[] arr) {
         // Base case: if array is size 0 or 1, it is already sorted
