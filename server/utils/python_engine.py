@@ -1,17 +1,18 @@
 import ast
 
 def find_dead_nodes_python(tree):
-    """
-    Iteratively prunes the AST to find unreachable functions and unused variables.
-    """
+    # Only top-level statements are exempt from being pruned as "unused" -
+    # module-scope function/class defs are the algorithm's public surface,
+    # not internal dead code, even if no __main__ block calls them.
+    top_level_ids = {id(n) for n in tree.body}
+
     dead_nodes = set()
     changed = True
-    
+
     while changed:
         changed = False
         used_names = set()
-        
-        # Pass 1: Gather all loaded (used) names from ALIVE nodes
+
         def visit_alive(node):
             if node in dead_nodes:
                 return
@@ -19,39 +20,39 @@ def find_dead_nodes_python(tree):
                 used_names.add(node.id)
             for child in ast.iter_child_nodes(node):
                 visit_alive(child)
-                
+
         visit_alive(tree)
-        
-        # Pass 2: Identify newly dead assignments or functions
+
         def check_dead(node):
             nonlocal changed
             if node in dead_nodes:
                 return
-                
+
             if isinstance(node, ast.FunctionDef):
-                # Keep dunder methods (like __init__) and anything that is actually called/used
-                if not node.name.startswith('__') and node.name not in used_names:
+                if (id(node) not in top_level_ids
+                        and not node.name.startswith('__')
+                        and node.name not in used_names):
                     dead_nodes.add(node)
                     changed = True
-                    
+
             elif isinstance(node, ast.Assign):
-                # Check if this assignment is ever used
-                is_dead = True
-                for t in node.targets:
-                    if isinstance(t, ast.Name):
-                        if t.id in used_names:
+                if id(node) not in top_level_ids:
+                    is_dead = True
+                    for t in node.targets:
+                        if isinstance(t, ast.Name):
+                            if t.id in used_names:
+                                is_dead = False
+                        else:
                             is_dead = False
-                    else:
-                        is_dead = False # Keep complex targets (e.g., tuple unpacking) safe
-                if is_dead:
-                    dead_nodes.add(node)
-                    changed = True
-                    
+                    if is_dead:
+                        dead_nodes.add(node)
+                        changed = True
+
             for child in ast.iter_child_nodes(node):
                 check_dead(child)
-                
+
         check_dead(tree)
-        
+
     return dead_nodes
 
 class ASTTokenExtractor(ast.NodeVisitor):
