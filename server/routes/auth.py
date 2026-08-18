@@ -114,36 +114,45 @@ def verify_otp():
 # ==============================================================================
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    
-    login_id = data.get('username') or data.get('email')
-    password = data.get('password')
-
-    user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
-
-    if user and user.check_password(password):
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid request. JSON body expected."}), 400
         
-        if not user.is_verified:
-            return jsonify({"error": "Please verify your email address before logging in."}), 403
+        login_id = data.get('username') or data.get('email')
+        password = data.get('password')
 
-        if user.status == 'pending':
-            return jsonify({"error": "Account pending Admin approval. Please check back later."}), 403
+        if not login_id or not password:
+            return jsonify({"error": "Username/Email and password are required."}), 400
 
-        access_token = create_access_token(identity=str(user.id))
-        return jsonify({
-            "access_token": access_token,
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "role": user.role,
-                # Safe fallback: Won't crash if the columns don't exist
-                "first_name": getattr(user, 'first_name', ''),
-                "last_name": getattr(user, 'last_name', '')
-            }
-        }), 200
+        user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
 
-    return jsonify({"error": "Invalid email or password"}), 401
+        if user and user.check_password(password):
+            if not user.is_verified:
+                return jsonify({"error": "Please verify your email address before logging in."}), 403
+
+            if user.status == 'pending':
+                return jsonify({"error": "Account pending Admin approval. Please check back later."}), 403
+
+            access_token = create_access_token(identity=str(user.id))
+            return jsonify({
+                "access_token": access_token,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": user.role,
+                    # Safe fallback: Won't crash if the columns don't exist
+                    "first_name": getattr(user, 'first_name', ''),
+                    "last_name": getattr(user, 'last_name', '')
+                }
+            }), 200
+
+        return jsonify({"error": "Invalid email or password"}), 401
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Authentication error: {str(e)}"}), 500
 
 
 # ==============================================================================

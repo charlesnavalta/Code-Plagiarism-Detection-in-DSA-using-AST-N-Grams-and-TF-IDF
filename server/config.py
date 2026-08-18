@@ -16,6 +16,10 @@ def get_database_uri():
             db_url = db_url.replace('mysql://', 'mysql+pymysql://', 1)
         elif db_url.startswith('postgres://'):
             db_url = db_url.replace('postgres://', 'postgresql://', 1)
+        
+        # Aiven appends ?ssl-mode=REQUIRED which causes PyMySQL kwargs errors; clean it safely
+        db_url = db_url.replace('?ssl-mode=REQUIRED', '').replace('&ssl-mode=REQUIRED', '')
+        db_url = db_url.replace('?ssl_mode=REQUIRED', '').replace('&ssl_mode=REQUIRED', '')
         return db_url
 
     # Fallback to individual variables for Docker / local development
