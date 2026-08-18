@@ -29,6 +29,7 @@ def create_app():
     allowed_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://falsicode.vercel.app",
     ]
     
     # Read CLIENT_URL or FRONTEND_URL from environment (support comma-separated values)
