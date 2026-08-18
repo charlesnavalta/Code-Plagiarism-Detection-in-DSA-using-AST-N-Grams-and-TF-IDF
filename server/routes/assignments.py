@@ -1,7 +1,10 @@
-from flask import Blueprint, request, jsonify
+import os
+from werkzeug.utils import secure_filename
+from flask import Blueprint, request, jsonify, current_app, send_file
 from database import db
-from models import User, Classroom, Assignment, Enrollment, Submission
+from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime, timedelta
 
 # Create a dedicated Blueprint for assignments
 assignments_bp = Blueprint('assignments', __name__)
@@ -9,7 +12,7 @@ assignments_bp = Blueprint('assignments', __name__)
 @assignments_bp.route('/<int:class_id>/assignments', methods=['POST'])
 @jwt_required()
 def create_assignment(class_id):
-    """Allows an instructor to create an assignment in a specific classroom"""
+    """Allows an instructor to create an assignment with up to 3 file attachments"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -20,38 +23,70 @@ def create_assignment(class_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
-    data = request.get_json()
+    # 🌟 Shift from get_json() to form data to support file uploads
+    data = request.form
     if not data or 'title' not in data:
         return jsonify({"error": "Assignment title is required."}), 400
 
+    parsed_deadline = None
+    if data.get('deadline'):
+        try:
+            parsed_deadline = datetime.fromisoformat(data.get('deadline').replace('Z', ''))
+            if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+                return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
+        except ValueError:
+            return jsonify({"error": "Invalid deadline format provided."}), 400
+
     new_assignment = Assignment(
-        title=data['title'],
+        title=data.get('title'),
         description=data.get('description', ''),
-        max_score=data.get('max_score', 100),
-        classroom_id=classroom.id
+        max_score=int(data.get('max_score', 100)),
+        classroom_id=classroom.id,
+        language=data.get('language', 'python').lower(),
+        deadline=parsed_deadline 
     )
     
     try:
         db.session.add(new_assignment)
+        db.session.flush() # Flushes to get the new_assignment.id before committing
+
+        # 🌟 Handle the Attachments (Max 3)
+        files = request.files.getlist('files')
+        if len(files) > 3:
+            return jsonify({"error": "Maximum of 3 guide files allowed."}), 400
+
+        for file in files:
+            if file and file.filename != '':
+                original_filename = secure_filename(file.filename)
+                # Prefix with assignment ID to prevent naming collisions
+                unique_filename = f"guide_assign_{new_assignment.id}_{original_filename}"
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+                
+                file.save(filepath)
+                
+                new_attachment = AssignmentAttachment(
+                    assignment_id=new_assignment.id,
+                    filename=original_filename,
+                    file_path=filepath
+                )
+                db.session.add(new_attachment)
+
         db.session.commit()
         return jsonify({
             "message": "Assignment created successfully!",
-            "assignment": {
-                "id": new_assignment.id,
-                "title": new_assignment.title,
-                "description": new_assignment.description,
-                "max_score": new_assignment.max_score
-            }
+            "assignment": new_assignment.to_dict() 
         }), 201
+        
     except Exception as e:
         db.session.rollback()
+        print(f"FALSICODE ERROR creating assignment: {e}")
         return jsonify({"error": "Database error occurred"}), 500
 
 
 @assignments_bp.route('/<int:class_id>/assignments', methods=['GET'])
 @jwt_required()
 def get_assignments(class_id):
-    """Fetches all assignments and attaches the student's submission status (One-Time Lock)"""
+    """Fetches all assignments and attaches the student's submission status and guide files"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -70,22 +105,165 @@ def get_assignments(class_id):
     
     assignments_data = []
     for a in assignments:
+        sub_count = Submission.query.filter_by(assignment_id=a.id).count()
+
+        # 🌟 THE FIX: Explicitly query the attachments table instead of relying on hasattr()
+        attachments_list = []
+        assignment_files = AssignmentAttachment.query.filter_by(assignment_id=a.id).all()
+        
+        for att in assignment_files:
+            attachments_list.append({
+                "id": att.id,
+                "filename": att.filename,
+                "url": f"/classrooms/{class_id}/attachments/{att.id}" 
+            })
+
         assignment_info = {
             "id": a.id,
             "title": a.title,
             "description": a.description,
             "max_score": a.max_score,
+            "language": a.language,
+            "deadline": a.deadline.isoformat() if a.deadline else None,
+            "submission_count": sub_count, 
             "has_submitted": False,
-            "score": None
+            "score": None,
+            "submitted_at": None,
+            "allow_resubmit": False,
+            "attachments": attachments_list # 🌟 Files are now guaranteed to be attached!
         }
 
-        # The new check: If student, see if they already uploaded a file
         if user.role == 'student':
             submission = Submission.query.filter_by(assignment_id=a.id, student_id=user.id).first()
             if submission:
                 assignment_info["has_submitted"] = True
                 assignment_info["score"] = getattr(submission, 'score', 'Pending')
+                assignment_info["submitted_at"] = submission.submitted_at.isoformat() if submission.submitted_at else None
+                assignment_info["allow_resubmit"] = getattr(submission, 'allow_resubmit', False)
                 
         assignments_data.append(assignment_info)
         
     return jsonify(assignments_data), 200
+
+
+@assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['PUT'])
+@jwt_required()
+def update_assignment(class_id, assignment_id):
+    """Allows an instructor to edit an existing assignment"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment or assignment.classroom_id != class_id:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
+    classroom = Classroom.query.get(class_id)
+    if not classroom or classroom.instructor_id != user.id:
+        return jsonify({"error": "Unauthorized to edit this assignment"}), 403
+
+    data = request.get_json()
+
+    if 'title' in data:
+        assignment.title = data['title']
+    if 'description' in data:
+        assignment.description = data['description']
+    if 'max_score' in data:
+        assignment.max_score = data['max_score']
+    if 'language' in data:
+        assignment.language = data['language'].lower()
+    
+    if 'deadline' in data:
+        if data['deadline']:
+            try:
+                parsed_deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+                if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+                    return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
+                assignment.deadline = parsed_deadline
+            except ValueError:
+                return jsonify({"error": "Invalid deadline format provided."}), 400
+        else:
+            assignment.deadline = None 
+
+    try:
+        db.session.commit()
+        response_data = assignment.to_dict()
+        response_data['submission_count'] = len(assignment.submissions) if hasattr(assignment, 'submissions') else 0
+        return jsonify({
+            "message": "Assignment updated successfully",
+            **response_data
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating assignment: {str(e)}")
+        return jsonify({"error": "Database error occurred while updating"}), 500
+
+
+@assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['DELETE'])
+@jwt_required()
+def delete_assignment(class_id, assignment_id):
+    """Allows an instructor to delete an existing assignment"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment or assignment.classroom_id != class_id:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
+    classroom = Classroom.query.get(class_id)
+    if not classroom or classroom.instructor_id != user.id:
+        return jsonify({"error": "Unauthorized to delete this assignment"}), 403
+
+    try:
+        db.session.delete(assignment)
+        db.session.commit()
+        return jsonify({
+            "message": "Assignment deleted successfully",
+            "id": assignment_id
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting assignment: {str(e)}")
+        return jsonify({"error": "Database error occurred while deleting"}), 500
+
+# ==========================================
+# 🌟 UPDATED: View / Download Attachment Route
+# ==========================================
+@assignments_bp.route('/<int:class_id>/attachments/<int:attachment_id>', methods=['GET'])
+@jwt_required()
+def get_attachment(class_id, attachment_id):
+    """Securely serves the guide file for inline viewing or downloading"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if user.role == 'student':
+        enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
+        if not enrollment:
+            return jsonify({"error": "Unauthorized access to classroom files."}), 403
+
+    attachment = AssignmentAttachment.query.get(attachment_id)
+    if not attachment:
+        return jsonify({"error": "File not found in database."}), 404
+
+    if not os.path.exists(attachment.file_path):
+        return jsonify({"error": "Physical file is missing from the server."}), 404
+
+    # Check if the frontend specifically requested a download
+    is_download = request.args.get('download', 'false').lower() == 'true'
+
+    try:
+        return send_file(
+            attachment.file_path, 
+            as_attachment=is_download, 
+            download_name=attachment.filename
+        )
+    except Exception as e:
+        print(f"Error serving file: {e}")
+        return jsonify({"error": "Failed to serve file."}), 500

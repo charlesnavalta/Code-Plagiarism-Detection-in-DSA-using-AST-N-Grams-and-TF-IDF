@@ -1,166 +1,176 @@
-.nexus-wrapper {
-    --bg-app: #030712;
-    --bg-card: rgba(17, 24, 39, 0.5);
-    --border-card: rgba(255, 255, 255, 0.05);
-    --text-main: #f9fafb;
-    --text-dim: #9ca3af;
-    --accent: #3b82f6;
-    --banner-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
-}
+/* src/student/components/StudentClassroomView.css */
 
-.nexus-wrapper.light {
-    --bg-app: #f8fafc;
-    --bg-card: rgba(255, 255, 255, 0.8);
-    --border-card: rgba(0, 0, 0, 0.05);
-    --text-main: #0f172a;
-    --text-dim: #64748b;
-    --accent: #2563eb;
+.nexus-content.student-layout { 
+    max-width: 1100px; 
+    margin: 0 auto; 
+    padding-top: 50px; 
+    padding-bottom: 60px;
+    padding-left: 20px; 
+    padding-right: 20px; 
+    position: relative; 
+    z-index: 10; 
 }
-
-.nexus-wrapper {
-    background-color: var(--bg-app); color: var(--text-main); min-height: 100vh;
-    font-family: 'Inter', system-ui, sans-serif; position: relative; overflow-x: hidden;
-    transition: background-color 0.5s ease;
-}
-
-/* Background Aurora */
-.aurora-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.aurora-blob { position: absolute; border-radius: 50%; filter: blur(100px); animation: drift 20s infinite alternate; }
-.blob-primary { width: 60vw; height: 60vw; background: rgba(59, 130, 246, 0.1); top: -10%; left: -10%; }
-.blob-secondary { width: 50vw; height: 50vw; background: rgba(139, 92, 246, 0.1); bottom: -10%; right: -10%; }
-@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
-
-.nexus-content { max-width: 1100px; margin: 0 auto; padding: 60px 40px; position: relative; z-index: 10; }
-
-/* SPATIAL ENGINE */
-.spatial-card {
-    background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-card);
-    backdrop-filter: blur(30px); position: relative; overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.spatial-card::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.05), transparent 40%);
-    opacity: 0; transition: opacity 0.3s;
-}
-.spatial-card:hover::after { opacity: 1; }
 
 /* =========================================
-    HEADER BOX: DASHBOARD MATCH
+   HEADER COMPONENTS
    ========================================= */
-.nexus-action-header {
-    background: var(--banner-gradient) !important;
-    border: none !important;
-    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
-    margin-bottom: 60px;
+.classroom-hero-banner { margin-bottom: 50px; border-radius: 24px; }
+.header-inner { padding: 45px; }
+
+.top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+
+.neo-back-btn { 
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.2); 
+    color: white; padding: 8px 20px; border-radius: 12px; font-weight: 700; 
+    cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center;
 }
+.neo-back-btn:hover { background: rgba(0,0,0,0.4); transform: translateX(-3px); }
+.back-icon { margin-right: 4px; vertical-align: middle; margin-top: -2px; }
 
-.header-box-content { padding: 48px; display: flex; flex-direction: column; gap: 40px; }
+.glass-chip { background: rgba(0,0,0,0.15); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
+.mono-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: white; letter-spacing: 1px; }
 
-.back-pill-nexus {
-    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff; padding: 8px 20px; border-radius: 100px; cursor: pointer;
-    display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 700;
-}
-.back-pill-nexus:hover { background: #ffffff; color: #4f46e5; transform: translateX(-4px); }
+.hero-title { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; margin: 0 0 10px 0; letter-spacing: -2px; color: white; }
 
-.header-top-row {
-    display: flex;
-    justify-content: flex-start; /* Aligned left now that badge is gone */
-    align-items: center;
-    width: 100%;
-}
+.instructor-badge { margin-bottom: 24px; }
+.ins-label { color: rgba(255,255,255,0.6); font-size: 0.8rem; text-transform: uppercase; margin-right: 10px; }
+.ins-name { color: white; font-weight: bold; font-size: 1.1rem; }
 
-.nexus-title-main {
-    color: #ffffff !important; font-size: 4rem; font-weight: 900; margin: 0;
-    letter-spacing: -3px; line-height: 1;
-}
-
-.instructor-row-nexus { display: flex; align-items: center; gap: 16px; margin-top: 10px;}
-.ins-label { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.7); letter-spacing: 2px; font-weight: 800; }
-.ins-name-pill { background: rgba(255, 255, 255, 0.15); padding: 8px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); }
-.ins-name-text { color: #ffffff; font-weight: 700; font-size: 1rem; }
+/* Progress Bar */
+.student-stats-row { margin-top: 20px; max-width: 400px; }
+.progress-track { height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: #10b981; border-radius: 10px; transition: width 0.5s ease-out; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+.progress-text { font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); font-weight: 600; }
 
 /* =========================================
-    ASSIGNMENT QUEUE
+   ASSIGNMENT COMPONENTS
    ========================================= */
-.stream-header-nexus { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
-.stream-header-nexus h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-dim); margin: 0; }
-.label-line-nexus { flex-grow: 1; height: 1px; background: var(--border-card); }
+.content-hub { margin-top: 20px; }
+.hub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.hub-header h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; margin: 0; color: var(--text-main); }
 
-.assignment-stack { display: flex; flex-direction: column; gap: 20px; }
-.assignment-row-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-
-.row-grid-content { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: center; padding: 40px; position: relative; z-index: 2; }
-.row-op-tag { color: var(--accent); font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 12px; display: block; }
-.row-info-nexus h3 { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.5px; }
-.row-info-nexus p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin: 0; }
-
-.nexus-select-btn {
-    background: var(--text-main); color: var(--bg-app); padding: 16px 32px; border-radius: 14px;
-    font-weight: 800; font-size: 0.9rem; cursor: pointer; text-align: center; transition: 0.3s;
+.assignment-grid { display: flex; flex-direction: column; gap: 20px; }
+.assignment-item-row { 
+    padding: 30px; background: var(--bg-card); border-radius: 20px; 
+    border: 1px solid var(--border-card); position: relative; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
-.nexus-select-btn:hover { opacity: 0.85; transform: scale(1.02); }
+.assignment-item-row.clickable-row { cursor: pointer; }
+.assignment-item-row.clickable-row:not(.locked-card):hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
 
-.nexus-deploy-group { width: 100%; display: flex; flex-direction: column; gap: 12px; }
-.nexus-file-pill { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 12px; text-align: center; }
-.nexus-file-pill code { color: var(--accent); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-.nexus-deploy-btn { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-.nexus-deploy-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.locked-card { opacity: 0.8; background: rgba(0, 0, 0, 0.15); }
+.locked-card:hover { transform: none; }
 
-/* LOADING */
-.nexus-loader { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.quantum-spinner { width: 40px; height: 40px; border: 3px solid var(--border-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+.assignment-meta-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.task-id { font-family: 'Inter', system-ui, sans-serif; font-size: 0.7rem; color: var(--accent); background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 4px 10px; border-radius: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; display: inline-flex; align-items: center; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+/* Dynamic Status Badges */
+.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.badge-submitted { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+.badge-overdue { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+.badge-pending { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
 
-/* --- SUBMITTED STATE & SCORE UI --- */
-.submitted-status-group {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+.assignment-item-row h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--text-main); }
+.assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
 
-.status-pill.success {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-}
+/* Deadline Row */
+.deadline-row { margin-top: 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #9ca3af; font-weight: 500; }
+.deadline-row.deadline-missed { color: #ef4444; }
+.deadline-row.deadline-missed svg { stroke: #ef4444; }
 
-.score-display {
-    display: flex;
-    flex-direction: column;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--border-glass);
-    padding: 6px 16px;
-    border-radius: 8px;
-    min-width: 120px;
+/* Footer Split (Score & Button) */
+.card-footer-split { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+.score-display { display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; min-width: 120px; }
+.score-label { font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; font-weight: 600; }
+.score-value { font-weight: bold; font-size: 1.1rem; color: white; }
+.score-value.pending { color: #f59e0b; font-size: 0.9rem; font-style: italic; }
+
+.btn-glass-action { background: transparent; color: var(--text-main); border: 1px solid var(--border-card); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; font-size: 0.95rem; }
+.btn-glass-action.btn-active:hover { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+.btn-disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 🌟 Resubmission Alert Styles */
+.badge-unlocked {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    animation: pulse-border 2s infinite;
 }
 
-.score-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    margin-bottom: 2px;
+.unlocked-card {
+    border-color: rgba(245, 158, 11, 0.4) !important;
 }
 
-.score-value {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text-hero);
+.btn-pulse {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
 }
 
-.score-value.pending {
-    color: var(--status-yellow);
-    font-style: italic;
-    font-size: 0.9rem;
-    padding-top: 2px;
+.btn-pulse:hover {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+
+/* =========================================
+   💻 TABLETS (Max Width: 1024px)
+   ========================================= */
+@media (max-width: 1024px) {
+    .nexus-content.student-layout { padding-top: 30px; }
+    .header-inner { padding: 30px 24px; }
+    .student-stats-row { max-width: 100%; }
+}
+
+/* =========================================
+   📱 MOBILE RESPONSIVENESS (App-like Fixes)
+   ========================================= */
+@media (max-width: 768px) {
+    .nexus-content.student-layout {
+        padding-top: 20px;
+        padding-bottom: 110px; /* Clears mobile bottom dock */
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* Compress the cinematic header */
+    .classroom-hero-banner { margin-bottom: 24px; border-radius: 20px; }
+    .header-inner { padding: 24px 20px; }
+    
+    /* Keep top meta on a single row */
+    .top-meta { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; gap: 10px;}
+    .hero-title { font-size: 1.8rem; }
+    
+    .glass-chip { padding: 6px 12px; }
+    .mono-label { font-size: 0.65rem; }
+
+    /* Adjust Assignment Cards */
+    .assignment-grid { gap: 16px; }
+    .assignment-item-row { padding: 20px; border-radius: 16px; }
+    
+    .assignment-meta-top { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .assignment-item-row h3 { font-size: 1.25rem; }
+    .assignment-item-row p { font-size: 0.9rem; margin-bottom: 16px; }
+
+    /* 🌟 THE MAGIC BULLET: Stack the Footer & Force Button Full-Width */
+    .card-footer-split { 
+        flex-direction: column; 
+        align-items: stretch; 
+        gap: 16px; 
+    }
+    
+    .score-display { text-align: center; }
+    .btn-glass-action { width: 100%; padding: 14px; text-align: center; }
+
+    /* Tactile Interactions */
+    .neo-back-btn:active, 
+    .btn-glass-action:active {
+        transform: scale(0.96);
+    }
 }

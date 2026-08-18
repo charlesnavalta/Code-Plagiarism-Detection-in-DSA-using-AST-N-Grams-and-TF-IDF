@@ -1,0 +1,35 @@
+/* src/modals/instructor/CreateAssignmentModal.css */
+
+.error-banner {
+    background-color: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px 15px; 
+    border-radius: 6px; margin-bottom: 15px; font-size: 13px; border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.input-row { display: flex; gap: 20px; }
+.input-group { margin-bottom: 20px; display: flex; flex-direction: column; }
+.half-width { flex: 1; }
+
+.input-group label { 
+    margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; 
+    color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; 
+}
+
+.styled-input {
+    width: 100%; padding: 14px 16px; background-color: var(--bg-main) !important; 
+    border: 1px solid var(--border-glass) !important; border-radius: 12px; 
+    color: var(--text-main) !important; font-size: 1rem; font-family: 'Inter', sans-serif; 
+    transition: all 0.2s ease; box-sizing: border-box; resize: vertical;
+}
+
+.styled-input:focus { 
+    outline: none; border-color: var(--accent-blue); background: var(--bg-card); 
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
+}
+
+.dropdown-fix option { background-color: var(--bg-card) !important; color: var(--text-main) !important; }
+.hide-arrows::-webkit-outer-spin-button, .hide-arrows::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hide-arrows[type=number] { -moz-appearance: textfield; }
+
+@media (max-width: 768px) {
+    .input-row { flex-direction: column; gap: 0; }
+}

@@ -1,0 +1,42 @@
+/* src/modals/instructor/EditAssignmentModal.css */
+
+.error-banner {
+    background-color: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px 15px; 
+    border-radius: 6px; margin-bottom: 15px; font-size: 13px; border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.input-row { display: flex; gap: 20px; }
+.input-group { margin-bottom: 20px; display: flex; flex-direction: column; text-align: left; }
+.half-width { flex: 1; }
+
+.input-group label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.styled-input {
+    width: 100%; padding: 14px; background: var(--bg-main); border: 1px solid var(--border-glass); 
+    color: var(--text-main); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 1rem; 
+    transition: all 0.2s ease; box-sizing: border-box; resize: vertical;
+}
+.styled-input:focus { outline: none; border-color: var(--accent-blue); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+
+.dropdown-fix option { background-color: var(--bg-card); color: var(--text-main); }
+.hide-arrows::-webkit-outer-spin-button, .hide-arrows::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hide-arrows[type=number] { -moz-appearance: textfield; }
+
+/* Edit Specific Footer Overrides */
+.edit-footer { justify-content: space-between !important; align-items: center; }
+.footer-right-actions { display: flex; gap: 12px; }
+
+.btn-delete {
+    background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); 
+    padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-delete:hover:not(:disabled) { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+
+@media (max-width: 768px) {
+    .input-row { flex-direction: column; gap: 0; }
+    
+    /* Optimize the 3 buttons for mobile thumbs */
+    .edit-footer { flex-direction: column-reverse !important; gap: 12px; }
+    .footer-right-actions { display: flex; flex-direction: column-reverse; width: 100%; gap: 12px; }
+    .btn-delete, .footer-right-actions button { width: 100%; text-align: center; }
+}

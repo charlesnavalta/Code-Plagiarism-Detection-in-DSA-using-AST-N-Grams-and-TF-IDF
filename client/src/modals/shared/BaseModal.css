@@ -1,0 +1,126 @@
+/* src/modals/shared/BaseModal.css */
+
+/* 1. THE ULTIMATE SAFE OVERLAY */
+.falsicode-hud-overlay {
+    position: fixed; 
+    /* 🌟 THE MAGIC: Abandons 100vh/100vw completely. Binds exactly to visible window */
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0, 0, 0, 0.7); 
+    backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; 
+    padding: 16px; 
+    box-sizing: border-box;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* 2. THE MODAL CONTAINER */
+.hud-modal-content {
+    background: #0f172a; 
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px; 
+    width: 100%; 
+    max-width: 480px;
+    display: flex; flex-direction: column; overflow: hidden;
+    /* 🌟 Uses % instead of vh to respect overlay padding */
+    max-height: 100%; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.hud-form-wrapper {
+    display: flex; flex-direction: column; flex: 1; overflow: hidden;
+    min-height: 0; /* Forces inner content to scroll */
+}
+
+/* 3. HEADER (Pinned) */
+.hud-header {
+    padding: 20px 24px; /* Tighter globally to save vertical space */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0; position: relative;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
+}
+.hud-header h2 { margin: 0 0 4px 0; font-size: 1.35rem !important; font-weight: 800; letter-spacing: -0.5px; }
+.hud-subtitle { margin: 0; color: #9ca3af; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
+
+.btn-close-icon {
+    position: absolute; top: 16px; right: 20px; background: transparent; border: none;
+    color: #9ca3af; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 4px;
+}
+.btn-close-icon:hover { color: white; }
+
+/* 4. SHARED MODAL BODY (Scrolls) */
+.hud-modal-body { 
+    padding: 20px 24px; 
+    flex: 1 1 auto; 
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch; 
+    min-height: 0; 
+}
+
+/* 5. SHARED FOOTER ACTIONS (Pinned) */
+.hud-modal-footer { 
+    padding: 16px 24px; 
+    display: flex; gap: 12px; justify-content: flex-end; 
+    flex-shrink: 0; 
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: #0f172a; 
+}
+
+/* 6. SHARED BUTTONS */
+.btn-glass-action {
+    background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+}
+.btn-glass-action:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+
+.btn-hud-run {
+    background: #3b82f6; color: white; border: none; padding: 12px 28px;
+    border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.2s ease;
+}
+.btn-hud-run:hover:not(:disabled) { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
+.btn-hud-run:disabled, .btn-glass-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ANIMATIONS */
+.fade-in-modal { animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+/* =========================================
+    📱 GLOBAL MOBILE MODAL ENGINE
+   ========================================= */
+@media (max-width: 768px) {
+    .falsicode-hud-overlay {
+        /* 🌟 CHANGED: Keeps the modal perfectly centered vertically and horizontally */
+        align-items: center; 
+        padding: 16px; /* Restores the outer margin so it floats */
+    }
+
+    .hud-modal-content {
+        max-width: 100%;
+        max-height: 85%; 
+        /* 🌟 CHANGED: Restores fully rounded corners for a floating card */
+        border-radius: 24px; 
+        /* 🌟 CHANGED: Uses the standard center pop-in animation instead of sliding from the bottom */
+        animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
+
+    .hud-header { padding: 16px 20px; }
+    .hud-header h2 { font-size: 1.35rem !important; } 
+    .hud-modal-body { padding: 16px 20px; }
+    
+    .hud-modal-footer { 
+        flex-direction: column-reverse; 
+        gap: 10px; 
+        /* Standard padding (removed the extra safe-area padding since it no longer touches the bottom edge) */
+        padding: 16px 20px; 
+    }
+    
+    .btn-glass-action, .btn-hud-run { 
+        width: 100%; 
+        padding: 14px; 
+        font-size: 1rem; 
+        text-align: center; 
+    }
+}

@@ -21,10 +21,32 @@ from routes.submissions import submissions_bp
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
 
     # 1. Load configurations
     app.config.from_object('config.Config')
+
+    # Allowed CORS origins (Local dev + Cloud Vercel/Render frontend)
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+    
+    # Read CLIENT_URL or FRONTEND_URL from environment (support comma-separated values)
+    client_env_urls = os.environ.get('CLIENT_URL') or os.environ.get('FRONTEND_URL')
+    if client_env_urls:
+        for url in client_env_urls.split(','):
+            cleaned = url.strip().rstrip('/')
+            if cleaned and cleaned not in allowed_origins:
+                allowed_origins.append(cleaned)
+
+    # Initialize CORS
+    CORS(
+        app,
+        supports_credentials=True,
+        origins=allowed_origins if allowed_origins else "*",
+        allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials", "Origin", "Accept"],
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    )
 
     # 2. Ensure Upload Folder Exists
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -38,28 +60,41 @@ def create_app():
     with app.app_context():
         print("Falsicode: Checking database connection...")
         
-        retries = 10
+        retries = 15
         connected = False
         while retries > 0:
             try:
-                db.create_all() 
+                # Test the connection to the database
+                db.session.execute(db.text('SELECT 1'))
                 connected = True
+                print("Falsicode: Database connected successfully!")
                 break
-            except (OperationalError, Exception):
+            except (OperationalError, Exception) as e:
                 retries -= 1
-                print(f"Falsicode: Database not ready... retrying in 3s ({10-retries}/10)")
-                time.sleep(3)
+                print(f"Falsicode: Database not ready... retrying in 2s ({15-retries}/15). Error: {e}")
+                time.sleep(2)
         
         if connected:
-            # Trigger the smart seeder from the separate file
-            run_smart_seed(db)
+            try:
+                # Only seed if the database is empty (first run)
+                if User.query.count() == 0:
+                    print("Falsicode: Empty database detected, running seeder...")
+                    run_smart_seed(db)
+                else:
+                    print("Falsicode: Database already has data, skipping seeder.")
+            except Exception as e:
+                print(f"Falsicode Seeder Notice: {e}")
         else:
             print("CRITICAL: Falsicode could not connect to database.")
 
-    # 5. Base Route
+    # 5. Base Route (Health Check)
     @app.route('/')
     def home():
-        return {"status": "The Falsicode System is Running Successfully!"}
+        return {
+            "status": "healthy",
+            "service": "Falsicode Code Plagiarism Detection API",
+            "message": "The system is running successfully!"
+        }
 
     # 6. Register Blueprints
     app.register_blueprint(analysis_bp, url_prefix='/api')
@@ -73,4 +108,6 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
+    app.run(debug=debug, host='0.0.0.0', port=port)

@@ -1,0 +1,842 @@
+/* =========================================
+   SHARED DASHBOARD LAYOUT — Single Source of Truth
+   Clean, Compact & Fully Responsive
+   ========================================= */
+
+/* --- CORE APP-LIKE RESETS --- */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+button {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* =========================================
+   NEXUS CORE THEME
+   ========================================= */
+.nexus-wrapper {
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.6);
+    --border-card: rgba(255, 255, 255, 0.08);
+    --text-main: #f9fafb;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --blob-1: rgba(59, 130, 246, 0.12);
+    --blob-2: rgba(139, 92, 246, 0.12);
+
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    min-height: calc(100vh - 65px);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.nexus-wrapper.light {
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --border-card: rgba(0, 0, 0, 0.08);
+    --text-main: #0f172a;
+    --text-dim: #64748b;
+    --accent: #2563eb;
+    --blob-1: rgba(59, 130, 246, 0.06);
+    --blob-2: rgba(139, 92, 246, 0.06);
+}
+
+/* Background Aurora Blobs */
+.aurora-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.aurora-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    animation: drift 20s infinite alternate;
+}
+.blob-primary { width: 60vw; height: 60vw; background: var(--blob-1); top: -20%; left: -10%; }
+.blob-secondary { width: 50vw; height: 50vw; background: var(--blob-2); bottom: -10%; right: -10%; }
+@keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
+
+/* =========================================
+   MASTER LAYOUT CONTAINER
+   ========================================= */
+.nexus-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+/* SPATIAL CARDS */
+.spatial-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    border: 1px solid var(--border-card);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.spatial-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.spatial-card:hover::after { opacity: 1; }
+.spatial-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+.card-content { padding: 22px; position: relative; z-index: 2; }
+.flex-col { display: flex; flex-direction: column; height: 100%; }
+
+/* =========================================
+   SIDEBAR (Profile & Stat Cards)
+   ========================================= */
+.nexus-sidebar {
+    width: 290px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 🌟 HERO PROFILE CARD (Bigger & Prominent) */
+.profile-card {
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.profile-card .card-content {
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.avatar-hologram {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar-core {
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 50%;
+    color: white;
+    font-weight: 900;
+    font-size: 1.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+.avatar-ring-1 {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    animation: pulse 2.4s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.85; }
+    100% { transform: scale(1.35); opacity: 0; }
+}
+
+.user-display-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0 0 4px;
+    text-align: center;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+}
+.user-role-text {
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    text-align: center;
+    margin: 0 0 16px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+.system-status {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #10b981;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    letter-spacing: 1px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.status-dot {
+    width: 7px;
+    height: 7px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+}
+
+/* 🌟 STAT CARD */
+.stat-card .card-content {
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.stat-label {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    margin: 0;
+    display: block;
+}
+.stat-value {
+    font-size: 2.3rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--text-main);
+    display: block;
+}
+
+/* =========================================
+   MAIN AREA
+   ========================================= */
+.nexus-main {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-self: flex-start;
+    width: 100%;
+}
+
+/* =========================================
+   HERO ACTION BANNER (COMPACT & CRISP)
+   ========================================= */
+.cinematic-banner-shared {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
+    border: none !important;
+    box-shadow: 0 16px 36px -8px rgba(79, 70, 229, 0.35) !important;
+    border-radius: 20px;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+.banner-content {
+    padding: 30px 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    height: auto !important;
+}
+
+.banner-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.banner-text h1 {
+    color: #ffffff !important;
+    font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+}
+.banner-subtitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    display: block;
+}
+
+/* Action Form (Pill Container) */
+.nexus-join-form {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 6px 6px 14px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.nexus-input {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    padding: 8px 12px;
+    outline: none !important;
+    width: 180px;
+    font-size: 0.92rem;
+}
+.code-input {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.nexus-input::placeholder {
+    color: rgba(255, 255, 255, 0.55) !important;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.nexus-btn-primary {
+    background: #ffffff !important;
+    color: #4f46e5 !important;
+    border: none !important;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.nexus-btn-primary:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+/* =========================================
+   CLASSROOM GRID & CARDS
+   ========================================= */
+.workspace-section {
+    width: 100%;
+}
+.section-title-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.section-title-block h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.classroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+.course-card {
+    cursor: pointer;
+    height: 100%;
+}
+.node-badge {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    align-self: flex-start;
+    margin-bottom: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+.course-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 0 14px;
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+}
+
+.instructor-tag-nexus {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.ins-mini-avatar {
+    width: 28px;
+    height: 28px;
+    background: rgba(125, 125, 125, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.ins-name {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+.course-footer-nexus {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-card);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.course-card:hover .course-footer-nexus { color: var(--accent); }
+.arrow-icon { transition: transform 0.25s ease; }
+.course-card:hover .arrow-icon { transform: translateX(5px); }
+
+/* =========================================
+   RECENT SUBMISSIONS HISTORY
+   ========================================= */
+.history-card { min-height: auto; }
+.submission-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    min-width: 0;
+}
+.history-title {
+    font-size: 12.5px;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+.history-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.clean-status-pill {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.clean-status-pill.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.clean-status-pill.archived {
+    background: rgba(156, 163, 175, 0.15);
+    color: #9ca3af;
+    border: 1px solid rgba(156, 163, 175, 0.25);
+}
+
+.light .history-item { background: #f9fafb; border: 1px solid #e5e7eb; }
+.light .history-item:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+/* =========================================
+   💀 SKELETON LOADING & SHIMMER ANIMATIONS
+   ========================================= */
+.skeleton-box {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border-radius: 8px;
+}
+
+.light .skeleton-box {
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.04) 0%,
+        rgba(0, 0, 0, 0.09) 50%,
+        rgba(0, 0, 0, 0.04) 100%
+    );
+    background-size: 200% 100%;
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Skeleton Classroom Card */
+.skeleton-course-card {
+    min-height: 175px;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    cursor: default;
+}
+.skeleton-badge {
+    width: 72px;
+    height: 20px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+}
+.skeleton-title {
+    width: 80%;
+    height: 24px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.skeleton-instructor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.skeleton-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.skeleton-text-sm {
+    width: 50%;
+    height: 14px;
+    border-radius: 4px;
+}
+.skeleton-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-card);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.skeleton-btn {
+    width: 95px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+/* Skeleton Recent Submissions */
+.skeleton-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.skeleton-history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 65%;
+}
+.skeleton-history-title {
+    width: 85%;
+    height: 12px;
+    border-radius: 4px;
+}
+.skeleton-history-date {
+    width: 50%;
+    height: 10px;
+    border-radius: 3px;
+}
+.skeleton-pill {
+    width: 46px;
+    height: 18px;
+    border-radius: 6px;
+}
+
+/* Skeleton Stat Card */
+.skeleton-stat-value {
+    width: 50px;
+    height: 34px;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+
+/* LOADERS & EMPTY STATES */
+.quantum-spinner {
+    width: 42px;
+    height: 42px;
+    border: 3.5px solid var(--border-card);
+    border-top: 3.5px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text { font-size: 0.9rem; font-weight: 500; color: var(--text-dim); }
+
+/* ANIMATIONS */
+.fade-in-left { animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+.fade-in-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+@keyframes slideRight { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } }
+
+/* =========================================
+   📱 RESPONSIVE DESIGN (TABLET & LAPTOP)
+   ========================================= */
+
+/* Laptops / Mid Desktops (992px to 1200px) */
+@media (max-width: 1200px) {
+    .nexus-layout {
+        padding: 24px 20px;
+        gap: 20px;
+    }
+    .nexus-sidebar {
+        width: 260px;
+    }
+    .banner-content {
+        padding: 24px 28px;
+    }
+    .nexus-input {
+        width: 150px;
+    }
+}
+
+/* Tablets (768px to 992px) */
+@media (max-width: 992px) {
+    .nexus-layout {
+        flex-direction: column;
+        padding: 20px 18px;
+        gap: 20px;
+    }
+    
+    /* On tablet: Profile Card is large & prominent on left, Stat Card on right */
+    .nexus-sidebar {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 16px;
+        align-items: stretch;
+    }
+    .profile-card {
+        grid-column: 1;
+        width: 100%;
+        height: 100%;
+    }
+    .stat-card {
+        grid-column: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .history-card {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .banner-content {
+        padding: 24px 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .banner-text {
+        width: 100%;
+        text-align: left;
+    }
+    .banner-text h1 {
+        font-size: 1.85rem;
+    }
+    .nexus-join-form {
+        width: 100%;
+        max-width: 480px;
+        justify-content: space-between;
+    }
+    .nexus-input {
+        flex-grow: 1;
+        width: auto;
+    }
+}
+
+/* =========================================
+   📱 RESPONSIVE DESIGN (MOBILE PHONES < 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    .nexus-layout {
+        display: flex;
+        flex-direction: column;
+        padding: 16px 14px;
+        padding-bottom: 110px;
+        gap: 16px;
+        width: 100%;
+    }
+    
+    .nexus-sidebar {
+        display: contents;
+    }
+
+    /* All cards span 100% full width */
+    .profile-card {
+        order: 1;
+        width: 100% !important;
+    }
+    .stat-card {
+        order: 2;
+        width: 100% !important;
+    }
+    .nexus-main {
+        order: 3;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100% !important;
+    }
+    .history-card {
+        order: 4;
+        margin-top: 8px;
+        width: 100% !important;
+    }
+
+    /* Mobile Hero Action Banner */
+    .cinematic-banner-shared {
+        border-radius: 18px;
+        height: auto !important;
+        width: 100% !important;
+    }
+    .banner-content {
+        padding: 20px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        height: auto !important;
+    }
+    .banner-text {
+        width: 100%;
+        text-align: left;
+    }
+    .banner-text h1 {
+        font-size: 1.5rem;
+        letter-spacing: -0.4px;
+        margin: 0 0 3px 0;
+        text-align: left;
+    }
+    .banner-subtitle {
+        font-size: 0.84rem;
+        color: rgba(255, 255, 255, 0.85) !important;
+        display: block !important;
+        line-height: 1.35;
+        text-align: left;
+    }
+
+    /* Mobile Form */
+    .nexus-join-form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-radius: 12px;
+        padding: 8px;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .input-with-icon {
+        width: 100%;
+    }
+    .nexus-input {
+        width: 100%;
+        text-align: center;
+        font-size: 0.92rem;
+        background: rgba(0, 0, 0, 0.2) !important;
+        border-radius: 8px !important;
+        padding: 10px;
+        color: #ffffff !important;
+    }
+    .nexus-btn-primary {
+        width: 100%;
+        padding: 11px;
+        border-radius: 8px;
+        font-size: 0.92rem;
+        font-weight: 800;
+    }
+    .nexus-btn-primary:active {
+        transform: scale(0.97);
+    }
+
+    /* Classroom Grid on Mobile */
+    .classroom-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        width: 100%;
+    }
+    .course-card:active {
+        transform: scale(0.98);
+        border-color: var(--accent);
+    }
+
+    /* Mobile Recent Submissions */
+    .history-card {
+        min-height: auto;
+    }
+    .history-title {
+        max-width: 180px;
+    }
+}
+

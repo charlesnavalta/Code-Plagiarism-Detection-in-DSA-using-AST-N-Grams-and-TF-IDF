@@ -1,0 +1,88 @@
+.auth-input-group {
+    margin-bottom: 14px;
+    width: 100%;
+}
+
+.auth-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    z-index: 2;
+}
+
+.auth-styled-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #d1d5db;
+    font-size: 14px;
+    color: #1f2937;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    background-color: #f9fafb;
+    font-family: inherit;
+}
+
+.auth-styled-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.auth-styled-input:focus + .auth-input-icon,
+.auth-input-wrapper:focus-within .auth-input-icon {
+    color: #3b82f6;
+}
+
+/* 44px Touch-Friendly Password Toggle */
+.auth-password-toggle {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.auth-password-toggle:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.08);
+}
+
+/* 🌟 CRITICAL iOS/Mobile Auto-Zoom Fix: Minimum 16px font-size on mobile screens */
+@media (max-width: 768px) {
+    .auth-styled-input {
+        font-size: 16px !important;
+        min-height: 48px;
+    }
+    .auth-password-toggle {
+        width: 44px;
+        height: 44px;
+        right: 2px;
+    }
+}

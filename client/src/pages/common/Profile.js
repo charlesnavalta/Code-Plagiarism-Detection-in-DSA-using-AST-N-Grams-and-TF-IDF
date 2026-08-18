@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useToast } from '../../context/NotificationContext';
 import './Profile.css';
 import api from '../../services/api'; 
 
@@ -6,15 +7,17 @@ const Profile = () => {
     const rawUser = localStorage.getItem('user');
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
+    const toast = useToast();
 
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
+    const [otpCode, setOtpCode] = useState('');
+    const [sendingCode, setSendingCode] = useState(false);
+    
     const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState(user.email || '');
 
-    // --- Nexus Theme Synchronization ---
     const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
 
     useEffect(() => {
@@ -29,36 +32,49 @@ const Profile = () => {
 
     const handleUpdateEmail = (e) => {
         e.preventDefault();
-        alert("System Notice: Email update functionality is currently being provisioned.");
+        toast.info("Email update functionality is currently being provisioned.", "System Notice");
+    };
+
+    const handleSendCode = async () => {
+        setSendingCode(true);
+        try {
+            const res = await api.post('/auth/profile/request-code');
+            toast.success(res.data.message || "Security authorization code sent to your email.", "Code Dispatched");
+        } catch (err) {
+            toast.error(err.response?.data?.error || "Failed to trigger security email.", "Dispatch Failed");
+        } finally {
+            setSendingCode(false);
+        }
     };
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
-        setMessage('');
-        setError('');
-
         if (newPassword !== confirmPassword) {
-            return setError("Security protocol failed: Passwords do not match.");
+            return toast.error("New passwords do not match. Please verify.", "Security Error");
         }
-
         if (newPassword.length < 6) {
-            return setError("Security protocol failed: Password must be at least 6 characters.");
+            return toast.warning("Password must be at least 6 characters in length.", "Validation Notice");
         }
 
         setLoading(true);
         try {
-            const res = await api.put('/auth/profile', { new_password: newPassword });
-            setMessage(res.data.message || "Security credentials updated successfully.");
-            setNewPassword('');
-            setConfirmPassword('');
+            const res = await api.put('/auth/profile', { 
+                current_password: currentPassword,
+                new_password: newPassword,
+                code: otpCode
+            });
+            toast.success(res.data.message || "Security credentials updated successfully!", "Credentials Updated");
+            setCurrentPassword(''); 
+            setNewPassword(''); 
+            setConfirmPassword(''); 
+            setOtpCode('');
         } catch (err) {
-            setError(err.response?.data?.error || "Critical failure: Unable to update security parameters.");
+            toast.error(err.response?.data?.error || "Unable to update security parameters.", "Update Failed");
         } finally {
             setLoading(false);
         }
     };
 
-    // --- Spatial Spotlight Logic ---
     const handleMouseMove = (e) => {
         if (!dashboardRef.current) return;
         const cards = dashboardRef.current.querySelectorAll('.spatial-card');
@@ -73,7 +89,6 @@ const Profile = () => {
 
     return (
         <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
             <div className="aurora-canvas">
                 <div className="aurora-blob blob-primary"></div>
                 <div className="aurora-blob blob-secondary"></div>
@@ -114,12 +129,8 @@ const Profile = () => {
 
                         <div className="identity-meta relative-z">
                             <div className="meta-item">
-                                <span className="meta-label">Node Status</span>
+                                <span className="meta-label">Status</span>
                                 <span className="meta-value text-green">Online</span>
-                            </div>
-                            <div className="meta-item">
-                                <span className="meta-label">Encryption</span>
-                                <span className="meta-value">AES-256 Enabled</span>
                             </div>
                         </div>
                     </div>
@@ -127,6 +138,7 @@ const Profile = () => {
                     {/* RIGHT COLUMN: Settings */}
                     <div className="spatial-card profile-settings-card">
                         <div className="card-glass-layer"></div>
+                        
                         <div className="settings-section relative-z">
                             <div className="settings-header">
                                 <h3>Email Preferences</h3>
@@ -135,7 +147,7 @@ const Profile = () => {
 
                             <form onSubmit={handleUpdateEmail} className="premium-form">
                                 <div className="dark-form-group">
-                                    <label>Contact Email</label>
+                                    <label><br></br>Contact Email</label>
                                     <div className="nexus-input-wrapper">
                                         <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -143,7 +155,7 @@ const Profile = () => {
                                         <input 
                                             type="email" className="nexus-input-field with-icon"
                                             value={emailInput} onChange={(e) => setEmailInput(e.target.value)} 
-                                            placeholder="node@Falsicode.com"
+                                            placeholder="node@falsicode.com"
                                         />
                                     </div>
                                 </div>
@@ -162,8 +174,14 @@ const Profile = () => {
                             </div>
 
                             <form onSubmit={handleUpdatePassword} className="premium-form">
-                                {message && <div className="nexus-alert success">{message}</div>}
-                                {error && <div className="nexus-alert error">{error}</div>}
+                                <div className="dark-form-group">
+                                    <label>Current Password</label>
+                                    <input 
+                                        type="password" className="nexus-input-field"
+                                        value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} 
+                                        placeholder="Enter your current password" required
+                                    />
+                                </div>
 
                                 <div className="form-group-row">
                                     <div className="dark-form-group w-50">
@@ -184,10 +202,30 @@ const Profile = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-actions">
+                                <div className="form-group-row code-row">
+                                    <div className="dark-form-group w-50">
+                                        <label>Authorization Code</label>
+                                        <input 
+                                            type="text" className="nexus-input-field code-input"
+                                            value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))} 
+                                            placeholder="000000" maxLength="6" required
+                                        />
+                                    </div>
+                                    <div className="dark-form-group w-50 code-btn-group">
+                                        <label className="desktop-spacer-label">&nbsp;</label>
+                                        <button 
+                                            type="button" className="nexus-btn-secondary full-width-btn send-otp-btn" 
+                                            onClick={handleSendCode} disabled={sendingCode}
+                                        >
+                                            {sendingCode ? "Transmitting..." : "Send Code to Email"}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="form-actions" style={{ marginTop: '30px' }}>
                                     <button 
-                                        type="submit" className="nexus-btn-primary" 
-                                        disabled={loading || !newPassword || !confirmPassword}
+                                        type="submit" className="nexus-btn-primary full-width-btn" 
+                                        disabled={loading || !currentPassword || !newPassword || !confirmPassword || otpCode.length !== 6}
                                     >
                                         {loading ? "Syncing..." : "Update Credentials"}
                                     </button>

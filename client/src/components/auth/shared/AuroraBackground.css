@@ -1,0 +1,33 @@
+.aurora-canvas {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-bg-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.2;
+}
+
+.blob-1 { 
+    background: #3b82f6; 
+    top: -20%; left: -10%; 
+    animation: blobDrift 12s infinite alternate ease-in-out; 
+}
+
+.blob-2 { 
+    background: #8b5cf6; 
+    bottom: -20%; right: -10%; 
+    animation: blobDrift 15s infinite alternate-reverse ease-in-out; 
+}
+
+@keyframes blobDrift {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}

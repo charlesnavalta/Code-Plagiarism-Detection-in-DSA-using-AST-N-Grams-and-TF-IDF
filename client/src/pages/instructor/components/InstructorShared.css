@@ -1,0 +1,70 @@
+/* src/instructor/components/InstructorShared.css */
+
+/* --- CORE APP-LIKE RESETS --- */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* --- 1. THEME VARIABLES & CORE WRAPPER --- */
+.nexus-wrapper {
+    /* DARK MODE (Default) */
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.5);
+    --border-card: rgba(255, 255, 255, 0.05);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-main: #f9fafb;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --accent-blue: #3b82f6;
+    --nexus-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+    
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 🔥 THE FIX: Light Mode Overrides for Instructor Pages 🔥 */
+.nexus-wrapper.light {
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --border-card: rgba(0, 0, 0, 0.05);
+    --border-glass: rgba(0, 0, 0, 0.08);
+    --text-main: #0f172a; 
+    --text-dim: #64748b;
+    --accent: #0284c7;
+    --accent-blue: #2563eb;
+    --nexus-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+}
+
+/* --- 2. GLOBAL LOADERS --- */
+.falsicode-loader-fullscreen {
+    height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--bg-app); gap: 20px; color: var(--text-main);
+}
+.falsicode-loader-local {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px; gap: 15px; color: var(--text-main);
+}
+.quantum-spinner {
+    width: 50px; height: 50px; border: 4px solid var(--border-card); border-top: 4px solid var(--accent);
+    border-radius: 50%; animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text { font-size: 0.9rem; font-weight: 500; color: var(--text-dim); }
+
+/* --- 3. CINEMATIC GRADIENT BANNER --- */
+.cinematic-banner-shared {
+    background: var(--nexus-grad) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
+    border-radius: 24px;
+}

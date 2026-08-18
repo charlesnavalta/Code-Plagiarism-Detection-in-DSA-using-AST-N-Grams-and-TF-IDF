@@ -14,6 +14,13 @@ services:
       - "${DB_PORT}:3306"
     volumes:
       - db_data:/var/lib/mysql
+    # 🌟 NEW: Tells Docker how to check if MySQL is actually ready to accept connections
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
 
   # ----------------------------
   # 2. PYTHON BACKEND (Flask)
@@ -26,13 +33,18 @@ services:
     volumes:
       - ./server:/app
       - ./datasets:/app/datasets
-      - /app/uploads
+      # 🌟 THE FIX: Map uploads to a real folder so student code is never lost
+      - ./server/uploads:/app/uploads 
     env_file:
-      - .env
+      # 🌟 Ensures Docker reads the env file from the same folder as this yaml file
+      - .env 
     depends_on:
-      - db
+      # 🌟 NEW: Forces the backend to wait until the DB healthcheck passes
+      db:
+        condition: service_healthy
     environment:
       - FLASK_ENV=development
+      - FLASK_DEBUG=1 # 🌟 NEW: Forces Flask to auto-reload when you save a .py file!
 
   # ----------------------------
   # 3. REACT FRONTEND
@@ -42,7 +54,6 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: frontend
-    command: sh -c "npm install && npm start"
     ports:
       - "3000:3000"
     volumes:
@@ -72,6 +83,5 @@ services:
     depends_on:
       - db
 
-# Make sure 'volumes:' is all the way to the left!
 volumes:
   db_data:

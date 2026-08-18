@@ -1,143 +1,133 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api'; 
-import './InstructorDashboard.css'; 
+import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
+
+// 🌟 DRY: Shared Dashboard Components
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import ProfileCard from '../../components/dashboard/ProfileCard';
+import StatCard from '../../components/dashboard/StatCard';
+import RecentSubmissions from '../../components/dashboard/RecentSubmissions';
+import ClassroomCardSkeleton, { EmptyClassroomSkeleton } from '../../components/dashboard/ClassroomCardSkeleton';
+
+// Utilities
+import { getUserData } from '../../utils/authUtils';
 
 const InstructorDashboard = () => {
-    const [classrooms, setClassrooms] = useState([]);
-    const [newClassName, setNewClassName] = useState('');
-    const [loading, setLoading] = useState(true);
-    const dashboardRef = useRef(null);
-    const navigate = useNavigate();
+    const currentUser = getUserData();
+    const userId = currentUser.id || currentUser.user_id || currentUser.username || 'instructor';
+    const cacheKeyClasses = `falsicode_instructor_classes_${userId}`;
+    const cacheKeyActivity = `falsicode_instructor_activity_${userId}`;
 
-    // --- Nexus Theme Synchronization ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
-
-    // --- Dynamic User Identity ---
-    const getUserData = () => {
+    const getCached = (key) => {
         try {
-            const rawUser = localStorage.getItem('user');
-            if (rawUser && rawUser !== "undefined") return JSON.parse(rawUser);
-        } catch (e) { console.error("Identity Sync Error", e); }
-        return { username: 'Instructor Node', role: 'instructor' }; 
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
     };
 
-    const currentUser = getUserData();
+    const cachedClasses = getCached(cacheKeyClasses);
+    const cachedActivity = getCached(cacheKeyActivity);
+
+    const [classrooms, setClassrooms] = useState(cachedClasses || []);
+    const [recentActivity, setRecentActivity] = useState(cachedActivity || []);
+    const [newClassName, setNewClassName] = useState('');
+    const [loading, setLoading] = useState(true);
+    const toast = useToast();
+    const navigate = useNavigate();
+
     const displayName = currentUser.name || currentUser.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    // --- API Operations ---
-    const fetchClassrooms = async () => {
+    const fetchDashboardData = async () => {
+        setLoading(true);
+        const startTime = Date.now();
         try {
-            const res = await api.get('/classrooms/');
-            setClassrooms(res.data);
+            const classRes = await api.get('/classrooms/');
+            setClassrooms(classRes.data);
+            localStorage.setItem(cacheKeyClasses, JSON.stringify(classRes.data));
+
+            const activityRes = await api.get('/classrooms/instructor/activity');
+            setRecentActivity(activityRes.data);
+            localStorage.setItem(cacheKeyActivity, JSON.stringify(activityRes.data));
         } catch (error) {
-            console.error("Critical error fetching classrooms:", error);
+            console.error("Critical error fetching dashboard data:", error);
         } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 450;
+            if (elapsed < minDelay) {
+                await new Promise(r => setTimeout(r, minDelay - elapsed));
+            }
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchClassrooms();
-    }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { fetchDashboardData(); }, []);
 
-    // Logic: Aggregating total student density
-    const totalStudents = classrooms.reduce((acc, cls) => acc + (cls.student_count || 0), 0);
-
-    // --- CREATE: Initialize New Classroom Node ---
     const handleCreateClass = async (e) => {
         e.preventDefault();
-        if (!newClassName.trim()) return alert("Security Notice: Please enter a valid class identifier.");
+        if (!newClassName.trim()) return toast.warning("Please enter a valid class identifier.", "Class Name Required");
         try {
             await api.post('/classrooms/', { name: newClassName });
+            toast.success("Classroom provisioned successfully!", "Classroom Created");
             setNewClassName('');
-            fetchClassrooms(); 
+            fetchDashboardData();
         } catch (error) {
-            alert("Protocol failure: Unable to initialize classroom node.");
-        }
-    };
-
-    // --- Spatial Spotlight Logic ---
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            toast.error("Unable to initialize classroom.", "Creation Failed");
         }
     };
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            {/* Background Aurora Engine */}
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-primary"></div>
-                <div className="aurora-blob blob-secondary"></div>
-            </div>
-
+        <DashboardLayout>
             <div className="nexus-layout">
-                {/* --- Sidebar: Identity Node --- */}
+                {/* --- Sidebar: Identity --- */}
                 <aside className="nexus-sidebar fade-in-left">
-                    <div className="spatial-card profile-card">
-                        <div className="card-glass-layer"></div>
-                        <div className="card-content">
-                            <div className="avatar-hologram">
-                                <div className="avatar-core">{userInitial}</div>
-                                <div className="avatar-ring-1"></div>
-                            </div>
-                            <h2 className="user-display-name">{displayName}</h2>
-                            <p className="user-role-text">Instructor Workspace</p>
-                            <div className="system-status">
-                                <span className="status-dot online"></span>ACTIVE
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card stat-card delay-1">
-                        <div className="card-content">
-                            <span className="stat-label">Active Classes</span>
-                            <span className="stat-value">{classrooms.length}</span>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card stat-card delay-2">
-                        <div className="card-content">
-                            <span className="stat-label">Total Students</span>
-                            <span className="stat-value">{totalStudents}</span>
-                        </div>
-                    </div>
+                    <ProfileCard
+                        displayName={displayName}
+                        userInitial={userInitial}
+                        roleText="Instructor Workspace"
+                        statusLabel="ACTIVE"
+                        profileLink="/instructor/profile"
+                    />
+                    <StatCard
+                        label="Active Classes"
+                        value={classrooms.length}
+                        loading={loading}
+                    />
+                    <RecentSubmissions
+                        submissions={recentActivity}
+                        loading={loading}
+                        role="instructor"
+                    />
                 </aside>
 
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
-                    
-                    {/* Action Banner */}
-                    <div className="action-banner-nexus spatial-card">
+                    {/* Instructor Banner */}
+                    <div className="cinematic-banner-shared spatial-card">
                         <div className="banner-content">
                             <div className="banner-text">
-                                <h1>Welcome Back, {displayName.split(' ')[0]}</h1>
-                                <p>Provision classrooms, deploy assignments, and review logic integrity.</p>
+                                <h1>Instructor Hub</h1>
+                                <p className="banner-subtitle desktop-only">Provision and manage your digital classrooms.</p>
                             </div>
-                            
+
                             <form onSubmit={handleCreateClass} className="nexus-join-form">
-                                <input 
-                                    type="text" placeholder="Class Name" 
-                                    value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
-                                    className="nexus-input"
-                                />
-                                <button type="submit" className="nexus-btn-primary">Create Class </button>
+                                <div className="input-with-icon">
+                                    <input
+                                        type="text" placeholder="Class Name"
+                                        value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
+                                        className="nexus-input"
+                                    />
+                                </div>
+                                <button type="submit" className="nexus-btn-primary">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Create Class
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -146,34 +136,36 @@ const InstructorDashboard = () => {
                     <div className="workspace-section">
                         <div className="section-title-block">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            <h2>Active Managed Nodes</h2>
+                            <h2>My Classroom(s)</h2>
                         </div>
 
                         {loading ? (
-                            <div className="spatial-card loading-card">
-                                <div className="quantum-spinner"></div>
-                                <p>Synchronizing nodes...</p>
-                            </div>
+                            cachedClasses && cachedClasses.length > 0 ? (
+                                <div className="classroom-grid">
+                                    <ClassroomCardSkeleton count={cachedClasses.length} />
+                                </div>
+                            ) : (
+                                <EmptyClassroomSkeleton />
+                            )
                         ) : classrooms.length === 0 ? (
-                            <div className="spatial-card empty-card">
-                                <div className="empty-icon">📁</div>
-                                <h3>No Nodes Connected</h3>
-                                <p>Provision a new classroom above to get started.</p>
+                            <div className="spatial-card empty-card" style={{ padding: '40px', textAlign: 'center' }}>
+                                <div className="empty-icon" style={{ fontSize: '3rem', marginBottom: '10px' }}>📁</div>
+                                <h3>No Classrooms Found</h3>
+                                <p style={{ color: 'var(--text-dim)' }}>Provision a new classroom above to get started.</p>
                             </div>
                         ) : (
                             <div className="classroom-grid">
                                 {classrooms.map((cls, index) => (
-                                    <div 
-                                        key={cls.id} className="spatial-card course-card" 
+                                    <div
+                                        key={cls.id} className="spatial-card course-card"
                                         onClick={() => navigate(`/instructor/class/${cls.id}`)}
                                         style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
                                     >
                                         <div className="card-glass-layer"></div>
                                         <div className="card-content flex-col">
-                                            <span className="node-badge">Command Center</span>
+                                            <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
-                                            
-                                            {/* Reusing student tag CSS for Instructor data */}
+
                                             <div className="instructor-tag-nexus">
                                                 <div className="ins-mini-avatar">🔑</div>
                                                 <span className="ins-name">
@@ -182,7 +174,7 @@ const InstructorDashboard = () => {
                                             </div>
 
                                             <div className="course-footer-nexus">
-                                                <span>Access Node</span>
+                                                <span>Access Classroom</span>
                                                 <svg className="arrow-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                             </div>
                                         </div>
@@ -193,7 +185,7 @@ const InstructorDashboard = () => {
                     </div>
                 </main>
             </div>
-        </div>
+        </DashboardLayout>
     );
 };
 

@@ -1,28 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
+import SubmitFileModal from '../../modals/student/SubmitFileModal';
+import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
+
+// Shared Utilities & Components
+import { formatLanguageDisplay } from '../../utils/fileUtils';
+import { formatDeadline } from '../../utils/dateUtils';
+import InstructorWrapper from '../instructor/components/InstructorWrapper';
+import ClassroomViewSkeleton from '../instructor/components/ClassroomViewSkeleton';
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
+    const dashboardRef = useRef(null);
+    
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedFiles, setSelectedFiles] = useState({});
-    
-    // --- Dynamic Theme & Spatial Sync ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-    const workspaceRef = useRef(null);
+    const [theme] = useTheme();
 
-    useEffect(() => {
-        const handleSync = () => setTheme(localStorage.getItem('app-theme') || 'dark');
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
+    const [activeAssignment, setActiveAssignment] = useState(null);
+    const [viewAssignment, setViewAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            const startTime = Date.now();
             try {
                 const [classRes, assignRes] = await Promise.all([
                     api.get(`/classrooms/${id}`),
@@ -33,16 +40,20 @@ const StudentClassroomView = () => {
             } catch (error) {
                 navigate('/student'); 
             } finally {
+                const elapsed = Date.now() - startTime;
+                const minDelay = 450;
+                if (elapsed < minDelay) {
+                    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+                }
                 setLoading(false);
             }
         };
         fetchData();
     }, [id, navigate]);
 
-    // --- Spatial UI: Mouse Spotlight Logic ---
     const handleMouseMove = (e) => {
-        if (!workspaceRef.current) return;
-        const cards = workspaceRef.current.querySelectorAll('.spatial-card');
+        if (!dashboardRef.current) return;
+        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
         for (const card of cards) {
             const rect = card.getBoundingClientRect();
             card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
@@ -50,122 +61,182 @@ const StudentClassroomView = () => {
         }
     };
 
-    const handleFileChange = (assignmentId, event) => {
-        const file = event.target.files[0];
-        if (file) setSelectedFiles(prev => ({ ...prev, [assignmentId]: file }));
+    const handleOpenSubmission = (assignment) => {
+        const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
+        const isUnlocked = assignment.allow_resubmit;
+        
+        // 🌟 THE FIX: Only block the modal if they are NOT allowed to resubmit
+        if ((assignment.has_submitted && !isUnlocked) || (isOverdue && !isUnlocked)) return; 
+        
+        setActiveAssignment(assignment);
+        setShowSubmitModal(true);
     };
 
-    const handleFileUpload = async (assignmentId) => {
-        const fileToUpload = selectedFiles[assignmentId];
-        if (!fileToUpload) return alert("Select a .py file.");
-        const formData = new FormData();
-        formData.append('file', fileToUpload);
-        try {
-            await api.post(`/classrooms/${id}/assignments/${assignmentId}/submit`, formData);
-            alert("Node Deployment Successful.");
-            setSelectedFiles(prev => ({ ...prev, [assignmentId]: null }));
-            
-            // Instantly update the UI to lock the button without needing a page refresh
-            setAssignments(prev => prev.map(a => 
-                a.id === assignmentId ? { ...a, has_submitted: true, score: 'Pending' } : a
-            ));
-        } catch (error) { 
-            alert(error.response?.data?.error || "Upload failed."); 
-        }
+    const handleSubmissionSuccess = (assignmentId) => {
+        // 🌟 THE FIX: Instantly lock the assignment again locally after a successful resubmit
+        setAssignments(assignments.map(a => 
+            a.id === assignmentId ? { ...a, has_submitted: true, allow_resubmit: false, score: 'Pending' } : a
+        ));
     };
 
-    if (loading) return <div className={`nexus-loader ${theme}`}><div className="quantum-spinner"></div></div>;
-    if (!classroom) return null;
+    if (loading) return <ClassroomViewSkeleton role="student" />;
+
+    const completedTasks = assignments.filter(a => a.has_submitted).length;
+    const totalTasks = assignments.length;
+    const progressPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={workspaceRef} onMouseMove={handleMouseMove}>
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-primary"></div>
-                <div className="aurora-blob blob-secondary"></div>
-            </div>
-
-            <div className="nexus-content">
-                <header className="spatial-card nexus-action-header fade-in">
-                    <div className="header-box-content">
-                        <div className="header-top-row">
-                            <button onClick={() => navigate('/student')} className="back-pill-nexus">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                                Return to Hub
+        <InstructorWrapper>
+            <div className={`nexus-content student-layout ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
+                
+                {/* --- CINEMATIC CLASSROOM HEADER --- */}
+                <header className="cinematic-banner-shared spatial-card fade-in-down classroom-hero-banner">
+                    <div className="header-inner">
+                        <div className="top-meta">
+                            <button onClick={() => navigate('/student')} className="neo-back-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="back-icon">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Hub
                             </button>
+                            <div className="glass-chip">
+                                <span className="mono-label">STUDENT WORKSPACE</span>
+                            </div>
                         </div>
                         
-                        <div className="identity-block">
-                            <h1 className="nexus-title-main">{classroom.name}</h1>
-                            
-                            <div className="instructor-row-nexus">
-                                <span className="ins-label">Instructor</span>
-                                <div className="ins-name-pill">
-                                    <span className="ins-name-text">{classroom.instructor}</span>
-                                </div>
+                        <h1 className="hero-title">{classroom?.name}</h1>
+                        
+                        <div className="instructor-badge">
+                            <span className="ins-label">Instructor:</span>
+                            <span className="ins-name">{classroom?.instructor}</span>
+                        </div>
+                        
+                        <div className="student-stats-row">
+                            <div className="progress-track">
+                                {/* The dynamic width MUST stay inline, everything else is in CSS */}
+                                <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
                             </div>
+                            <span className="progress-text">{completedTasks} / {totalTasks} Tasks Completed</span>
                         </div>
                     </div>
                 </header>
 
-                <section className="assignment-nexus slide-up">
-                    <div className="stream-header-nexus">
-                        <h2>Assignment Queue</h2>
-                        <div className="label-line-nexus"></div>
+                {/* --- ASSIGNMENT STREAM --- */}
+                <main className="content-hub">
+                    <div className="hub-header">
+                        <div className="header-titles">
+                            <h2>Assignment(s)</h2>
+                        </div>
                     </div>
-                    
-                    <div className="assignment-stack">
-                        {assignments.length === 0 ? (
-                            <div className="spatial-card empty-card-nexus">
-                                <p>No active protocols detected in this cluster.</p>
-                            </div>
-                        ) : (
-                            assignments.map((assignment, index) => (
-                                <div key={assignment.id} className="spatial-card assignment-row-card" style={{ animationDelay: `${index * 0.1}s` }}>
-                                    <div className="card-glass-layer"></div>
-                                    <div className="row-grid-content">
-                                        <div className="row-info-nexus">
-                                            <span className="row-op-tag">OP_TASK_0{index + 1}</span>
-                                            <h3>{assignment.title}</h3>
-                                            <p>{assignment.description || "Parameters standard."}</p>
-                                        </div>
-                                        
-                                        <div className="row-actions-nexus">
-                                            {/* --- THE LOCK AND SCORE LOGIC --- */}
-                                            {assignment.has_submitted ? (
-                                                <div className="submitted-status-group">
-                                                    <span className="status-pill success">✓ Turned In</span>
-                                                    <div className="score-display">
-                                                        <span className="score-label">FALSICODE SCORE</span>
-                                                        <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
-                                                            {assignment.score}
-                                                        </span>
-                                                    </div>
-                                                </div>
+
+                    <div className="assignment-grid">
+                        {assignments.map((assignment, idx) => {
+                            const isSubmitted = assignment.has_submitted;
+                            const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
+                            
+                            // 🌟 THE FIX: Read the flag from the backend
+                            const isUnlocked = assignment.allow_resubmit; 
+                            
+                            // Only disable the card if they are completely locked out
+                            const isDisabled = (isSubmitted && !isUnlocked) || (isOverdue && !isUnlocked); 
+                            
+                            const language = formatLanguageDisplay(assignment.language);
+                            
+                            // Determine dynamic status classes
+                            let statusClass = 'badge-pending';
+                            let statusText = 'Pending';
+                            
+                            if (isUnlocked) {
+                                statusClass = 'badge-unlocked'; // Custom styling for unlocked state
+                                statusText = 'Resubmit Requested';
+                            } else if (isSubmitted) {
+                                statusClass = 'badge-submitted';
+                                statusText = 'Turned In';
+                            } else if (isOverdue) {
+                                statusClass = 'badge-overdue';
+                                statusText = 'Overdue';
+                            }
+
+                            // Dynamic Button Text
+                            let buttonText = 'Initialize Source File →';
+                            if (isUnlocked) buttonText = 'Resubmit Source File →';
+                            else if (isSubmitted) buttonText = 'Your work has been submitted.';
+                            else if (isOverdue) buttonText = 'Deadline Passed';
+
+                            return (
+                                <div 
+                                    key={assignment.id} 
+                                    className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''} ${isUnlocked ? 'unlocked-card' : ''}`}
+                                    onClick={() => setViewAssignment(assignment)}
+                                >
+                                    <div className="assignment-meta-top">
+                                        <span className="task-id">
+                                            TASK {String(idx + 1).padStart(2, '0')} • {language}
+                                        </span>
+                                        <span className={`status-badge ${statusClass}`}>
+                                            {statusText}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3>{assignment.title}</h3>
+                                    <p>{assignment.description}</p>
+                                    
+                                    <div className={`deadline-row ${isOverdue && !isSubmitted && !isUnlocked ? 'deadline-missed' : ''}`}>
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>Due: {formatDeadline(assignment.deadline)}</span>
+                                    </div>
+                                    
+                                    <div className="card-footer-split">
+                                        <div className="score-display">
+                                            {isSubmitted ? (
+                                                <>
+                                                    <span className="score-label">SCORE</span>
+                                                    <span className={`score-value ${assignment.score === 'Pending' ? 'pending' : ''}`}>
+                                                        {assignment.score}
+                                                    </span>
+                                                </>
                                             ) : (
                                                 <>
-                                                    <input type="file" accept=".py" id={`f-${assignment.id}`} style={{display: 'none'}} onChange={(e) => handleFileChange(assignment.id, e)} />
-                                                    
-                                                    {!selectedFiles[assignment.id] ? (
-                                                        <label htmlFor={`f-${assignment.id}`} className="nexus-select-btn">
-                                                            Initialize Source
-                                                        </label>
-                                                    ) : (
-                                                        <div className="nexus-deploy-group">
-                                                            <div className="nexus-file-pill"><code>{selectedFiles[assignment.id].name}</code></div>
-                                                            <button className="nexus-deploy-btn" onClick={() => handleFileUpload(assignment.id)}>Deploy Node</button>
-                                                        </div>
-                                                    )}
+                                                    <span className="score-label">MAX SCORE</span>
+                                                    <span className="score-value">{assignment.max_score} pts</span>
                                                 </>
                                             )}
                                         </div>
+
+                                        <button 
+                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'} ${isUnlocked ? 'btn-pulse' : ''}`} 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleOpenSubmission(assignment);
+                                            }}
+                                            disabled={isDisabled}
+                                        >
+                                            {buttonText}
+                                        </button>
                                     </div>
                                 </div>
-                            ))
-                        )}
+                            );
+                        })}
                     </div>
-                </section>
+                </main>
             </div>
-        </div>
+
+            <SubmitFileModal 
+                isOpen={showSubmitModal}
+                onClose={() => setShowSubmitModal(false)}
+                assignment={activeAssignment}
+                classroomId={id}
+                onSuccess={handleSubmissionSuccess}
+            />
+
+            <ViewAssignmentModal 
+                isOpen={!!viewAssignment}
+                onClose={() => setViewAssignment(null)}
+                assignment={viewAssignment}
+            />
+        </InstructorWrapper>
     );
 };
 

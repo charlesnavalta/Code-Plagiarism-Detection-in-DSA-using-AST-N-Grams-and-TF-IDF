@@ -27,6 +27,7 @@
     color: var(--text-main);
     min-height: calc(100vh - 65px);
     font-family: 'Inter', system-ui, sans-serif;
+    padding-top: 70px;
     position: relative;
     overflow-x: hidden;
     transition: background-color 0.5s ease, color 0.5s ease;
