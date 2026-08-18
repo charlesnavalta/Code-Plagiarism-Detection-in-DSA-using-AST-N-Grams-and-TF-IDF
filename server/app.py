@@ -1,6 +1,7 @@
 import os
 import time
-from flask import Flask
+import re
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from sqlalchemy.exc import OperationalError
@@ -25,11 +26,13 @@ def create_app():
     # 1. Load configurations
     app.config.from_object('config.Config')
 
-    # Allowed CORS origins (Local dev + Cloud Vercel/Render frontend)
+    # Allowed CORS origins pattern (Local dev + All Vercel domains + Render)
     allowed_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://falsicode.vercel.app",
+        re.compile(r"^https:\/\/.*\.vercel\.app$"),
+        re.compile(r"^https:\/\/.*\.onrender\.com$")
     ]
     
     # Read CLIENT_URL or FRONTEND_URL from environment (support comma-separated values)
@@ -44,10 +47,34 @@ def create_app():
     CORS(
         app,
         supports_credentials=True,
-        origins=allowed_origins if allowed_origins else "*",
-        allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials", "Origin", "Accept"],
-        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+        origins=allowed_origins,
+        allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials", "Origin", "Accept", "X-Requested-With"],
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        expose_headers=["Content-Type", "Authorization"]
     )
+
+    # Global fallback to ensure CORS headers on every response (including preflights & error responses)
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            response = app.make_default_options_response()
+            origin = request.headers.get('Origin')
+            if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+            return response
+
+    @app.after_request
+    def add_cors_headers(response):
+        origin = request.headers.get('Origin')
+        if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        return response
 
     # 2. Ensure Upload Folder Exists
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
