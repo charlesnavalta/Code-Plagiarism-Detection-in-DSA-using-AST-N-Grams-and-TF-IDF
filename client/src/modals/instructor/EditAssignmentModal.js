@@ -15,7 +15,6 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
     const [language, setLanguage] = useState('python');
     const [deadline, setDeadline] = useState(''); 
     const [isSaving, setIsSaving] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const toast = useToast();
 
     useEffect(() => {
@@ -25,7 +24,6 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             setMaxScore(assignment.max_score || 100);
             setLanguage(assignment.language || 'python');
             setDeadline(assignment.deadline || '');
-            setErrorMessage('');
         }
     }, [assignment]);
 
@@ -46,11 +44,9 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage(''); 
 
         const validationError = validateAssignmentDescription(description);
         if (validationError) { 
-            setErrorMessage(validationError); 
             toast.warning(validationError, "Validation Notice");
             return; 
         }
@@ -58,7 +54,6 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         // Validate deadline if provided or changed
         const deadlineError = validateDeadline(deadline);
         if (deadlineError) {
-            setErrorMessage(deadlineError);
             toast.warning(deadlineError, "Invalid Deadline");
             return;
         }
@@ -73,7 +68,6 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             onClose();
         } catch (error) {
             const errText = error.response?.data?.error || error.message || "Failed to update assignment.";
-            setErrorMessage(errText);
             toast.error(errText, "Update Failed");
         } finally {
             setIsSaving(false);
@@ -85,20 +79,19 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         if (!confirmDelete) return;
 
         setIsSaving(true);
-        setErrorMessage('');
         try {
             await api.delete(`/classrooms/${classroomId}/assignments/${assignment.id}`);
             if (onAssignmentDeleted) onAssignmentDeleted(assignment.id);
+            toast.success("Assignment deleted successfully.", "Task Deleted");
             onClose();
         } catch (error) {
-            setErrorMessage("Failed to delete: " + (error.response?.data?.error || error.message));
+            toast.error("Failed to delete: " + (error.response?.data?.error || error.message), "Deletion Error");
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleClose = () => {
-        setErrorMessage(''); 
         onClose();
     };
 

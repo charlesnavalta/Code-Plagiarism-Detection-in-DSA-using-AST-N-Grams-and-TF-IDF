@@ -18,24 +18,18 @@ const ForgotPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
 
     const handleRequestCode = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
-        setMessage('');
         try {
             const data = await authService.requestPasswordReset(email);
-            setMessage(data.message);
             toast.success(data.message || "Recovery code sent to your email!", "Code Dispatched");
             setStep(2); 
         } catch (err) {
             const errText = err.response?.data?.error || "Failed to initialize recovery sequence.";
-            setError(errText);
             toast.error(errText, "Recovery Error");
         } finally {
             setLoading(false);
@@ -46,19 +40,20 @@ const ForgotPassword = () => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
             toast.error("Security error: Passwords do not match.", "Password Mismatch");
-            return setError("Security error: Passwords do not match.");
+            return;
         }
         
         setLoading(true);
-        setError('');
-        setMessage('');
         try {
-            const data = await authService.resetPassword({ email, code, newPassword });
+            const data = await authService.resetPassword({
+                email,
+                code,
+                new_password: newPassword
+            });
             toast.success(data.message || "Password updated successfully!", "Credentials Updated");
             navigate('/login'); 
         } catch (err) {
-            const errText = err.response?.data?.error || "Validation failed. Check your code or password guidelines.";
-            setError(errText);
+            const errText = err.response?.data?.error || "Invalid or expired authorization code.";
             toast.error(errText, "Reset Failed");
         } finally {
             setLoading(false);

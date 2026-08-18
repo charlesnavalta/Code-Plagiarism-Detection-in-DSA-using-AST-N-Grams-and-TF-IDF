@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../context/NotificationContext';
 import './Profile.css';
 import api from '../../services/api'; 
@@ -8,7 +7,6 @@ const Profile = () => {
     const rawUser = localStorage.getItem('user');
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
-    const navigate = useNavigate();
     const toast = useToast();
 
     const [currentPassword, setCurrentPassword] = useState('');
@@ -17,8 +15,6 @@ const Profile = () => {
     const [otpCode, setOtpCode] = useState('');
     const [sendingCode, setSendingCode] = useState(false);
     
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState(user.email || '');
 

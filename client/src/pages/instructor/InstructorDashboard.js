@@ -64,6 +64,7 @@ const InstructorDashboard = () => {
         }
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchDashboardData(); }, []);
 
     const handleCreateClass = async (e) => {

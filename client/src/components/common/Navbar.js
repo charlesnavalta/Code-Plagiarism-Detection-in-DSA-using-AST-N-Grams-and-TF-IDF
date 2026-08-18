@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'; 
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
 import './Navbar.css'; 
 
 const Navbar = () => {
-    const navigate = useNavigate();
     const location = useLocation(); 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [theme, setTheme] = useTheme();
@@ -17,7 +16,6 @@ const Navbar = () => {
     const displayName = user?.name || user?.username || 'User';
 
     const targetDashboard = user ? `/${user.role}` : '/';
-    const isAlreadyOnDashboard = location.pathname === targetDashboard;
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);

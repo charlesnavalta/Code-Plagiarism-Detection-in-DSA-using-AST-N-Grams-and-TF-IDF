@@ -9,7 +9,6 @@ import { validateAssignmentDescription, validateDeadline } from '../../utils/val
 import BaseModal from '../shared/BaseModal';
 
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
-    const [errorMessage, setErrorMessage] = useState("");
     const [guideFiles, setGuideFiles] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const toast = useToast();
@@ -30,7 +29,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
 
     const handleCreateAssignment = async (e) => {
         e.preventDefault();
-        setErrorMessage(""); 
         setIsSubmitting(true);
 
         const title = e.target.title.value;
@@ -41,7 +39,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
 
         const validationError = validateAssignmentDescription(description);
         if (validationError) {
-            setErrorMessage(validationError);
             toast.warning(validationError, "Validation Notice");
             setIsSubmitting(false);
             return;
@@ -49,7 +46,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
 
         const deadlineError = validateDeadline(deadline);
         if (deadlineError) {
-            setErrorMessage(deadlineError);
             toast.warning(deadlineError, "Invalid Deadline");
             setIsSubmitting(false);
             return;
@@ -75,13 +71,11 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
             onAssignmentCreated(res.data.assignment); 
             
             // Cleanup state and UI
-            setErrorMessage("");
             setGuideFiles([]);
             e.target.reset();
             onClose(); 
         } catch (error) {
             const errText = error.response?.data?.error || "Failed to create assignment. Please try again.";
-            setErrorMessage(errText);
             toast.error(errText, "Creation Failed");
         } finally {
             setIsSubmitting(false);
@@ -89,7 +83,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     };
 
     const handleClose = () => {
-        setErrorMessage(""); 
         setGuideFiles([]);
         onClose();
     };

@@ -22,8 +22,6 @@ const Register = () => {
     const [sendingCode, setSendingCode] = useState(false);
     const [cooldown, setCooldown] = useState(0);
     const [expectedCode, setExpectedCode] = useState(null);
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -43,8 +41,7 @@ const Register = () => {
         if (pass.length >= 10) score += 1;
         if (/[A-Z]/.test(pass) && /[0-9]/.test(pass)) score += 1;
         if (/[^A-Za-z0-9]/.test(pass)) score += 1;
-
-        if (score <= 1) return { score: 1, label: 'Weak', color: '#ef4444' };
+        if (score === 1) return { score: 1, label: 'Weak', color: '#ef4444' };
         if (score === 2) return { score: 2, label: 'Fair', color: '#f59e0b' };
         if (score === 3) return { score: 3, label: 'Good', color: '#3b82f6' };
         return { score: 4, label: 'Strong', color: '#10b981' };
@@ -56,22 +53,17 @@ const Register = () => {
 
     const handleSendCode = async () => {
         if (!formData.email) {
-            setError("Please enter an email address first.");
             toast.warning("Please enter an email address first.", "Email Required");
             return;
         }
         setSendingCode(true);
-        setError('');
-        setSuccessMessage('');
         try {
             const data = await authService.requestCode(formData.email);
-            setSuccessMessage("Verification code sent! Check your email inbox.");
             toast.success("Verification code sent! Check your email inbox.", "Code Dispatched");
             setExpectedCode(data.code);
             setCooldown(60);
         } catch (err) {
             const errText = err.response?.data?.error || "Failed to send verification code. Please try again.";
-            setError(errText);
             toast.error(errText, "Verification Error");
         } finally {
             setSendingCode(false);
@@ -80,18 +72,17 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         if (formData.password !== formData.confirmPassword) {
             toast.error("Passwords do not match. Please verify.", "Validation Error");
-            return setError("Passwords do not match. Please verify.");
+            return;
         }
         if (!expectedCode) {
             toast.warning("Please verify your email address by requesting a verification code.", "Email Verification Required");
-            return setError("Please verify your email address by requesting a verification code.");
+            return;
         }
         if (formData.code !== expectedCode) {
             toast.error("The 6-digit verification code you entered is incorrect.", "Invalid Code");
-            return setError("The 6-digit verification code you entered is incorrect.");
+            return;
         }
 
         setLoading(true);
@@ -121,7 +112,6 @@ const Register = () => {
                 await new Promise(r => setTimeout(r, 450 - elapsed));
             }
             const errText = err.response?.data?.error || "Registration failed. Please try again.";
-            setError(errText);
             toast.error(errText, "Registration Failed");
         } finally {
             setLoading(false);
