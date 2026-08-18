@@ -1,9 +1,26 @@
 // src/services/api.js
 import axios from "axios";
 
-// Create a centralized axios instance with a DYNAMIC hostname
+// Helper to determine the API base URL:
+// 1. If REACT_APP_API_URL is provided (e.g. on Vercel or in .env), use it
+// 2. Otherwise, fall back to localhost / dynamic hostname for local development
+const getBaseURL = () => {
+  if (process.env.REACT_APP_API_URL) {
+    let url = process.env.REACT_APP_API_URL.trim();
+    if (url.endsWith('/')) {
+      url = url.slice(0, -1);
+    }
+    if (!url.endsWith('/api')) {
+      url = `${url}/api`;
+    }
+    return url;
+  }
+  return `http://${window.location.hostname}:5000/api`;
+};
+
+// Create a centralized axios instance
 const api = axios.create({
-  baseURL: `http://${window.location.hostname}:5000/api`,
+  baseURL: getBaseURL(),
 });
 
 // 1. REQUEST INTERCEPTOR: Automatically attach the token to every outgoing call

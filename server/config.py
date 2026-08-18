@@ -7,27 +7,45 @@ load_dotenv()
 # Get the absolute path of the directory this file is in
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+def get_database_uri():
+    """Constructs the database URI, prioritizing DATABASE_URL for cloud providers like Aiven."""
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        # Aiven & standard MySQL connection string fix: mysql:// -> mysql+pymysql://
+        if db_url.startswith('mysql://'):
+            db_url = db_url.replace('mysql://', 'mysql+pymysql://', 1)
+        elif db_url.startswith('postgres://'):
+            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+        return db_url
+
+    # Fallback to individual variables for Docker / local development
+    db_user = os.environ.get('DB_USERNAME', 'root')
+    db_pass = os.environ.get('DB_PASSWORD', 'rootpassword')
+    db_host = os.environ.get('DB_HOST', 'localhost')
+    db_port = os.environ.get('DB_PORT', '3306')
+    db_name = os.environ.get('DB_DATABASE', 'system_db')
+
+    return f"mysql+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+
 class Config:
     """Base configuration class for the Falsicode system."""
     
     # 1. Security Keys
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback_secret_key_for_dev')
-    JWT_SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback_jwt_key') # Reusing secret key for JWT
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'falsicode_fallback_secret_key_2026')
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', SECRET_KEY)
 
-    # 2. Database Setup (Constructing the URI from your .env variables)
-    DB_USER = os.environ.get('DB_USERNAME', 'root')
-    DB_PASS = os.environ.get('DB_PASSWORD', 'rootpassword')
-    DB_HOST = os.environ.get('DB_HOST', 'db')
-    DB_PORT = os.environ.get('DB_PORT', '3306')
-    DB_NAME = os.environ.get('DB_DATABASE', 'system_db')
-    
-    # Format: mysql+pymysql://username:password@host:port/database_name
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    # 2. Database Setup
+    SQLALCHEMY_DATABASE_URI = get_database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Cloud database resilience: automatically check and recycle dropped connections
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_recycle": 280,
+        "pool_pre_ping": True,
+    }
 
     # 3. Application Specific Settings
-    # This automatically sets your upload folder to server/uploads
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(BASE_DIR, 'uploads'))
     
-    # Security: Prevent massive file uploads from crashing your server (Max 16 MB)
+    # Security: Prevent massive file uploads (Max 16 MB)
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
