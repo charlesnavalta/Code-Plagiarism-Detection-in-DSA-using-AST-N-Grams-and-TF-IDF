@@ -53,12 +53,16 @@ def create_app():
                 break
             except (OperationalError, Exception) as e:
                 retries -= 1
-                print(f"Falsicode: Database not ready... retrying in 3s ({10-retries}/10). Error: {e}")
-                time.sleep(3)
+                print(f"Falsicode: Database not ready... retrying in 1s ({10-retries}/10). Error: {e}")
+                time.sleep(1)
         
         if connected:
-            # Trigger the smart seeder
-            run_smart_seed(db)
+            # Only seed if the database is empty (first run)
+            if User.query.count() == 0:
+                print("Falsicode: Empty database detected, running seeder...")
+                run_smart_seed(db)
+            else:
+                print("Falsicode: Database already has data, skipping seeder.")
         else:
             print("CRITICAL: Falsicode could not connect to database.")
 

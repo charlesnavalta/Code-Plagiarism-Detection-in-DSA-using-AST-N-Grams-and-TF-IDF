@@ -17,9 +17,10 @@ services:
     # 🌟 NEW: Tells Docker how to check if MySQL is actually ready to accept connections
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 3s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
 
   # ----------------------------
   # 2. PYTHON BACKEND (Flask)
@@ -53,7 +54,6 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: frontend
-    command: sh -c "npm install && npm start"
     ports:
       - "3000:3000"
     volumes:
