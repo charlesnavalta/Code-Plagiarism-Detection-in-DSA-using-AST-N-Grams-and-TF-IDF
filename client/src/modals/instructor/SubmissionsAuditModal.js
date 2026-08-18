@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../../services/api'; 
+import { useToast } from '../../context/NotificationContext';
 import CodeComparisonView from '../../components/instructor/CodeComparisonView'; 
 import './SubmissionsAuditModal.css'; 
 import { getPlagiarismDisplayData } from '../../utils/theme';
@@ -11,6 +12,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
     const [selectedPair, setSelectedPair] = useState(null);
     const [gradeInputs, setGradeInputs] = useState({}); 
     const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
+    const toast = useToast();
 
     if (!isOpen) {
         if (selectedPair) setSelectedPair(null);
@@ -19,15 +21,15 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
 
     const handleSaveGrade = async (submissionId) => {
         const scoreToSave = gradeInputs[submissionId];
-        if (!scoreToSave) return alert("Please enter a score first.");
+        if (!scoreToSave) return toast.warning("Please enter a valid grade or score first.", "Input Required");
 
         try {
             await api.post(`/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${submissionId}/grade`, { score: scoreToSave });
-            alert("Grade saved successfully!");
+            toast.success("Grade committed successfully!", "Score Updated");
             const subToUpdate = submissions.find(s => s.id === submissionId);
             if (subToUpdate) subToUpdate.score = scoreToSave;
         } catch (error) {
-            alert("Failed to save grade.");
+            toast.error("Failed to commit grade to database.", "Grading Error");
         }
     };
 
@@ -35,9 +37,10 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions, analysisResults, 
     const handleAllowResubmit = async (submissionId) => {
         try {
             await api.patch(`/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${submissionId}/allow-resubmit`);
+            toast.success("Resubmission unlocked for student!", "Lock Cleared");
             setUnlockedIds(prev => [...prev, submissionId]); // Instantly updates the UI
         } catch (error) {
-            alert("Failed to unlock resubmission. Please check your connection.");
+            toast.error("Failed to unlock resubmission. Please check your connection.", "Action Failed");
         }
     };
 

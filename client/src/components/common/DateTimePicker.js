@@ -40,6 +40,14 @@ const DateTimePicker = ({ label, name, value, onChange, required }) => {
         hiddenInputValue = (new Date(selectedDate - offset)).toISOString().slice(0, 16);
     }
 
+    // Calculate minTime and maxTime so past hours/minutes cannot be picked if today is selected
+    const now = new Date();
+    const isToday = selectedDate && selectedDate.toDateString() === now.toDateString();
+    
+    // If today is selected, minTime is the current time; if future date, allow 00:00 - 23:59
+    const minTime = isToday ? now : new Date(new Date().setHours(0, 0, 0, 0));
+    const maxTime = new Date(new Date().setHours(23, 59, 59, 999));
+
     return (
         <div className="datetime-picker-group">
             {label && <label>{label}</label>}
@@ -55,6 +63,9 @@ const DateTimePicker = ({ label, name, value, onChange, required }) => {
                     className="styled-datetime-input custom-react-datepicker"
                     required={required && !selectedDate} // Only require the visible input if no date is picked
                     placeholderText="Select deadline..."
+                    minDate={now}
+                    minTime={minTime}
+                    maxTime={maxTime}
                 />
                 
                 {/* 🌟 THE MAGIC: This hidden input ensures standard form submission (e.target.deadline.value) still works perfectly! */}

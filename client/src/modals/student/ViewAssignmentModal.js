@@ -1,10 +1,12 @@
 import React from 'react';
 import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
 import './ViewAssignmentModal.css'; 
 import BaseModal from '../shared/BaseModal';
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 
 const ViewAssignmentModal = ({ isOpen, onClose, assignment }) => {
+    const toast = useToast();
     if (!isOpen || !assignment) return null;
 
     const languageLabel = formatLanguageDisplay(assignment.language);
@@ -23,7 +25,7 @@ const ViewAssignmentModal = ({ isOpen, onClose, assignment }) => {
             window.open(blobUrl, '_blank');
         } catch (error) {
             console.error("Failed to open file:", error);
-            alert("Failed to securely open the file preview.");
+            toast.error("Failed to securely open the file preview.", "File Preview Error");
         }
     };
 

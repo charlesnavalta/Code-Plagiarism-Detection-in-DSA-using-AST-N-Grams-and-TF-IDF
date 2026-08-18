@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api'; 
+import { useToast } from '../../context/NotificationContext';
 import './EditAssignmentModal.css'; 
 import DateTimePicker from '../../components/common/DateTimePicker';
-import { validateAssignmentDescription } from '../../utils/validation';
+import { validateAssignmentDescription, validateDeadline } from '../../utils/validation';
 
 // 🌟 Import the Base Skeleton
 import BaseModal from '../shared/BaseModal';
@@ -15,6 +16,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
     const [deadline, setDeadline] = useState(''); 
     const [isSaving, setIsSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const toast = useToast();
 
     useEffect(() => {
         if (assignment) {
@@ -22,7 +24,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             setDescription(assignment.description || '');
             setMaxScore(assignment.max_score || 100);
             setLanguage(assignment.language || 'python');
-            setDeadline(assignment.deadline ? assignment.deadline.substring(0, 16) : '');
+            setDeadline(assignment.deadline || '');
             setErrorMessage('');
         }
     }, [assignment]);
@@ -38,7 +40,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
             window.open(blobUrl, '_blank');
         } catch (error) {
             console.error("Failed to open file:", error);
-            alert("Failed to securely open the file preview.");
+            toast.error("Failed to securely open the file preview.");
         }
     };
 
@@ -47,17 +49,32 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         setErrorMessage(''); 
 
         const validationError = validateAssignmentDescription(description);
-        if (validationError) { setErrorMessage(validationError); return; }
+        if (validationError) { 
+            setErrorMessage(validationError); 
+            toast.warning(validationError, "Validation Notice");
+            return; 
+        }
+
+        // Validate deadline if provided or changed
+        const deadlineError = validateDeadline(deadline);
+        if (deadlineError) {
+            setErrorMessage(deadlineError);
+            toast.warning(deadlineError, "Invalid Deadline");
+            return;
+        }
 
         setIsSaving(true);
         try {
             const res = await api.put(`/classrooms/${classroomId}/assignments/${assignment.id}`, {
                 title, description, max_score: parseInt(maxScore), language, deadline: deadline || null
             });
+            toast.success("Assignment parameters updated successfully!", "Task Updated");
             onAssignmentUpdated(res.data);
             onClose();
         } catch (error) {
-            setErrorMessage("Failed to update: " + (error.response?.data?.error || error.message));
+            const errText = error.response?.data?.error || error.message || "Failed to update assignment.";
+            setErrorMessage(errText);
+            toast.error(errText, "Update Failed");
         } finally {
             setIsSaving(false);
         }
@@ -88,13 +105,7 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
     return (
         <BaseModal isOpen={isOpen} onClose={handleClose} title="Edit Task" isDeploying={isSaving}>
             <form onSubmit={handleSubmit} className="hud-form-wrapper">
-                
                 <div className="hud-modal-body">
-                    {errorMessage && (
-                        <div className="error-banner">
-                            <strong>Error:</strong> {errorMessage}
-                        </div>
-                    )}
 
                     <div className="input-group">
                         <label>Assignment Title</label>

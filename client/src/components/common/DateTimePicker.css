@@ -104,3 +104,12 @@
     background-color: #3b82f6 !important;
     color: white !important;
 }
+
+/* Disabled / Past Days and Times */
+.react-datepicker__day--disabled,
+.react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--disabled {
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    background-color: transparent !important;
+}

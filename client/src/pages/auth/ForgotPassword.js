@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../services/api';
+import authService from '../../services/authService';
+import { useToast } from '../../context/NotificationContext';
 
 // Extracted Components
 import AuroraBackground from '../../components/auth/shared/AuroraBackground';
@@ -19,6 +20,7 @@ const ForgotPassword = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const toast = useToast();
     const navigate = useNavigate();
 
     const handleRequestCode = async (e) => {
@@ -27,11 +29,14 @@ const ForgotPassword = () => {
         setError('');
         setMessage('');
         try {
-            const res = await api.post('/auth/forgot-password', { email });
-            setMessage(res.data.message);
+            const data = await authService.requestPasswordReset(email);
+            setMessage(data.message);
+            toast.success(data.message || "Recovery code sent to your email!", "Code Dispatched");
             setStep(2); 
         } catch (err) {
-            setError(err.response?.data?.error || "Failed to initialize recovery sequence.");
+            const errText = err.response?.data?.error || "Failed to initialize recovery sequence.";
+            setError(errText);
+            toast.error(errText, "Recovery Error");
         } finally {
             setLoading(false);
         }
@@ -39,17 +44,22 @@ const ForgotPassword = () => {
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
-        if (newPassword !== confirmPassword) return setError("Security error: Passwords do not match.");
+        if (newPassword !== confirmPassword) {
+            toast.error("Security error: Passwords do not match.", "Password Mismatch");
+            return setError("Security error: Passwords do not match.");
+        }
         
         setLoading(true);
         setError('');
         setMessage('');
         try {
-            const res = await api.post('/auth/reset-password', { email, code, new_password: newPassword });
-            alert(res.data.message);
+            const data = await authService.resetPassword({ email, code, newPassword });
+            toast.success(data.message || "Password updated successfully!", "Credentials Updated");
             navigate('/login'); 
         } catch (err) {
-            setError(err.response?.data?.error || "Validation failed. Check your code or password guidelines.");
+            const errText = err.response?.data?.error || "Validation failed. Check your code or password guidelines.";
+            setError(errText);
+            toast.error(errText, "Reset Failed");
         } finally {
             setLoading(false);
         }
@@ -62,8 +72,6 @@ const ForgotPassword = () => {
                 <AuroraBackground />
 
                 <div className="left-pane-content fade-in-up">
-                    
-                    {/* 🌟 ADDED: The wrapper required by Login.css to center text on mobile/tablet */}
                     <div className="mobile-center-content">
                         <div className="brand-logo">
                             <span className="logo-icon">⎔</span> Falsicode.
@@ -86,10 +94,10 @@ const ForgotPassword = () => {
                             <div className="match-indicator indicator-blue"></div>
                         </div>
                         <div className="abstract-card card-front">
-                            <code> verify_otp(******)</code>
-                            <div className="dummy-code-line w-58"></div>
+                            <code>verify_otp(******)</code>
                             <div className="dummy-code-line w-75"></div>
-                            <code className="text-green"> Keys updated_</code>
+                            <div className="dummy-code-line w-50"></div>
+                            <code className="text-green">Keys updated_</code>
                         </div>
                     </div>
                 </div>
@@ -97,14 +105,21 @@ const ForgotPassword = () => {
 
             <div className="split-right-pane">
                 <div className="form-container fade-in-up">
-                    <h2 className="auth-title">Reset Access Signature</h2>
-                    
-                    {error && <p className="auth-error-msg">{error}</p>}
-                    {message && <p className="auth-success-msg">{message}</p>}
+                    <div className="form-top-nav">
+                        <Link to="/login" className="auth-back-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                            Back to Login
+                        </Link>
+                    </div>
+
+                    <h2 className="auth-title">Reset Password</h2>
 
                     {step === 1 ? (
                         <form onSubmit={handleRequestCode}>
-                            <p className="auth-subtitle">Enter your registered account username or email address to generate a verification token.</p>
+                            <p className="auth-subtitle">Enter your registered email address to receive a secure recovery code.</p>
                             
                             <AuthInput 
                                 type="text" name="email" placeholder="Username or Email"
@@ -118,25 +133,31 @@ const ForgotPassword = () => {
                                 }
                             />
 
-                            <AuthButton loading={loading} loadingText="Generating Signature...">
+                            <AuthButton loading={loading} loadingText="Generating Code...">
                                 Request Access Code
                             </AuthButton>
                         </form>
                     ) : (
                         <form onSubmit={handleResetPassword}>
-                            <p className="auth-subtitle">Code deployed to account identity: <strong>{email}</strong>. Enter the digits along with your new password configuration.</p>
+                            <p className="auth-subtitle">Code dispatched to <strong>{email}</strong>. Enter the 6-digit code with your new password.</p>
                             
                             <AuthInput 
                                 type="text" name="code" placeholder="6-Digit Code"
                                 maxLength={6} value={code} required
-                                extraStyles={{ letterSpacing: '4px', fontWeight: 'bold' }}
-                                onChange={e => setCode(e.target.value)}
-                                icon={<span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>#</span>}
+                                extraStyles={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '3px', fontWeight: 'bold' }}
+                                onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+                                icon={
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                }
                             />
 
                             <AuthInput 
-                                type="password" name="newPassword" placeholder="New Password"
-                                value={newPassword} required
+                                type="password" name="newPassword" placeholder="New Password (min. 6 chars)"
+                                value={newPassword} required minLength="6"
                                 onChange={e => setNewPassword(e.target.value)}
                                 icon={
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -148,18 +169,17 @@ const ForgotPassword = () => {
 
                             <AuthInput 
                                 type="password" name="confirmPassword" placeholder="Confirm New Password"
-                                value={confirmPassword} required
+                                value={confirmPassword} required minLength="6"
                                 onChange={e => setConfirmPassword(e.target.value)}
                                 icon={
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                        <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                 }
                             />
 
                             <AuthButton variant="accent" loading={loading} loadingText="Updating Credentials...">
-                                Commit Security Change
+                                Reset Password
                             </AuthButton>
                         </form>
                     )}

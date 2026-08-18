@@ -250,3 +250,38 @@ def get_student_history():
     except Exception as e:
         print(f"FALSICODE ERROR fetching history: {e}")
         return jsonify({"error": "Failed to fetch submission history"}), 500
+
+
+@submissions_bp.route('/instructor/activity', methods=['GET'])
+@jwt_required()
+def get_instructor_activity():
+    """Fetches recent submissions across all classrooms owned by the instructor."""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or user.role != 'instructor':
+            return jsonify({"error": "Unauthorized"}), 403
+
+        recent = db.session.query(Submission, Assignment, Classroom).join(
+            Assignment, Submission.assignment_id == Assignment.id
+        ).join(
+            Classroom, Assignment.classroom_id == Classroom.id
+        ).filter(
+            Classroom.instructor_id == current_user_id
+        ).order_by(Submission.submitted_at.desc()).limit(5).all()
+
+        activity = []
+        for submission, assignment, classroom in recent:
+            activity.append({
+                "id": submission.id,
+                "student_name": submission.student.username,
+                "assignment_name": assignment.title,
+                "classroom_name": classroom.name,
+                "submitted_at": submission.submitted_at.isoformat() if submission.submitted_at else None,
+                "score": submission.score
+            })
+
+        return jsonify(activity), 200
+    except Exception as e:
+        print(f"FALSICODE ERROR fetching instructor activity: {e}")
+        return jsonify({"error": "Failed to fetch activity"}), 500

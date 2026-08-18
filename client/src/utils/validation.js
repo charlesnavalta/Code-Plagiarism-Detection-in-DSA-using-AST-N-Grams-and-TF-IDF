@@ -19,3 +19,20 @@ export const validateAssignmentDescription = (description) => {
     // If everything is good, return null (no errors)
     return null; 
 };
+
+export const validateDeadline = (deadline) => {
+    if (!deadline) return null; // Deadline is optional, but if set, must be valid
+
+    const deadlineDate = new Date(deadline);
+    if (isNaN(deadlineDate.getTime())) {
+        return "Invalid deadline date format.";
+    }
+
+    const now = new Date();
+    // Allow a 1-minute grace period to prevent submission race conditions
+    if (deadlineDate.getTime() < (now.getTime() - 60000)) {
+        return "Deadline cannot be set in the past. Please select a future date and time.";
+    }
+
+    return null;
+};

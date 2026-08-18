@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
 import './CreateAssignmentModal.css';
 import DateTimePicker from '../../components/common/DateTimePicker';
-import { validateAssignmentDescription } from '../../utils/validation';
+import { validateAssignmentDescription, validateDeadline } from '../../utils/validation';
 
 // 🌟 Import the Base Skeleton
 import BaseModal from '../shared/BaseModal';
@@ -11,6 +12,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     const [errorMessage, setErrorMessage] = useState("");
     const [guideFiles, setGuideFiles] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const toast = useToast();
 
     if (!isOpen) return null;
 
@@ -18,7 +20,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
         if (selectedFiles.length > 3) {
-            alert("You can only upload a maximum of 3 guide files.");
+            toast.warning("You can only upload a maximum of 3 guide files.", "File Limit Exceeded");
             e.target.value = null; // Reset the input field
             setGuideFiles([]);
             return;
@@ -40,6 +42,15 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         const validationError = validateAssignmentDescription(description);
         if (validationError) {
             setErrorMessage(validationError);
+            toast.warning(validationError, "Validation Notice");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const deadlineError = validateDeadline(deadline);
+        if (deadlineError) {
+            setErrorMessage(deadlineError);
+            toast.warning(deadlineError, "Invalid Deadline");
             setIsSubmitting(false);
             return;
         }
@@ -60,6 +71,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         try {
             // Axios will automatically configure the multipart boundaries
             const res = await api.post(`/classrooms/${classroomId}/assignments`, formData);
+            toast.success("Assignment created successfully!", "Task Provisioned");
             onAssignmentCreated(res.data.assignment); 
             
             // Cleanup state and UI
@@ -68,7 +80,9 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
             e.target.reset();
             onClose(); 
         } catch (error) {
-            setErrorMessage(error.response?.data?.error || "Failed to create assignment. Please try again.");
+            const errText = error.response?.data?.error || "Failed to create assignment. Please try again.";
+            setErrorMessage(errText);
+            toast.error(errText, "Creation Failed");
         } finally {
             setIsSubmitting(false);
         }
@@ -83,13 +97,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     return (
         <BaseModal isOpen={isOpen} onClose={handleClose} title="Create Assignment">
             <form onSubmit={handleCreateAssignment} className="hud-form-wrapper">
-                
                 <div className="hud-modal-body">
-                    {errorMessage && (
-                        <div className="error-banner">
-                            <strong>Error:</strong> {errorMessage}
-                        </div>
-                    )}
 
                     <div className="input-group">
                         <label>Assignment Title</label>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../context/NotificationContext';
 import './Profile.css';
 import api from '../../services/api'; 
 
@@ -8,6 +9,7 @@ const Profile = () => {
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
     const navigate = useNavigate();
+    const toast = useToast();
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -34,18 +36,16 @@ const Profile = () => {
 
     const handleUpdateEmail = (e) => {
         e.preventDefault();
-        alert("System Notice: Email update functionality is currently being provisioned.");
+        toast.info("Email update functionality is currently being provisioned.", "System Notice");
     };
 
     const handleSendCode = async () => {
         setSendingCode(true);
-        setError('');
-        setMessage('');
         try {
             const res = await api.post('/auth/profile/request-code');
-            setMessage(res.data.message);
+            toast.success(res.data.message || "Security authorization code sent to your email.", "Code Dispatched");
         } catch (err) {
-            setError(err.response?.data?.error || "Failed to trigger security email.");
+            toast.error(err.response?.data?.error || "Failed to trigger security email.", "Dispatch Failed");
         } finally {
             setSendingCode(false);
         }
@@ -53,10 +53,12 @@ const Profile = () => {
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
-        setMessage('');
-        setError('');
-        if (newPassword !== confirmPassword) return setError("Security protocol failed: New passwords do not match.");
-        if (newPassword.length < 6) return setError("Security protocol failed: Password must be at least 6 characters.");
+        if (newPassword !== confirmPassword) {
+            return toast.error("New passwords do not match. Please verify.", "Security Error");
+        }
+        if (newPassword.length < 6) {
+            return toast.warning("Password must be at least 6 characters in length.", "Validation Notice");
+        }
 
         setLoading(true);
         try {
@@ -65,10 +67,13 @@ const Profile = () => {
                 new_password: newPassword,
                 code: otpCode
             });
-            setMessage(res.data.message);
-            setCurrentPassword(''); setNewPassword(''); setConfirmPassword(''); setOtpCode('');
+            toast.success(res.data.message || "Security credentials updated successfully!", "Credentials Updated");
+            setCurrentPassword(''); 
+            setNewPassword(''); 
+            setConfirmPassword(''); 
+            setOtpCode('');
         } catch (err) {
-            setError(err.response?.data?.error || "Critical failure: Unable to update security parameters.");
+            toast.error(err.response?.data?.error || "Unable to update security parameters.", "Update Failed");
         } finally {
             setLoading(false);
         }
@@ -173,9 +178,6 @@ const Profile = () => {
                             </div>
 
                             <form onSubmit={handleUpdatePassword} className="premium-form">
-                                {message && <div className="nexus-alert success">{message}</div>}
-                                {error && <div className="nexus-alert error">{error}</div>}
-
                                 <div className="dark-form-group">
                                     <label>Current Password</label>
                                     <input 
@@ -213,9 +215,10 @@ const Profile = () => {
                                             placeholder="000000" maxLength="6" required
                                         />
                                     </div>
-                                    <div className="w-50 code-btn-wrapper">
+                                    <div className="dark-form-group w-50 code-btn-group">
+                                        <label className="desktop-spacer-label">&nbsp;</label>
                                         <button 
-                                            type="button" className="nexus-btn-secondary full-width-btn" 
+                                            type="button" className="nexus-btn-secondary full-width-btn send-otp-btn" 
                                             onClick={handleSendCode} disabled={sendingCode}
                                         >
                                             {sendingCode ? "Transmitting..." : "Send Code to Email"}

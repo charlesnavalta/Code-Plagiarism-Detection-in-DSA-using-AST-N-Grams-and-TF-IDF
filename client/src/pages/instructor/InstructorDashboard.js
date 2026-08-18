@@ -1,97 +1,122 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api'; 
-import './InstructorDashboard.css';
+import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
 
-// Utilities & Shared Components
+// 🌟 DRY: Shared Dashboard Components
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import ProfileCard from '../../components/dashboard/ProfileCard';
+import StatCard from '../../components/dashboard/StatCard';
+import RecentSubmissions from '../../components/dashboard/RecentSubmissions';
+import ClassroomCardSkeleton, { EmptyClassroomSkeleton } from '../../components/dashboard/ClassroomCardSkeleton';
+
+// Utilities
 import { getUserData } from '../../utils/authUtils';
-import InstructorWrapper from './components/InstructorWrapper';
-import QuantumLoader from './components/QuantumLoader';
 
 const InstructorDashboard = () => {
-    const [classrooms, setClassrooms] = useState([]);
+    const currentUser = getUserData();
+    const userId = currentUser.id || currentUser.user_id || currentUser.username || 'instructor';
+    const cacheKeyClasses = `falsicode_instructor_classes_${userId}`;
+    const cacheKeyActivity = `falsicode_instructor_activity_${userId}`;
+
+    const getCached = (key) => {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const cachedClasses = getCached(cacheKeyClasses);
+    const cachedActivity = getCached(cacheKeyActivity);
+
+    const [classrooms, setClassrooms] = useState(cachedClasses || []);
+    const [recentActivity, setRecentActivity] = useState(cachedActivity || []);
     const [newClassName, setNewClassName] = useState('');
     const [loading, setLoading] = useState(true);
+    const toast = useToast();
     const navigate = useNavigate();
 
-    const currentUser = getUserData();
     const displayName = currentUser.name || currentUser.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    const fetchClassrooms = async () => {
+    const fetchDashboardData = async () => {
+        setLoading(true);
+        const startTime = Date.now();
         try {
-            const res = await api.get('/classrooms/');
-            setClassrooms(res.data);
+            const classRes = await api.get('/classrooms/');
+            setClassrooms(classRes.data);
+            localStorage.setItem(cacheKeyClasses, JSON.stringify(classRes.data));
+
+            const activityRes = await api.get('/classrooms/instructor/activity');
+            setRecentActivity(activityRes.data);
+            localStorage.setItem(cacheKeyActivity, JSON.stringify(activityRes.data));
         } catch (error) {
-            console.error("Critical error fetching classrooms:", error);
+            console.error("Critical error fetching dashboard data:", error);
         } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 450;
+            if (elapsed < minDelay) {
+                await new Promise(r => setTimeout(r, minDelay - elapsed));
+            }
             setLoading(false);
         }
     };
 
-    useEffect(() => { fetchClassrooms(); }, []);
-
-    const totalStudents = classrooms.reduce((acc, cls) => acc + (cls.student_count || 0), 0);
+    useEffect(() => { fetchDashboardData(); }, []);
 
     const handleCreateClass = async (e) => {
         e.preventDefault();
-        if (!newClassName.trim()) return alert("Security Notice: Please enter a valid class identifier.");
+        if (!newClassName.trim()) return toast.warning("Please enter a valid class identifier.", "Class Name Required");
         try {
             await api.post('/classrooms/', { name: newClassName });
+            toast.success("Classroom provisioned successfully!", "Classroom Created");
             setNewClassName('');
-            fetchClassrooms(); 
+            fetchDashboardData();
         } catch (error) {
-            alert("Protocol failure: Unable to initialize classroom.");
+            toast.error("Unable to initialize classroom.", "Creation Failed");
         }
     };
 
     return (
-        <InstructorWrapper>
+        <DashboardLayout>
             <div className="nexus-layout">
                 {/* --- Sidebar: Identity --- */}
                 <aside className="nexus-sidebar fade-in-left">
-                    <div 
-                        className="spatial-card profile-card"
-                        onClick={() => navigate('/instructor/profile')} 
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className="card-glass-layer"></div>
-                        <div className="card-content">
-                            <div className="avatar-hologram">
-                                <div className="avatar-core">{userInitial}</div>
-                                <div className="avatar-ring-1"></div>
-                            </div>
-                            <h2 className="user-display-name">{displayName}</h2>
-                            <p className="user-role-text">Instructor Workspace</p>
-                            <div className="system-status">
-                                <span className="status-dot online"></span>ACTIVE
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card stat-card delay-1">
-                        <div className="card-content">
-                            <span className="stat-label">Active Classes</span>
-                            <span className="stat-value">{classrooms.length}</span>
-                        </div>
-                    </div>
+                    <ProfileCard
+                        displayName={displayName}
+                        userInitial={userInitial}
+                        roleText="Instructor Workspace"
+                        statusLabel="ACTIVE"
+                        profileLink="/instructor/profile"
+                    />
+                    <StatCard
+                        label="Active Classes"
+                        value={classrooms.length}
+                        loading={loading}
+                    />
+                    <RecentSubmissions
+                        submissions={recentActivity}
+                        loading={loading}
+                        role="instructor"
+                    />
                 </aside>
 
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
-                    
-                    {/* 🌟 PREMIUM INSTRUCTOR BANNER */}
-                    <div className="cinematic-banner-shared spatial-card instructor-hero-banner">
+                    {/* Instructor Banner */}
+                    <div className="cinematic-banner-shared spatial-card">
                         <div className="banner-content">
                             <div className="banner-text">
                                 <h1>Instructor Hub</h1>
                                 <p className="banner-subtitle desktop-only">Provision and manage your digital classrooms.</p>
                             </div>
-                            
+
                             <form onSubmit={handleCreateClass} className="nexus-join-form">
                                 <div className="input-with-icon">
-                                    <input 
-                                        type="text" placeholder="Class Name" 
+                                    <input
+                                        type="text" placeholder="Class Name"
                                         value={newClassName} onChange={(e) => setNewClassName(e.target.value)}
                                         className="nexus-input"
                                     />
@@ -114,18 +139,24 @@ const InstructorDashboard = () => {
                         </div>
 
                         {loading ? (
-                            <div className="spatial-card"><QuantumLoader fullScreen={false} /></div>
+                            cachedClasses && cachedClasses.length > 0 ? (
+                                <div className="classroom-grid">
+                                    <ClassroomCardSkeleton count={cachedClasses.length} />
+                                </div>
+                            ) : (
+                                <EmptyClassroomSkeleton />
+                            )
                         ) : classrooms.length === 0 ? (
-                            <div className="spatial-card empty-card">
-                                <div className="empty-icon">📁</div>
+                            <div className="spatial-card empty-card" style={{ padding: '40px', textAlign: 'center' }}>
+                                <div className="empty-icon" style={{ fontSize: '3rem', marginBottom: '10px' }}>📁</div>
                                 <h3>No Classrooms Found</h3>
-                                <p>Provision a new classroom above to get started.</p>
+                                <p style={{ color: 'var(--text-dim)' }}>Provision a new classroom above to get started.</p>
                             </div>
                         ) : (
                             <div className="classroom-grid">
                                 {classrooms.map((cls, index) => (
-                                    <div 
-                                        key={cls.id} className="spatial-card course-card" 
+                                    <div
+                                        key={cls.id} className="spatial-card course-card"
                                         onClick={() => navigate(`/instructor/class/${cls.id}`)}
                                         style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
                                     >
@@ -133,7 +164,7 @@ const InstructorDashboard = () => {
                                         <div className="card-content flex-col">
                                             <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
-                                            
+
                                             <div className="instructor-tag-nexus">
                                                 <div className="ins-mini-avatar">🔑</div>
                                                 <span className="ins-name">
@@ -153,7 +184,7 @@ const InstructorDashboard = () => {
                     </div>
                 </main>
             </div>
-        </InstructorWrapper>
+        </DashboardLayout>
     );
 };
 

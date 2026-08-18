@@ -10,7 +10,7 @@ import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 import { formatDeadline } from '../../utils/dateUtils';
 import InstructorWrapper from '../instructor/components/InstructorWrapper';
-import QuantumLoader from '../instructor/components/QuantumLoader';
+import ClassroomViewSkeleton from '../instructor/components/ClassroomViewSkeleton';
 
 const StudentClassroomView = () => {
     const { id } = useParams(); 
@@ -28,6 +28,8 @@ const StudentClassroomView = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            const startTime = Date.now();
             try {
                 const [classRes, assignRes] = await Promise.all([
                     api.get(`/classrooms/${id}`),
@@ -38,6 +40,11 @@ const StudentClassroomView = () => {
             } catch (error) {
                 navigate('/student'); 
             } finally {
+                const elapsed = Date.now() - startTime;
+                const minDelay = 450;
+                if (elapsed < minDelay) {
+                    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+                }
                 setLoading(false);
             }
         };
@@ -72,7 +79,7 @@ const StudentClassroomView = () => {
         ));
     };
 
-    if (loading) return <QuantumLoader fullScreen={true} />;
+    if (loading) return <ClassroomViewSkeleton role="student" />;
 
     const completedTasks = assignments.filter(a => a.has_submitted).length;
     const totalTasks = assignments.length;

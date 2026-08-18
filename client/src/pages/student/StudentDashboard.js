@@ -1,41 +1,66 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../hooks/useTheme';
-import api from '../../services/api'; 
-import './StudentDashboard.css';
+import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
 
-// 🌟 IMPORT DRY UTILITIES & HOOKS
+// 🌟 DRY: Shared Dashboard Components
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import ProfileCard from '../../components/dashboard/ProfileCard';
+import StatCard from '../../components/dashboard/StatCard';
+import RecentSubmissions from '../../components/dashboard/RecentSubmissions';
+import ClassroomCardSkeleton, { EmptyClassroomSkeleton } from '../../components/dashboard/ClassroomCardSkeleton';
+
+// Utilities
 import { getUserData } from '../../utils/authUtils';
-import { formatTimestamp } from '../../utils/dateUtils';
-import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 
 const StudentDashboard = () => {
-    const [enrolledClasses, setEnrolledClasses] = useState([]);
-    const [submissions, setSubmissions] = useState([]); 
+    const currentUser = getUserData();
+    const userId = currentUser.id || currentUser.user_id || currentUser.username || 'student';
+    const cacheKeyClasses = `falsicode_student_classes_${userId}`;
+    const cacheKeySubs = `falsicode_student_subs_${userId}`;
+
+    const getCached = (key) => {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const cachedClasses = getCached(cacheKeyClasses);
+    const cachedSubs = getCached(cacheKeySubs);
+
+    const [enrolledClasses, setEnrolledClasses] = useState(cachedClasses || []);
+    const [submissions, setSubmissions] = useState(cachedSubs || []);
     const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState(true);
-    const dashboardRef = useRef(null);
+    const toast = useToast();
     const navigate = useNavigate();
-    const [theme] = useTheme();
 
-    const currentUser = getUserData();
     const displayName = currentUser.first_name || currentUser.name || currentUser.username || 'Student';
     const userInitial = displayName.charAt(0).toUpperCase();
 
-    const handleMouseMove = useSpatialSpotlight(dashboardRef);
-
     const fetchDashboardData = async () => {
         setLoading(true);
+        const startTime = Date.now();
         try {
             const classRes = await api.get('/classrooms/enrolled');
             setEnrolledClasses(classRes.data);
+            localStorage.setItem(cacheKeyClasses, JSON.stringify(classRes.data));
 
-            const subRes = await api.get('/classrooms/student/history'); 
+            const subRes = await api.get('/classrooms/student/history');
             setSubmissions(subRes.data);
-        } catch (error) { 
-            console.error("Critical error syncing dashboard data:", error); 
-        } finally { 
-            setLoading(false); 
+            localStorage.setItem(cacheKeySubs, JSON.stringify(subRes.data));
+        } catch (error) {
+            console.error("Critical error syncing dashboard data:", error);
+        } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 450;
+            if (elapsed < minDelay) {
+                await new Promise((resolve) => setTimeout(resolve, minDelay - elapsed));
+            }
+            setLoading(false);
         }
     };
 
@@ -43,110 +68,56 @@ const StudentDashboard = () => {
 
     const handleJoinClass = async (e) => {
         e.preventDefault();
-        if (!inviteCode.trim() || inviteCode.length !== 6) return alert("Security Notice: Invalid code.");
-        
+        if (!inviteCode.trim() || inviteCode.length !== 6) return toast.warning("Please enter a valid 6-digit classroom code.", "Invalid Code");
+
         try {
             const res = await api.post('/classrooms/join', { invite_code: inviteCode });
-            alert(res.data.message || "Successfully joined the classroom!");
+            toast.success(res.data.message || "Successfully joined the classroom!", "Enrolled");
             setInviteCode('');
             fetchDashboardData();
-        } catch (error) { 
-            // 🌟 Extract the specific error message from the backend (e.g., "Already enrolled")
+        } catch (error) {
             const backendError = error.response?.data?.error || error.response?.data?.message;
-            
-            if (backendError) {
-                alert(`Notice: ${backendError}`);
-            } else {
-                alert("Protocol failure: Unable to join classroom. Please check the code and try again."); 
-            }
+            toast.error(backendError || "Unable to join classroom. Please check the code and try again.", "Enrollment Failed");
         }
     };
 
     return (
-        <div className={`nexus-wrapper ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove}>
-            <div className="aurora-canvas">
-                <div className="aurora-blob blob-primary"></div>
-                <div className="aurora-blob blob-secondary"></div>
-            </div>
-
+        <DashboardLayout>
             <div className="nexus-layout">
                 {/* --- Sidebar: Identity Node --- */}
                 <aside className="nexus-sidebar fade-in-left">
-                    <div 
-                        className="spatial-card profile-card" 
-                        onClick={() => navigate('/student/profile')} 
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className="card-glass-layer"></div>
-                        <div className="card-content">
-                            <div className="avatar-hologram">
-                                <div className="avatar-core">{userInitial}</div>
-                                <div className="avatar-ring-1"></div>
-                            </div>
-                            <h2 className="user-display-name">{displayName}</h2>
-                            <p className="user-role-text">Student Workspace</p>
-                            <div className="system-status">
-                                <span className="status-dot online"></span>ONLINE
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card stat-card delay-1">
-                        <div className="card-glass-layer"></div>
-                        <div className="card-content">
-                            <span className="stat-label">Active Enrollments</span>
-                            <span className="stat-value">{enrolledClasses.length}</span>
-                        </div>
-                    </div>
-
-                    <div className="spatial-card history-card delay-2">
-                        <div className="card-glass-layer"></div>
-                        <div className="card-content">
-                            <span className="stat-label" style={{ marginBottom: '15px', display: 'block', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '8px' }}>
-                                Recent Submissions
-                            </span>
-                            
-                            {submissions.length === 0 ? (
-                                <p className="email-dim" style={{ fontSize: '12px', textAlign: 'center', marginTop: '10px', color: '#9ca3af' }}>
-                                    No submissions on record.
-                                </p>
-                            ) : (
-                                <ul className="submission-history-list">
-                                    {submissions.slice(0, 5).map((sub) => (
-                                        <li key={sub.id} className="history-item">
-                                            <div className="history-info">
-                                                <strong className="history-title" title={sub.assignment_name}>
-                                                    {sub.assignment_name}
-                                                </strong>
-                                                <span className="history-date">
-                                                    {formatTimestamp(sub.date || sub.submitted_at)}
-                                                </span>
-                                            </div>
-                                            <div className={`clean-status-pill ${sub.score && sub.score !== 'Pending' ? 'active' : 'archived'}`} style={{ padding: '2px 6px', fontSize: '10px' }}>
-                                                {sub.score || 'Pending'}
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    </div>
+                    <ProfileCard
+                        displayName={displayName}
+                        userInitial={userInitial}
+                        roleText="Student Workspace"
+                        statusLabel="ONLINE"
+                        profileLink="/student/profile"
+                    />
+                    <StatCard
+                        label="Active Enrollments"
+                        value={enrolledClasses.length}
+                        loading={loading}
+                    />
+                    <RecentSubmissions
+                        submissions={submissions}
+                        loading={loading}
+                        role="student"
+                    />
                 </aside>
 
                 {/* --- Main Hub Area --- */}
                 <main className="nexus-main fade-in-up">
-                    
-                    {/* 🌟 PREMIUM STUDENT BANNER */}
-                    <div className="cinematic-banner-shared spatial-card student-hero-banner">
+                    {/* Student Banner */}
+                    <div className="cinematic-banner-shared spatial-card">
                         <div className="banner-content">
                             <div className="banner-text">
                                 <h1>Student Hub</h1>
                                 <p className="banner-subtitle desktop-only">Join classrooms and access your assignments.</p>
                             </div>
-                            
+
                             <form onSubmit={handleJoinClass} className="nexus-join-form">
                                 <div className="input-with-icon">
-                                    <input 
+                                    <input
                                         type="text" placeholder="Enter Invite Code" maxLength={6}
                                         value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                                         className="nexus-input code-input"
@@ -169,10 +140,13 @@ const StudentDashboard = () => {
                         </div>
 
                         {loading ? (
-                            <div className="spatial-card loading-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-                                <div className="quantum-spinner"></div>
-                                <p>Synchronizing...</p>
-                            </div>
+                            cachedClasses && cachedClasses.length > 0 ? (
+                                <div className="classroom-grid">
+                                    <ClassroomCardSkeleton count={cachedClasses.length} />
+                                </div>
+                            ) : (
+                                <EmptyClassroomSkeleton />
+                            )
                         ) : enrolledClasses.length === 0 ? (
                             <div className="spatial-card empty-card" style={{ padding: '40px', textAlign: 'center' }}>
                                 <div className="empty-icon" style={{ fontSize: '3rem', marginBottom: '10px' }}>📁</div>
@@ -182,8 +156,8 @@ const StudentDashboard = () => {
                         ) : (
                             <div className="classroom-grid">
                                 {enrolledClasses.map((cls, index) => (
-                                    <div 
-                                        key={cls.id} className="spatial-card course-card" 
+                                    <div
+                                        key={cls.id} className="spatial-card course-card"
                                         onClick={() => navigate(`/student/class/${cls.id}`)}
                                         style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
                                     >
@@ -207,7 +181,7 @@ const StudentDashboard = () => {
                     </div>
                 </main>
             </div>
-        </div>
+        </DashboardLayout>
     );
 };
 

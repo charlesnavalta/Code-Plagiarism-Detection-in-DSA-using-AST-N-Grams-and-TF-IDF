@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../services/api'; 
+import authService from '../../services/authService';
+import { useToast } from '../../context/NotificationContext';
 import './Login.css';
 
 // Import our extracted components
@@ -12,36 +13,49 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const toast = useToast();
     
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
+        const startTime = Date.now();
 
         try {
-            const res = await api.post('/auth/login', { 
-                username: email, 
-                password 
-            });
+            const data = await authService.login(email, password);
             
-            const userString = JSON.stringify(res.data.user);
-            const token = res.data.access_token;
+            const userString = JSON.stringify(data.user);
+            const token = data.access_token;
 
             localStorage.clear();
             sessionStorage.clear();
             localStorage.setItem('user', userString); 
             localStorage.setItem('token', token);
 
-            const role = res.data.user.role;
-            if (role === 'admin') navigate('/admin');
-            else if (role === 'instructor') navigate('/instructor');
-            else navigate('/student');
+            // Natural UX buffer to ensure smooth button loading state
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 450) {
+                await new Promise(r => setTimeout(r, 450 - elapsed));
+            }
+
+            toast.success(`Welcome back, ${data.user.username || 'User'}!`, "Access Granted");
+
+            const role = data.user.role;
+            setTimeout(() => {
+                if (role === 'admin') navigate('/admin');
+                else if (role === 'instructor') navigate('/instructor');
+                else navigate('/student');
+            }, 300);
 
         } catch (err) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 450) {
+                await new Promise(r => setTimeout(r, 450 - elapsed));
+            }
             console.error("Login Error Details:", err.response);
-            const errorMessage = err.response?.data?.error || err.response?.data?.message || "Invalid Credentials or Server Offline";
-            alert(`Login Failed: ${errorMessage}`);
+            const errorMessage = err.response?.data?.error || err.response?.data?.message || "Invalid email or password.";
+            toast.error(errorMessage, "Login Failed");
         } finally {
             setLoading(false);
         }

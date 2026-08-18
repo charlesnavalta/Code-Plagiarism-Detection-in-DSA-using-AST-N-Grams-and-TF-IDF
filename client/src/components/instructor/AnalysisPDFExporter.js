@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { useToast } from '../../context/NotificationContext';
 import './AnalysisPDFExporter.css';
 
 // 🌟 IMPORT THE DRY UTILITY HERE
@@ -9,6 +10,7 @@ import { getPlagiarismDisplayData } from '../../utils/theme';
 
 const AnalysisPDFExporter = ({ selectedPair }) => {
     const [isGenerating, setIsGenerating] = useState(false);
+    const toast = useToast();
 
     // 🌟 1. Fetch base color and type from the centralized theme utility
     const themeData = getPlagiarismDisplayData(selectedPair?.plagiarism_type);
@@ -53,7 +55,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
             
         } catch (error) {
             console.error("PDF Generation failed:", error);
-            alert("System Error: Failed to compile forensic audit document.");
+            toast.error("System Error: Failed to compile forensic audit document.");
         } finally {
             setIsGenerating(false);
         }

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useTheme } from './hooks/useTheme';
+import { NotificationProvider, useToast } from './context/NotificationContext';
+import ToastContainer from './components/common/ToastContainer';
 
 // ==========================================
 // 1. CORE COMPONENTS & COMMON UI
@@ -32,58 +34,48 @@ import InstructorClassroomView from './pages/instructor/InstructorClassroomView'
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 
-function App() {
-
+function AppContent() {
   useTheme();
+  const toast = useToast();
 
   // ==========================================
   // GLOBAL INACTIVITY TIMER (AUTO-LOGOUT)
   // ==========================================
   useEffect(() => {
     let inactivityTimer;
-    
-    // 10 Minutes in milliseconds
-    const INACTIVITY_LIMIT = 10 * 60 * 1000; 
+    const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 mins
 
     const handleLogout = () => {
       const user = localStorage.getItem('user');
-      // Only force logout if they are actually logged in
       if (user) {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        alert("You have been logged out due to inactivity.");
+        toast.warning("You have been logged out due to inactivity.", "Session Timeout");
         window.location.href = '/login';
       }
     };
 
     const resetTimer = () => {
       clearTimeout(inactivityTimer);
-      // Restart the 10-minute countdown
       inactivityTimer = setTimeout(handleLogout, INACTIVITY_LIMIT);
     };
 
-    // Events that count as "activity"
     const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
-
-    // Attach listeners to the window
     activityEvents.forEach(event => window.addEventListener(event, resetTimer));
-
-    // Initialize the timer on first load
     resetTimer();
 
-    // Cleanup listeners if the app unmounts
     return () => {
       clearTimeout(inactivityTimer);
       activityEvents.forEach(event => window.removeEventListener(event, resetTimer));
     };
-  }, []);
+  }, [toast]);
 
-  return (  
+  return (
     <Router>
       <Navbar /> 
+      <ToastContainer />
       
       <Routes>
-        {/* NEW: Base route now points to the Landing Page instead of redirecting */}
         <Route path="/" element={<LandingPage />} />
         
         <Route path="/login" element={<Login />} />
@@ -139,4 +131,12 @@ function App() {
   );
 }
 
-export default App; 
+function App() {
+  return (
+    <NotificationProvider>
+      <AppContent />
+    </NotificationProvider>
+  );
+}
+
+export default App;

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
+import analysisService from '../../services/analysisService';
+import { useToast } from '../../context/NotificationContext';
 import './InstructorClassroomView.css';
 
 // Utilities & Shared Components
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 import InstructorWrapper from './components/InstructorWrapper';
-import QuantumLoader from './components/QuantumLoader';
+import ClassroomViewSkeleton from './components/ClassroomViewSkeleton';
 
 // Modals
 import CreateAssignmentModal from '../../modals/instructor/CreateAssignmentModal';
@@ -16,6 +18,7 @@ import EditAssignmentModal from '../../modals/instructor/EditAssignmentModal';
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
+    const toast = useToast();
     
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
@@ -32,6 +35,8 @@ const InstructorClassroomView = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            const startTime = Date.now();
             try {
                 const [classRes, assignRes] = await Promise.all([
                     api.get(`/classrooms/${id}`),
@@ -42,6 +47,11 @@ const InstructorClassroomView = () => {
             } catch (error) {
                 navigate('/instructor'); 
             } finally {
+                const elapsed = Date.now() - startTime;
+                const minDelay = 450;
+                if (elapsed < minDelay) {
+                    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+                }
                 setLoading(false);
             }
         };
@@ -50,24 +60,26 @@ const InstructorClassroomView = () => {
 
     const handleViewSubmissions = async (assignment) => {
         try {
-            const res = await api.get(`/classrooms/${id}/assignments/${assignment.id}/submissions`);
-            setCurrentSubmissions(res.data);
+            const data = await analysisService.getAssignmentSubmissions(id, assignment.id);
+            setCurrentSubmissions(data);
             setSelectedAssignment(assignment);
             setAnalysisResults(null); 
             setShowSubmissionsModal(true);
         } catch (error) {
-            alert("Access to submissions denied.");
+            toast.error("Access to submissions denied.", "Permission Error");
         }
     };
 
     const handleRunAnalysis = async () => {
-        if (currentSubmissions.length < 2) return alert("Minimum 2 submissions required.");
+        if (currentSubmissions.length < 2) return toast.warning("A minimum of 2 student submissions are required to run comparative AST analysis.", "Insufficient Data");
         setIsAnalyzing(true);
+        toast.info("Running AST, N-Gram & TF-IDF algorithmic comparison...", "Analysis Started");
         try {
-            const res = await api.post(`/analyze/${selectedAssignment.id}`, {});
-            setAnalysisResults(res.data.results);
+            const data = await analysisService.runAnalysis(selectedAssignment.id);
+            setAnalysisResults(data.results);
+            toast.success("Structural plagiarism audit completed successfully!", "Analysis Complete");
         } catch (error) {
-            alert("Analysis failed: " + (error.response?.data?.error || error.message));
+            toast.error("Analysis failed: " + (error.response?.data?.error || error.message), "Engine Failure");
         } finally {
             setIsAnalyzing(false);
         }
@@ -81,7 +93,7 @@ const InstructorClassroomView = () => {
         setAssignments(currentAssignments => currentAssignments.filter(a => a.id !== deletedAssignmentId));
     };
 
-    if (loading) return <QuantumLoader fullScreen={true} />;
+    if (loading) return <ClassroomViewSkeleton role="instructor" />;
 
     return (
         <InstructorWrapper>

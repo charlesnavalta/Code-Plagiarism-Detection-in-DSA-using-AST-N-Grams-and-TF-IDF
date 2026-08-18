@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify, current_app, send_file
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create a dedicated Blueprint for assignments
 assignments_bp = Blueprint('assignments', __name__)
@@ -32,6 +32,8 @@ def create_assignment(class_id):
     if data.get('deadline'):
         try:
             parsed_deadline = datetime.fromisoformat(data.get('deadline').replace('Z', ''))
+            if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+                return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
         except ValueError:
             return jsonify({"error": "Invalid deadline format provided."}), 400
 
@@ -176,7 +178,10 @@ def update_assignment(class_id, assignment_id):
     if 'deadline' in data:
         if data['deadline']:
             try:
-                assignment.deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+                parsed_deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+                if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+                    return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
+                assignment.deadline = parsed_deadline
             except ValueError:
                 return jsonify({"error": "Invalid deadline format provided."}), 400
         else:

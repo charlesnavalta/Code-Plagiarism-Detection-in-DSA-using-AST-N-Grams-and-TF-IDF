@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
+import { useToast } from '../../context/NotificationContext';
 import './SubmitFileModal.css';
 
 // 🌟 Import our new Base Skeleton
@@ -9,6 +10,7 @@ import { getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
 const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDeploying, setIsDeploying] = useState(false);
+    const toast = useToast();
 
     if (!isOpen || !assignment) return null;
 
@@ -24,7 +26,10 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
         e.preventDefault();
 
         const validationError = validateUploadedFile(selectedFile, fileExtension);
-        if (validationError) { alert(validationError); return; }
+        if (validationError) { 
+            toast.warning(validationError, "Validation Notice"); 
+            return; 
+        }
 
         setIsDeploying(true);
         const formData = new FormData();
@@ -32,11 +37,12 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
 
         try {
             await api.post(`/classrooms/${classroomId}/assignments/${assignment.id}/submit`, formData);
+            toast.success("Assignment submitted successfully!", "Deployment Complete");
             onSuccess(assignment.id);
             setSelectedFile(null);
             onClose();
         } catch (error) {
-            alert("Upload failed: " + (error.response?.data?.error || error.message));
+            toast.error("Upload failed: " + (error.response?.data?.error || error.message), "Submission Error");
         } finally {
             setIsDeploying(false);
         }
@@ -82,7 +88,7 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
                         Cancel
                     </button>
                     <button type="submit" className="btn-hud-run" disabled={isDeploying || !selectedFile}>
-                        {isDeploying ? 'Securing Node...' : 'Deploy Node'}
+                        {isDeploying ? 'Securing Node...' : 'Submit Assignment'}
                     </button>
                 </div>
                 
