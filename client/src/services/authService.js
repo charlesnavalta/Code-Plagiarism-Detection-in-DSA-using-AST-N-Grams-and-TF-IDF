@@ -40,13 +40,15 @@ const authService = {
 
     /**
      * Finalize password reset with OTP code
-     * @param {Object} payload - { email, code, new_password }
+     * @param {Object} payload - { email, code, new_password | newPassword }
      */
-    resetPassword: async ({ email, code, newPassword }) => {
+    resetPassword: async ({ email, code, newPassword, new_password }) => {
+        const passwordValue = (new_password || newPassword || '').trim();
         const response = await api.post('/auth/reset-password', { 
-            email, 
-            code, 
-            new_password: newPassword 
+            email: (email || '').trim(), 
+            code: (code || '').trim(), 
+            new_password: passwordValue,
+            newPassword: passwordValue
         });
         return response.data;
     },

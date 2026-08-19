@@ -6,7 +6,7 @@ import './Navbar.css';
 const Navbar = () => {
     const location = useLocation(); 
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [theme, setTheme] = useTheme();
+    const [theme, setTheme, themePreference, cycleTheme] = useTheme();
     
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
@@ -44,13 +44,6 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('app-theme', newTheme);
-        window.dispatchEvent(new Event('storage'));
-    };
-
     const handleLogout = () => {
         setDropdownOpen(false); 
         localStorage.removeItem('user');
@@ -63,6 +56,39 @@ const Navbar = () => {
     if (!user) return null;
 
     const isActive = (path) => location.pathname === path ? 'active' : '';
+
+    const getThemeIcon = (mode) => {
+        if (mode === 'light') {
+            return (
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            );
+        }
+        if (mode === 'dark') {
+            return (
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            );
+        }
+        // Device / System icon
+        return (
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+        );
+    };
 
     return (
         <>
@@ -98,53 +124,61 @@ const Navbar = () => {
                 <div className="navbar-right desktop-only">
                     <div className="profile-menu">
                         <button className="profile-trigger-nexus" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            <div className="user-avatar-mini">
-                                {displayName.charAt(0).toUpperCase()}
-                            </div>
+                            <div className="user-avatar-mini">{displayName.charAt(0).toUpperCase()}</div>
                             <span className="user-name-nexus">{displayName}</span>
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg className={`chevron-nexus ${dropdownOpen ? 'open' : ''}`} width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
                         </button>
-                        
+
+                        {/* DESKTOP DROPDOWN */}
                         {dropdownOpen && (
-                            <div className="dropdown-nexus scale-in-tr">
-                                {/* Premium Identity Header */}
-                                <div className="dropdown-header-nexus">
-                                    <div className="dropdown-avatar-large">
-                                        {displayName.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div className="dropdown-user-details">
-                                        <strong>{displayName}</strong>
-                                        <span className={`role-badge-${user.role?.toLowerCase()}`}>
-                                            {user.role} workspace
-                                        </span>
+                            <div className="dropdown-panel-nexus fade-in-down">
+                                <div className="dropdown-user-card">
+                                    <div className="user-avatar-medium">{displayName.charAt(0).toUpperCase()}</div>
+                                    <div className="user-meta-nexus">
+                                        <div className="meta-name">{displayName}</div>
+                                        <div className="meta-role-badge">{user.role}</div>
                                     </div>
                                 </div>
                                 
                                 <div className="dropdown-divider-nexus"></div>
                                 
-                                {/* Theme Toggle */}
-                                <button className="dropdown-item-nexus" onClick={toggleTheme}>
-                                    <span className="item-icon">
-                                        {theme === 'light' ? (
-                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                            </svg>
-                                        ) : (
-                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <circle cx="12" cy="12" r="5"></circle>
-                                                <line x1="12" y1="1" x2="12" y2="3"></line>
-                                                <line x1="12" y1="21" x2="12" y2="23"></line>
-                                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                                <line x1="1" y1="12" x2="3" y2="12"></line>
-                                                <line x1="21" y1="12" x2="23" y2="12"></line>
-                                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                                            </svg>
-                                        )}
-                                    </span>
-                                    <span>{theme === 'light' ? 'Switch to Dark' : 'Switch to Light'}</span>
-                                </button>
+                                {/* 🌟 3-WAY THEME SELECTOR: Dark | Light | Device */}
+                                <div className="theme-selector-container">
+                                    <div className="theme-selector-label">Theme</div>
+                                    <div className="theme-segmented-control">
+                                        <button 
+                                            type="button"
+                                            className={`theme-segment-btn ${themePreference === 'dark' ? 'active' : ''}`}
+                                            onClick={() => setTheme('dark')}
+                                            title="Dark Mode"
+                                        >
+                                            {getThemeIcon('dark')}
+                                            <span>Dark</span>
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            className={`theme-segment-btn ${themePreference === 'light' ? 'active' : ''}`}
+                                            onClick={() => setTheme('light')}
+                                            title="Light Mode"
+                                        >
+                                            {getThemeIcon('light')}
+                                            <span>Light</span>
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            className={`theme-segment-btn ${themePreference === 'system' ? 'active' : ''}`}
+                                            onClick={() => setTheme('system')}
+                                            title="Sync with Device / System"
+                                        >
+                                            {getThemeIcon('system')}
+                                            <span>Device</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="dropdown-divider-nexus"></div>
 
                                 {/* Account Link */}
                                 <Link to={`/${user.role}/profile`} className="dropdown-item-nexus" onClick={() => setDropdownOpen(false)}>
@@ -168,7 +202,7 @@ const Navbar = () => {
                                             <line x1="21" y1="12" x2="9" y2="12"></line>
                                         </svg>
                                     </span>
-                                    <span>Logout</span>
+                                    <span>Out</span>
                                 </button>
                             </div>
                         )}
@@ -192,14 +226,10 @@ const Navbar = () => {
                     <span>Profile</span>
                 </Link>
 
-                <button className="app-nav-item" onClick={toggleTheme}>
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                        {theme === 'light' 
-                            ? <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                            : <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        }
-                    </svg>
-                    <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
+                {/* 🌟 3-WAY CYCLE ON MOBILE: Dark -> Light -> Device */}
+                <button className="app-nav-item" onClick={cycleTheme} title={`Current: ${themePreference}`}>
+                    {getThemeIcon(themePreference)}
+                    <span>{themePreference === 'system' ? 'Device' : themePreference === 'light' ? 'Light' : 'Dark'}</span>
                 </button>
 
                 <button className="app-nav-item text-danger" onClick={handleLogout}>

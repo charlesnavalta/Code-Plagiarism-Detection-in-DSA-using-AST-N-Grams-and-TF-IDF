@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useTheme } from './hooks/useTheme';
+import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider, useToast } from './context/NotificationContext';
 import ToastContainer from './components/common/ToastContainer';
 
@@ -134,9 +135,11 @@ function AppContent() {
 
 function App() {
   return (
-    <NotificationProvider>
-      <AppContent />
-    </NotificationProvider>
+    <ThemeProvider>
+      <NotificationProvider>
+        <AppContent />
+      </NotificationProvider>
+    </ThemeProvider>
   );
 }
 

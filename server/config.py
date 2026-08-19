@@ -1,11 +1,13 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from your .env file
-load_dotenv()
-
 # Get the absolute path of the directory this file is in
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Explicitly load environment variables from server/.env or project root .env
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(os.path.join(os.path.dirname(BASE_DIR), '.env'))
+load_dotenv()
 
 def get_database_uri():
     """Constructs the database URI, prioritizing DATABASE_URL for cloud providers like Aiven."""

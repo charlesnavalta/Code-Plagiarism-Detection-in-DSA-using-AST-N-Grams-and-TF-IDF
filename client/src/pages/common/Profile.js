@@ -31,7 +31,11 @@ const Profile = () => {
         setSendingCode(true);
         try {
             const res = await api.post('/auth/profile/request-code');
-            toast.success(res.data.message || "Security authorization code sent to your email.", "Code Dispatched");
+            if (res.data.email_sent === false && res.data.code) {
+                toast.info(`Localhost Dev Mode: Authorization code is ${res.data.code}`, "Dev Security OTP", 7000);
+            } else {
+                toast.success(res.data.message || "Security authorization code sent to your email.", "Code Dispatched");
+            }
         } catch (err) {
             toast.error(err.response?.data?.error || "Failed to trigger security email.", "Dispatch Failed");
         } finally {

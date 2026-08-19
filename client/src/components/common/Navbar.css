@@ -10,12 +10,12 @@
    ========================================= */
 .navbar-nexus {
     /* Variables */
-    --nav-bg: rgba(21, 30, 50, 0.7);
-    --nav-border: rgba(255, 255, 255, 0.06);
-    --nav-text: #ffffff;
+    --nav-bg: rgba(3, 7, 18, 0.88);
+    --nav-border: rgba(255, 255, 255, 0.08);
+    --nav-text: #f9fafb;
     --nav-text-sub: #94a3b8;
     --nav-accent: #3b82f6;
-    --nav-highlight: rgba(255, 255, 255, 0.1);
+    --nav-highlight: rgba(255, 255, 255, 0.08);
 
     position: fixed; 
     top: 0;
@@ -29,8 +29,9 @@
     padding: 0 24px;
     height: 65px;
     background: var(--nav-bg);
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border-top: none;
     border-bottom: 1px solid var(--nav-border);
     color: var(--nav-text);
     font-family: 'Inter', system-ui, sans-serif;
@@ -43,13 +44,14 @@
 }
 
 /* Light Theme overrides */
-.navbar-nexus[data-theme='light'] {
-    --nav-bg: rgba(255, 255, 255, 0.8);
-    --nav-border: rgba(0, 0, 0, 0.05);
+.navbar-nexus[data-theme='light'],
+html[data-theme='light'] .navbar-nexus {
+    --nav-bg: rgba(255, 255, 255, 0.92);
+    --nav-border: rgba(0, 0, 0, 0.07);
     --nav-text: #0f172a;
     --nav-text-sub: #64748b;
     --nav-accent: #2563eb;
-    --nav-highlight: rgba(255, 255, 255, 1);
+    --nav-highlight: rgba(0, 0, 0, 0.05);
 }
 
 /* LEFT SIDE */
@@ -113,50 +115,52 @@
 /* =========================================
    PREMIUM DESKTOP DROPDOWN
    ========================================= */
-.dropdown-nexus {
+.dropdown-nexus, .dropdown-panel-nexus {
     position: absolute; 
     top: calc(100% + 8px); /* The 'Floating Island' gap */
     right: 0; 
-    width: 260px; /* Slightly wider for breathing room */
+    width: 270px;
     background: var(--nav-bg);
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
     border: 1px solid var(--nav-border); 
-    border-radius: 14px; /* Softer corners */
-    /* Deep, multi-layered shadow for realistic depth */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.05);
     padding: 8px; 
     display: flex; 
     flex-direction: column;
+    z-index: 1000;
 }
 
 /* Identity Header */
-.dropdown-header-nexus { 
-    padding: 12px; 
+.dropdown-header-nexus, .dropdown-user-card { 
+    padding: 10px 12px; 
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.dropdown-avatar-large {
+.dropdown-avatar-large, .user-avatar-medium {
     width: 38px; height: 38px; 
     background: var(--nav-accent); 
     color: white; 
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center; 
     font-size: 1.1rem; font-weight: 800;
+    flex-shrink: 0;
 }
 
-.dropdown-user-details {
+.dropdown-user-details, .user-meta-nexus {
     display: flex; flex-direction: column; gap: 2px;
 }
 
-.dropdown-user-details strong { 
-    color: var(--nav-text); font-size: 0.95rem; font-weight: 700; line-height: 1;
+.dropdown-user-details strong, .meta-name { 
+    color: var(--nav-text); font-size: 0.95rem; font-weight: 700; line-height: 1.2;
 }
 
-.dropdown-user-details span { 
+.meta-role-badge, .dropdown-user-details span { 
     font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+    color: var(--nav-accent);
 }
 
 /* Role Badge Coloring */
@@ -166,6 +170,72 @@
 
 .dropdown-divider-nexus { 
     height: 1px; background: var(--nav-border); margin: 6px 0; 
+}
+
+/* 🌟 Theme Segmented Control in Dropdown */
+.theme-selector-container {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.theme-selector-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--nav-text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.theme-segmented-control {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--nav-border);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+}
+
+html[data-theme='light'] .theme-segmented-control {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.theme-segment-btn {
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: var(--nav-text-sub);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.theme-segment-btn:hover {
+    color: var(--nav-text);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.theme-segment-btn.active {
+    background: var(--nav-accent);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.chevron-nexus {
+    transition: transform 0.2s ease;
+    margin-left: 2px;
+}
+.chevron-nexus.open {
+    transform: rotate(180deg);
 }
 
 /* Interactive Items */

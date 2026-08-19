@@ -26,7 +26,11 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             const data = await authService.requestPasswordReset(email);
-            toast.success(data.message || "Recovery code sent to your email!", "Code Dispatched");
+            if (data.email_sent === false && data.code) {
+                toast.info(`Localhost Dev Mode: Recovery code is ${data.code}`, "Dev Recovery OTP", 7000);
+            } else {
+                toast.success(data.message || "Recovery code sent to your email!", "Code Dispatched");
+            }
             setStep(2); 
         } catch (err) {
             const errText = err.response?.data?.error || "Failed to initialize recovery sequence.";
@@ -46,14 +50,15 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             const data = await authService.resetPassword({
-                email,
-                code,
+                email: email.trim(),
+                code: code.trim(),
+                newPassword: newPassword,
                 new_password: newPassword
             });
             toast.success(data.message || "Password updated successfully!", "Credentials Updated");
             navigate('/login'); 
         } catch (err) {
-            const errText = err.response?.data?.error || "Invalid or expired authorization code.";
+            const errText = err.response?.data?.error || err.response?.data?.message || "Invalid or expired authorization code.";
             toast.error(errText, "Reset Failed");
         } finally {
             setLoading(false);

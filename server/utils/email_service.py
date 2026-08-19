@@ -6,13 +6,20 @@ import urllib.request
 import urllib.error
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+
+# Ensure environment variables are loaded
+_base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+load_dotenv(os.path.join(_base_dir, '.env'))
+load_dotenv(os.path.join(os.path.dirname(_base_dir), '.env'))
+load_dotenv()
 
 def generate_6_digit_code():
     """Generates a random 6-digit string."""
     return str(random.randint(100000, 999999))
 
 def send_via_resend(api_key, to_email, subject, html_body):
-    """Sends email via Resend REST API over HTTPS Port 443 (Allowed on Render Free Tier)."""
+    """Sends email via Resend REST API over HTTPS Port 443 (Allowed on Render Free Tier & Localhost)."""
     try:
         url = "https://api.resend.com/emails"
         from_email = os.environ.get('MAIL_FROM', 'Falsicode <onboarding@resend.dev>')
@@ -33,17 +40,26 @@ def send_via_resend(api_key, to_email, subject, html_body):
             },
             method="POST"
         )
-        with urllib.request.urlopen(req, timeout=8) as response:
+        with urllib.request.urlopen(req, timeout=10) as response:
             if response.status in (200, 201):
-                print(f"Falsicode Auth: Email sent to {to_email} via Resend HTTPS API", flush=True)
+                print(f"[Falsicode Auth] Email sent to {to_email} via Resend HTTPS API", flush=True)
                 return True, "Email dispatched via Resend HTTPS API"
             return False, f"Resend API returned status {response.status}"
+    except urllib.error.HTTPError as he:
+        try:
+            err_body = he.read().decode('utf-8')
+            err_json = json.loads(err_body)
+            err_msg = err_json.get('message', str(he))
+        except Exception:
+            err_msg = str(he)
+        print(f"[Falsicode Auth] Resend API HTTP error: {err_msg}", flush=True)
+        return False, f"Resend API error: {err_msg}"
     except Exception as e:
-        print(f"Falsicode Auth: Resend API error: {e}", flush=True)
+        print(f"[Falsicode Auth] Resend API error: {e}", flush=True)
         return False, str(e)
 
 def send_via_brevo(api_key, sender_email, to_email, subject, html_body):
-    """Sends email via Brevo REST API over HTTPS Port 443 (Allowed on Render Free Tier)."""
+    """Sends email via Brevo REST API over HTTPS Port 443 (Allowed on Render Free Tier & Localhost)."""
     try:
         url = "https://api.brevo.com/v3/smtp/email"
         payload = json.dumps({
@@ -63,21 +79,34 @@ def send_via_brevo(api_key, sender_email, to_email, subject, html_body):
             },
             method="POST"
         )
-        with urllib.request.urlopen(req, timeout=8) as response:
+        with urllib.request.urlopen(req, timeout=10) as response:
             if response.status in (200, 201):
-                print(f"Falsicode Auth: Email sent to {to_email} via Brevo HTTPS API", flush=True)
+                print(f"[Falsicode Auth] Email sent to {to_email} via Brevo HTTPS API", flush=True)
                 return True, "Email dispatched via Brevo HTTPS API"
             return False, f"Brevo API returned status {response.status}"
+    except urllib.error.HTTPError as he:
+        try:
+            err_body = he.read().decode('utf-8')
+            err_json = json.loads(err_body)
+            err_msg = err_json.get('message', str(he))
+        except Exception:
+            err_msg = str(he)
+        print(f"[Falsicode Auth] Brevo API HTTP error: {err_msg}", flush=True)
+        return False, f"Brevo API error: {err_msg}"
     except Exception as e:
-        print(f"Falsicode Auth: Brevo API error: {e}", flush=True)
+        print(f"[Falsicode Auth] Brevo API error: {e}", flush=True)
         return False, str(e)
 
 def send_otp_email(to_email, code, intent="registration"):
-    """Sends a styled 6-digit HTML code via HTTPS API or Google SMTP. Returns (success: bool, detail: str)."""
+    """Sends a styled 6-digit HTML code via HTTPS API or SMTP. Works in both localhost & production."""
     resend_key = os.environ.get('RESEND_API_KEY')
     brevo_key = os.environ.get('BREVO_API_KEY')
-    sender_email = (os.environ.get('MAIL_USERNAME') or '').strip()
-    sender_password = (os.environ.get('MAIL_PASSWORD') or '').strip()
+    
+    # SMTP Configuration (Supports standard and custom env variables)
+    smtp_host = os.environ.get('SMTP_HOST') or os.environ.get('SMTP_SERVER') or 'smtp.gmail.com'
+    smtp_port = int(os.environ.get('SMTP_PORT', 587))
+    sender_email = (os.environ.get('MAIL_USERNAME') or os.environ.get('SMTP_USER') or '').strip()
+    sender_password = (os.environ.get('MAIL_PASSWORD') or os.environ.get('SMTP_PASS') or '').strip().replace(' ', '').replace('"', '').replace("'", "")
     
     # Dynamic text based on intent
     if intent == "password_update":
@@ -141,7 +170,7 @@ def send_otp_email(to_email, code, intent="registration"):
     </html>
     """
 
-    # 1. Preferred Cloud Method: Resend HTTPS API (Port 443 - Never blocked on Render)
+    # 1. Preferred Cloud Method: Resend HTTPS API (Port 443 - Works reliably in Cloud & Localhost)
     if resend_key:
         return send_via_resend(resend_key, to_email, subject, html_body)
 
@@ -149,7 +178,7 @@ def send_otp_email(to_email, code, intent="registration"):
     if brevo_key and sender_email:
         return send_via_brevo(brevo_key, sender_email, to_email, subject, html_body)
 
-    # 3. Direct SMTP (Ports 587 / 465 - Works locally or on non-port-blocked hosts)
+    # 3. Direct SMTP (Ports 587 / 465 - Works on Localhost & unrestricted servers)
     if sender_email and sender_password:
         msg = MIMEMultipart()
         msg['From'] = f"Falsicode <{sender_email}>"
@@ -158,27 +187,34 @@ def send_otp_email(to_email, code, intent="registration"):
         msg.add_header('Reply-To', 'noreply@falsicode.com')
         msg.attach(MIMEText(html_body, 'html'))
 
-        # Use strict 3-second timeout so it never hangs Gunicorn or causes Render 502
+        last_smtp_err = ""
+        # Try Port 587 with STARTTLS
         try:
-            server = smtplib.SMTP('smtp.gmail.com', 587, timeout=3)
-            server.starttls()
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
+            server.ehlo()
+            if smtp_port == 587:
+                server.starttls()
+                server.ehlo()
             server.login(sender_email, sender_password)
             server.send_message(msg)
             server.quit()
-            print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email} via SMTP 587", flush=True)
-            return True, "Email dispatched via Gmail SMTP"
-        except Exception as e587:
-            print(f"Falsicode Auth Notice: Port 587 unavailable ({e587}), trying Port 465 SSL...", flush=True)
+            print(f"[Falsicode Auth] HTML OTP ({intent}) successfully sent to {to_email} via SMTP {smtp_port}", flush=True)
+            return True, f"Email dispatched via SMTP ({smtp_host}:{smtp_port})"
+        except Exception as e_smtp:
+            last_smtp_err = str(e_smtp)
+            print(f"[Falsicode Auth Notice] SMTP {smtp_port} failed ({e_smtp}), trying SSL Port 465 fallback...", flush=True)
             try:
-                server_ssl = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=3)
+                server_ssl = smtplib.SMTP_SSL(smtp_host, 465, timeout=10)
+                server_ssl.ehlo()
                 server_ssl.login(sender_email, sender_password)
                 server_ssl.send_message(msg)
                 server_ssl.quit()
-                print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email} via SMTP 465", flush=True)
-                return True, "Email dispatched via Gmail SMTP (SSL)"
-            except Exception as e465:
-                print(f"Falsicode Auth Notice: Cloud outbound SMTP blocked on Render Free Tier ({e465}). Returning code fallback.", flush=True)
-                return False, "Render Free Tier blocks outbound SMTP ports 587/465."
+                print(f"[Falsicode Auth] HTML OTP ({intent}) successfully sent to {to_email} via SMTP 465 SSL", flush=True)
+                return True, f"Email dispatched via SMTP SSL ({smtp_host}:465)"
+            except Exception as e_ssl:
+                last_smtp_err = str(e_ssl)
+                print(f"[Falsicode Auth Notice] SMTP SSL failed ({e_ssl}).", flush=True)
 
-    print("Falsicode Auth Notice: No email API keys configured. Returning code in response.", flush=True)
-    return False, "No email credentials configured."
+        return False, f"SMTP authentication/connection failed: {last_smtp_err}."
+
+    return False, "No email credentials configured. Please configure MAIL_USERNAME & MAIL_PASSWORD or RESEND_API_KEY in your server/.env file."

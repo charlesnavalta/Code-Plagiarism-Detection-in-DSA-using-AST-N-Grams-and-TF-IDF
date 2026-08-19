@@ -21,7 +21,7 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
     const [sendingCode, setSendingCode] = useState(false);
     const [cooldown, setCooldown] = useState(0);
-    const [expectedCode, setExpectedCode] = useState(null);
+    const [codeRequested, setCodeRequested] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -52,18 +52,19 @@ const Register = () => {
     const passwordsMismatch = formData.confirmPassword && formData.password !== formData.confirmPassword;
 
     const handleSendCode = async () => {
-        if (!formData.email) {
+        const trimmedEmail = (formData.email || '').trim().toLowerCase();
+        if (!trimmedEmail) {
             toast.warning("Please enter an email address first.", "Email Required");
             return;
         }
         setSendingCode(true);
         try {
-            const data = await authService.requestCode(formData.email);
-            toast.success("Verification code sent! Check your email inbox.", "Code Dispatched");
-            setExpectedCode(data.code);
+            const data = await authService.requestCode(trimmedEmail);
+            toast.success(data.message || "Verification code sent! Please check your email inbox.", "Code Dispatched");
+            setCodeRequested(true);
             setCooldown(60);
         } catch (err) {
-            const errText = err.response?.data?.error || "Failed to send verification code. Please try again.";
+            const errText = err.response?.data?.error || err.response?.data?.message || "Failed to send verification code. Please try again.";
             toast.error(errText, "Verification Error");
         } finally {
             setSendingCode(false);
@@ -76,12 +77,12 @@ const Register = () => {
             toast.error("Passwords do not match. Please verify.", "Validation Error");
             return;
         }
-        if (!expectedCode) {
-            toast.warning("Please verify your email address by requesting a verification code.", "Email Verification Required");
+        if (!codeRequested) {
+            toast.warning("Please click 'Send Code' to receive your verification code via email.", "Verification Code Required");
             return;
         }
-        if (formData.code !== expectedCode) {
-            toast.error("The 6-digit verification code you entered is incorrect.", "Invalid Code");
+        if (!formData.code || formData.code.trim().length !== 6) {
+            toast.warning("Please enter the 6-digit verification code sent to your email inbox.", "Email Verification Required");
             return;
         }
 
@@ -89,10 +90,11 @@ const Register = () => {
         const startTime = Date.now();
         try {
             await authService.register({
-                username: formData.username,
-                email: formData.email,
+                username: formData.username.trim(),
+                email: formData.email.trim().toLowerCase(),
                 password: formData.password,
-                role: formData.role
+                role: formData.role,
+                code: formData.code.trim()
             });
 
             const elapsed = Date.now() - startTime;

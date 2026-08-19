@@ -12,6 +12,7 @@ import ModalSkeleton from '../shared/ModalSkeleton';
 const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated, isLoading = false }) => {
     const [guideFiles, setGuideFiles] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const toast = useToast();
 
     if (!isOpen) return null;
@@ -26,16 +27,56 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         );
     }
 
-    // 🌟 Strict File Limit Handler
-    const handleFileChange = (e) => {
-        const selectedFiles = Array.from(e.target.files);
-        if (selectedFiles.length > 3) {
+    const formatFileSize = (bytes) => {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    };
+
+    const processFiles = (newFiles) => {
+        const combined = [...guideFiles, ...newFiles];
+        if (combined.length > 3) {
             toast.warning("You can only upload a maximum of 3 guide files.", "File Limit Exceeded");
-            e.target.value = null; // Reset the input field
-            setGuideFiles([]);
+            setGuideFiles(combined.slice(0, 3));
             return;
         }
-        setGuideFiles(selectedFiles);
+        setGuideFiles(combined);
+    };
+
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length > 0) {
+            processFiles(selectedFiles);
+        }
+        e.target.value = null; // Reset input so same file can be re-selected
+    };
+
+    const handleRemoveFile = (indexToRemove) => {
+        setGuideFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            processFiles(droppedFiles);
+        }
     };
 
     const handleCreateAssignment = async (e) => {
@@ -62,7 +103,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
             return;
         }
 
-        // 🌟 Construct FormData to handle multipart/form-data file uploads
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
@@ -76,7 +116,6 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
         });
 
         try {
-            // Axios will automatically configure the multipart boundaries
             const res = await api.post(`/classrooms/${classroomId}/assignments`, formData);
             toast.success("Assignment created successfully!", "Task Provisioned");
             onAssignmentCreated(res.data.assignment); 
@@ -99,7 +138,7 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
     };
 
     return (
-        <BaseModal isOpen={isOpen} onClose={handleClose} title="Create Assignment">
+        <BaseModal isOpen={isOpen} onClose={handleClose} title="Create Assignment" subtitle="Configure assignment parameters, deadline, and reference materials.">
             <form onSubmit={handleCreateAssignment} className="hud-form-wrapper">
                 <div className="hud-modal-body">
 
@@ -132,20 +171,77 @@ const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreat
                         </div>
                     </div>
 
-                    {/* 🌟 File Upload Input */}
-                    <div className="input-group" style={{ marginTop: '16px' }}>
-                        <label>Guide Files (Max 3)</label>
+                    {/* 🌟 Modern Designed Guide File Upload Area */}
+                    <div className="input-group guide-upload-group">
+                        <div className="guide-label-row">
+                            <label>Guide & Reference Materials</label>
+                            <span className="file-count-indicator">{guideFiles.length}/3 Files</span>
+                        </div>
+                        
                         <input 
                             type="file" 
+                            id="guide-file-picker"
                             multiple 
                             onChange={handleFileChange} 
-                            className="styled-input file-input"
                             accept=".pdf,.txt,.docx,.zip,.png,.jpg,.py,.java" 
-                            style={{ padding: '10px' }}
+                            style={{ display: 'none' }}
+                            disabled={guideFiles.length >= 3}
                         />
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '6px', display: 'block' }}>
-                            Upload rubrics, templates, or instructions to guide the students.
-                        </span>
+
+                        <div 
+                            className={`guide-dropzone ${isDragging ? 'dragging' : ''} ${guideFiles.length >= 3 ? 'disabled' : ''}`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+                            <div className="dropzone-icon-badge">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                            </div>
+                            
+                            <div className="dropzone-text-group">
+                                <label htmlFor="guide-file-picker" className="btn-choose-files">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{ marginRight: '6px', verticalAlign: 'middle' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Choose Files
+                                </label>
+                                <span className="dropzone-hint">or drag & drop here (PDF, TXT, DOCX, ZIP, PY, JAVA)</span>
+                            </div>
+                        </div>
+
+                        {/* Selected Files List */}
+                        {guideFiles.length > 0 && (
+                            <div className="selected-guide-files-list">
+                                {guideFiles.map((file, idx) => (
+                                    <div key={idx} className="guide-file-card">
+                                        <div className="guide-file-info">
+                                            <div className="file-type-icon">
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <div className="file-names-wrap">
+                                                <span className="file-primary-name">{file.name}</span>
+                                                <span className="file-size-tag">{formatFileSize(file.size)}</span>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            className="btn-remove-guide-file"
+                                            onClick={() => handleRemoveFile(idx)}
+                                            title="Remove file"
+                                        >
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
                 

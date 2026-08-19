@@ -7,6 +7,9 @@ from utils.email_service import generate_6_digit_code, send_otp_email
 
 auth_bp = Blueprint('auth', __name__)
 
+# In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
+PENDING_REGISTRATIONS = {}
+
 # ==============================================================================
 # NEW: REQUEST VERIFICATION CODE (Called before registration)
 # ==============================================================================
@@ -17,28 +20,29 @@ def request_code():
         if not data:
             return jsonify({"error": "JSON body is required"}), 400
 
-        email = data.get('email')
+        email = (data.get('email') or '').strip().lower()
 
         if not email:
             return jsonify({"error": "Email is required"}), 400
 
-        if User.query.filter_by(email=email).first():
-            return jsonify({"error": "Email already registered"}), 400
+        if User.query.filter(db.func.lower(User.email) == email).first():
+            return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
 
         code = generate_6_digit_code()
         
-        # Attempts HTTPS API (Resend/Brevo) or direct SMTP
-        email_sent, err_detail = send_otp_email(email, code)
+        # Attempts real email dispatch (Resend API or Gmail SMTP)
+        email_sent, err_detail = send_otp_email(email, code, intent="registration")
         
         if email_sent:
-            return jsonify({"message": "Verification code sent to your email!", "code": code, "email_sent": True}), 200
+            PENDING_REGISTRATIONS[email] = {
+                "code": code,
+                "expires": datetime.utcnow() + timedelta(minutes=15)
+            }
+            return jsonify({"message": "Verification code sent to your email inbox. Please check your email.", "email_sent": True}), 200
         else:
             return jsonify({
-                "message": f"Verification code generated: {code}",
-                "code": code,
-                "email_sent": False,
-                "notice": err_detail
-            }), 200
+                "error": f"Failed to send email to {email}: {err_detail}. Please verify your email settings in server/.env."
+            }), 500
             
     except Exception as e:
         import traceback
@@ -51,28 +55,50 @@ def request_code():
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    
-    if not data or 'username' not in data or 'password' not in data or 'email' not in data:
-        return jsonify({"error": "Missing required fields"}), 400
+    if not data:
+        return jsonify({"error": "JSON body is required"}), 400
 
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({"error": "Email already registered"}), 400
+    username = (data.get('username') or '').strip()
+    email = (data.get('email') or '').strip().lower()
+    password = data.get('password')
+    code = str(data.get('code') or '').strip()
     
+    if not username or not email or not password:
+        return jsonify({"error": "Username, email, and password are required fields."}), 400
+
+    if not code:
+        return jsonify({"error": "Please enter the 6-digit verification code sent to your email."}), 400
+
+    pending_entry = PENDING_REGISTRATIONS.get(email)
+    if not pending_entry or str(pending_entry.get("code")).strip() != code:
+        return jsonify({"error": "Invalid verification code. Please check the 6-digit code received in your email or request a new one."}), 400
+
+    if datetime.utcnow() > pending_entry.get("expires"):
+        PENDING_REGISTRATIONS.pop(email, None)
+        return jsonify({"error": "Verification code has expired. Please request a new code."}), 400
+
+    if User.query.filter(db.func.lower(User.email) == email).first():
+        return jsonify({"error": "This email address is already registered."}), 400
+
+    if User.query.filter(db.func.lower(User.username) == username.lower()).first():
+        return jsonify({"error": "This username is already taken. Please choose another."}), 400
+    
+    # Verification passed! Consume pending registration entry
+    PENDING_REGISTRATIONS.pop(email, None)
+
     requested_role = data.get('role', 'student')
     if requested_role not in ['student', 'instructor']:
         requested_role = 'student'
 
     user_status = 'pending' if requested_role == 'instructor' else 'active'
     
-    # 🌟 FIX: Removed first_name/last_name to prevent the 500 DB schema crash
     new_user = User(
-        username=data['username'],
-        email=data['email'],
+        username=username,
+        email=email,
         role=requested_role,
         status=user_status
     )
-    new_user.set_password(data['password'])
-    
+    new_user.set_password(password)
     new_user.is_verified = True
     
     try:
@@ -81,8 +107,7 @@ def register():
         return jsonify({"message": "Registration Successful!", "status": user_status}), 201
     except Exception as e:
         db.session.rollback()
-        # You can print(e) here in development to see exact DB errors in your terminal
-        return jsonify({"error": "An error occurred during registration."}), 500
+        return jsonify({"error": "An error occurred during registration: " + str(e)}), 500
 
 
 # ==============================================================================
@@ -92,20 +117,23 @@ def register():
 def verify_otp():
     """Validates the 6-digit code sent to the user's email."""
     data = request.get_json()
-    email = data.get('email')
-    code = data.get('code')
+    if not data:
+        return jsonify({"error": "JSON body is required"}), 400
+
+    email = (data.get('email') or '').strip().lower()
+    code = str(data.get('code') or '').strip()
     
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter(db.func.lower(User.email) == email).first()
     if not user:
         return jsonify({"error": "User not found."}), 404
         
     if user.is_verified:
         return jsonify({"message": "Account is already verified. You may log in."}), 200
 
-    if user.verification_code != code:
+    if str(user.verification_code).strip() != code:
         return jsonify({"error": "Invalid verification code."}), 400
         
-    if datetime.utcnow() > user.verification_expires:
+    if user.verification_expires and datetime.utcnow() > user.verification_expires:
         return jsonify({"error": "Verification code has expired. Please request a new one."}), 400
         
     try:
@@ -129,13 +157,16 @@ def login():
         if not data:
             return jsonify({"error": "Invalid request. JSON body expected."}), 400
         
-        login_id = data.get('username') or data.get('email')
+        login_id = (data.get('username') or data.get('email') or '').strip()
         password = data.get('password')
 
         if not login_id or not password:
             return jsonify({"error": "Username/Email and password are required."}), 400
 
-        user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
+        user = User.query.filter(
+            (db.func.lower(User.email) == login_id.lower()) | 
+            (db.func.lower(User.username) == login_id.lower())
+        ).first()
 
         if user and user.check_password(password):
             if not user.is_verified:
@@ -152,13 +183,12 @@ def login():
                     "username": user.username,
                     "email": user.email,
                     "role": user.role,
-                    # Safe fallback: Won't crash if the columns don't exist
                     "first_name": getattr(user, 'first_name', ''),
                     "last_name": getattr(user, 'last_name', '')
                 }
             }), 200
 
-        return jsonify({"error": "Invalid email or password"}), 401
+        return jsonify({"error": "Invalid email/username or password"}), 401
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -172,15 +202,21 @@ def login():
 def forgot_password():
     """Initializes the verification code process for account recovery."""
     data = request.get_json()
-    login_id = data.get('email') 
+    if not data:
+        return jsonify({"error": "JSON body is required"}), 400
+
+    login_id = (data.get('email') or data.get('username') or '').strip()
 
     if not login_id:
-        return jsonify({"error": "An identifier field is required."}), 400
+        return jsonify({"error": "Email or Username is required."}), 400
 
-    user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
+    user = User.query.filter(
+        (db.func.lower(User.email) == login_id.lower()) | 
+        (db.func.lower(User.username) == login_id.lower())
+    ).first()
     
     if not user:
-        return jsonify({"message": "If the account is valid, a recovery code has been sent."}), 200
+        return jsonify({"message": "If the account is valid, a recovery code has been sent to your email.", "email_sent": True}), 200
 
     try:
         code = generate_6_digit_code()
@@ -192,12 +228,11 @@ def forgot_password():
         email_sent, err_detail = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:
-            return jsonify({"message": "If the account is valid, a recovery code has been sent."}), 200
+            return jsonify({"message": "If the account is valid, a recovery code has been sent to your email inbox.", "email_sent": True}), 200
         else:
             return jsonify({
-                "message": f"If the account is valid, a recovery code has been generated: {code}",
-                "notice": err_detail
-            }), 200
+                "error": f"Failed to deliver recovery email: {err_detail}. Please verify your email settings in server/.env."
+            }), 500
             
     except Exception as e:
         db.session.rollback()
@@ -211,35 +246,42 @@ def forgot_password():
 def reset_password():
     """Validates verification code and commits the new password configuration."""
     data = request.get_json()
-    login_id = data.get('email') 
-    code = data.get('code')
-    new_password = data.get('new_password')
+    if not data:
+        return jsonify({"error": "JSON body is required"}), 400
+
+    login_id = (data.get('email') or data.get('username') or '').strip()
+    code = str(data.get('code') or '').strip()
+    new_password = (data.get('new_password') or data.get('newPassword') or data.get('password') or '').strip()
 
     if not login_id or not code or not new_password:
-        return jsonify({"error": "All execution inputs are strictly required."}), 400
+        return jsonify({"error": "Email/Username, verification code, and new password are all required."}), 400
 
     if len(new_password) < 6:
-        return jsonify({"error": "Security parameter failed: Password must be at least 6 characters."}), 400
+        return jsonify({"error": "Password must be at least 6 characters long."}), 400
 
-    user = User.query.filter((User.email == login_id) | (User.username == login_id)).first()
+    user = User.query.filter(
+        (db.func.lower(User.email) == login_id.lower()) | 
+        (db.func.lower(User.username) == login_id.lower())
+    ).first()
+    
     if not user:
-        return jsonify({"error": "Verification sequence invalid."}), 400
+        return jsonify({"error": "No account matches the provided identifier."}), 400
 
-    if user.verification_code != code:
-        return jsonify({"error": "Invalid code parameters provided."}), 400
+    if not user.verification_code or str(user.verification_code).strip() != code:
+        return jsonify({"error": "Invalid verification code. Please check the code and try again."}), 400
 
     if user.verification_expires and datetime.utcnow() > user.verification_expires:
-        return jsonify({"error": "Verification matrix has expired. Request a new sequence."}), 400
+        return jsonify({"error": "Verification code has expired. Please request a new code."}), 400
 
     try:
         user.set_password(new_password)
         user.verification_code = None
         user.verification_expires = None
         db.session.commit()
-        return jsonify({"message": "Credentials updated successfully! Proceeding to entry portal."}), 200
+        return jsonify({"message": "Password updated successfully! You may now log in."}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Failed to commit credential updates to database architecture."}), 500
+        return jsonify({"error": "Failed to update password: " + str(e)}), 500
 
 # ... (Admin and Profile routes remain exactly the same) ...
 
@@ -424,12 +466,11 @@ def request_profile_code():
         email_sent, err_detail = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:
-            return jsonify({"message": "Security code sent to your email!"}), 200
+            return jsonify({"message": "Security authorization code sent to your email inbox.", "email_sent": True}), 200
         else:
             return jsonify({
-                "message": f"Security authorization code: {code}",
-                "notice": err_detail
-            }), 200
+                "error": f"Failed to send security code: {err_detail}. Please verify your email settings in server/.env."
+            }), 500
             
     except Exception as e:
         db.session.rollback()
