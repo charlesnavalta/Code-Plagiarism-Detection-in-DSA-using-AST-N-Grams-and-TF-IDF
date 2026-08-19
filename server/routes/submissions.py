@@ -7,6 +7,7 @@ from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+from routes.analysis import resolve_submission_path
 
 # Create a dedicated Blueprint for submissions
 submissions_bp = Blueprint('submissions', __name__)
@@ -142,9 +143,10 @@ def get_assignment_submissions(class_id, assignment_id):
     
     for s in submissions:
         content = "File content unavailable on server disk."
-        if s.file_path and os.path.exists(s.file_path):
+        actual_path = resolve_submission_path(s.file_path) if s.file_path else None
+        if actual_path and os.path.exists(actual_path):
             try:
-                with open(s.file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(actual_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
             except Exception as e:
                 print(f"Error reading file for {s.student.username}: {e}")

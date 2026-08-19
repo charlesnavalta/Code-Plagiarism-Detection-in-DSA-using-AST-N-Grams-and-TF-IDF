@@ -32,7 +32,6 @@ services:
       - "5000:5000"
     volumes:
       - ./server:/app
-      - ./datasets:/app/datasets
       # 🌟 THE FIX: Map uploads to a real folder so student code is never lost
       - ./server/uploads:/app/uploads 
     env_file:
