@@ -27,7 +27,7 @@ import numpy as np
 # rewrite or an added range()/subscript indirection produces 20-50%+.
 ORDER_SIMILARITY_THRESHOLD = 80
 RAW_IDENTITY_TYPE1_THRESHOLD = 75
-STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD = 10
+STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD = 7.5
 
 # Token types that encode identifier/literal identity rather than code
 # structure. These are excluded when building a structural skeleton, since
