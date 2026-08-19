@@ -68,7 +68,7 @@ button {
    MASTER LAYOUT CONTAINER
    ========================================= */
 .nexus-layout {
-    max-width: 1400px;
+    max-width: var(--max-content-width, 1440px);
     margin: 0 auto;
     padding: 32px 28px;
     display: flex;
@@ -77,6 +77,18 @@ button {
     position: relative;
     z-index: 10;
     width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .nexus-layout {
+        max-width: var(--max-ultrawide-width, 1680px);
+        padding: 40px 36px;
+        gap: 36px;
+    }
+    .classroom-grid {
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
+        gap: 24px !important;
+    }
 }
 
 /* SPATIAL CARDS */

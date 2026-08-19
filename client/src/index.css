@@ -1,36 +1,136 @@
 /* src/index.css */
+/* =========================================================
+   FALSICODE CORE DESIGN SYSTEM — ROOT FOUNDATIONS
+   Single Source of Truth for Design Tokens & Responsiveness
+========================================================= */
 
-/* 1. Force the root background to be dark everywhere */
+:root, [data-theme="dark"] {
+    /* Color Palette — Dark Mode (Default) */
+    --bg-main: #030712;
+    --bg-app: #030712;
+    --bg-card: rgba(17, 24, 39, 0.65);
+    --card-glass: rgba(17, 24, 39, 0.65);
+    --border-card: rgba(255, 255, 255, 0.07);
+    --border-glass: rgba(255, 255, 255, 0.09);
+    
+    --text-hero: #f9fafb;
+    --text-main: #f9fafb;
+    --text-dim: #94a3b8;
+    --text-sub: #94a3b8;
+    
+    --accent: #3b82f6;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-glow: rgba(59, 130, 246, 0.35);
+    --spotlight-color: rgba(255, 255, 255, 0.06);
+    
+    --status-green: #10b981;
+    --status-yellow: #f59e0b;
+    --status-red: #ef4444;
+    
+    --nexus-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+    
+    --blob-1: rgba(59, 130, 246, 0.12);
+    --blob-2: rgba(139, 92, 246, 0.12);
+    
+    --scrollbar-track: #0b1121;
+    --scrollbar-thumb: #1e293b;
+    --scrollbar-thumb-hover: #334155;
+    
+    /* Layout & Sizing Standards */
+    --max-content-width: 1440px;
+    --max-ultrawide-width: 1680px;
+    --nav-height: 65px;
+    --mobile-dock-height: 72px;
+}
+
+[data-theme="light"] {
+    /* Color Palette — Light Mode */
+    --bg-main: #f8fafc;
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --card-glass: #ffffff;
+    --border-card: rgba(0, 0, 0, 0.06);
+    --border-glass: rgba(0, 0, 0, 0.08);
+    
+    --text-hero: #0f172a;
+    --text-main: #1e293b;
+    --text-dim: #64748b;
+    --text-sub: #64748b;
+    
+    --accent: #2563eb;
+    --accent-blue: #2563eb;
+    --accent-purple: #7c3aed;
+    --accent-glow: rgba(37, 99, 235, 0.25);
+    --spotlight-color: rgba(37, 99, 235, 0.08);
+    
+    --nexus-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+    
+    --blob-1: rgba(59, 130, 246, 0.05);
+    --blob-2: rgba(139, 92, 246, 0.05);
+    
+    --scrollbar-track: #f1f5f9;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+}
+
+/* 1. Global Box Sizing & Tap Highlights */
+*, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. Body & Root Standards */
 html, body, #root {
     margin: 0;
     padding: 0;
     width: 100%;
     min-height: 100vh;
-    background-color: #0b1121 !important; /* The Falsicode Navy */
-    color: #e2e8f0;
-    font-family: 'Inter', sans-serif;
+    min-height: 100dvh;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 2. Prevent white flashes during transitions */
-* {
-    box-sizing: border-box;
-}
-
-/* 3. Style the scrollbar to match the dark theme */
+/* 3. Smooth Native-Feel Scrollbars */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #0b1121;
+    background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #1e293b;
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* 4. Touch & Interaction Defaults */
+button, a, input, select, textarea {
+    font-family: inherit;
+}
+
+button {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 5. Accessible Focus Outlines */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }

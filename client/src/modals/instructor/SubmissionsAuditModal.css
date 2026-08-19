@@ -1,11 +1,75 @@
 /* src/modals/instructor/SubmissionsAuditModal.css */
 
-/* 🌟 Extends the BaseModal width for Desktop */
+/* 🌟 Extends the BaseModal width for Desktop & Big Screens */
 .wide-hud { max-width: 1100px !important; }
+
+@media (min-width: 1600px) {
+    .wide-hud { max-width: 1300px !important; }
+}
 
 /* Desktop Table Wrapper */
 .audit-body-override { padding: 0 24px 24px 24px !important; }
 .table-responsive-wrapper { overflow-x: auto; width: 100%; padding-bottom: 10px; }
+
+/* 🌟 SEGMENTED TABS */
+.audit-segmented-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    padding: 4px;
+    margin: 16px 24px 20px 24px;
+    gap: 6px;
+}
+
+.audit-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-dim);
+    font-weight: 700;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+.audit-tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+}
+.audit-tab-btn.active {
+    background: rgba(59, 130, 246, 0.15);
+    color: #ffffff;
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tab-badge-count {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-dim);
+}
+.audit-tab-btn.active .tab-badge-count {
+    background: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+.tab-badge-count.alert {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+}
+.tab-badge-count.clean {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+}
 
 /* 🌟 Base Table Styles (Web & Tablet) */
 .falsicode-table-hud { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 650px; }
@@ -15,127 +79,335 @@
     border-bottom: 1px solid var(--border-glass); position: sticky; top: 0; 
     background: var(--bg-card); z-index: 5; 
 }
+.falsicode-table-hud th.th-actions { width: 1%; white-space: nowrap; }
+.falsicode-table-hud td.td-action { width: 1%; white-space: nowrap; }
 .falsicode-table-hud td { padding: 16px 20px; border-bottom: 1px solid var(--border-glass); color: var(--text-main); }
 
 .hud-stu-cell { display: flex; align-items: center; gap: 12px; }
-.stu-icon { width: 32px; height: 32px; background: var(--bg-main); color: var(--accent-blue); border: 1px solid var(--border-glass); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
-.code-box { background: var(--bg-main); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-glass); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-dim); display: inline-block; }
+.stu-icon { width: 32px; height: 32px; background: var(--bg-main); color: var(--accent-blue); border: 1px solid var(--border-glass); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
+.code-box { background: var(--bg-main); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-glass); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-dim); display: inline-block; white-space: nowrap; }
 
-.grade-input-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.grade-input-small { width: 100px; padding: 10px; background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; transition: all 0.2s; }
+.grade-input-group { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+.grade-field-row { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.grade-input-small { width: 95px; height: 36px; padding: 6px 12px; background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box; }
 .grade-input-small:focus { outline: none; border-color: var(--status-green); background: rgba(16, 185, 129, 0.05); }
 
-.btn-save-grade { background: rgba(16, 185, 129, 0.1); color: var(--status-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; transition: all 0.2s; }
-.btn-save-grade:hover { background: var(--status-green); color: white; }
+.btn-save-grade { background: rgba(16, 185, 129, 0.1); color: var(--status-green); border: 1px solid rgba(16, 185, 129, 0.3); height: 36px; padding: 0 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.btn-save-grade:hover { background: var(--status-green); color: #ffffff; }
 
-/* 🌟 NEW: Resubmit Button Styles */
-.btn-allow-resubmit { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; transition: all 0.2s; }
-.btn-allow-resubmit:hover:not(:disabled) { background: #f59e0b; color: white; }
+/* 🌟 Classic Resubmit Button Styles */
+.btn-allow-resubmit { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); height: 36px; padding: 0 16px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.btn-allow-resubmit:hover:not(:disabled) { background: #f59e0b; color: #ffffff; }
 .btn-allow-resubmit.unlocked, .btn-allow-resubmit:disabled { background: rgba(255, 255, 255, 0.05); color: var(--text-dim); border-color: var(--border-glass); cursor: not-allowed; }
 
-/* Analysis Report */
-.analysis-report-section { background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border-glass); padding-bottom: 20px; margin-top: 30px; overflow: hidden; }
-.report-header { padding: 20px 24px 10px; display: flex; flex-direction: column; gap: 12px; }
-.report-header h3 { margin: 0; color: var(--text-hero); }
+/* Analysis Report Tab View */
+.analysis-report-section.tab-view { background: var(--bg-main); border-radius: 14px; border: 1px solid var(--border-glass); padding-bottom: 10px; margin-top: 6px; overflow: hidden; }
+.report-header { padding: 20px 24px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.report-header-info h3 { margin: 0 0 4px 0; color: var(--text-hero); font-size: 1.15rem; }
+.report-header-sub { margin: 0; font-size: 0.78rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
 .scan-badge { background: rgba(16, 185, 129, 0.1); color: var(--status-green); border: 1px solid rgba(16, 185, 129, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; width: fit-content; }
 
 .hoverable-table tbody tr.clickable-row { transition: background 0.2s; cursor: pointer; }
 .hoverable-table tbody tr.clickable-row:hover { background: rgba(59, 130, 246, 0.05); }
-.view-details-text { display: block; font-size: 0.75rem; color: var(--accent-blue); opacity: 0; transition: opacity 0.2s; margin-top: 6px; }
+.pair-wrap { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: #f1f5f9; }
+.pair-file { background: rgba(255, 255, 255, 0.04); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-glass); }
+.arrow-icon { color: var(--accent-blue, #3b82f6); font-weight: bold; }
+.view-details-text { display: block; font-size: 0.75rem; color: var(--accent-blue); opacity: 0.8; transition: opacity 0.2s; margin-top: 6px; }
 .clickable-row:hover .view-details-text { opacity: 1; }
+
 .sim-score { font-weight: 800; font-size: 1.2rem; text-align: right; }
-.pair-wrap { word-break: break-all; line-height: 1.5; }
+.plag-type-pill { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; border: 1px solid; margin-right: 8px; }
+.sim-score-num { font-size: 1.25rem; font-weight: 900; }
+
+/* Empty Scan & Clean State */
+.report-empty-state { text-align: center; padding: 48px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.report-empty-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue, #3b82f6); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.report-empty-state h4 { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+.report-empty-state p { margin: 0; font-size: 0.85rem; color: var(--text-dim); max-width: 360px; line-height: 1.5; }
+
+.clean-scan-cell { padding: 40px 20px !important; text-align: center; }
+.clean-scan-box { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--status-green); }
+.clean-scan-icon { width: 36px; height: 36px; stroke-width: 2.5; background: rgba(16, 185, 129, 0.1); padding: 6px; border-radius: 50%; border: 1px solid rgba(16, 185, 129, 0.2); }
+.clean-scan-box strong { font-size: 1.1rem; color: var(--status-green); }
+.clean-scan-box p { margin: 0; font-size: 0.85rem; color: var(--text-dim); }
 
 .pulsing { animation: pulse 2s infinite; }
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-
 /* =========================================
-   📱 RESPONSIVE ENGINE: THE "CARD-TABLE" FIX
+   🖥️ DESKTOP VS 📱 TABLET/MOBILE TOGGLES
    ========================================= */
-@media (max-width: 1024px) {
-    .audit-body-override { padding: 0 20px 20px 20px !important; }
+.desktop-table-container {
+    display: block;
+    width: 100%;
 }
 
-@media (max-width: 768px) {
-    .audit-body-override { padding: 0 16px 20px 16px !important; }
-    
-    /* Remove the horizontal scroll force on mobile */
-    .table-responsive-wrapper { overflow-x: visible; padding-bottom: 0; }
-    .falsicode-table-hud { min-width: 0; margin-top: 0; }
+.mobile-tablet-card-container {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
 
-    /* Destroy the table, build mobile cards */
-    .responsive-card-table, 
-    .responsive-card-table tbody, 
-    .responsive-card-table tr, 
-    .responsive-card-table td {
-        display: block;
+/* =========================================
+   📱 TABLET & MOBILE CARD ARCHITECTURE (< 1024px)
+   ========================================= */
+@media (max-width: 1023px) {
+    .desktop-table-container {
+        display: none !important;
+    }
+
+    .mobile-tablet-card-container {
+        display: flex !important;
+    }
+
+    .audit-body-override {
+        padding: 0 20px 20px 20px !important;
+    }
+
+    /* 🌟 BASE CARD CONTAINER */
+    .submission-responsive-card {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px 18px;
+        box-sizing: border-box;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(16px);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .submission-responsive-card:hover {
+        border-color: rgba(59, 130, 246, 0.35);
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    /* Identity & File Info */
+    .card-identity-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .student-profile-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .student-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .student-title-wrap .stu-name {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-hero, #ffffff);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .file-chip-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        max-width: 220px;
+    }
+
+    .file-icon-mini {
+        color: var(--accent-blue, #3b82f6);
+        flex-shrink: 0;
+    }
+
+    .file-name-text {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.76rem;
+        color: #93c5fd;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Status / Grade Pills */
+    .status-grade-pill {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .status-grade-pill.graded {
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--status-green, #10b981);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-grade-pill.pending {
+        background: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    /* Toolbar Actions on Tablet */
+    .card-action-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .grade-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .grade-input-wrapper .grade-input-small {
+        width: 88px;
+        height: 38px;
+    }
+
+    .grade-input-wrapper .btn-save-grade {
+        height: 38px;
+    }
+
+    .btn-allow-resubmit {
+        height: 38px;
+        padding: 0 14px;
+        font-size: 0.75rem;
+    }
+
+    /* Report Card on Tablet/Mobile */
+    .report-responsive-card {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px 18px;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .report-responsive-card:hover {
+        background: rgba(15, 23, 42, 0.85);
+        border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    .report-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+}
+
+/* =========================================
+   📱 MOBILE PHONES ONLY (< 768px)
+   ========================================= */
+@media (max-width: 767px) {
+    .audit-segmented-tabs {
+        margin: 12px 16px 16px 16px;
+        padding: 3px;
+    }
+    
+    .audit-tab-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+    
+    .audit-body-override {
+        padding: 0 16px 20px 16px !important;
+    }
+
+    /* Vertical Card Stacking on Mobile */
+    .submission-responsive-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .card-identity-header {
+        justify-content: space-between;
+        align-items: flex-start;
         width: 100%;
     }
 
-    /* Hide the traditional table headers */
-    .responsive-card-table thead, .hide-mobile {
-        display: none;
+    .student-title-wrap .stu-name {
+        font-size: 1rem;
     }
 
-    /* 🌟 TIGHTER NATIVE CARDS */
-    .responsive-card-table tr {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border-glass);
-        border-radius: 14px;
-        margin-bottom: 12px;
-        padding: 12px 16px; 
-        box-sizing: border-box;
-        position: relative;
+    .file-chip-row {
+        max-width: 100%;
     }
 
-    /* Clear the default padding from the cells */
-    .responsive-card-table td {
-        padding: 0;
-        margin: 0;
-        border-bottom: none;
-        text-align: left;
-    }
-
-    /* 🌟 FIX: Pull the status dot out of the flow and pin it to the top right! */
-    .responsive-card-table td.status-cell {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        width: auto;
-        padding: 0;
-    }
-
-    /* Shrink the avatar and tighten spacing */
-    .stu-icon { width: 28px; height: 28px; font-size: 0.8rem; }
-    .td-student { margin-bottom: 6px; }
-    
-    /* Shrink the code box slightly */
-    .td-file { margin-bottom: 12px; }
-    .code-box { padding: 4px 8px; font-size: 0.75rem; }
-    
-    /* 🌟 ADJUSTED FOR 3 ITEMS ON MOBILE */
-    .grade-input-group { 
-        display: flex; 
-        flex-direction: row;
-        flex-wrap: wrap; /* Allows the unlock button to drop to a new line if needed */
-        width: 100%; 
-        border-top: 1px solid rgba(255,255,255,0.05);
+    /* Actions Toolbar on Mobile */
+    .card-action-toolbar {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
         padding-top: 12px;
-        margin-top: 0;
+    }
+
+    .grade-input-wrapper {
+        width: 100%;
+    }
+
+    .grade-input-wrapper .grade-input-small {
+        flex: 1;
+        width: auto;
+        height: 40px;
+        font-size: 0.85rem;
+    }
+
+    .grade-input-wrapper .btn-save-grade {
+        height: 40px;
+        padding: 0 18px;
+    }
+
+    .btn-allow-resubmit {
+        width: 100%;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .report-card-top {
+        flex-direction: column;
+        align-items: flex-start;
         gap: 8px;
     }
-    
-    .grade-input-small { flex: 1; padding: 8px 12px; font-size: 0.8rem; min-width: 80px; } 
-    .btn-save-grade { flex-shrink: 0; padding: 8px 16px; font-size: 0.7rem; }
-    .btn-allow-resubmit { flex-grow: 1; padding: 8px 16px; font-size: 0.7rem; text-align: center; }
 
-    /* Fix Analysis Report Cards */
-    .align-left-mobile { text-align: left !important; display: block; }
-    .sim-score { text-align: left; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px !important; margin-top: 8px;}
-    .view-details-text { opacity: 1; margin-top: 8px; font-weight: 600; }
-
-    /* Ensure Bottom Sheet Button Layout is strictly native */
-    .hud-modal-footer { padding: 16px 20px 24px; border-top: 1px solid var(--border-glass); }
-    .btn-hud-run { width: 100%; padding: 14px; text-align: center; font-size: 1.05rem; }
-}
+    .report-card-top .sim-score {
+        text-align: left;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 8px;
+    }
+}

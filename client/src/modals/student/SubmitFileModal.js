@@ -3,8 +3,8 @@ import api from '../../services/api';
 import { useToast } from '../../context/NotificationContext';
 import './SubmitFileModal.css';
 
-// 🌟 Import our new Base Skeleton
 import BaseModal from '../shared/BaseModal';
+import ModalSkeleton from '../shared/ModalSkeleton';
 import { getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
 
 const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }) => {
@@ -60,27 +60,33 @@ const SubmitFileModal = ({ isOpen, onClose, assignment, classroomId, onSuccess }
             <form onSubmit={handleFileUpload} className="hud-form-wrapper">
                 
                 <div className="hud-modal-body">
-                    <div className="warning-banner">
-                        <strong>Warning:</strong> This system enforces a One-Time Lock. Once deployed, your file will be structurally analyzed and locked for grading.
-                    </div>
-
-                    <div className="upload-dropzone">
-                        <input type="file" accept={fileExtension} id="file-upload" style={{ display: 'none' }} onChange={handleFileChange} />
-                        
-                        {!selectedFile ? (
-                            <label htmlFor="file-upload" className="btn-glass-action file-select-btn">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                                </svg>
-                                Select {fileExtension} File
-                            </label>
-                        ) : (
-                            <div className="selected-file-display">
-                                <div className="file-name-badge">{selectedFile.name}</div>
-                                <label htmlFor="file-upload" className="change-file-label">Change File</label>
+                    {isDeploying ? (
+                        <ModalSkeleton.FileSubmit />
+                    ) : (
+                        <>
+                            <div className="warning-banner">
+                                <strong>Warning:</strong> This system enforces a One-Time Lock. Once deployed, your file will be structurally analyzed and locked for grading.
                             </div>
-                        )}
-                    </div>
+
+                            <div className="upload-dropzone">
+                                <input type="file" accept={fileExtension} id="file-upload" style={{ display: 'none' }} onChange={handleFileChange} />
+                                
+                                {!selectedFile ? (
+                                    <label htmlFor="file-upload" className="btn-glass-action file-select-btn">
+                                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                        </svg>
+                                        Select {fileExtension} File
+                                    </label>
+                                ) : (
+                                    <div className="selected-file-display">
+                                        <div className="file-name-badge">{selectedFile.name}</div>
+                                        <label htmlFor="file-upload" className="change-file-label">Change File</label>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className="hud-modal-footer">

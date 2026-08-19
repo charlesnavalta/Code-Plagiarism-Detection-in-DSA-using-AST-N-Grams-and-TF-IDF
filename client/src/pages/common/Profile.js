@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useToast } from '../../context/NotificationContext';
+import { useTheme } from '../../hooks/useTheme';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import './Profile.css';
 import api from '../../services/api'; 
 
@@ -8,6 +10,8 @@ const Profile = () => {
     const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : {};
     const dashboardRef = useRef(null);
     const toast = useToast();
+    const [theme] = useTheme();
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -17,18 +21,6 @@ const Profile = () => {
     
     const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState(user.email || '');
-
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
 
     const handleUpdateEmail = (e) => {
         e.preventDefault();
@@ -72,16 +64,6 @@ const Profile = () => {
             toast.error(err.response?.data?.error || "Unable to update security parameters.", "Update Failed");
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         }
     };
 
@@ -147,7 +129,7 @@ const Profile = () => {
 
                             <form onSubmit={handleUpdateEmail} className="premium-form">
                                 <div className="dark-form-group">
-                                    <label><br></br>Contact Email</label>
+                                    <label>Contact Email</label>
                                     <div className="nexus-input-wrapper">
                                         <svg className="input-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>

@@ -1,8 +1,22 @@
-/* src/instructor/components/InstructorClassroomView.css */
-
 .nexus-content.instructor-layout { 
-    max-width: 1100px; margin: 0 auto; padding-top: 50px; padding-bottom: 60px;
-    padding-left: 20px; padding-right: 20px; position: relative; z-index: 10; 
+    max-width: var(--max-content-width, 1440px); 
+    margin: 0 auto; 
+    padding-top: 40px; 
+    padding-bottom: 60px;
+    padding-left: 24px; 
+    padding-right: 24px; 
+    position: relative; 
+    z-index: 10; 
+    width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .nexus-content.instructor-layout {
+        max-width: var(--max-ultrawide-width, 1680px);
+        padding-top: 50px;
+        padding-left: 36px;
+        padding-right: 36px;
+    }
 }
 
 /* Header styling */

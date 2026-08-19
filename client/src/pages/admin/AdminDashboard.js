@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './AdminDashboard.css';
 import api from '../../services/api'; 
+import { useTheme } from '../../hooks/useTheme';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
@@ -10,19 +12,8 @@ const AdminDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const dashboardRef = useRef(null);
-
-    // --- Nexus Theme Synchronization ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
+    const [theme] = useTheme();
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -44,17 +35,6 @@ const AdminDashboard = () => {
 
         fetchStats();
     }, []);
-
-    // --- Spatial Spotlight Logic ---
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        }
-    };
 
     if (loading) return (
         <div className={`nexus-wrapper ${theme}`}>

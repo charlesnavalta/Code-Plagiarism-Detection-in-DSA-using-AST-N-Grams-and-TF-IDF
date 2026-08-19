@@ -65,6 +65,11 @@
     display: flex; gap: 24px; width: 100%; min-height: 500px;
 }
 
+@media (min-width: 1600px) {
+    .split-screen-container { min-height: 620px; gap: 32px; }
+    .pane-content-scroll { height: 620px !important; }
+}
+
 .code-pane { 
     flex: 1; background: #0d1117; border: 1px solid var(--border-glass); 
     border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; 

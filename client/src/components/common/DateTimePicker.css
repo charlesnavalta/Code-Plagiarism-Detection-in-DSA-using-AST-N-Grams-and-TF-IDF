@@ -113,3 +113,27 @@
     pointer-events: none !important;
     background-color: transparent !important;
 }
+
+/* =========================================
+   📱 MOBILE RESPONSIVENESS
+   ========================================= */
+@media (max-width: 480px) {
+    .react-datepicker {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+    }
+    .react-datepicker__time-container {
+        border-left: none !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        width: 100% !important;
+    }
+    .react-datepicker__time-box {
+        width: 100% !important;
+    }
+    .custom-react-datepicker {
+        padding: 12px 14px !important;
+        font-size: 0.95rem;
+    }
+}

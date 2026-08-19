@@ -53,12 +53,31 @@ button {
 @keyframes drift { 100% { transform: translate(5%, 10%) scale(1.1); } }
 
 /* LAYOUT STRUCTURE */
-.premium-profile-container { max-width: 1100px; margin: 0 auto; padding: 105px 20px 40px; position: relative; z-index: 10; }
-.premium-profile-grid { display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start; }
+.premium-profile-container { 
+    max-width: var(--max-content-width, 1440px); 
+    margin: 0 auto; 
+    padding: 85px 24px 40px; 
+    position: relative; 
+    z-index: 10; 
+    width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .premium-profile-container {
+        max-width: var(--max-ultrawide-width, 1680px);
+        padding: 95px 36px 50px;
+    }
+    .premium-profile-grid {
+        grid-template-columns: 380px 1fr !important;
+        gap: 36px !important;
+    }
+}
+
+.premium-profile-grid { display: grid; grid-template-columns: 350px 1fr; gap: 28px; align-items: start; }
 
 /* SPATIAL CARDS */
 .spatial-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-card); backdrop-filter: blur(30px); position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.spatial-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.05), transparent 40%); opacity: 0; transition: opacity 0.3s; z-index: 1; }
+.spatial-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 40%); opacity: 0; transition: opacity 0.3s; z-index: 1; }
 .spatial-card:hover::after { opacity: 1; }
 .spatial-card:hover { transform: translateY(-4px); border-color: var(--accent); }
 .relative-z { position: relative; z-index: 2; }

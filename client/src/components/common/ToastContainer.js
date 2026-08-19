@@ -2,18 +2,20 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNotificationContext } from '../../context/NotificationContext';
 import './Toast.css';
 
-const ToastItem = ({ toast, onRemove }) => {
-    const [isExiting, setIsExiting] = useState(false);
+const ToastItem = ({ toast, isExitingProp = false, onRemove }) => {
+    const [localExiting, setLocalExiting] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const dismissedRef = useRef(false);
+
+    const isExiting = isExitingProp || localExiting;
 
     const handleDismiss = useCallback(() => {
         if (dismissedRef.current) return;
         dismissedRef.current = true;
-        setIsExiting(true);
+        setLocalExiting(true);
         setTimeout(() => {
             onRemove(toast.id);
-        }, 280);
+        }, 260);
     }, [onRemove, toast.id]);
 
     useEffect(() => {
@@ -104,7 +106,12 @@ const ToastContainer = () => {
     return (
         <div className="toast-container" aria-live="polite" aria-atomic="true">
             {context.toasts.map((toast) => (
-                <ToastItem key={toast.id} toast={toast} onRemove={context.removeToast} />
+                <ToastItem 
+                    key={toast.id} 
+                    toast={toast} 
+                    isExitingProp={context.isExiting}
+                    onRemove={context.removeToast} 
+                />
             ))}
         </div>
     );

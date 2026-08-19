@@ -3,11 +3,27 @@ import api from '../../services/api';
 import { useToast } from '../../context/NotificationContext';
 import './ViewAssignmentModal.css'; 
 import BaseModal from '../shared/BaseModal';
+import ModalSkeleton from '../shared/ModalSkeleton';
 import { formatLanguageDisplay } from '../../utils/fileUtils';
 
-const ViewAssignmentModal = ({ isOpen, onClose, assignment }) => {
+const ViewAssignmentModal = ({ isOpen, onClose, assignment, isLoading = false }) => {
     const toast = useToast();
-    if (!isOpen || !assignment) return null;
+    if (!isOpen) return null;
+
+    if (isLoading || !assignment) {
+        return (
+            <BaseModal 
+                isOpen={isOpen} 
+                onClose={onClose} 
+                title="Task Parameters" 
+                subtitle="Loading task details..."
+            >
+                <div className="hud-modal-body">
+                    <ModalSkeleton.ViewAssignment />
+                </div>
+            </BaseModal>
+        );
+    }
 
     const languageLabel = formatLanguageDisplay(assignment.language);
     const isLocked = assignment.has_submitted;

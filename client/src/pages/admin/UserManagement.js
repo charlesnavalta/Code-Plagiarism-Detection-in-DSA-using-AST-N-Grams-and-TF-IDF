@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useUserCRUD } from '../../hooks/useUserCRUD'; 
+import { useTheme } from '../../hooks/useTheme';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import './UserManagement.css'; 
 
 const UserManagement = () => {
@@ -10,25 +12,14 @@ const UserManagement = () => {
     } = useUserCRUD();
 
     const dashboardRef = useRef(null);
+    const [theme] = useTheme();
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     // 2. UI State only (Modals and Themes)
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('create'); 
     // Updated formData to include 'status' to match DB defaults
     const [formData, setFormData] = useState({ id: null, username: '', email: '', role: 'student', status: 'active', password: '' });
-    
-    // --- Nexus Theme Synchronization ---
-    const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
-
-    useEffect(() => {
-        const handleSync = () => {
-            const currentTheme = localStorage.getItem('app-theme') || 'dark';
-            setTheme(currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        };
-        window.addEventListener('storage', handleSync);
-        return () => window.removeEventListener('storage', handleSync);
-    }, []);
 
     // --- MODAL HANDLERS ---
     const openCreateModal = () => {
@@ -55,17 +46,6 @@ const UserManagement = () => {
         const success = await saveUser(modalMode, formData);
         if (success) {
             setShowModal(false);
-        }
-    };
-
-    // --- Spatial Spotlight Logic ---
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
         }
     };
 

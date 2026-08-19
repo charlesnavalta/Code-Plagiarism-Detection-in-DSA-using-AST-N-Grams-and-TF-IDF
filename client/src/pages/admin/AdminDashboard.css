@@ -60,18 +60,33 @@
 .relative-z { position: relative; z-index: 2; }
 
 /* LAYOUT */
-.admin-max-width { max-width: 1100px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 10; }
+.admin-max-width { 
+    max-width: var(--max-content-width, 1440px); 
+    margin: 0 auto; 
+    padding: 36px 24px; 
+    position: relative; 
+    z-index: 10; 
+    width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .admin-max-width {
+        max-width: var(--max-ultrawide-width, 1680px);
+        padding: 44px 36px;
+    }
+}
 
 /* ACTION BANNER (White text preserved for dark gradient background) */
 .action-banner-nexus {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
     border: none !important;
     box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.4) !important;
+    border-radius: 20px;
 }
 
-.banner-content { padding: 40px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; position: relative; }
-.banner-text h1 { color: #ffffff !important; font-size: 2.8rem; font-weight: 900; letter-spacing: -1px; margin: 0 0 8px; }
-.banner-text p { color: rgba(255, 255, 255, 0.8) !important; margin: 0; font-size: 1.1rem; }
+.banner-content { padding: 32px 36px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; position: relative; }
+.banner-text h1 { color: #ffffff !important; font-size: clamp(2rem, 3.2vw, 2.8rem); font-weight: 900; letter-spacing: -1px; margin: 0 0 8px; }
+.banner-text p { color: rgba(255, 255, 255, 0.8) !important; margin: 0; font-size: 1.05rem; }
 
 /* Blinking Status Pill */
 .live-status-indicator {
@@ -86,6 +101,7 @@
     font-size: 0.85rem;
     font-weight: 800;
     letter-spacing: 1.5px;
+    white-space: nowrap;
 }
 
 .blinking-dot {
@@ -102,17 +118,17 @@
 .admin-bento-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 24px;
 }
 
 .bento-card { display: flex; flex-direction: column; }
-.bento-inner { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+.bento-inner { padding: 28px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
 
-.bento-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-.bento-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.bento-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.bento-label { color: var(--text-dim); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
 .bento-icon {
-    width: 48px; height: 48px; border-radius: 12px;
+    width: 46px; height: 46px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
 }
 
@@ -121,8 +137,8 @@
 .bento-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
 
 .bento-value-wrapper { display: flex; flex-direction: column; }
-.bento-value { font-size: 3.5rem; font-weight: 800; margin: 0 0 5px 0; color: var(--text-main); line-height: 1; letter-spacing: -1px;} /* Fixed for Light Mode */
-.bento-trend { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
+.bento-value { font-size: 3.2rem; font-weight: 800; margin: 0 0 5px 0; color: var(--text-main); line-height: 1; letter-spacing: -1px;}
+.bento-trend { font-size: 0.88rem; color: var(--text-dim); font-weight: 600; }
 
 /* Specific Highlights */
 .text-orange { color: #f59e0b !important; }
@@ -139,7 +155,7 @@
 
 /* --- Wide Health Card --- */
 .wide-card { grid-column: span 3; }
-.health-percentage { font-size: 1.4rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-main); } /* Fixed for Light Mode */
+.health-percentage { font-size: 1.4rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-main); }
 .health-visualizer { margin-top: 15px; }
 .health-bar-bg { height: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border-card);}
 .health-bar-fill { width: 99.9%; height: 100%; background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%); border-radius: 10px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
@@ -155,68 +171,45 @@
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
 
 /* =========================================
-   MOBILE RESPONSIVENESS
+   📱 RESPONSIVE BREAKPOINTS (Tablet & Mobile)
    ========================================= */
-@media (max-width: 900px) {
-    .admin-bento-grid { grid-template-columns: 1fr 1fr; }
-    .wide-card { grid-column: span 2; }
-}
-
-@media (max-width: 768px) {
-    .admin-max-width { padding: 20px 15px; }
-    .banner-header-split { flex-direction: column; align-items: flex-start; gap: 24px; padding: 24px; }
-    .banner-text h1 { font-size: 2.2rem; }
-    .live-status-indicator { width: 100%; justify-content: center; }
-    .admin-bento-grid { grid-template-columns: 1fr; gap: 20px;}
-    .wide-card { grid-column: span 1; }
-    .bento-inner { padding: 24px; }
-    .bento-value { font-size: 3rem; }
-}
-
-@media (max-width: 480px) {
-    .banner-text h1 { font-size: 1.8rem; }
-}
-
-/* =========================================
-   ADMIN DASHBOARD RESPONSIVE ENGINE
-   ========================================= */
-@media (max-width: 900px) {
-    /* Transition from 3 columns to 2 columns for tablets */
+@media (max-width: 1024px) {
     .admin-bento-grid { 
         grid-template-columns: 1fr 1fr; 
+        gap: 18px;
     }
     .wide-card { 
         grid-column: span 2; 
+    }
+    .admin-max-width {
+        padding: 24px 18px;
     }
 }
 
 @media (max-width: 768px) {
     .admin-max-width { 
-        padding: 20px 15px; 
+        padding: 16px 14px 110px 14px; 
     }
 
-    /* Stack the Header Banner */
     .banner-header-split { 
         flex-direction: column; 
         align-items: flex-start; 
-        gap: 24px; 
-        padding: 24px; 
+        gap: 20px; 
+        padding: 24px 20px; 
     }
 
     .banner-text h1 { 
-        font-size: 2.2rem; 
+        font-size: 2rem; 
     }
     
-    /* Center the Status Pill on mobile */
     .live-status-indicator { 
         width: 100%; 
         justify-content: center; 
     }
 
-    /* Force Bento Grid to 1 Column for phones */
     .admin-bento-grid { 
         grid-template-columns: 1fr; 
-        gap: 20px;
+        gap: 16px;
     }
 
     .wide-card { 
@@ -224,14 +217,13 @@
     }
 
     .bento-inner { 
-        padding: 24px; 
+        padding: 20px; 
     }
 
     .bento-value { 
-        font-size: 3rem; 
+        font-size: 2.8rem; 
     }
 
-    /* Adjust the Health Markers so they don't overlap */
     .health-markers {
         font-size: 0.65rem;
     }
@@ -239,9 +231,9 @@
 
 @media (max-width: 480px) {
     .banner-text h1 { 
-        font-size: 1.8rem; 
+        font-size: 1.65rem; 
     }
     .bento-value {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
     }
 }

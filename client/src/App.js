@@ -111,6 +111,7 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<AdminDash />} />
                 <Route path="users" element={<UserManagement />} />
+                <Route path="profile" element={<Profile />} />
               </Routes>
             </AdminLayout>
           </ProtectedRoute>

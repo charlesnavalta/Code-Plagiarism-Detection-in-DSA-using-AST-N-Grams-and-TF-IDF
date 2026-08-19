@@ -84,7 +84,18 @@
 .invite-badge-glass strong { font-size: 1.6rem; color: #fff; font-family: 'JetBrains Mono', monospace; line-height: 1.2; }
 
 /* BUTTONS */
-.nexus-btn-primary { background: #fff !important; color: #4f46e5 !important; border: none !important; padding: 12px 24px; border-radius: 40px; font-weight: 800; cursor: pointer; transition: 0.3s; white-space: nowrap; height: fit-content; }
+.nexus-btn-primary { 
+    background: #ffffff !important; 
+    color: #4f46e5 !important; 
+    border: none !important; 
+    padding: 12px 24px; 
+    border-radius: 40px; 
+    font-weight: 800; 
+    cursor: pointer; 
+    transition: 0.3s; 
+    white-space: nowrap; 
+    height: fit-content; 
+}
 .nexus-btn-primary:hover { transform: scale(1.05); }
 .nexus-btn-ghost { background: transparent; color: var(--text-dim); border: none; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
 .nexus-btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
@@ -104,7 +115,7 @@
 .student-cell { display: flex; align-items: center; gap: 15px; }
 .student-avatar { width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--accent); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
 .user-text-meta { display: flex; flex-direction: column; }
-.username-bold { font-weight: 600; font-size: 0.95rem; color: var(--text-main); } /* Fixed for Light Mode */
+.username-bold { font-weight: 600; font-size: 0.95rem; color: var(--text-main); }
 .email-dim { font-size: 0.85rem; color: var(--text-dim); margin-top: 2px; }
 
 /* BADGES */
@@ -114,7 +125,7 @@
 
 .clean-status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; text-transform: capitalize; }
 .status-indicator-dot { width: 8px; height: 8px; border-radius: 50%; }
-.clean-status-pill.active { color: var(--text-main); } /* Fixed for Light Mode */
+.clean-status-pill.active { color: var(--text-main); }
 .clean-status-pill.active .status-indicator-dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
 .clean-status-pill.pending { color: #f59e0b; }
 .clean-status-pill.pending .status-indicator-dot { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; animation: pulseDot 2s infinite; }
@@ -122,33 +133,35 @@
 
 /* TABLE ACTIONS */
 .table-action-group { display: flex; justify-content: flex-end; gap: 8px; }
-.action-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+.action-btn { background: transparent; border: 1px solid var(--border-card); color: var(--text-dim); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
 .action-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
 .action-btn.approve:hover { border-color: #10b981; color: #10b981; background: rgba(16,185,129,0.1); }
 .action-btn.edit:hover { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.1); }
 .action-btn.delete:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.1); }
 
 /* MODALS */
-.nexus-modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(10px); }
-.nexus-modal-content { width: 100%; max-width: 550px; }
-.modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding: 30px 30px 0 30px; }
-.modal-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); } /* Fixed for Light Mode */
+.nexus-modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 100000; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.nexus-modal-content { width: 100%; max-width: 520px; border-radius: 20px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 28px 28px 0 28px; }
+.modal-header h2 { margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text-main); }
 .btn-close-icon { background: none; border: none; color: var(--text-dim); font-size: 2rem; cursor: pointer; transition: 0.2s; line-height: 0.5;}
 .btn-close-icon:hover { color: var(--text-main); }
 
 /* FORMS */
-.dark-form-group { margin-bottom: 20px; }
+.dark-form-group { margin-bottom: 18px; }
 .form-group-row { display: flex; gap: 15px; }
 .w-50 { flex: 1; }
-.dark-form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;}
-.nexus-input-field { width: 100%; padding: 14px; background: rgba(0, 0, 0, 0.1); border: 1px solid var(--border-card); color: var(--text-main); border-radius: 12px; font-family: inherit; font-size: 1rem; transition: 0.3s; }
-.nexus-input-field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+.dark-form-group label { display: block; margin-bottom: 6px; font-weight: 700; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;}
+.nexus-input-field { width: 100%; padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-card); color: var(--text-main); border-radius: 10px; font-family: inherit; font-size: 0.95rem; transition: 0.2s; outline: none; }
+.nexus-input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.btn-modal-cancel { background: transparent; border: 1px solid var(--border-card); color: var(--text-main); padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-modal-cancel:hover { background: rgba(255, 255, 255, 0.05); }
 
 /* LOADING & EMPTY */
 .admin-loading-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; height: calc(100vh - 65px); color: var(--text-dim); font-weight: 600; position: relative; z-index: 10; }
 .quantum-spinner { width: 50px; height: 50px; border: 3px solid rgba(59, 130, 246, 0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-.empty-card { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+.empty-card { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
 .empty-icon { font-size: 3rem; margin-bottom: 15px; opacity: 0.8;}
 .empty-card h3 { margin: 0 0 10px; font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
 .empty-card p { color: var(--text-dim); margin: 0;}
@@ -156,147 +169,90 @@
 /* ANIMATIONS */
 .fade-in-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
+@keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* =========================================
-   MOBILE RESPONSIVENESS (Max Width: 768px)
+   📱 RESPONSIVE BREAKPOINTS (Tablet & Mobile)
    ========================================= */
-@media (max-width: 768px) {
-    .admin-max-width { padding: 20px 15px; }
-
-    /* Header Banner Stack */
-    .banner-header-split { flex-direction: column; align-items: flex-start; gap: 24px; padding: 24px; }
-    .banner-text h1 { font-size: 2.2rem; }
-    
-    .header-actions { width: 100%; flex-direction: column; gap: 15px; }
-    .invite-badge-glass { width: 100%; padding: 15px; flex-direction: row; justify-content: space-between; align-items: center;}
-    .nexus-btn-primary { width: 100%; display: flex; justify-content: center; }
-
-    /* Form stack */
-    .form-group-row { flex-direction: column; gap: 0; }
-    .nexus-input-field { font-size: 16px; /* Prevents iOS Safari auto-zoom */ }
-
-    /* Modals */
-    .nexus-modal-content { padding: 20px; width: calc(100% - 30px); margin: 15px; max-height: 90vh; overflow-y: auto; }
-    .modal-header { padding: 20px 20px 0 20px; align-items: flex-start; gap: 15px; }
-    .btn-close-icon { position: absolute; top: 20px; right: 20px; }
-    .modal-actions { flex-direction: column; gap: 12px; }
-    .modal-actions button { width: 100%; justify-content: center; }
-}
-
-@media (max-width: 480px) {
-    .banner-text h1 { font-size: 1.8rem; }
-}
-
-/* =========================================
-   BULLETPROOF MOBILE RESPONSIVENESS
-   ========================================= */
-
-/* Tablets & Small Laptops (Max Width: 1024px) */
 @media (max-width: 1024px) {
-    .banner-content { padding: 30px; }
-    .banner-text h1 { font-size: 2.2rem; }
-    .admin-max-width { padding: 30px 20px; }
+    .banner-content { padding: 28px 24px; }
+    .admin-max-width { padding: 24px 18px; }
 }
 
-/* Mobile Phones (Max Width: 768px) */
 @media (max-width: 768px) {
-    /* 1. Page Layout Fixes */
     .admin-max-width { 
-        padding: 20px 15px !important; 
-        width: 100%; 
-        box-sizing: border-box;
+        padding: 16px 14px 110px 14px; 
     }
 
-    /* 2. Force Banner to Stack */
     .banner-content { 
-        flex-direction: column !important; 
-        align-items: flex-start !important; 
-        gap: 20px !important; 
-        padding: 20px !important; 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 18px; 
+        padding: 20px; 
     }
     
     .banner-text h1 { 
-        font-size: 2rem !important; 
+        font-size: 1.9rem; 
     }
     
-    /* 3. Force Actions to Stack Full Width */
     .header-actions { 
-        width: 100% !important; 
-        flex-direction: column !important; 
-        align-items: stretch !important; /* Forces children to take full width */
-        gap: 15px !important; 
+        width: 100%; 
+        flex-direction: column; 
+        align-items: stretch;
+        gap: 12px; 
     }
     
     .invite-badge-glass { 
-        width: 100% !important; 
-        padding: 15px !important; 
-        flex-direction: row !important; 
-        justify-content: space-between !important; 
-        box-sizing: border-box;
+        width: 100%; 
+        padding: 12px 16px; 
+        flex-direction: row; 
+        justify-content: space-between; 
     }
 
     .nexus-btn-primary { 
-        width: 100% !important; 
-        display: flex !important; 
-        justify-content: center !important; 
+        width: 100%; 
+        justify-content: center; 
     }
 
-    /* 4. TABLE OVERFLOW FIX (Crucial for mobile) */
-    /* This stops the wide table from breaking the screen width */
-    .spatial-card {
-        max-width: 100vw;
-    }
-    
     .table-responsive-wrapper {
-        width: 100%;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 15px; /* Room for scrollbar */
+        padding-bottom: 12px;
     }
 
     .nexus-data-table {
-        min-width: 800px; /* Forces table to scroll instead of squishing text */
+        min-width: 700px;
     }
 
-    /* 5. Modal Fixes */
     .nexus-modal-content { 
-        width: 90% !important; 
-        max-height: 85vh !important; 
-        overflow-y: auto !important; 
-        padding: 0 !important;
+        width: calc(100% - 24px); 
+        max-height: 88vh; 
+        overflow-y: auto; 
     }
     
     .modal-header { 
-        padding: 20px !important; 
-        flex-direction: row !important; /* Keep X button next to title */
+        padding: 18px; 
     }
     
-    .modal-header h2 {
-        font-size: 1.2rem !important;
-    }
-
     .form-group-row { 
-        flex-direction: column !important; 
-        gap: 0 !important; 
+        flex-direction: column; 
+        gap: 0; 
     }
 
     .nexus-input-field { 
-        font-size: 16px !important; /* Prevents iOS Safari auto-zoom on focus */
+        font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
     }
 
     .modal-actions { 
-        flex-direction: column !important; 
-        gap: 10px !important; 
+        flex-direction: column; 
+        gap: 10px; 
     }
     
     .modal-actions button { 
-        width: 100% !important; 
+        width: 100%; 
     }
 }
 
-/* Extra Small Phones (Max Width: 480px) */
 @media (max-width: 480px) {
-    .banner-text h1 { font-size: 1.7rem !important; }
-    .banner-text p { font-size: 0.95rem !important; }
-    .invite-badge-glass strong { font-size: 1.3rem !important; }
+    .banner-text h1 { font-size: 1.65rem; }
+    .banner-text p { font-size: 0.92rem; }
+    .invite-badge-glass strong { font-size: 1.2rem; }
 }

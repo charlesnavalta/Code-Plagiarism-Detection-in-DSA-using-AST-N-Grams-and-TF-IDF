@@ -7,13 +7,24 @@ import { validateAssignmentDescription, validateDeadline } from '../../utils/val
 
 // 🌟 Import the Base Skeleton
 import BaseModal from '../shared/BaseModal';
+import ModalSkeleton from '../shared/ModalSkeleton';
 
-const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated }) => {
+const CreateAssignmentModal = ({ isOpen, onClose, classroomId, onAssignmentCreated, isLoading = false }) => {
     const [guideFiles, setGuideFiles] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const toast = useToast();
 
     if (!isOpen) return null;
+
+    if (isLoading) {
+        return (
+            <BaseModal isOpen={isOpen} onClose={onClose} title="Create Assignment" subtitle="Initializing workspace...">
+                <div className="hud-modal-body">
+                    <ModalSkeleton.Form />
+                </div>
+            </BaseModal>
+        );
+    }
 
     // 🌟 Strict File Limit Handler
     const handleFileChange = (e) => {

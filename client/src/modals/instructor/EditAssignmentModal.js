@@ -7,8 +7,9 @@ import { validateAssignmentDescription, validateDeadline } from '../../utils/val
 
 // 🌟 Import the Base Skeleton
 import BaseModal from '../shared/BaseModal';
+import ModalSkeleton from '../shared/ModalSkeleton';
 
-const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated, onAssignmentDeleted, classroomId }) => {
+const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated, onAssignmentDeleted, classroomId, isLoading = false }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [maxScore, setMaxScore] = useState(100);
@@ -27,7 +28,17 @@ const EditAssignmentModal = ({ isOpen, onClose, assignment, onAssignmentUpdated,
         }
     }, [assignment]);
 
-    if (!isOpen || !assignment) return null;
+    if (!isOpen) return null;
+
+    if (isLoading || !assignment) {
+        return (
+            <BaseModal isOpen={isOpen} onClose={onClose} title="Edit Task" subtitle="Loading parameters...">
+                <div className="hud-modal-body">
+                    <ModalSkeleton.Form />
+                </div>
+            </BaseModal>
+        );
+    }
 
     // 🌟 SECURE OPEN IN NEW TAB HANDLER FOR INSTRUCTORS
     const handleOpenInNewTab = async (attachment) => {

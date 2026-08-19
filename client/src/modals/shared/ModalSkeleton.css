@@ -1,0 +1,214 @@
+/* src/modals/shared/ModalSkeleton.css */
+
+.modal-skeleton-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    animation: fadeIn 0.25s ease-out;
+}
+
+/* Base Skeleton Box Shimmer */
+.modal-skeleton-box {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: modal-skeleton-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border-radius: 8px;
+}
+
+/* Light Theme Skeleton Box */
+[data-theme='light'] .modal-skeleton-box,
+.light .modal-skeleton-box {
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.04) 0%,
+        rgba(0, 0, 0, 0.09) 50%,
+        rgba(0, 0, 0, 0.04) 100%
+    );
+    background-size: 200% 100%;
+}
+
+@keyframes modal-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* --- Form Skeleton Styles --- */
+.modal-skeleton-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.modal-skeleton-label {
+    width: 110px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.modal-skeleton-input {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+}
+
+.modal-skeleton-textarea {
+    width: 100%;
+    height: 90px;
+    border-radius: 10px;
+}
+
+.modal-skeleton-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.modal-skeleton-row .modal-skeleton-field {
+    flex: 1;
+}
+
+/* --- Submissions List Skeleton Styles --- */
+.modal-skeleton-table {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.modal-skeleton-table-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-glass, rgba(255, 255, 255, 0.08));
+}
+
+.modal-skeleton-row-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
+    border-radius: 12px;
+    gap: 16px;
+}
+
+.modal-skeleton-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 180px;
+}
+
+.modal-skeleton-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.modal-skeleton-user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-skeleton-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- Plagiarism Analysis Report Skeleton --- */
+.modal-skeleton-scan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: rgba(59, 130, 246, 0.04);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 14px;
+    margin-bottom: 8px;
+}
+
+.modal-skeleton-match-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
+    border-radius: 14px;
+    gap: 14px;
+}
+
+/* --- View Assignment Details Skeleton --- */
+.modal-skeleton-view-box {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-skeleton-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-skeleton-desc-box {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* --- Submit Dropzone Skeleton --- */
+.modal-skeleton-dropzone {
+    height: 140px;
+    border: 2px dashed rgba(59, 130, 246, 0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(59, 130, 246, 0.03);
+}
+
+/* Mobile Responsiveness for Skeletons */
+@media (max-width: 768px) {
+    .modal-skeleton-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modal-skeleton-row-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .modal-skeleton-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-skeleton-match-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

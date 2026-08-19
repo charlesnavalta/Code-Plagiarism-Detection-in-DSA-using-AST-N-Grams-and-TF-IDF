@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
+import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
 import SubmitFileModal from '../../modals/student/SubmitFileModal';
@@ -21,6 +22,7 @@ const StudentClassroomView = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [theme] = useTheme();
+    const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
     const [showSubmitModal, setShowSubmitModal] = useState(false);
     const [activeAssignment, setActiveAssignment] = useState(null);
@@ -50,16 +52,6 @@ const StudentClassroomView = () => {
         };
         fetchData();
     }, [id, navigate]);
-
-    const handleMouseMove = (e) => {
-        if (!dashboardRef.current) return;
-        const cards = dashboardRef.current.querySelectorAll('.spatial-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        }
-    };
 
     const handleOpenSubmission = (assignment) => {
         const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);

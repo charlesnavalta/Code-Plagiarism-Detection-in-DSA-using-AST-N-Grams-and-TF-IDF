@@ -5,10 +5,11 @@
     position: fixed; 
     /* 🌟 THE MAGIC: Abandons 100vh/100vw completely. Binds exactly to visible window */
     top: 0; left: 0; right: 0; bottom: 0; 
-    background: rgba(0, 0, 0, 0.7); 
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.75); 
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
     display: flex; justify-content: center; align-items: center;
-    z-index: 9999; 
+    z-index: 100000; 
     padding: 16px; 
     box-sizing: border-box;
     animation: fadeIn 0.2s ease-out;
@@ -16,16 +17,16 @@
 
 /* 2. THE MODAL CONTAINER */
 .hud-modal-content {
-    background: #0f172a; 
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    background: var(--bg-card, #0f172a); 
+    border: 1px solid var(--border-glass, rgba(59, 130, 246, 0.2));
     border-radius: 20px; 
     width: 100%; 
     max-width: 480px;
     display: flex; flex-direction: column; overflow: hidden;
     /* 🌟 Uses % instead of vh to respect overlay padding */
     max-height: 100%; 
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    color: white;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    color: var(--text-main, #ffffff);
 }
 
 .hud-form-wrapper {
@@ -33,21 +34,42 @@
     min-height: 0; /* Forces inner content to scroll */
 }
 
-/* 3. HEADER (Pinned) */
+/* 3. HEADER & HANDLE (Pinned) */
+.hud-sheet-handle-bar {
+    display: none;
+    width: 100%;
+    padding: 10px 0 2px 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-sheet-handle {
+    width: 44px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+[data-theme='light'] .hud-sheet-handle,
+.light .hud-sheet-handle {
+    background: rgba(0, 0, 0, 0.2);
+}
+
 .hud-header {
     padding: 20px 24px; /* Tighter globally to save vertical space */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-glass, rgba(255, 255, 255, 0.05));
     flex-shrink: 0; position: relative;
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
 }
-.hud-header h2 { margin: 0 0 4px 0; font-size: 1.35rem !important; font-weight: 800; letter-spacing: -0.5px; }
-.hud-subtitle { margin: 0; color: #9ca3af; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
+.hud-header h2 { margin: 0 0 4px 0; font-size: 1.35rem !important; font-weight: 800; letter-spacing: -0.5px; color: var(--text-hero, #ffffff); }
+.hud-subtitle { margin: 0; color: var(--text-dim, #9ca3af); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
 
 .btn-close-icon {
     position: absolute; top: 16px; right: 20px; background: transparent; border: none;
-    color: #9ca3af; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 4px;
+    color: var(--text-dim, #9ca3af); font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 4px;
 }
-.btn-close-icon:hover { color: white; }
+.btn-close-icon:hover { color: var(--text-main, #ffffff); }
 
 /* 4. SHARED MODAL BODY (Scrolls) */
 .hud-modal-body { 
@@ -63,13 +85,13 @@
     padding: 16px 24px; 
     display: flex; gap: 12px; justify-content: flex-end; 
     flex-shrink: 0; 
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    background: #0f172a; 
+    border-top: 1px solid var(--border-glass, rgba(255, 255, 255, 0.05));
+    background: var(--bg-card, #0f172a); 
 }
 
 /* 6. SHARED BUTTONS */
 .btn-glass-action {
-    background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05); color: var(--text-main, #ffffff); border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.1));
     padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
 }
 .btn-glass-action:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
@@ -86,41 +108,56 @@
 @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* Helpers */
+.hide-desktop { display: none; }
 
 /* =========================================
-    📱 GLOBAL MOBILE MODAL ENGINE
+    📱 GLOBAL MOBILE MODAL ENGINE (Native Sheet Design)
    ========================================= */
 @media (max-width: 768px) {
+    .hide-desktop { display: flex; }
+
     .falsicode-hud-overlay {
-        /* 🌟 CHANGED: Keeps the modal perfectly centered vertically and horizontally */
-        align-items: center; 
-        padding: 16px; /* Restores the outer margin so it floats */
+        align-items: flex-end; /* Mobile Bottom Sheet Docking */
+        padding: 0; /* Flush to screen edge */
+        background: rgba(0, 0, 0, 0.8);
     }
 
     .hud-modal-content {
         max-width: 100%;
-        max-height: 85%; 
-        /* 🌟 CHANGED: Restores fully rounded corners for a floating card */
-        border-radius: 24px; 
-        /* 🌟 CHANGED: Uses the standard center pop-in animation instead of sliding from the bottom */
-        animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        max-height: 90%; 
+        border-radius: 28px 28px 0 0; /* Native Sheet curvature */
+        border-bottom: none;
+        border-left: 1px solid var(--border-glass, rgba(255, 255, 255, 0.1));
+        border-right: 1px solid var(--border-glass, rgba(255, 255, 255, 0.1));
+        border-top: 1px solid var(--border-glass, rgba(255, 255, 255, 0.15));
+        animation: slideUpSheet 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     }
 
-    .hud-header { padding: 16px 20px; }
-    .hud-header h2 { font-size: 1.35rem !important; } 
-    .hud-modal-body { padding: 16px 20px; }
+    @keyframes slideUpSheet {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    .hud-sheet-handle-bar {
+        display: flex;
+    }
+
+    .hud-header { padding: 12px 20px 16px; }
+    .hud-header h2 { font-size: 1.3rem !important; } 
+    .hud-modal-body { padding: 16px 20px 20px; }
     
     .hud-modal-footer { 
         flex-direction: column-reverse; 
         gap: 10px; 
-        /* Standard padding (removed the extra safe-area padding since it no longer touches the bottom edge) */
-        padding: 16px 20px; 
+        padding: 14px 20px calc(env(safe-area-inset-bottom, 16px) + 14px); 
     }
     
     .btn-glass-action, .btn-hud-run { 
         width: 100%; 
         padding: 14px; 
-        font-size: 1rem; 
+        font-size: 0.95rem; 
         text-align: center; 
     }
-}
+}
