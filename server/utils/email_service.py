@@ -8,13 +8,17 @@ def generate_6_digit_code():
     """Generates a random 6-digit string."""
     return str(random.randint(100000, 999999))
 
-# 🌟 FIX: Added the 'intent' parameter with a default fallback
 def send_otp_email(to_email, code, intent="registration"):
-    """Sends a styled 6-digit HTML code via Google SMTP."""
-    sender_email = os.environ.get('MAIL_USERNAME')
-    sender_password = os.environ.get('MAIL_PASSWORD')
+    """Sends a styled 6-digit HTML code via Google SMTP. Returns (success: bool, detail: str)."""
+    sender_email = (os.environ.get('MAIL_USERNAME') or '').strip()
+    sender_password = (os.environ.get('MAIL_PASSWORD') or '').strip()
     
-    # 🌟 FIX: Dynamic text based on what the user is doing
+    if not sender_email or not sender_password:
+        err = "MAIL_USERNAME or MAIL_PASSWORD environment variables are not set on Render."
+        print(f"Falsicode Auth Error: {err}", flush=True)
+        return False, err
+    
+    # Dynamic text based on what the user is doing
     if intent == "password_update":
         subject = "Falsicode: Security Verification Code"
         header_text = "Security Authorization"
@@ -95,14 +99,26 @@ def send_otp_email(to_email, code, intent="registration"):
     msg.add_header('Reply-To', 'noreply@falsicode.com')
     msg.attach(MIMEText(html_body, 'html'))
 
+    # Attempt 1: Port 587 with STARTTLS
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=15)
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-        print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email}", flush=True)
-        return True
-    except Exception as e:
-        print(f"Falsicode Auth Error: SMTP failed. Details: {e}", flush=True)
-        return False
+        print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email} via port 587", flush=True)
+        return True, "Email dispatched successfully"
+    except Exception as e587:
+        print(f"Falsicode Auth Notice: Port 587 failed ({e587}), trying Port 465 SSL...", flush=True)
+        # Attempt 2: Port 465 with SSL
+        try:
+            server_ssl = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
+            server_ssl.login(sender_email, sender_password)
+            server_ssl.send_message(msg)
+            server_ssl.quit()
+            print(f"Falsicode Auth: HTML OTP ({intent}) successfully sent to {to_email} via port 465", flush=True)
+            return True, "Email dispatched successfully"
+        except Exception as e465:
+            err_details = f"Gmail SMTP failed on port 587 ({e587}) and port 465 ({e465})"
+            print(f"Falsicode Auth Error: {err_details}", flush=True)
+            return False, str(e465)

@@ -25,12 +25,12 @@ def request_code():
         code = generate_6_digit_code()
         
         # Falls back to intent="registration" automatically
-        email_sent = send_otp_email(email, code)
+        email_sent, err_detail = send_otp_email(email, code)
         
         if email_sent:
             return jsonify({"message": "Verification code sent!", "code": code}), 200
         else:
-            return jsonify({"error": "Failed to connect to Gmail SMTP. Check Docker logs."}), 500
+            return jsonify({"error": f"Failed to send verification email: {err_detail}"}), 500
             
     except Exception as e:
         return jsonify({"error": "Failed to process request: " + str(e)}), 500
@@ -179,12 +179,12 @@ def forgot_password():
         user.verification_expires = datetime.utcnow() + timedelta(minutes=15)
         db.session.commit()
 
-        email_sent = send_otp_email(user.email, code, intent="password_update")
+        email_sent, err_detail = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:
             return jsonify({"message": "If the account is valid, a recovery code has been sent."}), 200
         else:
-            return jsonify({"error": "Failed to route notification through recovery channel."}), 500
+            return jsonify({"error": f"Failed to send recovery email: {err_detail}"}), 500
             
     except Exception as e:
         db.session.rollback()
@@ -408,12 +408,12 @@ def request_profile_code():
         user.verification_expires = datetime.utcnow() + timedelta(minutes=10)
         db.session.commit()
 
-        email_sent = send_otp_email(user.email, code, intent="password_update")
+        email_sent, err_detail = send_otp_email(user.email, code, intent="password_update")
         
         if email_sent:
             return jsonify({"message": "Security code sent to your email!"}), 200
         else:
-            return jsonify({"error": "Failed to send email. Check server logs."}), 500
+            return jsonify({"error": f"Failed to send security code: {err_detail}"}), 500
             
     except Exception as e:
         db.session.rollback()
