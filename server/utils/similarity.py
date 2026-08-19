@@ -171,8 +171,8 @@ def compare_all_files(file_data, ngram_bounds):
 
     # Dynamic max_df safely filters out boilerplate for large batches.
     # If there are 5 or fewer files, we keep everything (1.0).
-    # If there are many files, we ignore N-Grams that appear in >85% of them (standard boilerplate).
-    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.85
+    # If there are many files, we ignore N-Grams that appear in >=70% of them (common DSA boilerplate/patterns).
+    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.70
 
     # Initialize the TF-IDF Vectorizer
     vectorizer = TfidfVectorizer(
@@ -225,11 +225,17 @@ def compare_all_files(file_data, ngram_bounds):
                     # The final system score takes the HIGHER of the two mathematical approaches
                     final_score = max(score, containment_score)
 
+                    # Adaptive risk thresholds based on code length/token count:
+                    # Short algorithms (<45 tokens) naturally have higher baseline overlap
+                    avg_tokens = (len(tokens_list[i]) + len(tokens_list[j])) / 2.0
+                    high_threshold = 85.0 if avg_tokens < 45 else 80.0
+                    med_threshold = 55.0 if avg_tokens < 45 else 50.0
+
                     # Assign a strict classification tier
                     status = "Low"
-                    if final_score > 80:
+                    if final_score >= high_threshold:
                         status = "High"
-                    elif final_score >= 50:
+                    elif final_score >= med_threshold:
                         status = "Medium"
 
                     # =========================================================================
