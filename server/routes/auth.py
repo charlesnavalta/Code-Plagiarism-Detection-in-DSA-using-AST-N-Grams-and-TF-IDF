@@ -12,16 +12,19 @@ auth_bp = Blueprint('auth', __name__)
 # ==============================================================================
 @auth_bp.route('/request-code', methods=['POST'])
 def request_code():
-    data = request.get_json()
-    email = data.get('email')
-
-    if not email:
-        return jsonify({"error": "Email is required"}), 400
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "Email already registered"}), 400
-
     try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "JSON body is required"}), 400
+
+        email = data.get('email')
+
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+
+        if User.query.filter_by(email=email).first():
+            return jsonify({"error": "Email already registered"}), 400
+
         code = generate_6_digit_code()
         
         # Falls back to intent="registration" automatically
@@ -33,6 +36,8 @@ def request_code():
             return jsonify({"error": f"Failed to send verification email: {err_detail}"}), 500
             
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": "Failed to process request: " + str(e)}), 500
     
 # ==============================================================================

@@ -76,6 +76,22 @@ def create_app():
             response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         return response
 
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        import traceback
+        traceback.print_exc()
+        code = getattr(e, 'code', 500)
+        description = getattr(e, 'description', str(e))
+        response = jsonify({"error": description, "details": str(e)})
+        response.status_code = code if isinstance(code, int) and 100 <= code <= 599 else 500
+        origin = request.headers.get('Origin')
+        if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        return response
+
     # 2. Ensure Upload Folder Exists
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
