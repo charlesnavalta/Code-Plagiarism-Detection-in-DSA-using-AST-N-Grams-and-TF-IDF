@@ -8,7 +8,7 @@
     animation: fadeIn 0.25s ease-out;
 }
 
-/* Base Skeleton Box Shimmer */
+/* Base Skeleton Box Shimmer — Dark Mode */
 .modal-skeleton-box {
     background: linear-gradient(
         90deg,
@@ -21,14 +21,15 @@
     border-radius: 8px;
 }
 
-/* Light Theme Skeleton Box */
+/* Light Theme Skeleton Box — Eye-Friendly Soothing Tone */
 [data-theme='light'] .modal-skeleton-box,
+html[data-theme='light'] .modal-skeleton-box,
 .light .modal-skeleton-box {
     background: linear-gradient(
         90deg,
-        rgba(0, 0, 0, 0.04) 0%,
-        rgba(0, 0, 0, 0.09) 50%,
-        rgba(0, 0, 0, 0.04) 100%
+        #e2e8f0 0%,
+        #f1f5f9 50%,
+        #e2e8f0 100%
     );
     background-size: 200% 100%;
 }
@@ -89,6 +90,11 @@
     border-bottom: 1px solid var(--border-glass, rgba(255, 255, 255, 0.08));
 }
 
+[data-theme='light'] .modal-skeleton-table-header,
+html[data-theme='light'] .modal-skeleton-table-header {
+    border-bottom: 1px solid #e2e8f0;
+}
+
 .modal-skeleton-row-card {
     display: flex;
     align-items: center;
@@ -98,6 +104,13 @@
     border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
     border-radius: 12px;
     gap: 16px;
+}
+
+[data-theme='light'] .modal-skeleton-row-card,
+html[data-theme='light'] .modal-skeleton-row-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .modal-skeleton-user-info {
@@ -138,6 +151,12 @@
     margin-bottom: 8px;
 }
 
+[data-theme='light'] .modal-skeleton-scan-header,
+html[data-theme='light'] .modal-skeleton-scan-header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
 .modal-skeleton-match-card {
     display: flex;
     justify-content: space-between;
@@ -147,6 +166,13 @@
     border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
     border-radius: 14px;
     gap: 14px;
+}
+
+[data-theme='light'] .modal-skeleton-match-card,
+html[data-theme='light'] .modal-skeleton-match-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 /* --- View Assignment Details Skeleton --- */
@@ -172,6 +198,12 @@
     gap: 10px;
 }
 
+[data-theme='light'] .modal-skeleton-desc-box,
+html[data-theme='light'] .modal-skeleton-desc-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
 /* --- Submit Dropzone Skeleton --- */
 .modal-skeleton-dropzone {
     height: 140px;
@@ -183,6 +215,12 @@
     justify-content: center;
     gap: 12px;
     background: rgba(59, 130, 246, 0.03);
+}
+
+[data-theme='light'] .modal-skeleton-dropzone,
+html[data-theme='light'] .modal-skeleton-dropzone {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
 }
 
 /* Mobile Responsiveness for Skeletons */

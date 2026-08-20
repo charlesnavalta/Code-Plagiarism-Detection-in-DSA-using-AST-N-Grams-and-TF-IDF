@@ -36,14 +36,14 @@ button {
 }
 
 .nexus-wrapper.light {
-    --bg-app: #f8fafc;
-    --bg-card: rgba(255, 255, 255, 0.9);
-    --border-card: rgba(0, 0, 0, 0.08);
-    --text-main: #0f172a;
+    --bg-app: #f1f5f9;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --border-card: #e2e8f0;
+    --text-main: #1e293b;
     --text-dim: #64748b;
     --accent: #2563eb;
-    --blob-1: rgba(59, 130, 246, 0.06);
-    --blob-2: rgba(139, 92, 246, 0.06);
+    --blob-1: rgba(59, 130, 246, 0.03);
+    --blob-2: rgba(139, 92, 246, 0.03);
 }
 
 /* Background Aurora Blobs */
@@ -374,12 +374,14 @@ button {
 
 .classroom-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 .course-card {
     cursor: pointer;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 .node-badge {
     background: rgba(59, 130, 246, 0.12);
@@ -389,27 +391,123 @@ button {
     font-size: 0.7rem;
     font-weight: 800;
     align-self: flex-start;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     border: 1px solid rgba(59, 130, 246, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 .course-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 800;
     margin: 0 0 14px;
-    letter-spacing: -0.5px;
-    line-height: 1.25;
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+    min-height: 2.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--text-hero, #f9fafb);
 }
 
-.instructor-tag-nexus {
+/* 🌟 Structured Meta Row for Classroom Cards */
+.course-card-meta-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 8px;
     margin-bottom: 18px;
+    width: 100%;
+}
+
+.card-code-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+.card-code-pill:hover {
+    background: rgba(59, 130, 246, 0.22);
+    border-color: rgba(59, 130, 246, 0.55);
+    transform: translateY(-1px);
+}
+.card-code-pill:active {
+    transform: scale(0.95);
+}
+
+.code-pill-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.code-pill-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+.code-pill-icon {
+    color: var(--accent);
+    transition: transform 0.2s;
+}
+.card-code-pill:hover .code-pill-icon {
+    transform: scale(1.15);
+}
+
+.card-students-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-card);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+.card-students-badge svg {
+    color: var(--accent);
+}
+
+/* Light Theme overrides for card meta */
+[data-theme='light'] .card-code-pill,
+html[data-theme='light'] .card-code-pill {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+}
+[data-theme='light'] .card-code-pill:hover,
+html[data-theme='light'] .card-code-pill:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+}
+[data-theme='light'] .card-students-badge,
+html[data-theme='light'] .card-students-badge {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.card-instructor-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 .ins-mini-avatar {
-    width: 28px;
-    height: 28px;
-    background: rgba(125, 125, 125, 0.2);
+    width: 26px;
+    height: 26px;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -419,7 +517,7 @@ button {
     flex-shrink: 0;
 }
 .ins-name {
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     color: var(--text-dim);
     font-weight: 600;
 }
@@ -516,21 +614,23 @@ button {
 .skeleton-box {
     background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.03) 0%,
-        rgba(255, 255, 255, 0.08) 50%,
-        rgba(255, 255, 255, 0.03) 100%
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.04) 100%
     );
     background-size: 200% 100%;
-    animation: skeleton-shimmer 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: skeleton-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     border-radius: 8px;
 }
 
-.light .skeleton-box {
+.light .skeleton-box,
+[data-theme='light'] .skeleton-box,
+html[data-theme='light'] .skeleton-box {
     background: linear-gradient(
         90deg,
-        rgba(0, 0, 0, 0.04) 0%,
-        rgba(0, 0, 0, 0.09) 50%,
-        rgba(0, 0, 0, 0.04) 100%
+        #e2e8f0 0%,
+        #f1f5f9 50%,
+        #e2e8f0 100%
     );
     background-size: 200% 100%;
 }
@@ -735,9 +835,8 @@ button {
     .nexus-layout {
         display: flex;
         flex-direction: column;
-        padding: 16px 14px;
-        padding-bottom: 110px;
-        gap: 16px;
+        padding: 4px 14px 110px 14px;
+        gap: 12px;
         width: 100%;
     }
     
@@ -745,15 +844,63 @@ button {
         display: contents;
     }
 
-    /* All cards span 100% full width */
+    /* 🌟 1. Renz (Profile Card) */
     .profile-card {
         order: 1;
         width: 100% !important;
+        border-radius: 16px;
     }
+    .profile-card .card-content {
+        padding: 16px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .avatar-hologram {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 8px;
+    }
+    .avatar-core {
+        width: 46px;
+        height: 46px;
+        font-size: 1.25rem;
+    }
+    .user-display-name {
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin: 0 0 2px;
+    }
+    .user-role-text {
+        font-size: 0.68rem;
+        margin: 0 0 8px 0;
+        letter-spacing: 0.8px;
+    }
+    .system-status {
+        font-size: 0.68rem;
+        padding: 3px 10px;
+    }
+
+    /* 🌟 2. Active Classes (Stat Card) */
     .stat-card {
         order: 2;
         width: 100% !important;
+        border-radius: 16px;
     }
+    .stat-card .card-content {
+        padding: 16px 18px;
+    }
+    .stat-number {
+        font-size: 2.2rem;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+    .stat-label {
+        font-size: 0.72rem;
+    }
+
+    /* 🌟 3. Instructor Hub & 4. My Classrooms (Main Section) */
     .nexus-main {
         order: 3;
         display: flex;
@@ -761,10 +908,16 @@ button {
         gap: 20px;
         width: 100% !important;
     }
+
+    /* 🌟 5. Recent Submissions (At the very bottom) */
     .history-card {
         order: 4;
-        margin-top: 8px;
+        margin-top: 4px;
         width: 100% !important;
+        border-radius: 18px;
+    }
+    .history-card .card-content {
+        padding: 18px 16px;
     }
 
     /* Mobile Hero Action Banner */

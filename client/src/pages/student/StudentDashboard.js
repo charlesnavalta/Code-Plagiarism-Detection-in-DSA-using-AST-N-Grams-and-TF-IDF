@@ -166,9 +166,11 @@ const StudentDashboard = () => {
                                         <div className="card-content flex-col">
                                             <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
-                                            <div className="instructor-tag-nexus">
-                                                <div className="ins-mini-avatar">{cls.instructor.charAt(0)}</div>
-                                                <span className="ins-name">{cls.instructor}</span>
+                                            <div className="course-card-meta-row">
+                                                <div className="card-instructor-pill">
+                                                    <div className="ins-mini-avatar">{cls.instructor.charAt(0).toUpperCase()}</div>
+                                                    <span className="ins-name">{cls.instructor}</span>
+                                                </div>
                                             </div>
                                             <div className="course-footer-nexus">
                                                 <span>Open Classroom</span>

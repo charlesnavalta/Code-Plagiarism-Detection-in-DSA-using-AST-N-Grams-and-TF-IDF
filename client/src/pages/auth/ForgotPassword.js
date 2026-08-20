@@ -26,11 +26,7 @@ const ForgotPassword = () => {
         setLoading(true);
         try {
             const data = await authService.requestPasswordReset(email);
-            if (data.email_sent === false && data.code) {
-                toast.info(`Localhost Dev Mode: Recovery code is ${data.code}`, "Dev Recovery OTP", 7000);
-            } else {
-                toast.success(data.message || "Recovery code sent to your email!", "Code Dispatched");
-            }
+            toast.success(data.message || "Recovery code sent! Please check your email inbox.", "Code Dispatched");
             setStep(2); 
         } catch (err) {
             const errText = err.response?.data?.error || "Failed to initialize recovery sequence.";

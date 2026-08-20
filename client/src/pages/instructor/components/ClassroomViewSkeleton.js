@@ -1,33 +1,36 @@
 import React from 'react';
 import InstructorWrapper from './InstructorWrapper';
+import { useTheme } from '../../../hooks/useTheme';
 import '../../../components/dashboard/DashboardLayout.css';
 
 const ClassroomViewSkeleton = ({ role = 'student' }) => {
+    const [theme] = useTheme();
+
     return (
         <InstructorWrapper>
-            <div className={`nexus-content ${role}-layout`}>
+            <div className={`nexus-content ${role}-layout ${theme}`}>
                 {/* --- 🌟 Shimmering Classroom Hero Banner --- */}
                 <header className="cinematic-banner-shared spatial-card classroom-hero-banner" style={{ minHeight: '220px', marginBottom: '50px' }}>
                     <div className="header-inner" style={{ padding: '45px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div className="top-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                            <div className="skeleton-box" style={{ width: '80px', height: '36px', borderRadius: '12px', background: 'rgba(255,255,255,0.2)' }}></div>
-                            <div className="skeleton-box" style={{ width: '160px', height: '32px', borderRadius: '30px', background: 'rgba(255,255,255,0.15)' }}></div>
+                            <div className="skeleton-box" style={{ width: '80px', height: '36px', borderRadius: '12px' }}></div>
+                            <div className="skeleton-box" style={{ width: '160px', height: '32px', borderRadius: '30px' }}></div>
                         </div>
 
-                        <div className="skeleton-box" style={{ width: '55%', height: '42px', borderRadius: '10px', background: 'rgba(255,255,255,0.25)', margin: '6px 0' }}></div>
+                        <div className="skeleton-box" style={{ width: '55%', height: '42px', borderRadius: '10px', margin: '6px 0' }}></div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div className="skeleton-box" style={{ width: '90px', height: '18px', borderRadius: '4px', background: 'rgba(255,255,255,0.15)' }}></div>
-                            <div className="skeleton-box" style={{ width: '140px', height: '20px', borderRadius: '6px', background: 'rgba(255,255,255,0.2)' }}></div>
+                            <div className="skeleton-box" style={{ width: '90px', height: '18px', borderRadius: '4px' }}></div>
+                            <div className="skeleton-box" style={{ width: '140px', height: '20px', borderRadius: '6px' }}></div>
                         </div>
 
                         {role === 'student' ? (
                             <div style={{ maxWidth: '400px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <div className="skeleton-box" style={{ width: '100%', height: '8px', borderRadius: '10px', background: 'rgba(255,255,255,0.15)' }}></div>
-                                <div className="skeleton-box" style={{ width: '180px', height: '14px', borderRadius: '4px', background: 'rgba(255,255,255,0.15)' }}></div>
+                                <div className="skeleton-box" style={{ width: '100%', height: '8px', borderRadius: '10px' }}></div>
+                                <div className="skeleton-box" style={{ width: '180px', height: '14px', borderRadius: '4px' }}></div>
                             </div>
                         ) : (
-                            <div className="skeleton-box" style={{ width: '140px', height: '24px', borderRadius: '20px', background: 'rgba(255,255,255,0.15)' }}></div>
+                            <div className="skeleton-box" style={{ width: '140px', height: '24px', borderRadius: '20px' }}></div>
                         )}
                     </div>
                 </header>

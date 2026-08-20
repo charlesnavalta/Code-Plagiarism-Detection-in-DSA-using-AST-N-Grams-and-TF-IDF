@@ -166,11 +166,29 @@ const InstructorDashboard = () => {
                                             <span className="node-badge">Classroom</span>
                                             <h3 className="course-title">{cls.name}</h3>
 
-                                            <div className="instructor-tag-nexus">
-                                                <div className="ins-mini-avatar">🔑</div>
-                                                <span className="ins-name">
-                                                    Code: <strong style={{color: 'var(--text-main)'}}>{cls.invite_code}</strong> | Students: {cls.student_count || 0}
-                                                </span>
+                                            <div className="course-card-meta-row">
+                                                <div 
+                                                    className="card-code-pill"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigator.clipboard.writeText(cls.invite_code);
+                                                        toast.success(`Invite code "${cls.invite_code}" copied to clipboard!`, "Code Copied");
+                                                    }}
+                                                    title="Click to copy invite code"
+                                                >
+                                                    <span className="code-pill-label">Code:</span>
+                                                    <strong className="code-pill-value">{cls.invite_code}</strong>
+                                                    <svg className="code-pill-icon" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </div>
+
+                                                <div className="card-students-badge" title={`${cls.student_count || 0} enrolled students`}>
+                                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                                    </svg>
+                                                    <span>{cls.student_count || 0} Students</span>
+                                                </div>
                                             </div>
 
                                             <div className="course-footer-nexus">

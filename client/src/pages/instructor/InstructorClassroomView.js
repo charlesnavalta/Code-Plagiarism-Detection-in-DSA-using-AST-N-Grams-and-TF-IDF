@@ -107,8 +107,27 @@ const InstructorClassroomView = () => {
                                 </svg>
                                 Hub
                             </button>
-                            <div className="glass-chip">
+                            <div 
+                                className="glass-chip glass-chip-interactive"
+                                onClick={() => {
+                                    if (classroom?.invite_code) {
+                                        navigator.clipboard.writeText(classroom.invite_code);
+                                        toast.success(`Invite code "${classroom.invite_code}" copied to clipboard!`, "Code Copied");
+                                    }
+                                }}
+                                title="Click to copy invite code"
+                            >
                                 <span className="mono-label">INVITE CODE: {classroom?.invite_code}</span>
+                                <button
+                                    type="button"
+                                    className="btn-copy-code-inline"
+                                    title="Copy Invite Code"
+                                    aria-label="Copy Invite Code"
+                                >
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         <h1 className="hero-title">{classroom?.name}</h1>

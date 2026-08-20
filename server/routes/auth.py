@@ -9,6 +9,7 @@ auth_bp = Blueprint('auth', __name__)
 
 # In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
 PENDING_REGISTRATIONS = {}
+PENDING_EMAIL_UPDATES = {}
 
 # ==============================================================================
 # NEW: REQUEST VERIFICATION CODE (Called before registration)
@@ -516,3 +517,114 @@ def update_profile():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Database error occurred."}), 500
+
+
+@auth_bp.route('/profile/request-email-update', methods=['POST'])
+@jwt_required()
+def request_email_update():
+    """Generates and sends an OTP to a new email address after verifying user password."""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    data = request.get_json() or {}
+    new_email = (data.get('new_email') or '').strip().lower()
+    password = (data.get('password') or '').strip()
+
+    if not new_email or '@' not in new_email or '.' not in new_email:
+        return jsonify({"error": "Please enter a valid email address."}), 400
+
+    if not password:
+        return jsonify({"error": "Current password is required to request an email change."}), 400
+
+    if not user.check_password(password):
+        return jsonify({"error": "Security protocol failed: Current password is incorrect."}), 403
+
+    if user.email and user.email.lower() == new_email:
+        return jsonify({"error": "The specified address is already your current registered email."}), 400
+
+    existing = User.query.filter(db.func.lower(User.email) == new_email).first()
+    if existing and existing.id != user.id:
+        return jsonify({"error": "This email address is already registered to another account."}), 400
+
+    try:
+        code = generate_6_digit_code()
+        
+        email_sent, err_detail = send_otp_email(new_email, code, intent="email_update")
+        
+        if email_sent:
+            PENDING_EMAIL_UPDATES[user.id] = {
+                "new_email": new_email,
+                "code": code,
+                "expires": datetime.utcnow() + timedelta(minutes=10)
+            }
+            return jsonify({
+                "message": f"Verification code dispatched to {new_email}. Please check your inbox.",
+                "email_sent": True
+            }), 200
+        else:
+            return jsonify({
+                "error": f"Failed to send verification email: {err_detail}. Please verify your email settings in server/.env."
+            }), 500
+
+    except Exception as e:
+        return jsonify({"error": "Failed to process email update request: " + str(e)}), 500
+
+
+@auth_bp.route('/profile/update-email', methods=['PUT'])
+@jwt_required()
+def update_email():
+    """Validates the OTP and updates the user's email address."""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    data = request.get_json() or {}
+    code = str(data.get('code') or '').strip()
+
+    if not code:
+        return jsonify({"error": "Verification code is required."}), 400
+
+    pending = PENDING_EMAIL_UPDATES.get(user.id)
+    if not pending:
+        return jsonify({"error": "No pending email change request found. Please request a new code."}), 400
+
+    if pending.get('expires') and datetime.utcnow() > pending['expires']:
+        PENDING_EMAIL_UPDATES.pop(user.id, None)
+        return jsonify({"error": "Verification code has expired. Please request a new one."}), 400
+
+    if str(pending.get('code')).strip() != code:
+        return jsonify({"error": "Security protocol failed: Invalid verification code."}), 400
+
+    new_email = pending.get('new_email')
+    if not new_email:
+        return jsonify({"error": "Invalid email state. Please restart the update process."}), 400
+
+    # Final check for race condition
+    existing = User.query.filter(db.func.lower(User.email) == new_email.lower()).first()
+    if existing and existing.id != user.id:
+        PENDING_EMAIL_UPDATES.pop(user.id, None)
+        return jsonify({"error": "This email address was claimed by another user."}), 400
+
+    try:
+        user.email = new_email
+        db.session.commit()
+        PENDING_EMAIL_UPDATES.pop(user.id, None)
+        
+        user_dict = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role
+        }
+        return jsonify({
+            "message": "Contact email updated successfully!",
+            "user": user_dict
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error while updating email: " + str(e)}), 500

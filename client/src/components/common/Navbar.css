@@ -5,6 +5,11 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Hide mobile bottom navigation on desktop screens by default */
+.mobile-bottom-nav {
+    display: none;
+}
+
 /* =========================================
    NEXUS NAVBAR (ANCHORED BRANDING)
    ========================================= */
@@ -46,12 +51,12 @@
 /* Light Theme overrides */
 .navbar-nexus[data-theme='light'],
 html[data-theme='light'] .navbar-nexus {
-    --nav-bg: rgba(255, 255, 255, 0.92);
-    --nav-border: rgba(0, 0, 0, 0.07);
+    --nav-bg: rgba(248, 250, 252, 0.94);
+    --nav-border: #e2e8f0;
     --nav-text: #0f172a;
     --nav-text-sub: #64748b;
     --nav-accent: #2563eb;
-    --nav-highlight: rgba(0, 0, 0, 0.05);
+    --nav-highlight: rgba(0, 0, 0, 0.04);
 }
 
 /* LEFT SIDE */
@@ -282,6 +287,16 @@ html[data-theme='light'] .theme-segmented-control {
     to { opacity: 1; transform: scale(1) translateY(0); } 
 }
 
+/* Tablet Adjustments */
+@media (max-width: 992px) {
+    .brand-logo-nexus {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+}
+
 /* =========================================
 📱 MOBILE ADAPTATIONS (Floating Dock)
    ========================================= */
@@ -296,12 +311,38 @@ html[data-theme='light'] .theme-segmented-control {
     /* Simplify Top Navbar */
     .desktop-only { display: none !important; }
     
+    /* 🌟 Static in-flow header on mobile (Scrolls away naturally, zero sticky photobombing!) */
     .navbar-nexus {
-        padding: 0 16px;
-        background: transparent; /* Makes the top bar blend seamlessly on mobile */
-        border-bottom: none;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
+        position: relative !important;
+        display: flex !important;
+        height: 48px;
+        padding: 0 14px;
+        background: transparent;
+        border-bottom: 1px solid var(--border-glass, rgba(255, 255, 255, 0.06));
+        z-index: 20;
+    }
+
+    [data-theme='light'] .navbar-nexus,
+    html[data-theme='light'] .navbar-nexus {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* 🌟 Increased background size of logo on mobile */
+    .brand-logo-nexus {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .brand-logo-nexus svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .brand-text-nexus {
+        font-size: 1.05rem;
+        font-weight: 800;
     }
 
     /* 🌟 THE PREMIUM FLOATING DOCK 🌟 */

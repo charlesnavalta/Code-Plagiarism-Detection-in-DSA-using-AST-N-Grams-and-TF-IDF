@@ -113,6 +113,10 @@ def send_otp_email(to_email, code, intent="registration"):
         subject = "Falsicode: Security Verification Code"
         header_text = "Security Authorization"
         body_text = "Here is your authorization code to update your security credentials:"
+    elif intent == "email_update":
+        subject = "Falsicode: Verify Your New Email Address"
+        header_text = "Email Update Verification"
+        body_text = "Here is your verification code to confirm and link this new email address:"
     else:
         subject = "Falsicode: Your Verification Code"
         header_text = "Sign-in Code"

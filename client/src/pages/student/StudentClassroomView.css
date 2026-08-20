@@ -1,3 +1,5 @@
+/* src/pages/student/StudentClassroomView.css */
+
 .nexus-content.student-layout { 
     max-width: var(--max-content-width, 1440px); 
     margin: 0 auto; 
@@ -22,7 +24,21 @@
 /* =========================================
    HEADER COMPONENTS
    ========================================= */
-.classroom-hero-banner { margin-bottom: 50px; border-radius: 24px; }
+.classroom-hero-banner { 
+    margin-bottom: 50px; 
+    border-radius: 24px; 
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
+    border: none !important;
+    box-shadow: 0 16px 36px -8px rgba(79, 70, 229, 0.35) !important;
+}
+
+[data-theme='light'] .classroom-hero-banner,
+html[data-theme='light'] .classroom-hero-banner,
+.student-layout.light .classroom-hero-banner {
+    background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 50%, #7c3aed 100%) !important;
+    box-shadow: 0 16px 36px -8px rgba(59, 130, 246, 0.25) !important;
+}
+
 .header-inner { padding: 45px; }
 
 .top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -38,17 +54,17 @@
 .glass-chip { background: rgba(0,0,0,0.15); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
 .mono-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: white; letter-spacing: 1px; }
 
-.hero-title { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; margin: 0 0 10px 0; letter-spacing: -2px; color: white; }
+.hero-title { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; margin: 0 0 10px 0; letter-spacing: -2px; color: white !important; }
 
 .instructor-badge { margin-bottom: 24px; }
-.ins-label { color: rgba(255,255,255,0.6); font-size: 0.8rem; text-transform: uppercase; margin-right: 10px; }
+.ins-label { color: rgba(255,255,255,0.7); font-size: 0.8rem; text-transform: uppercase; margin-right: 10px; }
 .ins-name { color: white; font-weight: bold; font-size: 1.1rem; }
 
 /* Progress Bar */
 .student-stats-row { margin-top: 20px; max-width: 400px; }
-.progress-track { height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.progress-track { height: 6px; background: rgba(255, 255, 255, 0.18); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
 .progress-fill { height: 100%; background: #10b981; border-radius: 10px; transition: width 0.5s ease-out; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
-.progress-text { font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); font-weight: 600; }
+.progress-text { font-size: 0.85rem; color: rgba(255, 255, 255, 0.9); font-weight: 600; }
 
 /* =========================================
    ASSIGNMENT COMPONENTS
@@ -57,19 +73,64 @@
 .hub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .hub-header h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; margin: 0; color: var(--text-main); }
 
+[data-theme='light'] .hub-header h2,
+html[data-theme='light'] .hub-header h2,
+.student-layout.light .hub-header h2 { color: #0f172a; }
+
 .assignment-grid { display: flex; flex-direction: column; gap: 20px; }
 .assignment-item-row { 
     padding: 30px; background: var(--bg-card); border-radius: 20px; 
     border: 1px solid var(--border-card); position: relative; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
-.assignment-item-row.clickable-row { cursor: pointer; }
-.assignment-item-row.clickable-row:not(.locked-card):hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
 
-.locked-card { opacity: 0.8; background: rgba(0, 0, 0, 0.15); }
+[data-theme='light'] .assignment-item-row,
+html[data-theme='light'] .assignment-item-row,
+.student-layout.light .assignment-item-row {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.assignment-item-row.clickable-row { cursor: pointer; }
+.assignment-item-row.clickable-row:not(.locked-card):hover { 
+    transform: translateY(-2px); 
+    border-color: var(--accent); 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+}
+
+[data-theme='light'] .assignment-item-row.clickable-row:not(.locked-card):hover,
+html[data-theme='light'] .assignment-item-row.clickable-row:not(.locked-card):hover,
+.student-layout.light .assignment-item-row.clickable-row:not(.locked-card):hover {
+    border-color: #2563eb;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.08);
+}
+
+.locked-card { opacity: 0.85; background: rgba(0, 0, 0, 0.15); }
 .locked-card:hover { transform: none; }
 
+[data-theme='light'] .locked-card,
+html[data-theme='light'] .locked-card,
+.student-layout.light .locked-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    opacity: 0.9;
+}
+
 .assignment-meta-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.task-id { font-family: 'Inter', system-ui, sans-serif; font-size: 0.7rem; color: var(--accent); background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 4px 10px; border-radius: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; display: inline-flex; align-items: center; }
+.task-id { 
+    font-family: 'Inter', system-ui, sans-serif; font-size: 0.7rem; color: var(--accent); 
+    background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); 
+    padding: 4px 10px; border-radius: 6px; text-transform: uppercase; font-weight: 700; 
+    letter-spacing: 1px; display: inline-flex; align-items: center; 
+}
+
+[data-theme='light'] .task-id,
+html[data-theme='light'] .task-id,
+.student-layout.light .task-id {
+    color: #1d4ed8;
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.2);
+}
 
 /* Dynamic Status Badges */
 .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
@@ -77,25 +138,103 @@
 .badge-overdue { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
 .badge-pending { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
 
+[data-theme='light'] .badge-submitted,
+html[data-theme='light'] .badge-submitted,
+.student-layout.light .badge-submitted { background-color: rgba(16, 185, 129, 0.12); color: #059669; }
+
+[data-theme='light'] .badge-overdue,
+html[data-theme='light'] .badge-overdue,
+.student-layout.light .badge-overdue { background-color: rgba(239, 68, 68, 0.12); color: #dc2626; }
+
+[data-theme='light'] .badge-pending,
+html[data-theme='light'] .badge-pending,
+.student-layout.light .badge-pending { background-color: rgba(245, 158, 11, 0.12); color: #d97706; }
+
 .assignment-item-row h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--text-main); }
+[data-theme='light'] .assignment-item-row h3,
+html[data-theme='light'] .assignment-item-row h3,
+.student-layout.light .assignment-item-row h3 { color: #0f172a; }
+
 .assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+[data-theme='light'] .assignment-item-row p,
+html[data-theme='light'] .assignment-item-row p,
+.student-layout.light .assignment-item-row p { color: #64748b; }
 
 /* Deadline Row */
 .deadline-row { margin-top: 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #9ca3af; font-weight: 500; }
+[data-theme='light'] .deadline-row,
+html[data-theme='light'] .deadline-row,
+.student-layout.light .deadline-row { color: #64748b; }
+
 .deadline-row.deadline-missed { color: #ef4444; }
 .deadline-row.deadline-missed svg { stroke: #ef4444; }
+[data-theme='light'] .deadline-row.deadline-missed,
+html[data-theme='light'] .deadline-row.deadline-missed,
+.student-layout.light .deadline-row.deadline-missed { color: #dc2626; }
 
 /* Footer Split (Score & Button) */
 .card-footer-split { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
 
-.score-display { display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; min-width: 120px; }
+[data-theme='light'] .card-footer-split,
+html[data-theme='light'] .card-footer-split,
+.student-layout.light .card-footer-split { border-top: 1px solid #f1f5f9; }
+
+.score-display { 
+    display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); 
+    border: 1px solid rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; min-width: 120px; 
+}
+
+[data-theme='light'] .score-display,
+html[data-theme='light'] .score-display,
+.student-layout.light .score-display {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
 .score-label { font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; font-weight: 600; }
-.score-value { font-weight: bold; font-size: 1.1rem; color: white; }
+[data-theme='light'] .score-label,
+html[data-theme='light'] .score-label,
+.student-layout.light .score-label { color: #64748b; }
+
+.score-value { font-weight: bold; font-size: 1.1rem; color: var(--text-main, #ffffff); }
+[data-theme='light'] .score-value,
+html[data-theme='light'] .score-value,
+.student-layout.light .score-value { color: #0f172a; }
+
 .score-value.pending { color: #f59e0b; font-size: 0.9rem; font-style: italic; }
 
-.btn-glass-action { background: transparent; color: var(--text-main); border: 1px solid var(--border-card); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; font-size: 0.95rem; }
+.btn-glass-action { 
+    background: transparent; color: var(--text-main); 
+    border: 1px solid var(--border-card); padding: 12px 24px; 
+    border-radius: 10px; cursor: pointer; font-weight: 600; 
+    transition: all 0.2s ease; font-size: 0.95rem; 
+}
 .btn-glass-action.btn-active:hover { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+
+[data-theme='light'] .btn-glass-action,
+html[data-theme='light'] .btn-glass-action,
+.student-layout.light .btn-glass-action {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+[data-theme='light'] .btn-glass-action.btn-active:hover,
+html[data-theme='light'] .btn-glass-action.btn-active:hover,
+.student-layout.light .btn-glass-action.btn-active:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.06);
+}
+
 .btn-disabled { opacity: 0.5; cursor: not-allowed; }
+[data-theme='light'] .btn-disabled,
+html[data-theme='light'] .btn-disabled,
+.student-layout.light .btn-disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+}
 
 /* 🌟 Resubmission Alert Styles */
 .badge-unlocked {
@@ -126,7 +265,6 @@
     100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
 }
 
-
 /* =========================================
    💻 TABLETS (Max Width: 1024px)
    ========================================= */
@@ -137,28 +275,25 @@
 }
 
 /* =========================================
-   📱 MOBILE RESPONSIVENESS (App-like Fixes)
+   📱 MOBILE RESPONSIVENESS
    ========================================= */
 @media (max-width: 768px) {
     .nexus-content.student-layout {
-        padding-top: 20px;
-        padding-bottom: 110px; /* Clears mobile bottom dock */
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-top: 4px;
+        padding-bottom: 110px;
+        padding-left: 14px;
+        padding-right: 14px;
     }
 
-    /* Compress the cinematic header */
-    .classroom-hero-banner { margin-bottom: 24px; border-radius: 20px; }
-    .header-inner { padding: 24px 20px; }
+    .classroom-hero-banner { margin-bottom: 18px; border-radius: 18px; }
+    .header-inner { padding: 18px 16px; }
     
-    /* Keep top meta on a single row */
-    .top-meta { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; gap: 10px;}
+    .top-meta { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 14px; width: 100%; gap: 10px;}
     .hero-title { font-size: 1.8rem; }
     
     .glass-chip { padding: 6px 12px; }
     .mono-label { font-size: 0.65rem; }
 
-    /* Adjust Assignment Cards */
     .assignment-grid { gap: 16px; }
     .assignment-item-row { padding: 20px; border-radius: 16px; }
     
@@ -166,7 +301,6 @@
     .assignment-item-row h3 { font-size: 1.25rem; }
     .assignment-item-row p { font-size: 0.9rem; margin-bottom: 16px; }
 
-    /* 🌟 THE MAGIC BULLET: Stack the Footer & Force Button Full-Width */
     .card-footer-split { 
         flex-direction: column; 
         align-items: stretch; 
@@ -176,7 +310,6 @@
     .score-display { text-align: center; }
     .btn-glass-action { width: 100%; padding: 14px; text-align: center; }
 
-    /* Tactile Interactions */
     .neo-back-btn:active, 
     .btn-glass-action:active {
         transform: scale(0.96);

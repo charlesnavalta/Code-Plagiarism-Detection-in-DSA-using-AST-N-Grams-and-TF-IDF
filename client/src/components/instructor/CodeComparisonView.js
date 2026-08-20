@@ -7,6 +7,7 @@ import { getPlagiarismDisplayData, getASTBadgeStyle } from '../../utils/theme';
 
 const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     const [viewMode, setViewMode] = useState('code'); 
+    const [activeMobilePane, setActiveMobilePane] = useState('a'); // 'a' | 'b' | 'stacked'
 
     // Get smart theme data for the banner
     const themeData = selectedPair ? getPlagiarismDisplayData(selectedPair.plagiarism_type) : null;
@@ -170,9 +171,44 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                 </div>
             )}
 
-            {/* 🌟 3. Responsive Split Screen Container */}
-            <div className="split-screen-container">
-                <div className="code-pane">
+            {/* 🌟 3. Mobile View Switcher (For iPhone 13 and Mobile Screens) */}
+            {selectedPair && (
+                <div className="mobile-pane-switcher">
+                    <button 
+                        type="button"
+                        className={`mobile-pane-tab ${activeMobilePane === 'a' ? 'active' : ''}`}
+                        onClick={() => setActiveMobilePane('a')}
+                    >
+                        <span className="mobile-tab-badge">Source A</span>
+                        <span className="mobile-tab-name">{selectedPair.file1}</span>
+                    </button>
+
+                    <button 
+                        type="button"
+                        className={`mobile-pane-tab ${activeMobilePane === 'b' ? 'active' : ''}`}
+                        onClick={() => setActiveMobilePane('b')}
+                    >
+                        <span className="mobile-tab-badge">Source B</span>
+                        <span className="mobile-tab-name">{selectedPair.file2}</span>
+                    </button>
+
+                    <button 
+                        type="button"
+                        className={`mobile-pane-tab mobile-tab-split ${activeMobilePane === 'stacked' ? 'active' : ''}`}
+                        onClick={() => setActiveMobilePane('stacked')}
+                        title="View Both Stacked"
+                    >
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <span>Both</span>
+                    </button>
+                </div>
+            )}
+
+            {/* 🌟 4. Responsive Split Screen Container */}
+            <div className={`split-screen-container mobile-mode-${activeMobilePane}`}>
+                <div className={`code-pane pane-source-a ${activeMobilePane === 'b' ? 'mobile-hidden' : ''}`}>
                     <div className="code-pane-header">
                         <span className="file-badge student-a">{selectedPair.file1}</span>
                     </div>
@@ -181,7 +217,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     </div>
                 </div>
                 
-                <div className="code-pane">
+                <div className={`code-pane pane-source-b ${activeMobilePane === 'a' ? 'mobile-hidden' : ''}`}>
                     <div className="code-pane-header">
                         <span className="file-badge student-b">{selectedPair.file2}</span>
                     </div>
