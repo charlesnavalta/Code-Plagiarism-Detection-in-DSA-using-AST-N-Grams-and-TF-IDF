@@ -4,10 +4,10 @@ import authService from '../../services/authService';
 import { useToast } from '../../context/NotificationContext';
 import './Register.css'; 
 
-// Shared Auth Components
 import AuroraBackground from '../../components/auth/shared/AuroraBackground';
 import AuthInput from '../../components/auth/shared/AuthInput';
 import AuthButton from '../../components/auth/shared/AuthButton';
+import TermsAndPrivacyModal from '../../modals/shared/TermsAndPrivacyModal';
 
 const Register = () => {
     const [formData, setFormData] = useState({ 
@@ -18,6 +18,9 @@ const Register = () => {
         confirmPassword: '', 
         role: 'student' 
     });
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
+    const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+    const [termsModalTab, setTermsModalTab] = useState('terms');
     const [loading, setLoading] = useState(false);
     const [sendingCode, setSendingCode] = useState(false);
     const [cooldown, setCooldown] = useState(0);
@@ -51,6 +54,11 @@ const Register = () => {
     const passwordsMatch = formData.confirmPassword && formData.password === formData.confirmPassword;
     const passwordsMismatch = formData.confirmPassword && formData.password !== formData.confirmPassword;
 
+    const handleOpenTerms = (tab = 'terms') => {
+        setTermsModalTab(tab);
+        setIsTermsModalOpen(true);
+    };
+
     const handleSendCode = async () => {
         const trimmedEmail = (formData.email || '').trim().toLowerCase();
         if (!trimmedEmail) {
@@ -83,6 +91,10 @@ const Register = () => {
         }
         if (!formData.code || formData.code.trim().length !== 6) {
             toast.warning("Please enter the 6-digit verification code sent to your email inbox.", "Email Verification Required");
+            return;
+        }
+        if (!agreedToTerms) {
+            toast.warning("Please review and agree to the Terms of Service and Privacy Policy to proceed.", "Agreement Required");
             return;
         }
 
@@ -375,8 +387,29 @@ const Register = () => {
                         {/* Terms checkbox */}
                         <div className="auth-terms-row">
                             <label className="auth-checkbox-container">
-                                <input type="checkbox" required />
-                                <span>I agree to the <a href="#terms" className="auth-link">Terms of Service</a> and <a href="#privacy" className="auth-link">Privacy Policy</a></span>
+                                <input 
+                                    type="checkbox" 
+                                    checked={agreedToTerms}
+                                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                />
+                                <span>
+                                    I agree to the{' '}
+                                    <button 
+                                        type="button" 
+                                        className="auth-inline-link"
+                                        onClick={() => handleOpenTerms('terms')}
+                                    >
+                                        Terms of Service
+                                    </button>
+                                    {' '}and{' '}
+                                    <button 
+                                        type="button" 
+                                        className="auth-inline-link"
+                                        onClick={() => handleOpenTerms('privacy')}
+                                    >
+                                        Privacy Policy
+                                    </button>
+                                </span>
                             </label>
                         </div>
 
@@ -401,6 +434,14 @@ const Register = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Terms & Privacy Policy Modal */}
+            <TermsAndPrivacyModal 
+                isOpen={isTermsModalOpen}
+                initialTab={termsModalTab}
+                onClose={() => setIsTermsModalOpen(false)}
+                onAccept={() => setAgreedToTerms(true)}
+            />
         </div>
     );
 };

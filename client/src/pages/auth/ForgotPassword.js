@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import authService from '../../services/authService';
 import { useToast } from '../../context/NotificationContext';
@@ -18,21 +18,55 @@ const ForgotPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [resending, setResending] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
     const toast = useToast();
     const navigate = useNavigate();
 
+    // Countdown timer for code resend
+    useEffect(() => {
+        if (cooldown > 0) {
+            const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [cooldown]);
+
     const handleRequestCode = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
+        const trimmed = (email || '').trim();
+        if (!trimmed) {
+            toast.warning("Please enter your registered username or email address.", "Input Required");
+            return;
+        }
+
         setLoading(true);
         try {
-            const data = await authService.requestPasswordReset(email);
+            const data = await authService.requestPasswordReset(trimmed);
             toast.success(data.message || "Recovery code sent! Please check your email inbox.", "Code Dispatched");
-            setStep(2); 
+            setStep(2);
+            setCooldown(60);
         } catch (err) {
-            const errText = err.response?.data?.error || "Failed to initialize recovery sequence.";
+            const errText = err.response?.data?.error || err.response?.data?.message || "Failed to initialize recovery sequence.";
             toast.error(errText, "Recovery Error");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleResendCode = async () => {
+        const trimmed = (email || '').trim();
+        if (!trimmed || cooldown > 0) return;
+
+        setResending(true);
+        try {
+            const data = await authService.requestPasswordReset(trimmed);
+            toast.success(data.message || "A new recovery code has been sent to your email inbox.", "Code Dispatched");
+            setCooldown(60);
+        } catch (err) {
+            const errText = err.response?.data?.error || err.response?.data?.message || "Failed to resend code.";
+            toast.error(errText, "Resend Error");
+        } finally {
+            setResending(false);
         }
     };
 
@@ -40,6 +74,14 @@ const ForgotPassword = () => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
             toast.error("Security error: Passwords do not match.", "Password Mismatch");
+            return;
+        }
+        if (newPassword.length < 6) {
+            toast.warning("Password must be at least 6 characters in length.", "Validation Notice");
+            return;
+        }
+        if (!code || code.trim().length !== 6) {
+            toast.warning("Please enter the 6-digit verification code sent to your email inbox.", "Code Required");
             return;
         }
         
@@ -51,8 +93,8 @@ const ForgotPassword = () => {
                 newPassword: newPassword,
                 new_password: newPassword
             });
-            toast.success(data.message || "Password updated successfully!", "Credentials Updated");
-            navigate('/login'); 
+            toast.success(data.message || "Password updated successfully! You may now log in.", "Credentials Updated");
+            setTimeout(() => navigate('/login'), 400); 
         } catch (err) {
             const errText = err.response?.data?.error || err.response?.data?.message || "Invalid or expired authorization code.";
             toast.error(errText, "Reset Failed");
@@ -129,27 +171,55 @@ const ForgotPassword = () => {
                                 }
                             />
 
-                            <AuthButton loading={loading} loadingText="Generating Code...">
+                            <AuthButton loading={loading} loadingText="Sending Recovery Code...">
                                 Request Access Code
                             </AuthButton>
                         </form>
                     ) : (
                         <form onSubmit={handleResetPassword}>
-                            <p className="auth-subtitle">Code dispatched to <strong>{email}</strong>. Enter the 6-digit code with your new password.</p>
+                            <p className="auth-subtitle">Code dispatched to <strong>{email}</strong>. Check your Gmail inbox for the 6-digit code.</p>
                             
-                            <AuthInput 
-                                type="text" name="code" placeholder="6-Digit Code"
-                                maxLength={6} value={code} required
-                                extraStyles={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '3px', fontWeight: 'bold' }}
-                                onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
-                                icon={
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                    </svg>
-                                }
-                            />
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '14px' }}>
+                                <div style={{ flex: 1 }}>
+                                    <AuthInput 
+                                        type="text" name="code" placeholder="6-Digit Code"
+                                        maxLength={6} value={code} required
+                                        extraStyles={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '3px', fontWeight: 'bold' }}
+                                        onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+                                        icon={
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                                <button 
+                                    type="button" 
+                                    onClick={handleResendCode}
+                                    disabled={resending || cooldown > 0}
+                                    style={{
+                                        minHeight: '48px',
+                                        padding: '0 16px',
+                                        background: '#eff6ff',
+                                        color: '#2563eb',
+                                        border: '1.5px solid #bfdbfe',
+                                        borderRadius: '10px',
+                                        fontWeight: 700,
+                                        fontSize: '0.85rem',
+                                        cursor: cooldown > 0 ? 'not-allowed' : 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        minWidth: '95px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        opacity: cooldown > 0 ? 0.7 : 1
+                                    }}
+                                >
+                                    {resending ? '...' : cooldown > 0 ? `${cooldown}s` : 'Resend'}
+                                </button>
+                            </div>
 
                             <AuthInput 
                                 type="password" name="newPassword" placeholder="New Password (min. 6 chars)"
@@ -179,12 +249,6 @@ const ForgotPassword = () => {
                             </AuthButton>
                         </form>
                     )}
-
-                    <div className="auth-divider"><span>Or</span></div>
-
-                    <div className="register-container">
-                        <Link to="/login" className="btn-create-account">Return to log-in portal</Link>
-                    </div>
                 </div>
             </div>
             

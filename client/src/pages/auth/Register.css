@@ -383,12 +383,32 @@
     align-items: center;
     cursor: pointer;
     user-select: none;
+    line-height: 1.4;
 }
 .auth-checkbox-container input {
     margin-right: 8px;
     accent-color: #3b82f6;
     width: 16px;
     height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.auth-inline-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    display: inline;
+}
+.auth-inline-link:hover {
+    color: #1d4ed8;
 }
 
 /* Dividers & CTA */
