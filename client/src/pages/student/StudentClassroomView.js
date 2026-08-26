@@ -4,8 +4,6 @@ import { useTheme } from '../../hooks/useTheme';
 import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
-import SubmitFileModal from '../../modals/student/SubmitFileModal';
-import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
 
 // Shared Utilities & Components
 import { formatLanguageDisplay } from '../../utils/fileUtils';
@@ -23,10 +21,6 @@ const StudentClassroomView = () => {
     const [loading, setLoading] = useState(true);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
-
-    const [showSubmitModal, setShowSubmitModal] = useState(false);
-    const [activeAssignment, setActiveAssignment] = useState(null);
-    const [viewAssignment, setViewAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,24 +46,6 @@ const StudentClassroomView = () => {
         };
         fetchData();
     }, [id, navigate]);
-
-    const handleOpenSubmission = (assignment) => {
-        const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
-        const isUnlocked = assignment.allow_resubmit;
-        
-        // 🌟 THE FIX: Only block the modal if they are NOT allowed to resubmit
-        if ((assignment.has_submitted && !isUnlocked) || (isOverdue && !isUnlocked)) return; 
-        
-        setActiveAssignment(assignment);
-        setShowSubmitModal(true);
-    };
-
-    const handleSubmissionSuccess = (assignmentId) => {
-        // 🌟 THE FIX: Instantly lock the assignment again locally after a successful resubmit
-        setAssignments(assignments.map(a => 
-            a.id === assignmentId ? { ...a, has_submitted: true, allow_resubmit: false, score: 'Pending' } : a
-        ));
-    };
 
     if (loading) return <ClassroomViewSkeleton role="student" />;
 
@@ -213,20 +189,6 @@ const StudentClassroomView = () => {
                     </div>
                 </main>
             </div>
-
-            <SubmitFileModal 
-                isOpen={showSubmitModal}
-                onClose={() => setShowSubmitModal(false)}
-                assignment={activeAssignment}
-                classroomId={id}
-                onSuccess={handleSubmissionSuccess}
-            />
-
-            <ViewAssignmentModal 
-                isOpen={!!viewAssignment}
-                onClose={() => setViewAssignment(null)}
-                assignment={viewAssignment}
-            />
         </InstructorWrapper>
     );
 };
