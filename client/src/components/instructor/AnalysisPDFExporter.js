@@ -63,32 +63,36 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
         }
     };
 
-    // Vector Graph Trigonometric Calculations (Fixed 530x135 container)
+    // Vector Graph Trigonometric Calculations (Precision bounded 640x148 container)
     const scoreVal = Math.min(100, Math.max(0, Number(selectedPair.score) || 0));
     const rawIdentityVal = selectedPair.raw_identity_score !== undefined ? selectedPair.raw_identity_score : scoreVal;
     const orderSimVal = selectedPair.order_similarity_score !== undefined ? selectedPair.order_similarity_score : 100;
     
-    // Origin at (45, 110)
-    const ox = 45;
-    const oy = 110;
-    const vecLen = 220;
+    // Origin at (50, 122)
+    const ox = 50;
+    const oy = 122;
     
-    // Vector A (Blue, 26° from horizontal)
-    const angleADeg = 26;
+    // Vector A (Blue, 18° baseline from horizontal)
+    const angleADeg = 18;
     const angleARad = angleADeg * (Math.PI / 180);
-    const ax = ox + vecLen * Math.cos(angleARad);
-    const ay = oy - vecLen * Math.sin(angleARad);
+    const vecLenA = 220;
+    const ax = ox + vecLenA * Math.cos(angleARad);
+    const ay = oy - vecLenA * Math.sin(angleARad);
     
     // Vector B (Theme color, angle offset proportional to divergence)
     const exactThetaDeg = (100 - scoreVal) * 0.45;
-    const visualThetaDeg = exactThetaDeg < 2.0 ? (exactThetaDeg === 0 ? 0 : 2.0) : exactThetaDeg;
+    const visualThetaDeg = Math.min(42.0, Math.max(0.0, (100 - scoreVal) * 0.42));
     const angleBDeg = angleADeg + visualThetaDeg;
     const angleBRad = angleBDeg * (Math.PI / 180);
-    const bx = ox + vecLen * Math.cos(angleBRad);
-    const by = oy - vecLen * Math.sin(angleBRad);
+    
+    // Bounded length so Y is never < 25 (guarantees vectors stay strictly inside chart frame)
+    const maxAllowedYDist = oy - 25; // 97px
+    const vecLenB = Math.min(220, maxAllowedYDist / Math.sin(angleBRad));
+    const bx = ox + vecLenB * Math.cos(angleBRad);
+    const by = oy - vecLenB * Math.sin(angleBRad);
 
     // Arc points for theta angle
-    const arcRadius = 60;
+    const arcRadius = 45;
     const arcAx = ox + arcRadius * Math.cos(angleARad);
     const arcAy = oy - arcRadius * Math.sin(angleARad);
     const arcBx = ox + arcRadius * Math.cos(angleBRad);
@@ -97,7 +101,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
     // Short label formatters
     const cleanFileName = (str) => {
         if (!str) return 'File';
-        return str.length > 22 ? str.substring(0, 20) + '...' : str;
+        return str.length > 20 ? str.substring(0, 18) + '...' : str;
     };
 
     const hiddenTemplate = (
@@ -178,31 +182,41 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                 <div className="pdf-vector-wrapper">
                     <h3>Vector Space Alignment (Cosine Similarity Mapping)</h3>
                     <p>
-                        The graph coordinates indicate the alignment vectors between Document A and Document B. When projected into an $N$-dimensional semantic space, identical structures run along a shared trajectory. The angle between the structural orientation arrays approaches zero, mathematically validating a cosine proximity rating of **{(scoreVal / 100).toFixed(4)}**.
+                        The graph coordinates indicate the alignment vectors between Document A and Document B. When projected into an N-dimensional semantic space, identical structures run along a shared trajectory. The angle between the structural orientation arrays approaches zero, mathematically validating a cosine proximity rating of **{(scoreVal / 100).toFixed(4)}**.
                     </p>
                     
                     {/* FIXED-SIZE SVG VECTOR GRAPH */}
                     <div className="pdf-vector-canvas-box">
                         <svg 
-                            width="530" 
-                            height="135" 
-                            viewBox="0 0 530 135" 
-                            style={{ overflow: 'visible', backgroundColor: '#ffffff' }}
+                            width="640" 
+                            height="148" 
+                            viewBox="0 0 640 148" 
+                            style={{ overflow: 'hidden', backgroundColor: '#ffffff' }}
                         >
+                            {/* Marker definitions for vector arrow heads */}
+                            <defs>
+                                <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
+                                </marker>
+                                <marker id="arrow-b" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill={themeData.color} />
+                                </marker>
+                            </defs>
+
                             {/* Background Horizontal Grid Dashes */}
-                            <line x1="45" y1="30" x2="490" y2="30" stroke="#f3f4f6" strokeWidth="1" strokeDasharray="4,4" />
-                            <line x1="45" y1="58" x2="490" y2="58" stroke="#f3f4f6" strokeWidth="1" strokeDasharray="4,4" />
-                            <line x1="45" y1="86" x2="490" y2="86" stroke="#f3f4f6" strokeWidth="1" strokeDasharray="4,4" />
+                            <line x1="50" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
+                            <line x1="50" y1="60" x2="600" y2="60" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
+                            <line x1="50" y1="90" x2="600" y2="90" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
                             
                             {/* Primary Coordinate Axis Lines */}
-                            <line x1={ox} y1="12" x2={ox} y2={oy} stroke="#4b5563" strokeWidth="2" strokeLinecap="round" />
-                            <line x1={ox} y1={oy} x2="495" y2={oy} stroke="#4b5563" strokeWidth="2" strokeLinecap="round" />
+                            <line x1={ox} y1="14" x2={ox} y2={oy} stroke="#475569" strokeWidth="1.5" strokeLinecap="round" />
+                            <line x1={ox} y1={oy} x2="605" y2={oy} stroke="#475569" strokeWidth="1.5" strokeLinecap="round" />
                             
                             {/* Axis Title Indicators */}
-                            <text x="495" y="122" fill="#6b7280" fontSize="9" fontWeight="bold" textAnchor="end" fontFamily="monospace">
+                            <text x="605" y="138" fill="#64748b" fontSize="8.5" fontWeight="bold" textAnchor="end" fontFamily="monospace">
                                 AST N-Gram Feature Dimensions →
                             </text>
-                            <text x="50" y="18" fill="#6b7280" fontSize="9" fontWeight="bold" fontFamily="monospace">
+                            <text x="54" y="16" fill="#64748b" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
                                 ↑ Structural Depth
                             </text>
 
@@ -215,6 +229,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 stroke="#2563eb" 
                                 strokeWidth="2.5" 
                                 strokeLinecap="round" 
+                                markerEnd="url(#arrow-blue)"
                             />
                             
                             {/* Vector Line B (Source B) */}
@@ -227,21 +242,22 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 strokeWidth="2.5" 
                                 strokeLinecap="round" 
                                 strokeDasharray={exactThetaDeg === 0 ? "4,3" : "none"}
+                                markerEnd="url(#arrow-b)"
                             />
 
                             {/* Clear Line Labels Attached directly to Endpoints */}
                             {/* Source A Label Pill */}
-                            <g transform={`translate(${ax + 6}, ${ay - 10})`}>
-                                <rect x="0" y="0" width="145" height="18" rx="3" fill="#2563eb" />
-                                <text x="6" y="12" fill="#ffffff" fontSize="9" fontWeight="bold" fontFamily="monospace">
+                            <g transform={`translate(${ax + 8}, ${ay - 9})`}>
+                                <rect x="0" y="0" width="140" height="18" rx="4" fill="#2563eb" />
+                                <text x="6" y="12" fill="#ffffff" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
                                     Source A: {cleanFileName(selectedPair.file1)}
                                 </text>
                             </g>
 
-                            {/* Source B Label Pill */}
-                            <g transform={`translate(${bx + 6}, ${by + 6})`}>
-                                <rect x="0" y="0" width="145" height="18" rx="3" fill={themeData.color} />
-                                <text x="6" y="12" fill="#ffffff" fontSize="9" fontWeight="bold" fontFamily="monospace">
+                            {/* Source B Label Pill - Offset downwards if collinear */}
+                            <g transform={`translate(${bx + 8}, ${visualThetaDeg < 4 ? by + 12 : by - 9})`}>
+                                <rect x="0" y="0" width="140" height="18" rx="4" fill={themeData.color} />
+                                <text x="6" y="12" fill="#ffffff" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
                                     Source B: {cleanFileName(selectedPair.file2)}
                                 </text>
                             </g>
@@ -256,12 +272,12 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                         strokeWidth="1.5" 
                                         strokeDasharray="3,3"
                                     />
-                                    <text x="105" y="102" fill="#059669" fontSize="9.5" fontFamily="monospace" fontWeight="bold">
+                                    <text x="105" y="112" fill="#059669" fontSize="9" fontFamily="monospace" fontWeight="bold">
                                         θ spatial distance = {exactThetaDeg.toFixed(2)}° (cos θ = {(scoreVal / 100).toFixed(4)})
                                     </text>
                                 </>
                             ) : (
-                                <text x="105" y="102" fill="#059669" fontSize="9.5" fontFamily="monospace" fontWeight="bold">
+                                <text x="105" y="112" fill="#059669" fontSize="9" fontFamily="monospace" fontWeight="bold">
                                     θ spatial distance = 0.00° (Collinear: cos θ = 1.0000)
                                 </text>
                             )}
