@@ -1,6 +1,7 @@
 import os
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app, send_file
+from sqlalchemy import func
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -86,7 +87,7 @@ def create_assignment(class_id):
 @assignments_bp.route('/<int:class_id>/assignments', methods=['GET'])
 @jwt_required()
 def get_assignments(class_id):
-    """Fetches all assignments and attaches the student's submission status and guide files"""
+    """Fetches all assignments and attaches the student's submission status and guide files in bulk"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -102,22 +103,44 @@ def get_assignments(class_id):
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
     assignments = Assignment.query.filter_by(classroom_id=class_id).all()
-    
+    if not assignments:
+        return jsonify([]), 200
+
+    assignment_ids = [a.id for a in assignments]
+
+    # 1. Batch fetch submission counts across all assignments in 1 query
+    sub_count_results = db.session.query(
+        Submission.assignment_id,
+        func.count(Submission.id)
+    ).filter(
+        Submission.assignment_id.in_(assignment_ids)
+    ).group_by(Submission.assignment_id).all()
+    sub_counts = {assign_id: count for assign_id, count in sub_count_results}
+
+    # 2. Batch fetch attachments for all assignments in 1 query
+    all_attachments = AssignmentAttachment.query.filter(
+        AssignmentAttachment.assignment_id.in_(assignment_ids)
+    ).all()
+    attach_map = {}
+    for att in all_attachments:
+        attach_map.setdefault(att.assignment_id, []).append({
+            "id": att.id,
+            "filename": att.filename,
+            "url": f"/classrooms/{class_id}/attachments/{att.id}"
+        })
+
+    # 3. Batch fetch student submissions in 1 query (if student)
+    student_subs = {}
+    if user.role == 'student':
+        subs = Submission.query.filter(
+            Submission.assignment_id.in_(assignment_ids),
+            Submission.student_id == user.id
+        ).all()
+        student_subs = {s.assignment_id: s for s in subs}
+
+    # 4. Construct response payload in memory
     assignments_data = []
     for a in assignments:
-        sub_count = Submission.query.filter_by(assignment_id=a.id).count()
-
-        # 🌟 THE FIX: Explicitly query the attachments table instead of relying on hasattr()
-        attachments_list = []
-        assignment_files = AssignmentAttachment.query.filter_by(assignment_id=a.id).all()
-        
-        for att in assignment_files:
-            attachments_list.append({
-                "id": att.id,
-                "filename": att.filename,
-                "url": f"/classrooms/{class_id}/attachments/{att.id}" 
-            })
-
         assignment_info = {
             "id": a.id,
             "title": a.title,
@@ -125,22 +148,21 @@ def get_assignments(class_id):
             "max_score": a.max_score,
             "language": a.language,
             "deadline": a.deadline.isoformat() if a.deadline else None,
-            "submission_count": sub_count, 
+            "submission_count": sub_counts.get(a.id, 0),
             "has_submitted": False,
             "score": None,
             "submitted_at": None,
             "allow_resubmit": False,
-            "attachments": attachments_list # 🌟 Files are now guaranteed to be attached!
+            "attachments": attach_map.get(a.id, [])
         }
 
-        if user.role == 'student':
-            submission = Submission.query.filter_by(assignment_id=a.id, student_id=user.id).first()
-            if submission:
-                assignment_info["has_submitted"] = True
-                assignment_info["score"] = getattr(submission, 'score', 'Pending')
-                assignment_info["submitted_at"] = submission.submitted_at.isoformat() if submission.submitted_at else None
-                assignment_info["allow_resubmit"] = getattr(submission, 'allow_resubmit', False)
-                
+        if user.role == 'student' and a.id in student_subs:
+            sub = student_subs[a.id]
+            assignment_info["has_submitted"] = True
+            assignment_info["score"] = getattr(sub, 'score', 'Pending')
+            assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
+            assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
+
         assignments_data.append(assignment_info)
         
     return jsonify(assignments_data), 200
@@ -190,7 +212,7 @@ def update_assignment(class_id, assignment_id):
     try:
         db.session.commit()
         response_data = assignment.to_dict()
-        response_data['submission_count'] = len(assignment.submissions) if hasattr(assignment, 'submissions') else 0
+        response_data['submission_count'] = Submission.query.filter_by(assignment_id=assignment.id).count()
         return jsonify({
             "message": "Assignment updated successfully",
             **response_data

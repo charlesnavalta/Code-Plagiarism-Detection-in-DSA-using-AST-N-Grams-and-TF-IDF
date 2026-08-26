@@ -3,6 +3,7 @@ import ast
 import javalang
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app
+from sqlalchemy.orm import joinedload
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -138,9 +139,12 @@ def get_assignment_submissions(class_id, assignment_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
-    submissions = Submission.query.filter_by(assignment_id=assignment_id).all()
-    submissions_data = []
+    # Eager load student to prevent N+1 queries when accessing s.student.username
+    submissions = Submission.query.options(
+        joinedload(Submission.student)
+    ).filter_by(assignment_id=assignment_id).all()
     
+    submissions_data = []
     for s in submissions:
         content = "File content unavailable on server disk."
         actual_path = resolve_submission_path(s.file_path) if s.file_path else None
@@ -149,11 +153,12 @@ def get_assignment_submissions(class_id, assignment_id):
                 with open(actual_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
             except Exception as e:
-                print(f"Error reading file for {s.student.username}: {e}")
+                print(f"Error reading file for {s.student.username if s.student else s.student_id}: {e}")
 
+        student_name = s.student.username if s.student else f"Student #{s.student_id}"
         submissions_data.append({
             "id": s.id,
-            "student_name": s.student.username,
+            "student_name": student_name,
             "filename": s.filename,
             "content": content, 
             "raw_code": content,
@@ -212,14 +217,17 @@ def allow_resubmission(class_id, assignment_id, submission_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
-    submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
+    submission = Submission.query.options(
+        joinedload(Submission.student)
+    ).filter_by(id=submission_id, assignment_id=assignment_id).first()
     if not submission:
         return jsonify({"error": "Submission not found."}), 404
 
     try:
         submission.allow_resubmit = True
         db.session.commit()
-        return jsonify({"message": f"Resubmission unlocked for {submission.student.username}!"}), 200
+        student_name = submission.student.username if submission.student else f"Student #{submission.student_id}"
+        return jsonify({"message": f"Resubmission unlocked for {student_name}!"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to update resubmission status."}), 500
@@ -257,26 +265,28 @@ def get_student_history():
 @submissions_bp.route('/instructor/activity', methods=['GET'])
 @jwt_required()
 def get_instructor_activity():
-    """Fetches recent submissions across all classrooms owned by the instructor."""
+    """Fetches recent submissions across all classrooms owned by the instructor in a single JOIN."""
     try:
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
         if not user or user.role != 'instructor':
             return jsonify({"error": "Unauthorized"}), 403
 
-        recent = db.session.query(Submission, Assignment, Classroom).join(
+        recent = db.session.query(Submission, Assignment, Classroom, User).join(
             Assignment, Submission.assignment_id == Assignment.id
         ).join(
             Classroom, Assignment.classroom_id == Classroom.id
+        ).join(
+            User, Submission.student_id == User.id
         ).filter(
             Classroom.instructor_id == current_user_id
         ).order_by(Submission.submitted_at.desc()).limit(5).all()
 
         activity = []
-        for submission, assignment, classroom in recent:
+        for submission, assignment, classroom, student in recent:
             activity.append({
                 "id": submission.id,
-                "student_name": submission.student.username,
+                "student_name": student.username,
                 "assignment_name": assignment.title,
                 "classroom_name": classroom.name,
                 "submitted_at": submission.submitted_at.isoformat() if submission.submitted_at else None,

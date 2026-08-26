@@ -102,34 +102,43 @@ def create_app():
 
     # 4. --- DATABASE INITIALIZATION & SEEDING ---
     with app.app_context():
-        print("Falsicode: Checking database connection...")
-        
-        retries = 15
+        # Fast, non-blocking connection ping (max 3 retries, 1s sleep)
+        retries = 3
         connected = False
         while retries > 0:
             try:
-                # Test the connection to the database
                 db.session.execute(db.text('SELECT 1'))
                 connected = True
                 print("Falsicode: Database connected successfully!")
                 break
-            except (OperationalError, Exception) as e:
+            except Exception as e:
                 retries -= 1
-                print(f"Falsicode: Database not ready... retrying in 2s ({15-retries}/15). Error: {e}")
-                time.sleep(2)
+                if retries > 0:
+                    print(f"Falsicode: Database warming up... retrying ({3-retries}/3)")
+                    time.sleep(1)
+                else:
+                    print(f"Falsicode: Database connection notice: {e}")
         
-        if connected:
+        # Only run auto-seeding if explicitly enabled via AUTO_SEED=true or SEED_ON_START=true
+        auto_seed = os.environ.get('AUTO_SEED', 'false').lower() in ('true', '1', 't') or os.environ.get('SEED_ON_START', 'false').lower() in ('true', '1', 't')
+        if connected and auto_seed:
             try:
-                # Only seed if the database is empty (first run)
                 if User.query.count() == 0:
-                    print("Falsicode: Empty database detected, running seeder...")
+                    print("Falsicode: Empty database detected & AUTO_SEED enabled, running seeder...")
                     run_smart_seed(db)
                 else:
-                    print("Falsicode: Database already has data, skipping seeder.")
+                    print("Falsicode: Database already populated, skipping seeder.")
             except Exception as e:
                 print(f"Falsicode Seeder Notice: {e}")
-        else:
-            print("CRITICAL: Falsicode could not connect to database.")
+
+    # Add CLI seed command: `flask seed`
+    @app.cli.command('seed')
+    def seed_db():
+        """Seeds the database with users, classrooms, assignments, and sample submissions."""
+        with app.app_context():
+            print("Falsicode CLI: Running Smart Seed...")
+            run_smart_seed(db)
+            print("Falsicode CLI: Smart Seed complete.")
 
     # 5. Base Route (Health Check)
     @app.route('/')

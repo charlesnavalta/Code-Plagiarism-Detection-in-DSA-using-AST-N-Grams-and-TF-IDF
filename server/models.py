@@ -54,7 +54,7 @@ class Classroom(db.Model):
     invite_code = db.Column(db.String(6), unique=True, nullable=False)
     
     # Foreign Key: Links the classroom directly to the instructor (User) who created it
-    instructor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -105,7 +105,7 @@ class Assignment(db.Model):
     deadline = db.Column(db.DateTime, nullable=True)
     
     language = db.Column(db.String(50), nullable=False, default='python')
-    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     classroom = db.relationship('Classroom', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
@@ -141,10 +141,13 @@ class Assignment(db.Model):
 # ==============================================================================
 class Enrollment(db.Model):
     __tablename__ = 'enrollments'
+    __table_args__ = (
+        db.Index('idx_enrollment_student_class', 'student_id', 'classroom_id'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False, index=True)
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     student = db.relationship('User', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
@@ -163,12 +166,15 @@ class Enrollment(db.Model):
 # ==============================================================================
 class Submission(db.Model):
     __tablename__ = 'submissions'
+    __table_args__ = (
+        db.Index('idx_submission_assignment_student', 'assignment_id', 'student_id'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     
     # Foreign Keys
-    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False, index=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     
     # Grading & Metadata
     score = db.Column(db.String(20), nullable=True)
@@ -215,7 +221,7 @@ class AssignmentAttachment(db.Model):
     __tablename__ = 'assignment_attachments'
 
     id = db.Column(db.Integer, primary_key=True)
-    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False, index=True)
     
     filename = db.Column(db.String(255), nullable=False)  
     file_path = db.Column(db.String(255), nullable=False) 

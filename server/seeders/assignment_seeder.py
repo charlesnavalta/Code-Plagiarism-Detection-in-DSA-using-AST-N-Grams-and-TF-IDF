@@ -308,11 +308,13 @@ assignments_to_seed = [
 
 def seed_assignments(db):
     print("FALSICODE: Seeding Assignments...")
+    class_map = {c.name: c for c in Classroom.query.all()}
+    existing_assignments = {(a.title, a.classroom_id) for a in Assignment.query.all()}
+
     for assign_data in assignments_to_seed:
-        classroom = Classroom.query.filter_by(name=assign_data["classroom_name"]).first()
+        classroom = class_map.get(assign_data["classroom_name"])
         if classroom:
-            existing_assignment = Assignment.query.filter_by(title=assign_data["title"], classroom_id=classroom.id).first()
-            if not existing_assignment:
+            if (assign_data["title"], classroom.id) not in existing_assignments:
                 new_assignment = Assignment(
                     title=assign_data["title"],
                     description=assign_data["description"],
@@ -322,6 +324,7 @@ def seed_assignments(db):
                     deadline=assign_data.get("deadline")
                 )
                 db.session.add(new_assignment)
+                existing_assignments.add((assign_data["title"], classroom.id))
         else:
             print(f"WARNING: Classroom '{assign_data['classroom_name']}' not found.")
             

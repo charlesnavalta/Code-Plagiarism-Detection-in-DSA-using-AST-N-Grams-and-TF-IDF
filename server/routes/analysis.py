@@ -2,6 +2,7 @@ import os
 import traceback
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
+from sqlalchemy.orm import joinedload
 from models import Submission, Assignment
 from utils.similarity import compare_all_files
 
@@ -61,8 +62,10 @@ def analyze_assignment(assignment_id):
             process_func = process_python_file
             ngram_bounds = (2, 4) # Concise AST: Use smaller N-Grams
 
-        # 3. Fetch all submissions
-        submissions = Submission.query.filter_by(assignment_id=assignment_id).all()
+        # 3. Fetch all submissions with student relationship eager-loaded
+        submissions = Submission.query.options(
+            joinedload(Submission.student)
+        ).filter_by(assignment_id=assignment_id).all()
         if len(submissions) < 2:
             return jsonify({"error": f"Need at least 2 student submissions to run plagiarism comparison (found {len(submissions)})."}), 400
 

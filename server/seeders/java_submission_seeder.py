@@ -130,15 +130,17 @@ java_submissions = [
 
 def seed_java_submissions(db):
     print("FALSICODE: Seeding Java Submissions...")
+    # Pre-cache users, assignments, and existing submissions in bulk (3 queries total)
+    user_map = {u.username.lower(): u for u in User.query.all()}
+    assignment_map = {a.title: a for a in Assignment.query.all()}
+    existing_subs = {(s.student_id, s.assignment_id) for s in Submission.query.all()}
+
     for sub_data in java_submissions:
-        # Match case-insensitively just in case
-        student = User.query.filter(User.username.ilike(sub_data["student_username"])).first()
-        assignment = Assignment.query.filter_by(title=sub_data["assignment_title"]).first()
+        student = user_map.get(sub_data["student_username"].lower())
+        assignment = assignment_map.get(sub_data["assignment_title"])
 
         if student and assignment:
-            existing_sub = Submission.query.filter_by(student_id=student.id, assignment_id=assignment.id).first()
-
-            if not existing_sub:
+            if (student.id, assignment.id) not in existing_subs:
                 new_submission = Submission(
                     assignment_id=assignment.id,
                     student_id=student.id,
@@ -158,6 +160,7 @@ def seed_java_submissions(db):
                     new_submission.score = sub_data["score"]
                     
                 db.session.add(new_submission)
+                existing_subs.add((student.id, assignment.id))
         else:
             print(f"WARNING: Could not find Student '{sub_data['student_username']}' or Assignment '{sub_data['assignment_title']}' for '{sub_data['filename']}'")
             

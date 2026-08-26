@@ -26,7 +26,7 @@ def request_code():
         if not email:
             return jsonify({"error": "Email is required"}), 400
 
-        if User.query.filter(db.func.lower(User.email) == email).first():
+        if User.query.filter_by(email=email).first():
             return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
 
         code = generate_6_digit_code()
@@ -78,10 +78,10 @@ def register():
         PENDING_REGISTRATIONS.pop(email, None)
         return jsonify({"error": "Verification code has expired. Please request a new code."}), 400
 
-    if User.query.filter(db.func.lower(User.email) == email).first():
+    if User.query.filter_by(email=email).first():
         return jsonify({"error": "This email address is already registered."}), 400
 
-    if User.query.filter(db.func.lower(User.username) == username.lower()).first():
+    if User.query.filter(User.username.ilike(username)).first():
         return jsonify({"error": "This username is already taken. Please choose another."}), 400
     
     # Verification passed! Consume pending registration entry
@@ -124,7 +124,7 @@ def verify_otp():
     email = (data.get('email') or '').strip().lower()
     code = str(data.get('code') or '').strip()
     
-    user = User.query.filter(db.func.lower(User.email) == email).first()
+    user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"error": "User not found."}), 404
         
@@ -164,9 +164,11 @@ def login():
         if not login_id or not password:
             return jsonify({"error": "Username/Email and password are required."}), 400
 
+        # Fast lookup matching email or username
         user = User.query.filter(
-            (db.func.lower(User.email) == login_id.lower()) | 
-            (db.func.lower(User.username) == login_id.lower())
+            (User.email == login_id.lower()) | 
+            (User.username == login_id) |
+            (User.username.ilike(login_id))
         ).first()
 
         if user and user.check_password(password):
@@ -212,8 +214,9 @@ def forgot_password():
         return jsonify({"error": "Email or Username is required."}), 400
 
     user = User.query.filter(
-        (db.func.lower(User.email) == login_id.lower()) | 
-        (db.func.lower(User.username) == login_id.lower())
+        (User.email == login_id.lower()) | 
+        (User.username == login_id) |
+        (User.username.ilike(login_id))
     ).first()
     
     if not user:
@@ -261,8 +264,9 @@ def reset_password():
         return jsonify({"error": "Password must be at least 6 characters long."}), 400
 
     user = User.query.filter(
-        (db.func.lower(User.email) == login_id.lower()) | 
-        (db.func.lower(User.username) == login_id.lower())
+        (User.email == login_id.lower()) | 
+        (User.username == login_id) |
+        (User.username.ilike(login_id))
     ).first()
     
     if not user:
@@ -545,7 +549,7 @@ def request_email_update():
     if user.email and user.email.lower() == new_email:
         return jsonify({"error": "The specified address is already your current registered email."}), 400
 
-    existing = User.query.filter(db.func.lower(User.email) == new_email).first()
+    existing = User.query.filter_by(email=new_email).first()
     if existing and existing.id != user.id:
         return jsonify({"error": "This email address is already registered to another account."}), 400
 
@@ -605,7 +609,7 @@ def update_email():
         return jsonify({"error": "Invalid email state. Please restart the update process."}), 400
 
     # Final check for race condition
-    existing = User.query.filter(db.func.lower(User.email) == new_email.lower()).first()
+    existing = User.query.filter_by(email=new_email).first()
     if existing and existing.id != user.id:
         PENDING_EMAIL_UPDATES.pop(user.id, None)
         return jsonify({"error": "This email address was claimed by another user."}), 400

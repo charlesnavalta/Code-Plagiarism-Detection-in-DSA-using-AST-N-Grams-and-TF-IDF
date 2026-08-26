@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 from database import db
 from models import User, Classroom, Enrollment
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-# This Blueprint now ONLY handles Classroom logic
+# This Blueprint handles Classroom logic
 classrooms_bp = Blueprint('classrooms', __name__)
 
 @classrooms_bp.route('/', methods=['POST'])
@@ -45,20 +47,22 @@ def get_instructor_classrooms():
     if not user or user.role != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
-    # Fetch all classrooms owned by this instructor
-    classes = Classroom.query.filter_by(instructor_id=user.id).all()
+    # Fetch all classrooms with student counts in a single aggregated query
+    results = db.session.query(
+        Classroom,
+        func.count(Enrollment.id).label('student_count')
+    ).outerjoin(
+        Enrollment, Classroom.id == Enrollment.classroom_id
+    ).filter(
+        Classroom.instructor_id == user.id
+    ).group_by(Classroom.id).all()
     
-    class_list = []
-    for c in classes:
-        # 🌟 THE FIX: Count the number of enrollments for this specific classroom
-        student_count = Enrollment.query.filter_by(classroom_id=c.id).count()
-        
-        class_list.append({
-            "id": c.id, 
-            "name": c.name, 
-            "invite_code": c.invite_code,
-            "student_count": student_count  # 🌟 Inject the count into the JSON payload
-        })
+    class_list = [{
+        "id": c.id, 
+        "name": c.name, 
+        "invite_code": c.invite_code,
+        "student_count": student_count
+    } for c, student_count in results]
         
     return jsonify(class_list), 200
 
@@ -69,9 +73,13 @@ def get_classroom(class_id):
     user = User.query.get(current_user_id)
 
     if user.role == 'instructor':
-        classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+        classroom = Classroom.query.options(
+            joinedload(Classroom.instructor)
+        ).filter_by(id=class_id, instructor_id=user.id).first()
     elif user.role == 'student':
-        enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
+        enrollment = Enrollment.query.options(
+            joinedload(Enrollment.classroom).joinedload(Classroom.instructor)
+        ).filter_by(student_id=user.id, classroom_id=class_id).first()
         classroom = enrollment.classroom if enrollment else None
     else:
         return jsonify({"error": "Unauthorized"}), 403
@@ -83,7 +91,7 @@ def get_classroom(class_id):
         "id": classroom.id,
         "name": classroom.name,
         "invite_code": classroom.invite_code,
-        "instructor": classroom.instructor.username 
+        "instructor": classroom.instructor.username if classroom.instructor else "Unknown"
     }), 200
 
 @classrooms_bp.route('/join', methods=['POST'])
@@ -131,11 +139,15 @@ def get_enrolled_classrooms():
     if not user or user.role != 'student':
         return jsonify({"error": "Unauthorized"}), 403
 
-    enrollments = Enrollment.query.filter_by(student_id=user.id).all()
+    # Eager load both classroom and instructor in 1 single JOIN
+    enrollments = Enrollment.query.options(
+        joinedload(Enrollment.classroom).joinedload(Classroom.instructor)
+    ).filter_by(student_id=user.id).all()
+
     class_list = [{
         "id": e.classroom.id, 
         "name": e.classroom.name, 
-        "instructor": e.classroom.instructor.username 
-    } for e in enrollments]
+        "instructor": e.classroom.instructor.username if e.classroom.instructor else "Unknown"
+    } for e in enrollments if e.classroom]
     
     return jsonify(class_list), 200

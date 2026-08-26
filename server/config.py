@@ -44,10 +44,16 @@ class Config:
     SQLALCHEMY_DATABASE_URI = get_database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Cloud database resilience: automatically check and recycle dropped connections
+    # Cloud database resilience: automatically check and recycle dropped connections, with sane pool sizes and timeouts
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_recycle": 280,
         "pool_pre_ping": True,
+        "pool_size": 10,
+        "max_overflow": 20,
+        "pool_timeout": 15,
+        "connect_args": {
+            "connect_timeout": 10
+        }
     }
 
     # 3. Application Specific Settings
