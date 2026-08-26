@@ -35,12 +35,6 @@ def submit_assignment(class_id, assignment_id):
     existing_submission = Submission.query.filter_by(student_id=user.id, assignment_id=assignment.id).first()
     is_resubmit = existing_submission and getattr(existing_submission, 'allow_resubmit', False)
 
-    # If resubmission is active, verify that its dedicated deadline has not expired
-    if is_resubmit:
-        resub_deadline = getattr(existing_submission, 'resubmission_deadline', None)
-        if resub_deadline and datetime.utcnow() > resub_deadline:
-            return jsonify({"error": "Submission rejected: The instructor's resubmission deadline for your file has passed."}), 403
-
     # 2. THE HARD LOCK: Reject if submitted and resubmission is NOT allowed
     if existing_submission and not is_resubmit:
         return jsonify({"error": "You have already submitted this assignment. Multiple uploads are not allowed."}), 400
@@ -103,7 +97,6 @@ def submit_assignment(class_id, assignment_id):
             existing_submission.submitted_at = datetime.utcnow()
             existing_submission.score = None  # Reset the grade
             existing_submission.allow_resubmit = False  # Relock the submission
-            existing_submission.resubmission_deadline = None  # Reset resubmit deadline
             
             db.session.commit()
             return jsonify({
@@ -122,20 +115,20 @@ def submit_assignment(class_id, assignment_id):
             db.session.commit()
             
             return jsonify({
-                "message": f"{target_language.capitalize()} file submitted successfully!", 
-                "submission_id": new_submission.id,
+                "message": f"{target_language.capitalize()} file submitted successfully!",
                 "submitted_at": new_submission.submitted_at.isoformat()
-            }), 201
-
+            }), 200
+            
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to persist file: {str(e)}"}), 500
+        print(f"FALSICODE ERROR saving submission: {e}")
+        return jsonify({"error": "Database error occurred while saving submission."}), 500
 
 
 @submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions', methods=['GET'])
 @jwt_required()
 def get_assignment_submissions(class_id, assignment_id):
-    """Fetches all student submissions for a specific assignment (Instructor Only)"""
+    """Allows an instructor to see all student submissions, including file content and resubmission status"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -153,7 +146,7 @@ def get_assignment_submissions(class_id, assignment_id):
     
     submissions_data = []
     for s in submissions:
-        content = ""
+        content = "File content unavailable on server disk."
         actual_path = resolve_submission_path(s.file_path) if s.file_path else None
         if actual_path and os.path.exists(actual_path):
             try:
@@ -171,7 +164,6 @@ def get_assignment_submissions(class_id, assignment_id):
             "raw_code": content,
             "score": s.score or "Pending",
             "allow_resubmit": getattr(s, 'allow_resubmit', False),
-            "resubmission_deadline": s.resubmission_deadline.isoformat() if getattr(s, 'resubmission_deadline', None) else None,
             "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
         })
     
@@ -214,7 +206,7 @@ def grade_submission(class_id, assignment_id, submission_id):
 @submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions/<int:submission_id>/allow-resubmit', methods=['PATCH'])
 @jwt_required()
 def allow_resubmission(class_id, assignment_id, submission_id):
-    """Allows an instructor to unlock a specific student's submission for re-uploading with optional deadline"""
+    """Allows an instructor to unlock a specific student's submission for re-uploading"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -231,50 +223,11 @@ def allow_resubmission(class_id, assignment_id, submission_id):
     if not submission:
         return jsonify({"error": "Submission not found."}), 404
 
-    data = request.get_json(silent=True) or {}
-    
-    # Check if instructor is revoking resubmission permission
-    if data.get('action') == 'revoke' or data.get('allow_resubmit') is False:
-        try:
-            submission.allow_resubmit = False
-            submission.resubmission_deadline = None
-            db.session.commit()
-            student_name = submission.student.username if submission.student else f"Student #{submission.student_id}"
-            return jsonify({
-                "message": f"Resubmission permission revoked for {student_name}.",
-                "allow_resubmit": False,
-                "resubmission_deadline": None
-            }), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"error": "Failed to revoke resubmission status."}), 500
-
-    # Parse optional resubmission deadline
-    deadline_str = data.get('resubmission_deadline')
-    deadline_dt = None
-    if deadline_str:
-        try:
-            clean_str = deadline_str.replace('Z', '')
-            deadline_dt = datetime.fromisoformat(clean_str)
-        except Exception:
-            try:
-                deadline_dt = datetime.strptime(deadline_str, '%Y-%m-%d %H:%M:%S')
-            except Exception:
-                try:
-                    deadline_dt = datetime.strptime(deadline_str, '%Y-%m-%dT%H:%M')
-                except Exception as parse_err:
-                    return jsonify({"error": f"Invalid deadline format: {parse_err}"}), 400
-
     try:
         submission.allow_resubmit = True
-        submission.resubmission_deadline = deadline_dt
         db.session.commit()
         student_name = submission.student.username if submission.student else f"Student #{submission.student_id}"
-        return jsonify({
-            "message": f"Resubmission unlocked for {student_name}!",
-            "allow_resubmit": True,
-            "resubmission_deadline": submission.resubmission_deadline.isoformat() if submission.resubmission_deadline else None
-        }), 200
+        return jsonify({"message": f"Resubmission unlocked for {student_name}!"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to update resubmission status."}), 500

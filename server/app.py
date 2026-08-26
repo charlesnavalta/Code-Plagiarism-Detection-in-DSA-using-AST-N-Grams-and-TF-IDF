@@ -111,14 +111,6 @@ def create_app():
                 db.session.execute(db.text('SELECT 1'))
                 connected = True
                 print("Falsicode: Database connected successfully!")
-                
-                # Auto-ensure resubmission_deadline column exists
-                try:
-                    with db.engine.connect() as conn:
-                        conn.execute(db.text("ALTER TABLE submissions ADD COLUMN IF NOT EXISTS resubmission_deadline TIMESTAMP;"))
-                        conn.commit()
-                except Exception:
-                    pass
                 break
             except Exception as e:
                 retries -= 1

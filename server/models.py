@@ -180,9 +180,8 @@ class Submission(db.Model):
     score = db.Column(db.String(20), nullable=True)
     max_score = db.Column(db.Integer, nullable=True, default=100)
     
-    # 🌟 NEW: The Resubmission Gatekeeper & Deadline
+    # 🌟 NEW: The Resubmission Gatekeeper
     allow_resubmit = db.Column(db.Boolean, default=False)
-    resubmission_deadline = db.Column(db.DateTime, nullable=True)
     
     # File Storage Data
     filename = db.Column(db.String(255), nullable=False)  
@@ -209,7 +208,6 @@ class Submission(db.Model):
             'score': self.score,
             'filename': self.filename,
             'allow_resubmit': self.allow_resubmit, # 🌟 Send this state to React
-            'resubmission_deadline': self.resubmission_deadline.isoformat() if self.resubmission_deadline else None,
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
         }
 

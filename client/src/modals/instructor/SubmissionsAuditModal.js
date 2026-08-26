@@ -13,77 +13,10 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
     const [selectedPair, setSelectedPair] = useState(null);
     const [activeTab, setActiveTab] = useState('submissions'); // 'submissions' | 'report'
     const [gradeInputs, setGradeInputs] = useState({}); 
-    
-    // Dynamic resubmission tracking state { [subId]: { allow_resubmit: bool, resubmission_deadline: string|null } }
-    const [resubmissionMap, setResubmissionMap] = useState({});
-    
-    // Resubmission Deadline Dialog State
-    const [resubmitTarget, setResubmitTarget] = useState(null);
-    const [resubmitDeadlineInput, setResubmitDeadlineInput] = useState('');
-    const [isUpdatingResubmit, setIsUpdatingResubmit] = useState(false);
-
+    const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
     const toast = useToast();
-
-    // Format helper for short dates
-    const formatShortDeadline = (isoString) => {
-        if (!isoString) return 'No Limit';
-        try {
-            const date = new Date(isoString);
-            const isOverdue = new Date() > date;
-            const formatted = date.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            return isOverdue ? `Expired (${formatted})` : formatted;
-        } catch {
-            return 'Invalid Date';
-        }
-    };
-
-    // Helper to get local ISO string for datetime-local input
-    const getLocalDatetimeString = (dateObj) => {
-        const pad = (n) => String(n).padStart(2, '0');
-        const year = dateObj.getFullYear();
-        const month = pad(dateObj.getMonth() + 1);
-        const day = pad(dateObj.getDate());
-        const hours = pad(dateObj.getHours());
-        const minutes = pad(dateObj.getMinutes());
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
-    };
-
-    // Open Resubmission Modal
-    const openResubmitModal = (sub) => {
-        const dynamicState = resubmissionMap[sub.id];
-        const isUnlocked = dynamicState !== undefined ? dynamicState.allow_resubmit : sub.allow_resubmit;
-        const currentDeadline = dynamicState !== undefined ? dynamicState.resubmission_deadline : sub.resubmission_deadline;
-
-        setResubmitTarget({
-            ...sub,
-            allow_resubmit: isUnlocked,
-            resubmission_deadline: currentDeadline
-        });
-
-        if (currentDeadline) {
-            try {
-                setResubmitDeadlineInput(getLocalDatetimeString(new Date(currentDeadline)));
-            } catch {
-                setResubmitDeadlineInput('');
-            }
-        } else {
-            // Default preset: 24 hours from now
-            const defaultDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            setResubmitDeadlineInput(getLocalDatetimeString(defaultDate));
-        }
-    };
-
-    // Apply quick preset to deadline input
-    const applyPreset = (hours) => {
-        if (hours === 0) {
-            setResubmitDeadlineInput('');
-        } else {
-            const targetDate = new Date(Date.now() + hours * 60 * 60 * 1000);
-            setResubmitDeadlineInput(getLocalDatetimeString(targetDate));
-        }
-    };
 
     // Filter Submissions by Search Term
     const filteredSubmissions = useMemo(() => {
@@ -137,68 +70,14 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
         }
     };
 
-    // Save Resubmission Permission (with optional deadline)
-    const handleConfirmResubmit = async () => {
-        if (!resubmitTarget) return;
-        setIsUpdatingResubmit(true);
-
+    // Handler for the Resubmit Button
+    const handleAllowResubmit = async (submissionId) => {
         try {
-            const payload = {
-                allow_resubmit: true,
-                resubmission_deadline: resubmitDeadlineInput ? new Date(resubmitDeadlineInput).toISOString() : null
-            };
-
-            const res = await api.patch(
-                `/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${resubmitTarget.id}/allow-resubmit`,
-                payload
-            );
-
-            toast.success(res.data.message || `Resubmission unlocked for ${resubmitTarget.student_name}!`, "Lock Cleared");
-            
-            setResubmissionMap(prev => ({
-                ...prev,
-                [resubmitTarget.id]: {
-                    allow_resubmit: true,
-                    resubmission_deadline: res.data.resubmission_deadline || (resubmitDeadlineInput ? new Date(resubmitDeadlineInput).toISOString() : null)
-                }
-            }));
-            
-            setResubmitTarget(null);
+            await api.patch(`/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${submissionId}/allow-resubmit`);
+            toast.success("Resubmission unlocked for student!", "Lock Cleared");
+            setUnlockedIds(prev => [...prev, submissionId]); // Instantly updates the UI
         } catch (error) {
-            const msg = error.response?.data?.error || "Failed to update resubmission permission.";
-            toast.error(msg, "Action Failed");
-        } finally {
-            setIsUpdatingResubmit(false);
-        }
-    };
-
-    // Revoke Resubmission Permission
-    const handleRevokeResubmit = async () => {
-        if (!resubmitTarget) return;
-        setIsUpdatingResubmit(true);
-
-        try {
-            const res = await api.patch(
-                `/classrooms/${classroomId}/assignments/${assignmentId}/submissions/${resubmitTarget.id}/allow-resubmit`,
-                { action: 'revoke' }
-            );
-
-            toast.info(res.data.message || `Resubmission revoked for ${resubmitTarget.student_name}.`, "Lock Re-engaged");
-
-            setResubmissionMap(prev => ({
-                ...prev,
-                [resubmitTarget.id]: {
-                    allow_resubmit: false,
-                    resubmission_deadline: null
-                }
-            }));
-
-            setResubmitTarget(null);
-        } catch (error) {
-            const msg = error.response?.data?.error || "Failed to revoke resubmission permission.";
-            toast.error(msg, "Action Failed");
-        } finally {
-            setIsUpdatingResubmit(false);
+            toast.error("Failed to unlock resubmission. Please check your connection.", "Action Failed");
         }
     };
 
@@ -325,15 +204,12 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                         <tbody>
                                             {filteredSubmissions.length > 0 ? (
                                                 filteredSubmissions.map(sub => {
-                                                    const dynState = resubmissionMap[sub.id];
-                                                    const isUnlocked = dynState !== undefined ? dynState.allow_resubmit : Boolean(sub.allow_resubmit);
-                                                    const deadline = dynState !== undefined ? dynState.resubmission_deadline : sub.resubmission_deadline;
-                                                    const isOverdue = deadline && new Date() > new Date(deadline);
-
+                                                    const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
+                                                    
                                                     return (
                                                         <tr key={sub.id} className="submission-card-row">
                                                             <td className="status-cell">
-                                                                <div className={`status-dot ${isUnlocked ? 'orange' : 'yellow'}`}></div>
+                                                                <div className="status-dot yellow"></div>
                                                             </td>
                                                             <td className="td-student">
                                                                 <div className="hud-stu-cell">
@@ -361,21 +237,12 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                                     </div>
                                                                     
                                                                     <button 
-                                                                        className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''} ${isOverdue ? 'overdue' : ''}`} 
-                                                                        onClick={() => openResubmitModal(sub)}
-                                                                        title={isUnlocked ? "Click to view/modify resubmission deadline or lock" : "Click to allow student to resubmit with a deadline"}
-                                                                        type="button"
+                                                                        className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                                        onClick={() => handleAllowResubmit(sub.id)}
+                                                                        disabled={isUnlocked}
+                                                                        title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
                                                                     >
-                                                                        {isUnlocked ? (
-                                                                            <div className="resubmit-btn-inner">
-                                                                                <span className="resubmit-status-text">WAITING</span>
-                                                                                <span className="resubmit-deadline-pill">
-                                                                                    {deadline ? `🕒 ${formatShortDeadline(deadline)}` : '🕒 No Expiry'}
-                                                                                </span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <span>ALLOW RESUBMIT</span>
-                                                                        )}
+                                                                        {isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}
                                                                     </button>
                                                                 </div>
                                                             </td>
@@ -403,10 +270,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                 <div className="mobile-tablet-card-container">
                                     {filteredSubmissions.length > 0 ? (
                                         filteredSubmissions.map(sub => {
-                                            const dynState = resubmissionMap[sub.id];
-                                            const isUnlocked = dynState !== undefined ? dynState.allow_resubmit : Boolean(sub.allow_resubmit);
-                                            const deadline = dynState !== undefined ? dynState.resubmission_deadline : sub.resubmission_deadline;
-                                            const isOverdue = deadline && new Date() > new Date(deadline);
+                                            const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
                                             const hasScore = sub.score && sub.score !== 'Pending';
                                             
                                             return (
@@ -447,19 +311,15 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                         </div>
                                                         
                                                         <button 
-                                                            className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''} ${isOverdue ? 'overdue' : ''}`} 
-                                                            onClick={() => openResubmitModal(sub)}
-                                                            title={isUnlocked ? "Click to view/modify resubmission deadline or lock" : "Click to allow student to resubmit with a deadline"}
-                                                            type="button"
+                                                            className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                            onClick={() => handleAllowResubmit(sub.id)}
+                                                            disabled={isUnlocked}
+                                                            title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
                                                         >
                                                             <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                                             </svg>
-                                                            {isUnlocked ? (
-                                                                <span>WAITING ({deadline ? formatShortDeadline(deadline) : 'No Limit'})</span>
-                                                            ) : (
-                                                                <span>ALLOW RESUBMIT</span>
-                                                            )}
+                                                            <span>{isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -617,93 +477,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                     >
                         {isAnalyzing ? "Processing..." : (analysisResults ? "Re-run Plagiarism Analysis" : "Run Falsicode Analysis")}
                     </button>
-                </div>
-            )}
-
-            {/* 🌟 RESUBMISSION DEADLINE POPUP MODAL */}
-            {resubmitTarget && (
-                <div className="resubmit-dialog-backdrop" onClick={() => !isUpdatingResubmit && setResubmitTarget(null)}>
-                    <div className="resubmit-dialog-card" onClick={(e) => e.stopPropagation()}>
-                        <div className="resubmit-dialog-header">
-                            <div className="resubmit-dialog-icon">
-                                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3>{resubmitTarget.allow_resubmit ? 'Manage Resubmission Window' : 'Allow Student Resubmission'}</h3>
-                                <p className="resubmit-dialog-sub">
-                                    Target: <strong>{resubmitTarget.student_name}</strong> • <code>{resubmitTarget.filename}</code>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="resubmit-dialog-body">
-                            <label className="resubmit-field-label">
-                                Resubmission Deadline (Optional)
-                            </label>
-                            
-                            {/* Preset Buttons */}
-                            <div className="resubmit-presets-row">
-                                <button type="button" className="btn-preset-chip" onClick={() => applyPreset(24)}>+24 Hours</button>
-                                <button type="button" className="btn-preset-chip" onClick={() => applyPreset(48)}>+48 Hours</button>
-                                <button type="button" className="btn-preset-chip" onClick={() => applyPreset(72)}>+3 Days</button>
-                                <button type="button" className="btn-preset-chip" onClick={() => applyPreset(168)}>+1 Week</button>
-                                <button type="button" className="btn-preset-chip no-limit" onClick={() => applyPreset(0)}>No Expiry</button>
-                            </div>
-
-                            <input 
-                                type="datetime-local" 
-                                className="resubmit-datetime-input"
-                                value={resubmitDeadlineInput}
-                                onChange={(e) => setResubmitDeadlineInput(e.target.value)}
-                            />
-
-                            <div className="resubmit-info-box">
-                                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>
-                                    {resubmitDeadlineInput ? (
-                                        <>The student will be permitted to upload a new code file until <strong>{new Date(resubmitDeadlineInput).toLocaleString()}</strong>.</>
-                                    ) : (
-                                        <>No deadline specified. The student can upload a new code file at any time until they submit.</>
-                                    )}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="resubmit-dialog-actions">
-                            {resubmitTarget.allow_resubmit && (
-                                <button 
-                                    type="button" 
-                                    className="btn-revoke-resubmit"
-                                    onClick={handleRevokeResubmit}
-                                    disabled={isUpdatingResubmit}
-                                >
-                                    Revoke Resubmit
-                                </button>
-                            )}
-                            <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-                                <button 
-                                    type="button" 
-                                    className="btn-cancel-resubmit"
-                                    onClick={() => setResubmitTarget(null)}
-                                    disabled={isUpdatingResubmit}
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="btn-confirm-resubmit"
-                                    onClick={handleConfirmResubmit}
-                                    disabled={isUpdatingResubmit}
-                                >
-                                    {isUpdatingResubmit ? "Updating..." : (resubmitTarget.allow_resubmit ? "Save Window" : "Unlock Resubmission")}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             )}
         </BaseModal>
