@@ -4,8 +4,6 @@ import { useTheme } from '../../hooks/useTheme';
 import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import api from '../../services/api'; 
 import './StudentClassroomView.css'; 
-import SubmitFileModal from '../../modals/student/SubmitFileModal';
-import ViewAssignmentModal from '../../modals/student/ViewAssignmentModal';
 
 // Shared Utilities & Components
 import { formatLanguageDisplay } from '../../utils/fileUtils';
@@ -23,10 +21,6 @@ const StudentClassroomView = () => {
     const [loading, setLoading] = useState(true);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
-
-    const [showSubmitModal, setShowSubmitModal] = useState(false);
-    const [activeAssignment, setActiveAssignment] = useState(null);
-    const [viewAssignment, setViewAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,24 +46,6 @@ const StudentClassroomView = () => {
         };
         fetchData();
     }, [id, navigate]);
-
-    const handleOpenSubmission = (assignment) => {
-        const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
-        const isUnlocked = assignment.allow_resubmit;
-        
-        // 🌟 THE FIX: Only block the modal if they are NOT allowed to resubmit
-        if ((assignment.has_submitted && !isUnlocked) || (isOverdue && !isUnlocked)) return; 
-        
-        setActiveAssignment(assignment);
-        setShowSubmitModal(true);
-    };
-
-    const handleSubmissionSuccess = (assignmentId) => {
-        // 🌟 THE FIX: Instantly lock the assignment again locally after a successful resubmit
-        setAssignments(assignments.map(a => 
-            a.id === assignmentId ? { ...a, has_submitted: true, allow_resubmit: false, score: 'Pending' } : a
-        ));
-    };
 
     if (loading) return <ClassroomViewSkeleton role="student" />;
 
@@ -150,16 +126,16 @@ const StudentClassroomView = () => {
                             }
 
                             // Dynamic Button Text
-                            let buttonText = 'Initialize Source File →';
+                            let buttonText = 'Open Workspace & Submit →';
                             if (isUnlocked) buttonText = 'Resubmit Source File →';
-                            else if (isSubmitted) buttonText = 'Your work has been submitted.';
-                            else if (isOverdue) buttonText = 'Deadline Passed';
+                            else if (isSubmitted) buttonText = 'View Submitted Solution →';
+                            else if (isOverdue) buttonText = 'View Assignment (Closed)';
 
                             return (
                                 <div 
                                     key={assignment.id} 
                                     className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''} ${isUnlocked ? 'unlocked-card' : ''}`}
-                                    onClick={() => setViewAssignment(assignment)}
+                                    onClick={() => navigate(`/student/class/${id}/assignment/${assignment.id}`)}
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
@@ -198,12 +174,11 @@ const StudentClassroomView = () => {
                                         </div>
 
                                         <button 
-                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'} ${isUnlocked ? 'btn-pulse' : ''}`} 
+                                            className={`btn-glass-action btn-active ${isUnlocked ? 'btn-pulse' : ''}`} 
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleOpenSubmission(assignment);
+                                                navigate(`/student/class/${id}/assignment/${assignment.id}`);
                                             }}
-                                            disabled={isDisabled}
                                         >
                                             {buttonText}
                                         </button>
@@ -214,20 +189,6 @@ const StudentClassroomView = () => {
                     </div>
                 </main>
             </div>
-
-            <SubmitFileModal 
-                isOpen={showSubmitModal}
-                onClose={() => setShowSubmitModal(false)}
-                assignment={activeAssignment}
-                classroomId={id}
-                onSuccess={handleSubmissionSuccess}
-            />
-
-            <ViewAssignmentModal 
-                isOpen={!!viewAssignment}
-                onClose={() => setViewAssignment(null)}
-                assignment={viewAssignment}
-            />
         </InstructorWrapper>
     );
 };
