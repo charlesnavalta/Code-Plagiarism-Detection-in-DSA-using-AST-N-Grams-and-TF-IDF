@@ -30,9 +30,30 @@ const StudentAssignmentDetail = () => {
             setLoading(true);
             const startTime = Date.now();
             try {
-                const res = await api.get(`/classrooms/${classId}/assignments/${assignmentId}`);
-                setAssignment(res.data);
+                let data = null;
+                try {
+                    const res = await api.get(`/classrooms/${classId}/assignments/${assignmentId}`);
+                    data = res.data;
+                } catch (singleErr) {
+                    // Fallback to bulk classroom data if single endpoint is not yet loaded
+                    const [classRes, listRes] = await Promise.all([
+                        api.get(`/classrooms/${classId}`),
+                        api.get(`/classrooms/${classId}/assignments`)
+                    ]);
+                    const found = listRes.data.find(a => String(a.id) === String(assignmentId));
+                    if (found) {
+                        data = {
+                            ...found,
+                            classroom_name: classRes.data?.name,
+                            instructor_name: classRes.data?.instructor
+                        };
+                    } else {
+                        throw new Error("Assignment not found");
+                    }
+                }
+                setAssignment(data);
             } catch (err) {
+                console.error("Assignment fetch error:", err);
                 toast.error("Could not load assignment details.", "Access Error");
                 navigate(`/student/class/${classId}`);
             } finally {
