@@ -150,16 +150,16 @@ const StudentClassroomView = () => {
                             }
 
                             // Dynamic Button Text
-                            let buttonText = 'Initialize Source File →';
+                            let buttonText = 'Open Workspace & Submit →';
                             if (isUnlocked) buttonText = 'Resubmit Source File →';
-                            else if (isSubmitted) buttonText = 'Your work has been submitted.';
-                            else if (isOverdue) buttonText = 'Deadline Passed';
+                            else if (isSubmitted) buttonText = 'View Submitted Solution →';
+                            else if (isOverdue) buttonText = 'View Assignment (Closed)';
 
                             return (
                                 <div 
                                     key={assignment.id} 
                                     className={`assignment-item-row clickable-row ${isDisabled ? 'locked-card' : ''} ${isUnlocked ? 'unlocked-card' : ''}`}
-                                    onClick={() => setViewAssignment(assignment)}
+                                    onClick={() => navigate(`/student/class/${id}/assignment/${assignment.id}`)}
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
@@ -198,12 +198,11 @@ const StudentClassroomView = () => {
                                         </div>
 
                                         <button 
-                                            className={`btn-glass-action ${isDisabled ? 'btn-disabled' : 'btn-active'} ${isUnlocked ? 'btn-pulse' : ''}`} 
+                                            className={`btn-glass-action btn-active ${isUnlocked ? 'btn-pulse' : ''}`} 
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleOpenSubmission(assignment);
+                                                navigate(`/student/class/${id}/assignment/${assignment.id}`);
                                             }}
-                                            disabled={isDisabled}
                                         >
                                             {buttonText}
                                         </button>
