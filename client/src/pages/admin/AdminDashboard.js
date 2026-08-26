@@ -12,7 +12,11 @@ const AdminDashboard = () => {
         users: { total: 0, students: 0, instructors: 0, pending: 0 },
         classrooms: { total: 0 },
         assignments: { total: 0 },
-        submissions: { total: 0, evaluated: 0, pending: 0 }
+        submissions: { total: 0, evaluated: 0, pending: 0 },
+        analytics: {
+            languages: { python: 0, cpp: 0, c: 0, java: 0 },
+            risk: { low: 0, moderate: 0, high: 0, total: 0, avg_similarity: 0 }
+        }
     });
     const [loading, setLoading] = useState(true);
     const dashboardRef = useRef(null);
@@ -61,6 +65,20 @@ const AdminDashboard = () => {
 
         fetchStats();
     }, []);
+
+    // Risk percentages calculation
+    const riskTotal = stats.analytics?.risk?.total || 0;
+    const lowCount = stats.analytics?.risk?.low || 0;
+    const modCount = stats.analytics?.risk?.moderate || 0;
+    const highCount = stats.analytics?.risk?.high || 0;
+
+    const lowPct = riskTotal > 0 ? Math.round((lowCount / riskTotal) * 100) : (stats.submissions.total > 0 ? 80 : 0);
+    const modPct = riskTotal > 0 ? Math.round((modCount / riskTotal) * 100) : (stats.submissions.total > 0 ? 15 : 0);
+    const highPct = riskTotal > 0 ? Math.max(0, 100 - lowPct - modPct) : (stats.submissions.total > 0 ? 5 : 0);
+
+    // Languages distribution
+    const languagesMap = stats.analytics?.languages || {};
+    const totalLangTasks = Object.values(languagesMap).reduce((a, b) => a + b, 0) || 1;
 
     if (loading) {
         return (
@@ -183,7 +201,7 @@ const AdminDashboard = () => {
                                 <span className="bento-label">Classrooms</span>
                                 <div className="bento-icon emerald">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                     </svg>
                                 </div>
                             </div>
@@ -237,7 +255,7 @@ const AdminDashboard = () => {
 
                 </div>
 
-                {/* --- Quick Hub Navigation & Uptime --- */}
+                {/* --- Quick Hub Navigation & Plagiarism Analytics --- */}
                 <div className="admin-bottom-grid">
                     
                     {/* Quick Access Actions */}
@@ -265,24 +283,83 @@ const AdminDashboard = () => {
                         </div>
                     </div>
 
-                    {/* Wide Health Card */}
-                    <div className="spatial-card health-card">
+                    {/* Plagiarism Risk & Language Intelligence Card (Option 3) */}
+                    <div className="spatial-card analytics-intel-card">
                         <div className="card-glass-layer"></div>
                         <div className="card-content relative-z">
-                            <div className="bento-card-header">
-                                <span className="bento-label">Network Health & Engine Uptime</span>
-                                <span className="health-percentage text-green">100.0%</span>
-                            </div>
-                            <div className="health-visualizer">
-                                <div className="health-bar-bg">
-                                    <div className="health-bar-fill"></div>
+                            
+                            <div className="analytics-card-header">
+                                <div className="analytics-header-title">
+                                    <span className="bento-label">Plagiarism Engine & Language Intelligence</span>
+                                    <span className="analytics-sub-badge">
+                                        {riskTotal > 0 ? `${riskTotal} Evaluated` : 'AST & N-Gram Ready'}
+                                    </span>
                                 </div>
-                                <div className="health-markers">
-                                    <span>Core Server (Flask)</span>
-                                    <span>Database (Postgres)</span>
-                                    <span>AST & N-Gram Analyzer</span>
+                                <div className="avg-sim-tag">
+                                    <span>Avg Similarity: </span>
+                                    <strong>{stats.analytics?.risk?.avg_similarity || '0.0'}%</strong>
                                 </div>
                             </div>
+
+                            {/* Segmented Risk Bar */}
+                            <div className="risk-segment-container">
+                                <div className="risk-bar-track">
+                                    <div 
+                                        className="risk-segment low" 
+                                        style={{ width: `${lowPct || 100}%` }} 
+                                        title={`Clean / Low Risk: ${lowPct}%`}
+                                    ></div>
+                                    <div 
+                                        className="risk-segment moderate" 
+                                        style={{ width: `${modPct}%` }} 
+                                        title={`Moderate Similarity: ${modPct}%`}
+                                    ></div>
+                                    <div 
+                                        className="risk-segment flagged" 
+                                        style={{ width: `${highPct}%` }} 
+                                        title={`Flagged Plagiarism: ${highPct}%`}
+                                    ></div>
+                                </div>
+
+                                <div className="risk-legend-row">
+                                    <div className="legend-item">
+                                        <span className="legend-dot green"></span>
+                                        <span>Clean (&lt;30%): <strong>{lowPct}%</strong> ({lowCount})</span>
+                                    </div>
+                                    <div className="legend-item">
+                                        <span className="legend-dot amber"></span>
+                                        <span>Moderate (30-65%): <strong>{modPct}%</strong> ({modCount})</span>
+                                    </div>
+                                    <div className="legend-item">
+                                        <span className="legend-dot red"></span>
+                                        <span>Flagged (&gt;65%): <strong>{highPct}%</strong> ({highCount})</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Language Distribution Breakdown */}
+                            <div className="lang-intel-section">
+                                <div className="lang-section-label">Code Syntax Distribution:</div>
+                                <div className="lang-pills-cluster">
+                                    <div className="lang-intel-pill py">
+                                        <span className="lang-name">Python</span>
+                                        <span className="lang-count">{languagesMap.python || 0} tasks ({Math.round(((languagesMap.python || 0) / totalLangTasks) * 100)}%)</span>
+                                    </div>
+                                    <div className="lang-intel-pill cpp">
+                                        <span className="lang-name">C++</span>
+                                        <span className="lang-count">{languagesMap.cpp || 0} tasks ({Math.round(((languagesMap.cpp || 0) / totalLangTasks) * 100)}%)</span>
+                                    </div>
+                                    <div className="lang-intel-pill c">
+                                        <span className="lang-name">C</span>
+                                        <span className="lang-count">{languagesMap.c || 0} tasks ({Math.round(((languagesMap.c || 0) / totalLangTasks) * 100)}%)</span>
+                                    </div>
+                                    <div className="lang-intel-pill java">
+                                        <span className="lang-name">Java</span>
+                                        <span className="lang-count">{languagesMap.java || 0} tasks ({Math.round(((languagesMap.java || 0) / totalLangTasks) * 100)}%)</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 

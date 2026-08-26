@@ -253,15 +253,15 @@ html[data-theme='light'] .action-banner-nexus {
     box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
 }
 
-/* BOTTOM SECTION: Quick Hub & Health */
+/* BOTTOM SECTION: Quick Hub & Analytics */
 .admin-bottom-grid {
     display: grid;
-    grid-template-columns: 1fr 1.3fr;
+    grid-template-columns: 1fr 1.4fr;
     gap: 20px;
 }
 
 .hub-actions-card .card-content,
-.health-card .card-content {
+.analytics-intel-card .card-content {
     padding: 24px 28px;
 }
 
@@ -314,48 +314,146 @@ html[data-theme='light'] .quick-pill-btn {
 .pill-arrow { margin-left: auto; color: var(--text-dim); transition: transform 0.2s; }
 .quick-pill-btn:hover .pill-arrow { transform: translateX(3px); color: var(--accent); }
 
-/* Health Monitor */
-.health-percentage {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 800;
-    font-size: 0.88rem;
+/* =========================================
+   OPTION 3: PLAGIARISM RISK & LANGUAGE INTEL
+   ========================================= */
+.analytics-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
 }
 
-.health-visualizer {
-    margin-top: 14px;
+.analytics-header-title {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 4px;
 }
 
-.health-bar-bg {
+.analytics-sub-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.avg-sim-tag {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+}
+.avg-sim-tag strong {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Tri-Color Risk Segmented Bar */
+.risk-segment-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.risk-bar-track {
     width: 100%;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.06);
+    height: 12px;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
     overflow: hidden;
+    display: flex;
+    gap: 2px;
 }
 
-[data-theme='light'] .health-bar-bg,
-html[data-theme='light'] .health-bar-bg {
+[data-theme='light'] .risk-bar-track,
+html[data-theme='light'] .risk-bar-track {
     background: #e2e8f0;
 }
 
-.health-bar-fill {
-    width: 100%;
+.risk-segment {
     height: 100%;
-    background: linear-gradient(90deg, #10b981, #3b82f6);
-    border-radius: 20px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.risk-segment.low { background: #10b981; border-radius: 20px 0 0 20px; }
+.risk-segment.moderate { background: #f59e0b; }
+.risk-segment.flagged { background: #ef4444; border-radius: 0 20px 20px 0; }
 
-.health-markers {
+.risk-legend-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.75rem;
     color: var(--text-dim);
     font-weight: 600;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+.legend-dot.green { background: #10b981; }
+.legend-dot.amber { background: #f59e0b; }
+.legend-dot.red { background: #ef4444; }
+
+/* Language Distribution Section */
+.lang-intel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--border-card);
+    padding-top: 16px;
+}
+
+.lang-section-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+}
+
+.lang-pills-cluster {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.lang-intel-pill {
+    padding: 6px 12px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border: 1px solid var(--border-card);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme='light'] .lang-intel-pill,
+html[data-theme='light'] .lang-intel-pill {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.lang-intel-pill.py { border-color: rgba(59, 130, 246, 0.3); color: #3b82f6; }
+.lang-intel-pill.cpp { border-color: rgba(139, 92, 246, 0.3); color: #8b5cf6; }
+.lang-intel-pill.c { border-color: rgba(6, 182, 212, 0.3); color: #06b6d4; }
+.lang-intel-pill.java { border-color: rgba(245, 158, 11, 0.3); color: #f59e0b; }
+
+.lang-count {
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
 }
 
 /* RESPONSIVENESS */

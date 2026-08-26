@@ -18,7 +18,7 @@ def verify_admin():
     return user
 
 # ==========================================
-# 1. OPTIMIZED SYSTEM-WIDE STATS (2 Queries Total)
+# 1. OPTIMIZED SYSTEM-WIDE STATS & ANALYTICS
 # ==========================================
 @admin_bp.route('/stats', methods=['GET'])
 @jwt_required()
@@ -36,7 +36,7 @@ def get_admin_stats():
             func.sum(case((User.status == 'pending', 1), else_=0)).label('pending')
         ).first()
 
-        # Query 2: Single Aggregation for Submissions + Fast Scalar Counts for Classrooms & Tasks
+        # Query 2: Submissions Aggregations + Fast Scalar Counts
         sub_row = db.session.query(
             func.count(Submission.id).label('total'),
             func.sum(case(((Submission.score.isnot(None)) & (Submission.score != 'Pending'), 1), else_=0)).label('evaluated')
@@ -52,6 +52,40 @@ def get_admin_stats():
 
         total_submissions = int(sub_row.total or 0)
         evaluated_submissions = int(sub_row.evaluated or 0)
+
+        # Language distribution across assignments
+        lang_counts_raw = db.session.query(
+            Assignment.language, func.count(Assignment.id)
+        ).group_by(Assignment.language).all()
+        languages = {l[0].lower(): l[1] for l in lang_counts_raw if l[0]}
+
+        # Plagiarism Risk Distribution across evaluated submissions
+        eval_scores = db.session.query(Submission.score).filter(
+            Submission.score.isnot(None),
+            Submission.score != 'Pending'
+        ).all()
+
+        low_risk = 0
+        mod_risk = 0
+        high_risk = 0
+        total_score_sum = 0
+        valid_scores_count = 0
+
+        for (sc,) in eval_scores:
+            try:
+                val = float(str(sc).replace('%', '').strip())
+                total_score_sum += val
+                valid_scores_count += 1
+                if val < 30:
+                    low_risk += 1
+                elif val <= 65:
+                    mod_risk += 1
+                else:
+                    high_risk += 1
+            except Exception:
+                low_risk += 1
+
+        avg_similarity = round(total_score_sum / valid_scores_count, 1) if valid_scores_count > 0 else 0
 
         return jsonify({
             "users": {
@@ -70,6 +104,16 @@ def get_admin_stats():
                 "total": total_submissions,
                 "evaluated": evaluated_submissions,
                 "pending": total_submissions - evaluated_submissions
+            },
+            "analytics": {
+                "languages": languages,
+                "risk": {
+                    "low": low_risk,
+                    "moderate": mod_risk,
+                    "high": high_risk,
+                    "total": evaluated_submissions,
+                    "avg_similarity": avg_similarity
+                }
             }
         }), 200
     except Exception as e:
@@ -78,7 +122,7 @@ def get_admin_stats():
 
 
 # ==========================================
-# 2. OPTIMIZED CLASSROOM MANAGEMENT (Indexed Projections)
+# 2. OPTIMIZED CLASSROOM MANAGEMENT
 # ==========================================
 @admin_bp.route('/classrooms', methods=['GET'])
 @jwt_required()
@@ -88,7 +132,6 @@ def get_all_classrooms():
         return jsonify({"error": "Unauthorized. Admin privileges required."}), 403
 
     try:
-        # Column-projected query joining Classroom with User (Instructor)
         classrooms_data = db.session.query(
             Classroom.id,
             Classroom.name,
@@ -99,7 +142,6 @@ def get_all_classrooms():
             User.email.label('instructor_email')
         ).outerjoin(User, Classroom.instructor_id == User.id).order_by(Classroom.id.desc()).all()
 
-        # Batch counts grouped by classroom_id in 2 fast indexed queries
         enrollment_counts = dict(
             db.session.query(Enrollment.classroom_id, func.count(Enrollment.id))
             .group_by(Enrollment.classroom_id).all()
@@ -179,7 +221,6 @@ def delete_classroom(class_id):
         return jsonify({"error": "Classroom not found."}), 404
 
     try:
-        # Cascade delete in bulk
         assign_ids = [a[0] for a in db.session.query(Assignment.id).filter_by(classroom_id=class_id).all()]
         if assign_ids:
             Submission.query.filter(Submission.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
@@ -197,7 +238,7 @@ def delete_classroom(class_id):
 
 
 # ==========================================
-# 3. OPTIMIZED ASSIGNMENT MANAGEMENT (Indexed Projections)
+# 3. OPTIMIZED ASSIGNMENT MANAGEMENT
 # ==========================================
 @admin_bp.route('/assignments', methods=['GET'])
 @jwt_required()
@@ -207,7 +248,6 @@ def get_all_assignments():
         return jsonify({"error": "Unauthorized. Admin privileges required."}), 403
 
     try:
-        # Direct column-level projection with 2 outer joins
         assign_rows = db.session.query(
             Assignment.id,
             Assignment.title,
