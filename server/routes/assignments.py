@@ -324,30 +324,76 @@ def delete_assignment(class_id, assignment_id):
 @jwt_required()
 def get_attachment(class_id, attachment_id):
     """Securely serves the guide file for inline viewing or downloading"""
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    raw_identity = get_jwt_identity()
+    user_id = int(raw_identity) if str(raw_identity).isdigit() else raw_identity
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User session invalid."}), 401
 
     if user.role == 'student':
         enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
         if not enrollment:
             return jsonify({"error": "Unauthorized access to classroom files."}), 403
+    elif user.role == 'instructor':
+        classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+        if not classroom:
+            return jsonify({"error": "Unauthorized access to this classroom."}), 403
 
     attachment = AssignmentAttachment.query.get(attachment_id)
     if not attachment:
-        return jsonify({"error": "File not found in database."}), 404
+        return jsonify({"error": "Attachment record not found."}), 404
 
-    if not os.path.exists(attachment.file_path):
-        return jsonify({"error": "Physical file is missing from the server."}), 404
+    # Robust file resolution: check absolute path, then upload directory candidates
+    file_path = attachment.file_path
+    if not os.path.exists(file_path):
+        filename_only = os.path.basename(attachment.file_path)
+        candidates = [
+            os.path.join(current_app.config.get('UPLOAD_FOLDER', 'uploads'), filename_only),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', filename_only),
+            os.path.join(os.getcwd(), 'server', 'uploads', filename_only),
+            os.path.join(os.getcwd(), 'uploads', filename_only),
+            # Also check by original attachment filename
+            os.path.join(current_app.config.get('UPLOAD_FOLDER', 'uploads'), attachment.filename),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', attachment.filename),
+            os.path.join(os.getcwd(), 'server', 'uploads', attachment.filename),
+            os.path.join(os.getcwd(), 'uploads', attachment.filename),
+        ]
+        resolved = None
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                resolved = candidate
+                break
+        if resolved:
+            file_path = resolved
+        else:
+            return jsonify({"error": "Physical attachment file is missing from server storage."}), 404
 
-    # Check if the frontend specifically requested a download
+    # Determine MIME type for correct browser preview
+    ext = os.path.splitext(attachment.filename)[1].lower()
+    mime_map = {
+        '.pdf': 'application/pdf',
+        '.py': 'text/x-python',
+        '.java': 'text/x-java-source',
+        '.cpp': 'text/x-c',
+        '.c': 'text/x-c',
+        '.txt': 'text/plain',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.zip': 'application/zip'
+    }
+    mimetype = mime_map.get(ext, 'application/octet-stream')
+
     is_download = request.args.get('download', 'false').lower() == 'true'
 
     try:
         return send_file(
-            attachment.file_path, 
-            as_attachment=is_download, 
+            file_path,
+            mimetype=mimetype,
+            as_attachment=is_download,
             download_name=attachment.filename
         )
     except Exception as e:
-        print(f"Error serving file: {e}")
-        return jsonify({"error": "Failed to serve file."}), 500
+        print(f"Error serving attachment file: {e}")
+        return jsonify({"error": f"Failed to serve file: {str(e)}"}), 500

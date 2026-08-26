@@ -106,13 +106,62 @@ const StudentAssignmentView = () => {
 
     // Open attached guide file in new tab
     const handleOpenAttachment = async (attachment) => {
+        // Pre-open a blank tab synchronously to prevent browser popup blockers from suppressing it
+        const newTab = window.open('about:blank', '_blank');
+        if (newTab) {
+            newTab.document.write('<p style="font-family:sans-serif;padding:30px;color:#333;">Loading attachment preview...</p>');
+        }
+
         try {
             const response = await api.get(attachment.url, { responseType: 'blob' });
-            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+            // Determine accurate MIME type
+            let contentType = response.data?.type;
+            if (!contentType && response.headers) {
+                contentType = typeof response.headers.get === 'function'
+                    ? response.headers.get('content-type')
+                    : response.headers['content-type'];
+            }
+            if (!contentType || contentType === 'application/octet-stream') {
+                const fname = (attachment.filename || '').toLowerCase();
+                if (fname.endsWith('.pdf')) contentType = 'application/pdf';
+                else if (fname.endsWith('.png')) contentType = 'image/png';
+                else if (fname.endsWith('.jpg') || fname.endsWith('.jpeg')) contentType = 'image/jpeg';
+                else if (fname.endsWith('.py') || fname.endsWith('.txt') || fname.endsWith('.java') || fname.endsWith('.cpp')) contentType = 'text/plain';
+                else contentType = 'application/pdf';
+            }
+
+            const blob = new Blob([response.data], { type: contentType });
             const blobUrl = window.URL.createObjectURL(blob);
-            window.open(blobUrl, '_blank');
+
+            if (newTab && !newTab.closed) {
+                newTab.location.href = blobUrl;
+            } else {
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.target = '_blank';
+                link.download = attachment.filename || 'attachment';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         } catch (error) {
-            toast.error("Failed to securely open the file preview.", "File Preview Error");
+            console.error("Failed to open file preview:", error);
+            if (newTab && !newTab.closed) {
+                newTab.close();
+            }
+
+            let errorMessage = "Failed to securely open the file preview.";
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const text = await error.response.data.text();
+                    const json = JSON.parse(text);
+                    if (json.error) errorMessage = json.error;
+                } catch (_) {}
+            } else if (error.response?.data?.error) {
+                errorMessage = error.response.data.error;
+            }
+            toast.error(errorMessage, "File Preview Error");
         }
     };
 
