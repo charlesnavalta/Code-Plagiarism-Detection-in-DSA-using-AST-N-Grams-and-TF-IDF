@@ -98,7 +98,7 @@ const AdminDashboard = () => {
                     {/* 1. Pending Approvals */}
                     <div 
                         className={`spatial-card bento-card clickable-bento ${stats.users.pending > 0 ? 'needs-action' : ''}`}
-                        onClick={() => navigate('/admin/users')}
+                        onClick={() => navigate('/admin/users?role=pending')}
                     >
                         <div className="card-glass-layer"></div>
                         <div className="card-content bento-inner relative-z">
@@ -124,7 +124,7 @@ const AdminDashboard = () => {
                     {/* 2. Active Students */}
                     <div 
                         className="spatial-card bento-card clickable-bento"
-                        onClick={() => navigate('/admin/users')}
+                        onClick={() => navigate('/admin/users?role=student')}
                     >
                         <div className="card-glass-layer"></div>
                         <div className="card-content bento-inner relative-z">
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
                     {/* 3. Verified Instructors */}
                     <div 
                         className="spatial-card bento-card clickable-bento"
-                        onClick={() => navigate('/admin/users')}
+                        onClick={() => navigate('/admin/users?role=instructor')}
                     >
                         <div className="card-glass-layer"></div>
                         <div className="card-content bento-inner relative-z">

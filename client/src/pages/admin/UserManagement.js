@@ -1,4 +1,5 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useUserCRUD } from '../../hooks/useUserCRUD'; 
 import { useTheme } from '../../hooks/useTheme';
 import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
@@ -11,13 +12,32 @@ const UserManagement = () => {
         approveUser, deleteUser, saveUser 
     } = useUserCRUD();
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const dashboardRef = useRef(null);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
-    // Search and filter state
+    // Search and filter state (synced with URL query param ?role=...)
     const [searchTerm, setSearchTerm] = useState('');
-    const [roleFilter, setRoleFilter] = useState('all');
+    const [roleFilter, setRoleFilter] = useState(searchParams.get('role') || 'all');
+
+    useEffect(() => {
+        const queryRole = searchParams.get('role');
+        if (queryRole && ['all', 'pending', 'student', 'instructor'].includes(queryRole)) {
+            setRoleFilter(queryRole);
+        } else if (!queryRole) {
+            setRoleFilter('all');
+        }
+    }, [searchParams]);
+
+    const handleRoleFilterSelect = (selectedRole) => {
+        setRoleFilter(selectedRole);
+        if (selectedRole === 'all') {
+            setSearchParams({});
+        } else {
+            setSearchParams({ role: selectedRole });
+        }
+    };
 
     // UI State for Modals
     const [showModal, setShowModal] = useState(false);
@@ -125,25 +145,25 @@ const UserManagement = () => {
                     <div className="admin-filter-pills">
                         <button 
                             className={`filter-pill ${roleFilter === 'all' ? 'active' : ''}`}
-                            onClick={() => setRoleFilter('all')}
+                            onClick={() => handleRoleFilterSelect('all')}
                         >
                             All ({users.length})
                         </button>
                         <button 
                             className={`filter-pill ${roleFilter === 'pending' ? 'active' : ''}`}
-                            onClick={() => setRoleFilter('pending')}
+                            onClick={() => handleRoleFilterSelect('pending')}
                         >
                             Pending ({users.filter(u => u.status === 'pending').length})
                         </button>
                         <button 
                             className={`filter-pill ${roleFilter === 'student' ? 'active' : ''}`}
-                            onClick={() => setRoleFilter('student')}
+                            onClick={() => handleRoleFilterSelect('student')}
                         >
                             Students ({users.filter(u => u.role === 'student' && u.status !== 'pending').length})
                         </button>
                         <button 
                             className={`filter-pill ${roleFilter === 'instructor' ? 'active' : ''}`}
-                            onClick={() => setRoleFilter('instructor')}
+                            onClick={() => handleRoleFilterSelect('instructor')}
                         >
                             Instructors ({users.filter(u => u.role === 'instructor' && u.status !== 'pending').length})
                         </button>
