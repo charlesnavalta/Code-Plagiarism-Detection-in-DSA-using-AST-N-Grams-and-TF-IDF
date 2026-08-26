@@ -10,7 +10,8 @@
     --main-bg: #030712;
     
     display: flex;
-    min-height: calc(100vh - 65px);
+    min-height: 100vh;
+    padding-top: 65px;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     transition: background 0.4s ease;
 }
