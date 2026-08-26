@@ -36,11 +36,35 @@ const AssignmentManagement = () => {
         setLoading(true);
         const startTime = Date.now();
         try {
-            const res = await api.get('/admin/assignments');
-            setAssignments(res.data || []);
+            let taskList = [];
+            try {
+                const res = await api.get('/admin/assignments');
+                taskList = res.data || [];
+            } catch (assignErr) {
+                console.warn("Retrying assignments with fallback endpoint:", assignErr);
+                try {
+                    const classRes = await api.get('/classrooms');
+                    const classes = classRes.data || [];
+                    const allTasks = [];
+                    for (const cls of classes) {
+                        try {
+                            const taskRes = await api.get(`/classrooms/${cls.id}/assignments`);
+                            for (const t of (taskRes.data || [])) {
+                                allTasks.push({
+                                    ...t,
+                                    classroom_name: cls.name,
+                                    classroom_invite_code: cls.invite_code,
+                                    instructor_name: cls.instructor_name || 'Instructor'
+                                });
+                            }
+                        } catch (_) {}
+                    }
+                    taskList = allTasks;
+                } catch (_) {}
+            }
+            setAssignments(taskList);
         } catch (error) {
             console.error("Error loading assignments management data:", error);
-            toast.error("Failed to load assignments list.", "Data Error");
         } finally {
             const elapsed = Date.now() - startTime;
             const minDelay = 350;

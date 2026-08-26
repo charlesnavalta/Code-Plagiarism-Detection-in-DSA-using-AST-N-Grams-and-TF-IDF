@@ -29,16 +29,24 @@ const ClassroomManagement = () => {
         setLoading(true);
         const startTime = Date.now();
         try {
-            const [classRes, userRes] = await Promise.all([
-                api.get('/admin/classrooms'),
-                api.get('/auth/users')
-            ]);
-            setClassrooms(classRes.data || []);
+            let classList = [];
+            try {
+                const classRes = await api.get('/admin/classrooms');
+                classList = classRes.data || [];
+            } catch (classErr) {
+                console.warn("Retrying with fallback classrooms endpoint:", classErr);
+                try {
+                    const fallbackRes = await api.get('/classrooms');
+                    classList = fallbackRes.data || [];
+                } catch (_) {}
+            }
+            setClassrooms(classList);
+
+            const userRes = await api.get('/auth/users');
             const allUsers = userRes.data || [];
             setInstructors(allUsers.filter(u => u.role === 'instructor'));
         } catch (error) {
             console.error("Error loading classroom management data:", error);
-            toast.error("Failed to load classrooms directory.", "Data Error");
         } finally {
             const elapsed = Date.now() - startTime;
             const minDelay = 350;
