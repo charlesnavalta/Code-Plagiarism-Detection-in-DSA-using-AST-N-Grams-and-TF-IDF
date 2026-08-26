@@ -1,8 +1,8 @@
 /* src/pages/student/StudentAssignmentView.css */
 
 .assignment-view-container {
-    min-height: 100vh;
-    padding-top: 30px;
+    min-height: calc(100vh - 65px);
+    padding-top: 28px;
     padding-bottom: 80px;
     padding-left: 24px;
     padding-right: 24px;
