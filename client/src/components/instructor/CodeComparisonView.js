@@ -63,7 +63,16 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     };
 
     const renderASTStream = (xaiData) => {
-        if (!xaiData || xaiData.length === 0) return <div className="empty-ast">No structural tokens extracted. Please check backend configuration.</div>;
+        if (!xaiData || xaiData.length === 0) {
+            return (
+                <div className="empty-ast">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginBottom: '8px', opacity: 0.6 }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                    <span>No structural AST tokens extracted.</span>
+                </div>
+            );
+        }
         
         return (
             <div className="ast-pattern-stream">
@@ -72,34 +81,39 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     const { categoryLabel, badgeColor, badgeBg } = getASTBadgeStyle(realWeight, patternIndex, xaiData.length);
 
                     return (
-                        <div key={`pattern-${patternIndex}`} className="ngram-pattern-box" style={{ borderLeft: `3px solid ${badgeColor}` }}>
+                        <div key={`pattern-${patternIndex}`} className="ngram-pattern-card">
+                            {/* Sleek Sequence Header */}
                             <div className="pattern-header-row">
-                                <div className="pattern-title-wrap">
-                                    <div className="pattern-header">Logical Sequence {patternIndex + 1}</div>
-                                    <div className="pattern-subtitle" style={{ color: badgeColor }}>
+                                <div className="pattern-meta-left">
+                                    <span className="sequence-badge">Sequence #{patternIndex + 1}</span>
+                                    <span className="category-status-pill" style={{ color: badgeColor, backgroundColor: badgeBg }}>
+                                        <span className="category-status-dot" style={{ backgroundColor: badgeColor }}></span>
                                         {categoryLabel}
-                                    </div>
+                                    </span>
                                 </div>
-                                <div className="pattern-weight-badge" style={{ color: badgeColor, backgroundColor: badgeBg, borderColor: badgeBg }}>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '6px'}}>
-                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                <div className="pattern-weight-chip">
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
-                                    TF-IDF Weight: {realWeight}
+                                    <span>TF-IDF: <strong>{realWeight}</strong></span>
                                 </div>
                             </div>
                             
+                            {/* Connected AST Flow Pipeline */}
                             <div className="pattern-tokens-container">
                                 {patternData.sequence.map((token, tokenIndex) => (
                                     <React.Fragment key={`token-${patternIndex}-${tokenIndex}`}>
-                                        <div className="ast-token-pill">
-                                            <span className="token-index">{patternIndex + tokenIndex + 1}</span>
+                                        <div className="ast-token-chip">
+                                            <span className="token-step">{tokenIndex + 1}</span>
                                             <span className="token-name">{token}</span>
                                         </div>
                                         
                                         {tokenIndex < patternData.sequence.length - 1 && (
-                                            <svg className="pattern-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                            </svg>
+                                            <div className="pattern-flow-arrow">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                </svg>
+                                            </div>
                                         )}
                                     </React.Fragment>
                                 ))}
