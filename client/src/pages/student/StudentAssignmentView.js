@@ -75,9 +75,11 @@ const StudentAssignmentView = () => {
     const displayLanguage = assignment ? formatLanguageDisplay(assignment.language) : 'Python';
     const isOverdue = assignment?.deadline && new Date() > new Date(assignment.deadline);
     const isSubmitted = assignment?.has_submitted;
-    const isUnlocked = assignment?.allow_resubmit;
-    const isLocked = isSubmitted && !isUnlocked;
-    const isPastDeadline = isOverdue && !isSubmitted && !isUnlocked;
+    const isUnlocked = Boolean(assignment?.allow_resubmit);
+    const isResubmitExpired = isUnlocked && assignment?.resubmission_deadline && new Date() > new Date(assignment.resubmission_deadline);
+    const isEffectiveUnlocked = isUnlocked && !isResubmitExpired;
+    const isLocked = isSubmitted && !isEffectiveUnlocked;
+    const isPastDeadline = (isOverdue && !isSubmitted && !isEffectiveUnlocked) || isResubmitExpired;
 
     // File selection handlers
     const handleFileChange = (e) => {
@@ -180,20 +182,26 @@ const StudentAssignmentView = () => {
         formData.append('file', selectedFile);
 
         try {
-            await api.post(`/classrooms/${classId}/assignments/${assignment.id}/submit`, formData);
-            toast.success("Assignment submitted successfully!", "Deployment Complete");
+            const res = await api.post(`/classrooms/${classId}/assignments/${assignmentId}/submissions`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             
+            toast.success(res.data.message || "Assignment solution submitted successfully!", "Upload Complete");
+            setSelectedFile(null);
+            
+            // Reload assignment data to update locked UI status
             setAssignment(prev => ({
                 ...prev,
                 has_submitted: true,
-                allow_resubmit: false,
                 score: 'Pending',
+                submitted_at: res.data.submitted_at || new Date().toISOString(),
                 submitted_filename: selectedFile.name,
-                submitted_at: new Date().toISOString()
+                allow_resubmit: false,
+                resubmission_deadline: null
             }));
-            setSelectedFile(null);
-        } catch (error) {
-            toast.error("Upload failed: " + (error.response?.data?.error || error.message), "Submission Error");
+        } catch (err) {
+            const serverMsg = err.response?.data?.error || "Failed to submit assignment. Please verify your file and try again.";
+            toast.error(serverMsg, "Submission Error");
         } finally {
             setIsSubmitting(false);
         }
@@ -232,8 +240,10 @@ const StudentAssignmentView = () => {
                         </button>
                         
                         <div className="view-nav-status-badge">
-                            {isUnlocked ? (
-                                <span className="badge-view-unlocked">Resubmission Unlocked</span>
+                            {isEffectiveUnlocked ? (
+                                <span className="badge-view-unlocked">⚡ Resubmission Active</span>
+                            ) : isResubmitExpired ? (
+                                <span className="badge-view-overdue">Resubmit Window Expired</span>
                             ) : isSubmitted ? (
                                 <span className="badge-view-submitted">✓ Submitted</span>
                             ) : isOverdue ? (
@@ -299,18 +309,18 @@ const StudentAssignmentView = () => {
                                         {assignment.attachments.map(att => (
                                             <button 
                                                 key={att.id} 
-                                                className="view-attachment-button"
+                                                className="btn-attachment-item"
                                                 onClick={() => handleOpenAttachment(att)}
-                                                title={`Open ${att.filename}`}
+                                                type="button"
                                             >
-                                                <div className="attachment-file-icon">
+                                                <div className="att-file-icon">
                                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                     </svg>
                                                 </div>
-                                                <div className="attachment-meta-info">
-                                                    <strong className="attachment-title-text">{att.filename}</strong>
-                                                    <span className="attachment-action-text">Preview Document ↗</span>
+                                                <div className="att-file-info">
+                                                    <span className="att-file-name">{att.filename}</span>
+                                                    <span className="att-action-tag">Open in New Tab ↗</span>
                                                 </div>
                                             </button>
                                         ))}
@@ -367,23 +377,49 @@ const StudentAssignmentView = () => {
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                             </svg>
-                                            <span>Submission is locked. If you need to make changes, please contact your instructor to unlock resubmission.</span>
+                                            {isResubmitExpired ? (
+                                                <span>Your resubmission window expired on {new Date(assignment.resubmission_deadline).toLocaleString()}. Upload is locked.</span>
+                                            ) : (
+                                                <span>Submission is locked. If you need to make changes, please contact your instructor to unlock resubmission.</span>
+                                            )}
                                         </div>
                                     </div>
                                 ) : isPastDeadline ? (
-                                    /* Case 2: Deadline Passed without submission */
+                                    /* Case 2: Deadline Passed without submission or resubmission expired */
                                     <div className="submission-overdue-box">
                                         <div className="overdue-icon-circle">✕</div>
-                                        <h4>Assignment Deadline Passed</h4>
-                                        <p>The submission window for this assignment has closed. Please reach out to your instructor.</p>
+                                        <h4>{isResubmitExpired ? 'Resubmission Window Expired' : 'Assignment Deadline Passed'}</h4>
+                                        <p>
+                                            {isResubmitExpired
+                                                ? `The resubmission window granted by your instructor closed on ${new Date(assignment.resubmission_deadline).toLocaleString()}.`
+                                                : 'The submission window for this assignment has closed. Please reach out to your instructor.'}
+                                        </p>
                                     </div>
                                 ) : (
                                     /* Case 3: Ready to Submit / Resubmission Unlocked */
                                     <form onSubmit={handleSubmit} className="submission-upload-form">
                                         
-                                        {isUnlocked && (
+                                        {isEffectiveUnlocked && (
                                             <div className="resubmit-alert-banner">
-                                                <strong>Resubmission Active:</strong> Your instructor has unlocked this task. Uploading a new file will replace your previous submission.
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '6px' }}>
+                                                    <strong>⚡ Resubmission Active</strong>
+                                                    {assignment.resubmission_deadline && (
+                                                        <span style={{ 
+                                                            fontSize: '0.75rem', 
+                                                            fontWeight: '700', 
+                                                            background: 'rgba(245, 158, 11, 0.25)', 
+                                                            color: '#f59e0b',
+                                                            padding: '2px 8px', 
+                                                            borderRadius: '6px',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: '4px'
+                                                        }}>
+                                                            🕒 Due: {new Date(assignment.resubmission_deadline).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <span>Your instructor has unlocked this task. Uploading a new file will replace your previous submission.</span>
                                             </div>
                                         )}
 

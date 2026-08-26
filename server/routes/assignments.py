@@ -153,6 +153,7 @@ def get_assignments(class_id):
             "score": None,
             "submitted_at": None,
             "allow_resubmit": False,
+            "resubmission_deadline": None,
             "attachments": attach_map.get(a.id, [])
         }
 
@@ -162,6 +163,7 @@ def get_assignments(class_id):
             assignment_info["score"] = getattr(sub, 'score', 'Pending')
             assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
             assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
+            assignment_info["resubmission_deadline"] = sub.resubmission_deadline.isoformat() if getattr(sub, 'resubmission_deadline', None) else None
 
         assignments_data.append(assignment_info)
         
@@ -215,6 +217,7 @@ def get_assignment(class_id, assignment_id):
         "submitted_at": None,
         "submitted_filename": None,
         "allow_resubmit": False,
+        "resubmission_deadline": None,
         "attachments": attach_list
     }
 
@@ -226,6 +229,7 @@ def get_assignment(class_id, assignment_id):
             assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
             assignment_info["submitted_filename"] = getattr(sub, 'filename', None)
             assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
+            assignment_info["resubmission_deadline"] = sub.resubmission_deadline.isoformat() if getattr(sub, 'resubmission_deadline', None) else None
 
     return jsonify(assignment_info), 200
 
