@@ -35,6 +35,8 @@ import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
+import ClassroomManagement from './pages/admin/ClassroomManagement';
+import AssignmentManagement from './pages/admin/AssignmentManagement';
 
 function AppContent() {
   useTheme();
@@ -114,6 +116,8 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<AdminDash />} />
                 <Route path="users" element={<UserManagement />} />
+                <Route path="classrooms" element={<ClassroomManagement />} />
+                <Route path="assignments" element={<AssignmentManagement />} />
                 <Route path="profile" element={<Profile />} />
               </Routes>
             </AdminLayout>

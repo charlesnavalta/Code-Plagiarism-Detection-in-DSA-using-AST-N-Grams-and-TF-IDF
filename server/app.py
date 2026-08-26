@@ -19,6 +19,7 @@ from routes.auth import auth_bp
 from routes.classrooms import classrooms_bp
 from routes.assignments import assignments_bp
 from routes.submissions import submissions_bp
+from routes.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
@@ -155,6 +156,7 @@ def create_app():
     app.register_blueprint(classrooms_bp, url_prefix='/api/classrooms')
     app.register_blueprint(assignments_bp, url_prefix='/api/classrooms')
     app.register_blueprint(submissions_bp, url_prefix='/api/classrooms')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
 
     return app
 
