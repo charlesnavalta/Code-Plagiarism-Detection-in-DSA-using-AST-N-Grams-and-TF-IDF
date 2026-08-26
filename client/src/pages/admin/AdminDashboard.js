@@ -27,11 +27,15 @@ const AdminDashboard = () => {
                 const res = await api.get('/admin/stats');
                 setStats(res.data);
             } catch (error) {
-                console.error("Critical error fetching dashboard statistics:", error);
-                // Fallback to /auth/users if /admin/stats is not available yet
+                // Seamless fallback to /auth/users and /classrooms while backend finishes deploying
                 try {
-                    const fallbackRes = await api.get('/auth/users');
-                    const users = fallbackRes.data || [];
+                    const [userRes, classRes] = await Promise.allSettled([
+                        api.get('/auth/users'),
+                        api.get('/classrooms')
+                    ]);
+                    const users = (userRes.status === 'fulfilled' && userRes.value?.data) ? userRes.value.data : [];
+                    const classes = (classRes.status === 'fulfilled' && classRes.value?.data) ? classRes.value.data : [];
+
                     setStats(prev => ({
                         ...prev,
                         users: {
@@ -39,6 +43,9 @@ const AdminDashboard = () => {
                             students: users.filter(u => u.role === 'student').length,
                             instructors: users.filter(u => u.role === 'instructor' && u.status === 'active').length,
                             pending: users.filter(u => u.status === 'pending').length
+                        },
+                        classrooms: {
+                            total: classes.length
                         }
                     }));
                 } catch (_) {}
