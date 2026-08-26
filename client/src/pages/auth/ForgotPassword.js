@@ -11,6 +11,13 @@ import AuthButton from '../../components/auth/shared/AuthButton';
 import './Login.css'; // Reuses the shared split-layout from Login
 import './ForgotPassword.css';
 
+// Email format validation helper
+const isValidEmailFormat = (input) => {
+    if (!input || typeof input !== 'string') return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(input.trim());
+};
+
 const ForgotPassword = () => {
     const [step, setStep] = useState(1); 
     const [email, setEmail] = useState(''); 
@@ -36,6 +43,12 @@ const ForgotPassword = () => {
         const trimmed = (email || '').trim();
         if (!trimmed) {
             toast.warning("Please enter your registered username or email address.", "Input Required");
+            return;
+        }
+
+        // If user is entering an email (contains @), ensure it's valid format
+        if (trimmed.includes('@') && !isValidEmailFormat(trimmed)) {
+            toast.error("Please enter a valid email address (e.g. name@gmail.com or name@example.com).", "Invalid Email Format");
             return;
         }
 

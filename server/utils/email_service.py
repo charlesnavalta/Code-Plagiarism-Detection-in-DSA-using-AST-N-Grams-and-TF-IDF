@@ -106,6 +106,11 @@ def send_via_brevo(api_key, sender_email, to_email, subject, html_body, text_bod
 
 def send_otp_email(to_email, code, intent="registration"):
     """Sends a styled 6-digit HTML code via HTTPS API or direct SMTP. Works in both localhost & production."""
+    to_email = (to_email or '').strip()
+    # Fast sanity check to avoid slow DNS/SMTP timeouts on invalid emails
+    if not to_email or '@' not in to_email or '.' not in to_email.split('@')[-1] or len(to_email.split('@')[-1].split('.')[-1]) < 2:
+        return False, "Invalid recipient email address format."
+
     resend_key = (os.environ.get('RESEND_API_KEY') or '').strip()
     brevo_key = (os.environ.get('BREVO_API_KEY') or '').strip()
     
@@ -226,9 +231,9 @@ If you did not request this verification code, you can safely ignore this email.
         msg.attach(part_html)
 
         last_smtp_err = ""
-        # Try Port 587 with STARTTLS
+        # Try Port 587 with STARTTLS (fast 5s timeout)
         try:
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=5)
             server.ehlo()
             if smtp_port == 587:
                 server.starttls()
@@ -242,7 +247,7 @@ If you did not request this verification code, you can safely ignore this email.
             last_smtp_err = str(e_smtp)
             print(f"[Falsicode Auth Notice] SMTP {smtp_port} failed ({e_smtp}), trying SSL Port 465 fallback...", flush=True)
             try:
-                server_ssl = smtplib.SMTP_SSL(smtp_host, 465, timeout=10)
+                server_ssl = smtplib.SMTP_SSL(smtp_host, 465, timeout=5)
                 server_ssl.ehlo()
                 server_ssl.login(sender_email, sender_password)
                 server_ssl.send_message(msg)

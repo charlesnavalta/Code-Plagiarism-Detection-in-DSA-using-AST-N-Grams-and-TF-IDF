@@ -9,6 +9,13 @@ import AuthInput from '../../components/auth/shared/AuthInput';
 import AuthButton from '../../components/auth/shared/AuthButton';
 import TermsAndPrivacyModal from '../../modals/shared/TermsAndPrivacyModal';
 
+// Email format validation: requires user@domain.tld (e.g. name@gmail.com or user@example.com)
+const isValidEmail = (email) => {
+    if (!email || typeof email !== 'string') return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email.trim());
+};
+
 const Register = () => {
     const [formData, setFormData] = useState({ 
         username: '', 
@@ -65,6 +72,10 @@ const Register = () => {
             toast.warning("Please enter an email address first.", "Email Required");
             return;
         }
+        if (!isValidEmail(trimmedEmail)) {
+            toast.error("Please enter a valid email address (e.g. name@gmail.com or name@example.com).", "Invalid Email Format");
+            return;
+        }
         setSendingCode(true);
         try {
             const data = await authService.requestCode(trimmedEmail);
@@ -81,6 +92,17 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const trimmedUsername = (formData.username || '').trim();
+        const trimmedEmail = (formData.email || '').trim().toLowerCase();
+
+        if (!trimmedUsername) {
+            toast.warning("Please enter a username.", "Validation Error");
+            return;
+        }
+        if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
+            toast.error("Please enter a valid email address (e.g. name@gmail.com or name@example.com).", "Invalid Email Format");
+            return;
+        }
         if (formData.password !== formData.confirmPassword) {
             toast.error("Passwords do not match. Please verify.", "Validation Error");
             return;
@@ -102,8 +124,8 @@ const Register = () => {
         const startTime = Date.now();
         try {
             await authService.register({
-                username: formData.username.trim(),
-                email: formData.email.trim().toLowerCase(),
+                username: trimmedUsername,
+                email: trimmedEmail,
                 password: formData.password,
                 role: formData.role,
                 code: formData.code.trim()

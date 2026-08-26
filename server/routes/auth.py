@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from database import db
 from models import User
@@ -6,6 +7,29 @@ from datetime import datetime, timedelta
 from utils.email_service import generate_6_digit_code, send_otp_email
 
 auth_bp = Blueprint('auth', __name__)
+
+# Strict email regex requiring user@domain.tld
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+
+def is_valid_email_format(email_str):
+    """Validates email format strictly to prevent slow SMTP timeouts on malformed addresses."""
+    if not email_str or not isinstance(email_str, str):
+        return False
+    email_str = email_str.strip().lower()
+    if len(email_str) < 5 or len(email_str) > 254:
+        return False
+    if not EMAIL_REGEX.match(email_str):
+        return False
+    parts = email_str.split('@')
+    if len(parts) != 2:
+        return False
+    domain = parts[1]
+    if '.' not in domain or domain.startswith('.') or domain.endswith('.'):
+        return False
+    tld = domain.split('.')[-1]
+    if len(tld) < 2:
+        return False
+    return True
 
 # In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
 PENDING_REGISTRATIONS = {}
@@ -25,6 +49,9 @@ def request_code():
 
         if not email:
             return jsonify({"error": "Email is required"}), 400
+
+        if not is_valid_email_format(email):
+            return jsonify({"error": "Invalid email format. Please enter a valid email address (e.g. name@gmail.com or user@example.com)."}), 400
 
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
@@ -66,6 +93,9 @@ def register():
     
     if not username or not email or not password:
         return jsonify({"error": "Username, email, and password are required fields."}), 400
+
+    if not is_valid_email_format(email):
+        return jsonify({"error": "Invalid email format. Please enter a valid email address (e.g. name@gmail.com or user@example.com)."}), 400
 
     if not code:
         return jsonify({"error": "Please enter the 6-digit verification code sent to your email."}), 400
@@ -537,8 +567,8 @@ def request_email_update():
     new_email = (data.get('new_email') or '').strip().lower()
     password = (data.get('password') or '').strip()
 
-    if not new_email or '@' not in new_email or '.' not in new_email:
-        return jsonify({"error": "Please enter a valid email address."}), 400
+    if not is_valid_email_format(new_email):
+        return jsonify({"error": "Invalid email format. Please enter a valid email address (e.g. name@gmail.com or user@example.com)."}), 400
 
     if not password:
         return jsonify({"error": "Current password is required to request an email change."}), 400
