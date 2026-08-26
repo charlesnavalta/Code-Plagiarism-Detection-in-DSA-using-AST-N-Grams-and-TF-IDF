@@ -220,7 +220,11 @@ const AssignmentManagement = () => {
                         <div className="table-responsive-wrapper">
                             {filteredAssignments.length === 0 ? (
                                 <div className="empty-card" style={{ padding: '60px 20px' }}>
-                                    <div className="empty-icon">📝</div>
+                                    <div className="empty-icon" style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px', color: 'var(--text-dim)' }}>
+                                        <svg width="44" height="44" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                        </svg>
+                                    </div>
                                     <h3>No assignments found</h3>
                                     <p>Try resetting search keywords or language filters.</p>
                                 </div>
@@ -246,7 +250,11 @@ const AssignmentManagement = () => {
                                                     {/* Task Title & ID */}
                                                     <td>
                                                         <div className="task-title-cell">
-                                                            <div className="task-icon-box">📝</div>
+                                                            <div className="task-icon-box">
+                                                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                                </svg>
+                                                            </div>
                                                             <div>
                                                                 <strong className="task-main-title">{a.title}</strong>
                                                                 <span className="task-id-sub">Task #{a.id}</span>
@@ -415,7 +423,11 @@ const AssignmentManagement = () => {
                     <div className="spatial-card admin-modal-card delete-warning-modal">
                         <div className="card-glass-layer"></div>
                         <div className="card-content relative-z" style={{ padding: '28px' }}>
-                            <div className="delete-icon-alert">⚠️</div>
+                            <div className="delete-icon-alert">
+                                <svg width="36" height="36" fill="none" stroke="#ef4444" viewBox="0 0 24 24" style={{ margin: '0 auto 12px' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
                             <h3>Delete Assignment Confirmation</h3>
                             <p className="delete-warning-text">
                                 Are you sure you want to permanently delete <strong>"{activeAssignment.title}"</strong>?
