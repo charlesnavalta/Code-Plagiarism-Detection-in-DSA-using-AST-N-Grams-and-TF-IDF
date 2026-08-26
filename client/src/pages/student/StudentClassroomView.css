@@ -155,7 +155,7 @@ html[data-theme='light'] .badge-pending,
 html[data-theme='light'] .assignment-item-row h3,
 .student-layout.light .assignment-item-row h3 { color: #0f172a; }
 
-.assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+.assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
 [data-theme='light'] .assignment-item-row p,
 html[data-theme='light'] .assignment-item-row p,
 .student-layout.light .assignment-item-row p { color: #64748b; }

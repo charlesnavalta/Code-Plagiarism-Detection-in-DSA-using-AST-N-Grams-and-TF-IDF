@@ -94,7 +94,7 @@
 
 .task-id { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 8px; }
 .assignment-item-row h3 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--text-main); }
-.assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+.assignment-item-row p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
 
 .assignment-meta-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .assignment-meta-top .task-id { font-family: 'Inter', system-ui, sans-serif; font-size: 0.7rem; color: var(--accent); background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 4px 10px; border-radius: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 0; display: inline-flex; align-items: center; }
