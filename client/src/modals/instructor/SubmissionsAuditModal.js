@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import api from '../../services/api'; 
 import { useToast } from '../../context/NotificationContext';
 import CodeComparisonView from '../../components/instructor/CodeComparisonView'; 
@@ -14,7 +14,42 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
     const [activeTab, setActiveTab] = useState('submissions'); // 'submissions' | 'report'
     const [gradeInputs, setGradeInputs] = useState({}); 
     const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterType, setFilterType] = useState('all');
     const toast = useToast();
+
+    // Filter Submissions by Search Term
+    const filteredSubmissions = useMemo(() => {
+        if (!searchTerm.trim()) return submissions;
+        const query = searchTerm.toLowerCase().trim();
+        return submissions.filter(sub => 
+            (sub.student_name && sub.student_name.toLowerCase().includes(query)) ||
+            (sub.filename && sub.filename.toLowerCase().includes(query)) ||
+            (sub.score && String(sub.score).toLowerCase().includes(query))
+        );
+    }, [submissions, searchTerm]);
+
+    // Filter Plagiarism Report by Search Term & Type Filter
+    const filteredResults = useMemo(() => {
+        if (!analysisResults) return [];
+        let results = analysisResults;
+
+        if (filterType !== 'all') {
+            results = results.filter(r => r.plagiarism_type && r.plagiarism_type.includes(filterType));
+        }
+
+        if (searchTerm.trim()) {
+            const query = searchTerm.toLowerCase().trim();
+            results = results.filter(r => 
+                (r.file1 && r.file1.toLowerCase().includes(query)) ||
+                (r.file2 && r.file2.toLowerCase().includes(query)) ||
+                (r.plagiarism_type && r.plagiarism_type.toLowerCase().includes(query)) ||
+                (String(r.score).includes(query))
+            );
+        }
+
+        return results;
+    }, [analysisResults, searchTerm, filterType]);
 
     if (!isOpen) {
         if (selectedPair) setSelectedPair(null);
@@ -62,39 +97,99 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
             customClass="wide-hud"
         >
             {!selectedPair && (
-                <div className="audit-segmented-tabs">
-                    <button 
-                        className={`audit-tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('submissions')}
-                        type="button"
-                    >
-                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Submissions</span>
-                        <span className="tab-badge-count">{submissions.length}</span>
-                    </button>
-                    <button 
-                        className={`audit-tab-btn ${activeTab === 'report' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('report')}
-                        type="button"
-                    >
-                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        <span>Plagiarism Report</span>
-                        {analysisResults && (
-                            <span className={`tab-badge-count ${analysisResults.length > 0 ? 'alert' : 'clean'}`}>
-                                {analysisResults.length}
-                            </span>
+                <>
+                    {/* Segmented Tabs */}
+                    <div className="audit-segmented-tabs">
+                        <button 
+                            className={`audit-tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
+                            onClick={() => { setActiveTab('submissions'); setSearchTerm(''); }}
+                            type="button"
+                        >
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span>Submissions</span>
+                            <span className="tab-badge-count">{submissions.length}</span>
+                        </button>
+                        <button 
+                            className={`audit-tab-btn ${activeTab === 'report' ? 'active' : ''}`}
+                            onClick={() => { setActiveTab('report'); setSearchTerm(''); }}
+                            type="button"
+                        >
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Plagiarism Report</span>
+                            {analysisResults && (
+                                <span className={`tab-badge-count ${analysisResults.length > 0 ? 'alert' : 'clean'}`}>
+                                    {analysisResults.length}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* 🔍 Search & Filter Toolbar */}
+                    <div className="audit-search-toolbar">
+                        <div className="audit-search-input-wrap">
+                            <svg className="audit-search-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input
+                                type="text"
+                                className="audit-search-input"
+                                placeholder={activeTab === 'submissions' 
+                                    ? "Search by student name or filename (e.g. Mary, TS-A)..." 
+                                    : "Search student, filename, or clone pair..."}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            {searchTerm && (
+                                <button 
+                                    className="audit-search-clear" 
+                                    onClick={() => setSearchTerm('')} 
+                                    title="Clear search"
+                                    type="button"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Plagiarism Risk Filter Pills */}
+                        {activeTab === 'report' && analysisResults && (
+                            <div className="audit-filter-chips">
+                                {[
+                                    { id: 'all', label: 'All Pairs' },
+                                    { id: 'Type 1', label: 'Type 1 (Exact)' },
+                                    { id: 'Type 2', label: 'Type 2 (Renamed)' },
+                                    { id: 'Type 3', label: 'Type 3 (Structural)' }
+                                ].map(ft => (
+                                    <button
+                                        key={ft.id}
+                                        type="button"
+                                        className={`audit-chip-btn ${filterType === ft.id ? 'active' : ''}`}
+                                        onClick={() => setFilterType(ft.id)}
+                                    >
+                                        {ft.label}
+                                    </button>
+                                ))}
+                            </div>
                         )}
-                    </button>
-                </div>
-            )}            <div className="hud-modal-body audit-body-override">
+                    </div>
+                </>
+            )}
+
+            <div className="hud-modal-body audit-body-override">
                 {!selectedPair ? (
                     <>
                         {activeTab === 'submissions' && (
                             <div className="submissions-audit-list">
+                                {searchTerm && (
+                                    <div className="audit-results-count-banner">
+                                        Showing {filteredSubmissions.length} of {submissions.length} submissions
+                                    </div>
+                                )}
+
                                 {/* Desktop Table View (>= 1024px) */}
                                 <div className="desktop-table-container">
                                     <table className="falsicode-table-hud">
@@ -107,114 +202,138 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {submissions.map(sub => {
-                                                const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
-                                                
-                                                return (
-                                                    <tr key={sub.id} className="submission-card-row">
-                                                        <td className="status-cell">
-                                                            <div className="status-dot yellow"></div>
-                                                        </td>
-                                                        <td className="td-student">
-                                                            <div className="hud-stu-cell">
-                                                                <div className="stu-icon">{sub.student_name.charAt(0).toUpperCase()}</div>
-                                                                <div className="stu-info-meta">
-                                                                    <strong className="stu-name">{sub.student_name}</strong>
+                                            {filteredSubmissions.length > 0 ? (
+                                                filteredSubmissions.map(sub => {
+                                                    const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
+                                                    
+                                                    return (
+                                                        <tr key={sub.id} className="submission-card-row">
+                                                            <td className="status-cell">
+                                                                <div className="status-dot yellow"></div>
+                                                            </td>
+                                                            <td className="td-student">
+                                                                <div className="hud-stu-cell">
+                                                                    <div className="stu-icon">{sub.student_name.charAt(0).toUpperCase()}</div>
+                                                                    <div className="stu-info-meta">
+                                                                        <strong className="stu-name">{sub.student_name}</strong>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="td-file">
-                                                            <div className="file-chip-wrapper">
-                                                                <code className="code-box">{sub.filename}</code>
-                                                            </div>
-                                                        </td>
-                                                        <td className="td-action">
-                                                            <div className="grade-input-group">
-                                                                <div className="grade-field-row">
-                                                                    <input 
-                                                                        type="text" className="grade-input-small" 
-                                                                        placeholder={sub.score && sub.score !== 'Pending' ? sub.score : "e.g. 45/50"}
-                                                                        value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
-                                                                        onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
-                                                                    />
-                                                                    <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>SAVE</button>
+                                                            </td>
+                                                            <td className="td-file">
+                                                                <div className="file-chip-wrapper">
+                                                                    <code className="code-box">{sub.filename}</code>
                                                                 </div>
-                                                                
-                                                                <button 
-                                                                    className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
-                                                                    onClick={() => handleAllowResubmit(sub.id)}
-                                                                    disabled={isUnlocked}
-                                                                    title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
-                                                                >
-                                                                    {isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
+                                                            </td>
+                                                            <td className="td-action">
+                                                                <div className="grade-input-group">
+                                                                    <div className="grade-field-row">
+                                                                        <input 
+                                                                            type="text" className="grade-input-small" 
+                                                                            placeholder={sub.score && sub.score !== 'Pending' ? sub.score : "e.g. 45/50"}
+                                                                            value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
+                                                                            onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
+                                                                        />
+                                                                        <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>SAVE</button>
+                                                                    </div>
+                                                                    
+                                                                    <button 
+                                                                        className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                                        onClick={() => handleAllowResubmit(sub.id)}
+                                                                        disabled={isUnlocked}
+                                                                        title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
+                                                                    >
+                                                                        {isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="4" className="empty-search-cell">
+                                                        <div className="empty-search-box">
+                                                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                            </svg>
+                                                            <strong>No matching submissions found</strong>
+                                                            <p>No student submissions matched your search query "{searchTerm}".</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
 
                                 {/* Mobile & Tablet Responsive Cards (< 1024px) */}
                                 <div className="mobile-tablet-card-container">
-                                    {submissions.map(sub => {
-                                        const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
-                                        const hasScore = sub.score && sub.score !== 'Pending';
-                                        
-                                        return (
-                                            <div key={sub.id} className="submission-responsive-card">
-                                                {/* Top Row: Identity & Status Pill */}
-                                                <div className="card-identity-header">
-                                                    <div className="student-profile-badge">
-                                                        <div className="stu-icon">{sub.student_name.charAt(0).toUpperCase()}</div>
-                                                        <div className="student-title-wrap">
-                                                            <strong className="stu-name">{sub.student_name}</strong>
-                                                            <div className="file-chip-row">
-                                                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="file-icon-mini">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                                </svg>
-                                                                <span className="file-name-text">{sub.filename}</span>
+                                    {filteredSubmissions.length > 0 ? (
+                                        filteredSubmissions.map(sub => {
+                                            const isUnlocked = sub.allow_resubmit || unlockedIds.includes(sub.id);
+                                            const hasScore = sub.score && sub.score !== 'Pending';
+                                            
+                                            return (
+                                                <div key={sub.id} className="submission-responsive-card">
+                                                    {/* Top Row: Identity & Status Pill */}
+                                                    <div className="card-identity-header">
+                                                        <div className="student-profile-badge">
+                                                            <div className="stu-icon">{sub.student_name.charAt(0).toUpperCase()}</div>
+                                                            <div className="student-title-wrap">
+                                                                <strong className="stu-name">{sub.student_name}</strong>
+                                                                <div className="file-chip-row">
+                                                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="file-icon-mini">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                    </svg>
+                                                                    <span className="file-name-text">{sub.filename}</span>
+                                                                </div>
                                                             </div>
+                                                        </div>
+
+                                                        <div className={`status-grade-pill ${hasScore ? 'graded' : 'pending'}`}>
+                                                            {hasScore ? `Grade: ${sub.score}` : 'Pending'}
                                                         </div>
                                                     </div>
 
-                                                    <div className={`status-grade-pill ${hasScore ? 'graded' : 'pending'}`}>
-                                                        {hasScore ? `Grade: ${sub.score}` : 'Pending'}
-                                                    </div>
-                                                </div>
-
-                                                {/* Bottom Toolbar: Score Input + Save + Resubmit */}
-                                                <div className="card-action-toolbar">
-                                                    <div className="grade-input-wrapper">
-                                                        <input 
-                                                            type="text" 
-                                                            className="grade-input-small" 
-                                                            placeholder={hasScore ? sub.score : "e.g. 45/50"}
-                                                            value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
-                                                            onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
-                                                        />
-                                                        <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>
-                                                            SAVE
+                                                    {/* Bottom Toolbar: Score Input + Save + Resubmit */}
+                                                    <div className="card-action-toolbar">
+                                                        <div className="grade-input-wrapper">
+                                                            <input 
+                                                                type="text" 
+                                                                className="grade-input-small" 
+                                                                placeholder={hasScore ? sub.score : "e.g. 45/50"}
+                                                                value={gradeInputs[sub.id] !== undefined ? gradeInputs[sub.id] : ''}
+                                                                onChange={(e) => setGradeInputs({...gradeInputs, [sub.id]: e.target.value})}
+                                                            />
+                                                            <button className="btn-save-grade" onClick={() => handleSaveGrade(sub.id)}>
+                                                                SAVE
+                                                            </button>
+                                                        </div>
+                                                        
+                                                        <button 
+                                                            className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                            onClick={() => handleAllowResubmit(sub.id)}
+                                                            disabled={isUnlocked}
+                                                            title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
+                                                        >
+                                                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                            </svg>
+                                                            <span>{isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}</span>
                                                         </button>
                                                     </div>
-                                                    
-                                                    <button 
-                                                        className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
-                                                        onClick={() => handleAllowResubmit(sub.id)}
-                                                        disabled={isUnlocked}
-                                                        title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
-                                                    >
-                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                                        </svg>
-                                                        <span>{isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}</span>
-                                                    </button>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="empty-search-box">
+                                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                            <strong>No matching submissions found</strong>
+                                            <p>No student submissions matched your search query "{searchTerm}".</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -228,7 +347,10 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                         <div className="report-header">
                                             <div className="report-header-info">
                                                 <h3>Similarity Analysis Results</h3>
-                                                <p className="report-header-sub">Calculated AST Structure, N-Grams & TF-IDF Vector Cosine Similarity</p>
+                                                <p className="report-header-sub">
+                                                    Calculated AST Structure, N-Grams & TF-IDF Vector Cosine Similarity
+                                                    {searchTerm && ` • Filtered: ${filteredResults.length} of ${analysisResults.length} pairs`}
+                                                </p>
                                             </div>
                                             <span className="scan-badge">SCAN COMPLETE</span>
                                         </div>
@@ -243,8 +365,8 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {analysisResults.length > 0 ? (
-                                                        analysisResults.map((res, i) => {
+                                                    {filteredResults.length > 0 ? (
+                                                        filteredResults.map((res, i) => {
                                                             const displayData = getPlagiarismDisplayData(res.plagiarism_type);
                                                             return (
                                                                 <tr key={i} onClick={() => setSelectedPair(res)} className="clickable-row">
@@ -272,8 +394,8 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="clean-scan-icon">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                                                     </svg>
-                                                                    <strong>No structural plagiarism detected</strong>
-                                                                    <p>All student code submissions showed acceptable independence.</p>
+                                                                    <strong>No matching clone pairs found</strong>
+                                                                    <p>{searchTerm || filterType !== 'all' ? `No comparisons matched current search/filter.` : "All student code submissions showed acceptable independence."}</p>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -284,8 +406,8 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
 
                                         {/* Mobile & Tablet Report Cards (< 1024px) */}
                                         <div className="mobile-tablet-card-container">
-                                            {analysisResults.length > 0 ? (
-                                                analysisResults.map((res, i) => {
+                                            {filteredResults.length > 0 ? (
+                                                filteredResults.map((res, i) => {
                                                     const displayData = getPlagiarismDisplayData(res.plagiarism_type);
                                                     return (
                                                         <div 
@@ -316,8 +438,8 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="clean-scan-icon">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                                         </svg>
-                                                        <strong>No structural plagiarism detected</strong>
-                                                        <p>All student code submissions showed acceptable independence.</p>
+                                                        <strong>No matching clone pairs found</strong>
+                                                        <p>{searchTerm || filterType !== 'all' ? `No comparisons matched current search/filter.` : "All student code submissions showed acceptable independence."}</p>
                                                     </div>
                                                 </div>
                                             )}

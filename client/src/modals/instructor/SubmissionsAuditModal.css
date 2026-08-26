@@ -18,7 +18,7 @@
     border: 1px solid var(--border-glass);
     border-radius: 14px;
     padding: 4px;
-    margin: 16px 24px 20px 24px;
+    margin: 16px 24px 14px 24px;
     gap: 6px;
 }
 
@@ -26,6 +26,178 @@
 html[data-theme='light'] .audit-segmented-tabs {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid #e2e8f0;
+}
+
+/* 🌟 SEARCH & FILTER TOOLBAR */
+.audit-search-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 24px 16px 24px;
+    flex-wrap: wrap;
+}
+
+.audit-search-input-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    align-items: center;
+}
+
+.audit-search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-dim);
+    pointer-events: none;
+}
+
+.audit-search-input {
+    width: 100%;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 0 38px 0 40px;
+    color: var(--text-main);
+    font-size: 0.88rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.audit-search-input:focus {
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+[data-theme='light'] .audit-search-input,
+html[data-theme='light'] .audit-search-input {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme='light'] .audit-search-input:focus,
+html[data-theme='light'] .audit-search-input:focus {
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.audit-search-clear {
+    position: absolute;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-dim);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s ease;
+}
+
+.audit-search-clear:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+[data-theme='light'] .audit-search-clear,
+html[data-theme='light'] .audit-search-clear {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+/* Plagiarism Filter Chips */
+.audit-filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.audit-chip-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim);
+    transition: all 0.2s ease;
+}
+
+.audit-chip-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.audit-chip-btn.active {
+    background: rgba(59, 130, 246, 0.18);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #93c5fd;
+}
+
+[data-theme='light'] .audit-chip-btn,
+html[data-theme='light'] .audit-chip-btn {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+[data-theme='light'] .audit-chip-btn.active,
+html[data-theme='light'] .audit-chip-btn.active {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #2563eb;
+}
+
+.audit-results-count-banner {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Empty Search Results */
+.empty-search-cell {
+    padding: 48px 24px !important;
+    text-align: center;
+}
+
+.empty-search-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px 16px;
+    color: var(--text-dim);
+}
+
+.empty-search-box svg {
+    color: var(--text-dim);
+    opacity: 0.6;
+    margin-bottom: 4px;
+}
+
+.empty-search-box strong {
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.empty-search-box p {
+    font-size: 0.82rem;
+    margin: 0;
+    color: var(--text-dim);
 }
 
 .audit-tab-btn {
