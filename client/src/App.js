@@ -30,7 +30,6 @@ import AdminLayout from './layouts/AdminLayout';
 // ==========================================
 import StudentDash from './pages/student/StudentDashboard';
 import StudentClassroomView from './pages/student/StudentClassroomView';
-import StudentAssignmentDetail from './pages/student/StudentAssignmentDetail';
 import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
 import AdminDash from './pages/admin/AdminDashboard';
@@ -90,7 +89,6 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<StudentDash />} />
               <Route path="class/:id" element={<StudentClassroomView />} />
-              <Route path="class/:id/assignment/:assignmentId" element={<StudentAssignmentDetail />} />
               <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>

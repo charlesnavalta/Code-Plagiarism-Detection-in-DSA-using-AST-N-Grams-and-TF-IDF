@@ -168,68 +168,6 @@ def get_assignments(class_id):
     return jsonify(assignments_data), 200
 
 
-@assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['GET'])
-@jwt_required()
-def get_assignment(class_id, assignment_id):
-    """Fetches full details for a single assignment including attachments and student submission status"""
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    if user.role == 'instructor':
-        classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
-    elif user.role == 'student':
-        enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
-        classroom = enrollment.classroom if enrollment else None
-    else:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    if not classroom:
-        return jsonify({"error": "Classroom not found or access denied"}), 404
-
-    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
-    if not assignment:
-        return jsonify({"error": "Assignment not found"}), 404
-
-    # Attachments
-    attachments = AssignmentAttachment.query.filter_by(assignment_id=assignment.id).all()
-    attach_list = [{
-        "id": att.id,
-        "filename": att.filename,
-        "url": f"/classrooms/{class_id}/attachments/{att.id}"
-    } for att in attachments]
-
-    assignment_info = {
-        "id": assignment.id,
-        "title": assignment.title,
-        "description": assignment.description,
-        "max_score": assignment.max_score,
-        "language": assignment.language,
-        "deadline": assignment.deadline.isoformat() if assignment.deadline else None,
-        "classroom_name": classroom.name,
-        "instructor_name": classroom.instructor.username if classroom.instructor else "Instructor",
-        "has_submitted": False,
-        "score": None,
-        "submitted_at": None,
-        "submitted_filename": None,
-        "allow_resubmit": False,
-        "attachments": attach_list
-    }
-
-    if user.role == 'student':
-        sub = Submission.query.filter_by(assignment_id=assignment.id, student_id=user.id).first()
-        if sub:
-            assignment_info["has_submitted"] = True
-            assignment_info["score"] = getattr(sub, 'score', 'Pending')
-            assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
-            assignment_info["submitted_filename"] = getattr(sub, 'filename', None)
-            assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
-
-    return jsonify(assignment_info), 200
-
-
 @assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['PUT'])
 @jwt_required()
 def update_assignment(class_id, assignment_id):
