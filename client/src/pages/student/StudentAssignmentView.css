@@ -2,7 +2,7 @@
 
 .assignment-view-container {
     min-height: 100vh;
-    padding-top: 40px;
+    padding-top: 95px;
     padding-bottom: 80px;
     padding-left: 24px;
     padding-right: 24px;
@@ -701,7 +701,7 @@ html[data-theme='light'] .receipt-row strong,
     gap: 28px;
 }
 
-.skeleton-box {
+.view-skeleton-panel {
     height: 380px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;

@@ -9,6 +9,7 @@ import './StudentAssignmentView.css';
 // Shared Utilities
 import { formatLanguageDisplay, getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
 import { formatDeadline } from '../../utils/dateUtils';
+import InstructorWrapper from '../instructor/components/InstructorWrapper';
 
 const StudentAssignmentView = () => {
     const { id, assignmentId } = useParams();
@@ -151,22 +152,25 @@ const StudentAssignmentView = () => {
 
     if (loading) {
         return (
-            <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
-                <div className="view-inner-wrapper">
-                    <div className="view-loading-skeleton-hero"></div>
-                    <div className="view-loading-skeleton-grid">
-                        <div className="skeleton-box left"></div>
-                        <div className="skeleton-box right"></div>
+            <InstructorWrapper>
+                <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
+                    <div className="view-inner-wrapper">
+                        <div className="view-loading-skeleton-hero"></div>
+                        <div className="view-loading-skeleton-grid">
+                            <div className="view-skeleton-panel left"></div>
+                            <div className="view-skeleton-panel right"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </InstructorWrapper>
         );
     }
 
     if (!assignment) return null;
 
     return (
-        <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
+        <InstructorWrapper>
+            <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
             <div className="view-inner-wrapper">
                 
                 {/* --- TOP BREADCRUMB & BACK NAV --- */}
@@ -406,9 +410,8 @@ const StudentAssignmentView = () => {
                     </div>
 
                 </div>
-
             </div>
-        </div>
+        </InstructorWrapper>
     );
 };
 
