@@ -326,23 +326,31 @@ def reset_password():
 @auth_bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_all_users():
-    current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    raw_identity = get_jwt_identity()
+    user_id = int(raw_identity) if str(raw_identity).isdigit() else raw_identity
+    current_user = User.query.get(user_id)
 
     if not current_user or current_user.role != 'admin':
         return jsonify({"error": "Unauthorized: Admin access required"}), 403
 
-    users = User.query.all()
-    users_data = []
-    for u in users:
-        users_data.append({
-            "id": u.id,
-            "username": u.username,
-            "email": u.email,
-            "role": u.role,
-            "status": u.status,
-            "is_verified": u.is_verified 
-        })
+    # Fast column projection without hydrating complete ORM objects
+    users = db.session.query(
+        User.id,
+        User.username,
+        User.email,
+        User.role,
+        User.status,
+        User.is_verified
+    ).order_by(User.id.asc()).all()
+
+    users_data = [{
+        "id": u.id,
+        "username": u.username,
+        "email": u.email,
+        "role": u.role,
+        "status": u.status,
+        "is_verified": u.is_verified 
+    } for u in users]
         
     return jsonify(users_data), 200
 

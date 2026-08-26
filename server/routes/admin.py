@@ -1,7 +1,6 @@
 import os
 from flask import Blueprint, request, jsonify
-from sqlalchemy import func
-from sqlalchemy.orm import joinedload
+from sqlalchemy import func, case
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -19,7 +18,7 @@ def verify_admin():
     return user
 
 # ==========================================
-# 1. SYSTEM-WIDE STATS
+# 1. OPTIMIZED SYSTEM-WIDE STATS (2 Queries Total)
 # ==========================================
 @admin_bp.route('/stats', methods=['GET'])
 @jwt_required()
@@ -29,15 +28,30 @@ def get_admin_stats():
         return jsonify({"error": "Unauthorized. Admin privileges required."}), 403
 
     try:
-        total_students = User.query.filter_by(role='student').count()
-        total_instructors = User.query.filter_by(role='instructor', status='active').count()
-        pending_requests = User.query.filter_by(status='pending').count()
-        total_users = User.query.count()
+        # Query 1: Single Aggregation for all User Metrics
+        user_row = db.session.query(
+            func.count(User.id).label('total'),
+            func.sum(case((User.role == 'student', 1), else_=0)).label('students'),
+            func.sum(case(((User.role == 'instructor') & (User.status == 'active'), 1), else_=0)).label('instructors'),
+            func.sum(case((User.status == 'pending', 1), else_=0)).label('pending')
+        ).first()
 
-        total_classrooms = Classroom.query.count()
-        total_assignments = Assignment.query.count()
-        total_submissions = Submission.query.count()
-        evaluated_submissions = Submission.query.filter(Submission.score.isnot(None), Submission.score != 'Pending').count()
+        # Query 2: Single Aggregation for Submissions + Fast Scalar Counts for Classrooms & Tasks
+        sub_row = db.session.query(
+            func.count(Submission.id).label('total'),
+            func.sum(case(((Submission.score.isnot(None)) & (Submission.score != 'Pending'), 1), else_=0)).label('evaluated')
+        ).first()
+
+        total_classrooms = db.session.query(func.count(Classroom.id)).scalar() or 0
+        total_assignments = db.session.query(func.count(Assignment.id)).scalar() or 0
+
+        total_users = int(user_row.total or 0)
+        total_students = int(user_row.students or 0)
+        total_instructors = int(user_row.instructors or 0)
+        pending_requests = int(user_row.pending or 0)
+
+        total_submissions = int(sub_row.total or 0)
+        evaluated_submissions = int(sub_row.evaluated or 0)
 
         return jsonify({
             "users": {
@@ -64,7 +78,7 @@ def get_admin_stats():
 
 
 # ==========================================
-# 2. CLASSROOM MANAGEMENT
+# 2. OPTIMIZED CLASSROOM MANAGEMENT (Indexed Projections)
 # ==========================================
 @admin_bp.route('/classrooms', methods=['GET'])
 @jwt_required()
@@ -74,8 +88,18 @@ def get_all_classrooms():
         return jsonify({"error": "Unauthorized. Admin privileges required."}), 403
 
     try:
-        classrooms = Classroom.query.options(joinedload(Classroom.instructor)).all()
+        # Column-projected query joining Classroom with User (Instructor)
+        classrooms_data = db.session.query(
+            Classroom.id,
+            Classroom.name,
+            Classroom.invite_code,
+            Classroom.instructor_id,
+            Classroom.created_at,
+            User.username.label('instructor_name'),
+            User.email.label('instructor_email')
+        ).outerjoin(User, Classroom.instructor_id == User.id).order_by(Classroom.id.desc()).all()
 
+        # Batch counts grouped by classroom_id in 2 fast indexed queries
         enrollment_counts = dict(
             db.session.query(Enrollment.classroom_id, func.count(Enrollment.id))
             .group_by(Enrollment.classroom_id).all()
@@ -85,19 +109,17 @@ def get_all_classrooms():
             .group_by(Assignment.classroom_id).all()
         )
 
-        class_list = []
-        for c in classrooms:
-            class_list.append({
-                "id": c.id,
-                "name": c.name,
-                "invite_code": c.invite_code,
-                "instructor_id": c.instructor_id,
-                "instructor_name": c.instructor.username if c.instructor else "Unassigned",
-                "instructor_email": c.instructor.email if c.instructor else "N/A",
-                "student_count": enrollment_counts.get(c.id, 0),
-                "assignment_count": assignment_counts.get(c.id, 0),
-                "created_at": c.created_at.isoformat() if hasattr(c, 'created_at') and c.created_at else None
-            })
+        class_list = [{
+            "id": c.id,
+            "name": c.name,
+            "invite_code": c.invite_code,
+            "instructor_id": c.instructor_id,
+            "instructor_name": c.instructor_name or "Unassigned",
+            "instructor_email": c.instructor_email or "N/A",
+            "student_count": enrollment_counts.get(c.id, 0),
+            "assignment_count": assignment_counts.get(c.id, 0),
+            "created_at": c.created_at.isoformat() if hasattr(c, 'created_at') and c.created_at else None
+        } for c in classrooms_data]
 
         return jsonify(class_list), 200
     except Exception as e:
@@ -157,14 +179,14 @@ def delete_classroom(class_id):
         return jsonify({"error": "Classroom not found."}), 404
 
     try:
-        Enrollment.query.filter_by(classroom_id=class_id).delete()
+        # Cascade delete in bulk
+        assign_ids = [a[0] for a in db.session.query(Assignment.id).filter_by(classroom_id=class_id).all()]
+        if assign_ids:
+            Submission.query.filter(Submission.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
+            AssignmentAttachment.query.filter(AssignmentAttachment.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
+            Assignment.query.filter(Assignment.id.in_(assign_ids)).delete(synchronize_session=False)
 
-        assignments = Assignment.query.filter_by(classroom_id=class_id).all()
-        for assign in assignments:
-            Submission.query.filter_by(assignment_id=assign.id).delete()
-            AssignmentAttachment.query.filter_by(assignment_id=assign.id).delete()
-            db.session.delete(assign)
-
+        Enrollment.query.filter_by(classroom_id=class_id).delete(synchronize_session=False)
         db.session.delete(classroom)
         db.session.commit()
         return jsonify({"message": f"Classroom '{classroom.name}' and all associated tasks deleted successfully."}), 200
@@ -175,7 +197,7 @@ def delete_classroom(class_id):
 
 
 # ==========================================
-# 3. ASSIGNMENT MANAGEMENT
+# 3. OPTIMIZED ASSIGNMENT MANAGEMENT (Indexed Projections)
 # ==========================================
 @admin_bp.route('/assignments', methods=['GET'])
 @jwt_required()
@@ -185,31 +207,44 @@ def get_all_assignments():
         return jsonify({"error": "Unauthorized. Admin privileges required."}), 403
 
     try:
-        assignments = Assignment.query.options(
-            joinedload(Assignment.classroom).joinedload(Classroom.instructor)
-        ).order_by(Assignment.created_at.desc() if hasattr(Assignment, 'created_at') else Assignment.id.desc()).all()
+        # Direct column-level projection with 2 outer joins
+        assign_rows = db.session.query(
+            Assignment.id,
+            Assignment.title,
+            Assignment.description,
+            Assignment.language,
+            Assignment.max_score,
+            Assignment.deadline,
+            Assignment.created_at,
+            Assignment.classroom_id,
+            Classroom.name.label('classroom_name'),
+            Classroom.invite_code.label('classroom_invite_code'),
+            User.username.label('instructor_name')
+        ).outerjoin(
+            Classroom, Assignment.classroom_id == Classroom.id
+        ).outerjoin(
+            User, Classroom.instructor_id == User.id
+        ).order_by(Assignment.id.desc()).all()
 
         submission_counts = dict(
             db.session.query(Submission.assignment_id, func.count(Submission.id))
             .group_by(Submission.assignment_id).all()
         )
 
-        assign_list = []
-        for a in assignments:
-            assign_list.append({
-                "id": a.id,
-                "title": a.title,
-                "description": a.description,
-                "language": a.language,
-                "max_score": a.max_score,
-                "deadline": a.deadline.isoformat() if a.deadline else None,
-                "classroom_id": a.classroom_id,
-                "classroom_name": a.classroom.name if a.classroom else "Unknown Classroom",
-                "classroom_invite_code": a.classroom.invite_code if a.classroom else "N/A",
-                "instructor_name": a.classroom.instructor.username if (a.classroom and a.classroom.instructor) else "Unknown",
-                "submission_count": submission_counts.get(a.id, 0),
-                "created_at": a.created_at.isoformat() if hasattr(a, 'created_at') and a.created_at else None
-            })
+        assign_list = [{
+            "id": a.id,
+            "title": a.title,
+            "description": a.description,
+            "language": a.language,
+            "max_score": a.max_score,
+            "deadline": a.deadline.isoformat() if a.deadline else None,
+            "classroom_id": a.classroom_id,
+            "classroom_name": a.classroom_name or "Unknown Classroom",
+            "classroom_invite_code": a.classroom_invite_code or "N/A",
+            "instructor_name": a.instructor_name or "Unknown",
+            "submission_count": submission_counts.get(a.id, 0),
+            "created_at": a.created_at.isoformat() if hasattr(a, 'created_at') and a.created_at else None
+        } for a in assign_rows]
 
         return jsonify(assign_list), 200
     except Exception as e:
@@ -277,8 +312,8 @@ def delete_assignment(assignment_id):
         return jsonify({"error": "Assignment not found."}), 404
 
     try:
-        Submission.query.filter_by(assignment_id=assignment_id).delete()
-        AssignmentAttachment.query.filter_by(assignment_id=assignment_id).delete()
+        Submission.query.filter_by(assignment_id=assignment_id).delete(synchronize_session=False)
+        AssignmentAttachment.query.filter_by(assignment_id=assignment_id).delete(synchronize_session=False)
         db.session.delete(assignment)
         db.session.commit()
         return jsonify({"message": f"Assignment '{assignment.title}' deleted successfully."}), 200
