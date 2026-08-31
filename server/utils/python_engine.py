@@ -1,10 +1,13 @@
 import ast
 
 def find_dead_nodes_python(tree):
-    # Only top-level statements are exempt from being pruned as "unused" -
-    # module-scope function/class defs are the algorithm's public surface,
+    # Module-scope functions, classes, and class methods are the algorithm's public surface,
     # not internal dead code, even if no __main__ block calls them.
     top_level_ids = {id(n) for n in tree.body}
+    for n in tree.body:
+        if isinstance(n, ast.ClassDef):
+            for m in n.body:
+                top_level_ids.add(id(m))
 
     dead_nodes = set()
     changed = True
@@ -18,6 +21,8 @@ def find_dead_nodes_python(tree):
                 return
             if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
                 used_names.add(node.id)
+            elif isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Load):
+                used_names.add(node.attr)
             for child in ast.iter_child_nodes(node):
                 visit_alive(child)
 

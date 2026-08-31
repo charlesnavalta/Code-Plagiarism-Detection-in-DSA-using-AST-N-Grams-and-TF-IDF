@@ -1,0 +1,210 @@
+/* src/components/common/SessionTimeoutManager.css */
+
+.session-warning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 7, 18, 0.8);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: timeoutFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='light'] .session-warning-overlay,
+html[data-theme='light'] .session-warning-overlay {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(12px);
+}
+
+@keyframes timeoutFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.session-warning-card {
+    background: var(--bg-card, #0f172a);
+    border: 1px solid var(--border-card, rgba(255, 255, 255, 0.12));
+    border-radius: 24px;
+    width: 100%;
+    max-width: 480px;
+    padding: 32px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.15);
+    color: var(--text-main, #ffffff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: timeoutPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='light'] .session-warning-card,
+html[data-theme='light'] .session-warning-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.15), 0 0 30px rgba(245, 158, 11, 0.1);
+}
+
+@keyframes timeoutPopIn {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.session-warning-icon-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.15) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+    animation: pulseWarning 2s infinite ease-in-out;
+}
+
+[data-theme='light'] .session-warning-icon-badge {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-color: #fcd34d;
+    color: #d97706;
+}
+
+@keyframes pulseWarning {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25); }
+    50% { transform: scale(1.06); box-shadow: 0 12px 32px rgba(245, 158, 11, 0.4); }
+}
+
+.session-warning-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 8px 0;
+    color: var(--text-hero, #ffffff);
+}
+
+[data-theme='light'] .session-warning-title,
+html[data-theme='light'] .session-warning-title {
+    color: #0f172a;
+}
+
+.session-warning-desc {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text-dim, #94a3b8);
+    margin: 0 0 20px 0;
+}
+
+[data-theme='light'] .session-warning-desc,
+html[data-theme='light'] .session-warning-desc {
+    color: #64748b;
+}
+
+/* Countdown Clock Display */
+.session-timer-clock {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 10px 24px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 16px;
+    margin-bottom: 24px;
+}
+
+[data-theme='light'] .session-timer-clock {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.session-clock-digit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+[data-theme='light'] .session-clock-digit {
+    color: #d97706;
+}
+
+.session-clock-unit {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dim, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Action Buttons */
+.session-warning-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-session-stay {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-session-stay:hover {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(124, 58, 237, 0.45);
+}
+
+.btn-session-logout {
+    width: 100%;
+    padding: 11px 20px;
+    background: transparent;
+    color: var(--text-dim, #94a3b8);
+    border: 1px solid var(--border-card, rgba(255, 255, 255, 0.1));
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-session-logout:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+[data-theme='light'] .btn-session-logout {
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+[data-theme='light'] .btn-session-logout:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}

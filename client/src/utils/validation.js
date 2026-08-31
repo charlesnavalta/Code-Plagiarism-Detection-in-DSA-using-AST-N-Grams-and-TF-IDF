@@ -21,7 +21,9 @@ export const validateAssignmentDescription = (description) => {
 };
 
 export const validateDeadline = (deadline) => {
-    if (!deadline) return null; // Deadline is optional, but if set, must be valid
+    if (!deadline || !String(deadline).trim()) {
+        return "Deadline is required. Please set a date and time for the assignment.";
+    }
 
     const deadlineDate = new Date(deadline);
     if (isNaN(deadlineDate.getTime())) {

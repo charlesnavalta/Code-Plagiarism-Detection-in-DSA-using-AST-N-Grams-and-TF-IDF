@@ -44,6 +44,7 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=1 # 🌟 NEW: Forces Flask to auto-reload when you save a .py file!
+      - AUTO_SEED=true
 
   # ----------------------------
   # 3. REACT FRONTEND

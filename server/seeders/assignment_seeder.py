@@ -161,6 +161,60 @@ assignments_to_seed = [
         "language": "python",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
+    # ==========================================
+    # Multiple-E (Python)
+    # ==========================================
+    {
+        "title": "Multiple-E 1: Grid DFS (Recursive vs. Stack Traversal)",
+        "description": "Write a 2D Grid Depth-First Search (DFS) traversal program (e.g., Number of Islands / Flood Fill). This evaluates whether the system detects structural equivalence across recursive calls, explicit stack iterations, and unrolled direction loops, while cleanly distinguishing organic Breadth-First Search (BFS) baselines.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 2: Frequency Counter (Data Structure Substitution)",
+        "description": "Write a Frequency Counter and Bracket Matching program. This evaluates detection performance when high-level data structures (e.g., Hash Maps) are substituted with low-level primitive arrays, cascading if-elif branches, or string-based lookup buffers without altering algorithmic semantics.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 3: Range Accumulator (Directional Reversal & Function Stripping)",
+        "description": "Write an Array Range Accumulator program. This tests algorithmic resilience against directional iteration reversal (forward vs backward scans) and the manual replacement of built-in functions with explicit loops, compared against organic Divide-and-Conquer baselines.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 4: Substring Search (Control Flow Obfuscation)",
+        "description": "Write a Substring Pattern Searching program. This tests detection accuracy against control-flow restructuring—such as replacing explicit 'break' statements with stateful boolean flag variables and converting 'for' loops into 'while' constructs—while validating true negatives against organic KMP algorithms.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # Multiple-F (Python) - Large Cohorts (36 & 42 Students)
+    # ==========================================
+    {
+        "title": "Multiple-F 1: Merge Sort (Large Cohort - 36 Submissions)",
+        "description": "Divide-and-Conquer Sorting Benchmark: Write a complete Merge Sort algorithm to sort an array in ascending order. This large classroom benchmark features 36 student submissions (Divide-and-Conquer Sorting) evaluating detection of Type 1 verbatim copies, Type 2 lexical renames, Type 3 iterative bottom-up variants, in-place helper extractions, and diverse organic implementations across a 36-student cohort.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-F 2: Binary Search Tree (Large Cohort - 42 Submissions)",
+        "description": "Binary Search Tree Large Cohort: Implement a Binary Search Tree (BST) supporting Node insertion, searching, and tree traversals across varied class structures and pointer manipulation. Features 42 student submissions evaluating high-volume plagiarism detection, AST structural variants, helper delegation, dead code injection, and diverse organic implementations in a 42-student cohort.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
     
     # ==========================================
     # TS-A (java)
@@ -315,6 +369,60 @@ assignments_to_seed = [
     {
         "title": "Multiple-D 1: Quick Sort (Large Cohort) Java",
         "description": "Large Cohort Benchmark: Write a Quick Sort program. This realistic classroom test features 30 diverse submissions from 30 students, testing system scalability, heatmap rendering, and detection of Type 1, Type 2, Type 3, and mixed cheating attacks within a large cohort.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # Multiple-E (Java)
+    # ==========================================
+    {
+        "title": "Multiple-E 1: Grid DFS (Recursive vs. Stack Traversal) Java",
+        "description": "Write a 2D Grid Depth-First Search (DFS) traversal program (e.g., Number of Islands / Flood Fill). This evaluates whether the system detects structural equivalence across recursive calls, explicit stack iterations, and unrolled direction loops, while cleanly distinguishing organic Breadth-First Search (BFS) baselines.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 2: Frequency Counter (Data Structure Substitution) Java",
+        "description": "Write a Frequency Counter and Bracket Matching program. This evaluates detection performance when high-level data structures (e.g., Hash Maps) are substituted with low-level primitive arrays, cascading if-elif branches, or string-based lookup buffers without altering algorithmic semantics.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 3: Range Accumulator (Directional Reversal & Function Stripping) Java",
+        "description": "Write an Array Range Accumulator program. This tests algorithmic resilience against directional iteration reversal (forward vs backward scans) and the manual replacement of built-in functions with explicit loops, compared against organic Divide-and-Conquer baselines.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-E 4: Substring Search (Control Flow Obfuscation) Java",
+        "description": "Write a Substring Pattern Searching program. This tests detection accuracy against control-flow restructuring—such as replacing explicit 'break' statements with stateful boolean flag variables and converting 'for' loops into 'while' constructs—while validating true negatives against organic KMP algorithms.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # Multiple-F (Java) - Large Cohorts (36 & 42 Students)
+    # ==========================================
+    {
+        "title": "Multiple-F 1: Merge Sort (Large Cohort - 36 Submissions) Java",
+        "description": "Divide-and-Conquer Sorting Benchmark: Write a complete Merge Sort algorithm to sort an array in ascending order. This large classroom benchmark features 36 student submissions (Divide-and-Conquer Sorting) evaluating detection of Type 1 verbatim copies, Type 2 lexical renames, Type 3 iterative bottom-up variants, in-place helper extractions, and diverse organic implementations across a 36-student cohort.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-F 2: Binary Search Tree (Large Cohort - 42 Submissions) Java",
+        "description": "Binary Search Tree Large Cohort: Implement a Binary Search Tree (BST) supporting Node insertion, searching, and tree traversals across varied class structures and pointer manipulation. Features 42 student submissions evaluating high-volume plagiarism detection, AST structural variants, helper delegation, dead code injection, and diverse organic implementations in a 42-student cohort.",
         "max_score": 100,
         "classroom_name": "4CSB - Multiple Files",
         "language": "java",

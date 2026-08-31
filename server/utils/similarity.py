@@ -171,8 +171,8 @@ def compare_all_files(file_data, ngram_bounds):
 
     # Dynamic max_df safely filters out boilerplate for large batches.
     # If there are 5 or fewer files, we keep everything (1.0).
-    # If there are many files, we ignore N-Grams that appear in >=70% of them (common DSA boilerplate/patterns).
-    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.70
+    # If there are many files, we keep features up to 90% document frequency to prevent AST starvation in large cohorts.
+    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.90
 
     # Initialize the TF-IDF Vectorizer
     vectorizer = TfidfVectorizer(
@@ -316,16 +316,11 @@ def compare_all_files(file_data, ngram_bounds):
                             order_similarity_score = 100.0
 
                         # --- Structural skeleton signal (Type 3, catches control-flow rewrites) ---
-                        # Unlike order_similarity_score, this is NOT restricted to shared
-                        # n-grams first, so it can see structural tokens (an inserted
-                        # while-loop, an added range()/subscript) that exist in only one
-                        # file - exactly the case order_similarity_score alone misses.
-                        skeleton_i = get_structural_skeleton(tokens_i, flagged_lines_i)
-                        skeleton_j = get_structural_skeleton(tokens_j, flagged_lines_j)
-
-                        if not skeleton_i and not skeleton_j:
-                            skeleton_i = get_structural_skeleton(tokens_i)
-                            skeleton_j = get_structural_skeleton(tokens_j)
+                        # Uses full structural skeletons (excluding identifier/literal tokens)
+                        # so that structural insertions, deleted blocks, and loop conversions
+                        # are accurately measured.
+                        skeleton_i = get_structural_skeleton(tokens_i)
+                        skeleton_j = get_structural_skeleton(tokens_j)
 
                         struct_divergence_score = structural_divergence(skeleton_i, skeleton_j)
 

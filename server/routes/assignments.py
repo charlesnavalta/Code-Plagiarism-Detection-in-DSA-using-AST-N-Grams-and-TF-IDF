@@ -26,17 +26,19 @@ def create_assignment(class_id):
 
     # 🌟 Shift from get_json() to form data to support file uploads
     data = request.form
-    if not data or 'title' not in data:
+    if not data or 'title' not in data or not data.get('title', '').strip():
         return jsonify({"error": "Assignment title is required."}), 400
 
+    if not data.get('deadline'):
+        return jsonify({"error": "Assignment deadline is required. Please set a deadline."}), 400
+
     parsed_deadline = None
-    if data.get('deadline'):
-        try:
-            parsed_deadline = datetime.fromisoformat(data.get('deadline').replace('Z', ''))
-            if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
-                return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
-        except ValueError:
-            return jsonify({"error": "Invalid deadline format provided."}), 400
+    try:
+        parsed_deadline = datetime.fromisoformat(data.get('deadline').replace('Z', ''))
+        if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+            return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid deadline format provided."}), 400
 
     new_assignment = Assignment(
         title=data.get('title'),
@@ -233,7 +235,7 @@ def get_assignment(class_id, assignment_id):
 @assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['PUT'])
 @jwt_required()
 def update_assignment(class_id, assignment_id):
-    """Allows an instructor to edit an existing assignment"""
+    """Allows an instructor to edit an existing assignment, delete attachments, and upload new guide files"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -248,30 +250,72 @@ def update_assignment(class_id, assignment_id):
     if not classroom or classroom.instructor_id != user.id:
         return jsonify({"error": "Unauthorized to edit this assignment"}), 403
 
-    data = request.get_json()
+    # Support both JSON payload and FormData
+    data = request.form if request.form else (request.get_json() or {})
 
-    if 'title' in data:
-        assignment.title = data['title']
+    if 'title' in data and data.get('title', '').strip():
+        assignment.title = data['title'].strip()
     if 'description' in data:
         assignment.description = data['description']
-    if 'max_score' in data:
-        assignment.max_score = data['max_score']
-    if 'language' in data:
+    if 'max_score' in data and str(data['max_score']).isdigit():
+        assignment.max_score = int(data['max_score'])
+    if 'language' in data and data.get('language'):
         assignment.language = data['language'].lower()
     
     if 'deadline' in data:
-        if data['deadline']:
-            try:
-                parsed_deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
-                if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
-                    return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
-                assignment.deadline = parsed_deadline
-            except ValueError:
-                return jsonify({"error": "Invalid deadline format provided."}), 400
-        else:
-            assignment.deadline = None 
+        if not data['deadline']:
+            return jsonify({"error": "Assignment deadline is required. Please set a deadline."}), 400
+        try:
+            parsed_deadline = datetime.fromisoformat(data['deadline'].replace('Z', ''))
+            if parsed_deadline < (datetime.utcnow() - timedelta(minutes=1)):
+                return jsonify({"error": "Assignment deadline cannot be set in the past. Please choose a future date and time."}), 400
+            assignment.deadline = parsed_deadline
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid deadline format provided."}), 400
 
     try:
+        # 1. Process Deleted Attachments
+        deleted_ids_raw = data.get('deleted_attachment_ids', [])
+        if isinstance(deleted_ids_raw, str):
+            deleted_ids = [int(i.strip()) for i in deleted_ids_raw.split(',') if i.strip().isdigit()]
+        elif isinstance(deleted_ids_raw, list):
+            deleted_ids = [int(i) for i in deleted_ids_raw if str(i).isdigit()]
+        else:
+            deleted_ids = []
+
+        if deleted_ids:
+            for att_id in deleted_ids:
+                att = AssignmentAttachment.query.filter_by(id=att_id, assignment_id=assignment.id).first()
+                if att:
+                    try:
+                        if att.file_path and os.path.exists(att.file_path):
+                            os.remove(att.file_path)
+                    except Exception as fe:
+                        print(f"Notice: Could not delete physical guide file {att.file_path}: {fe}")
+                    db.session.delete(att)
+            db.session.flush()
+
+        # 2. Process Newly Added Guide Files (Max total 3)
+        new_files = request.files.getlist('files') if request.files else []
+        current_attachments_count = AssignmentAttachment.query.filter_by(assignment_id=assignment.id).count()
+
+        if current_attachments_count + len(new_files) > 3:
+            return jsonify({"error": f"Total attachments cannot exceed 3. Currently have {current_attachments_count} and tried to add {len(new_files)}."}), 400
+
+        for file in new_files:
+            if file and file.filename != '':
+                original_filename = secure_filename(file.filename)
+                unique_filename = f"guide_assign_{assignment.id}_{original_filename}"
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+                file.save(filepath)
+
+                new_attachment = AssignmentAttachment(
+                    assignment_id=assignment.id,
+                    filename=original_filename,
+                    file_path=filepath
+                )
+                db.session.add(new_attachment)
+
         db.session.commit()
         response_data = assignment.to_dict()
         response_data['submission_count'] = Submission.query.filter_by(assignment_id=assignment.id).count()
@@ -283,7 +327,41 @@ def update_assignment(class_id, assignment_id):
     except Exception as e:
         db.session.rollback()
         print(f"Error updating assignment: {str(e)}")
-        return jsonify({"error": "Database error occurred while updating"}), 500
+        return jsonify({"error": f"Database error occurred while updating: {str(e)}"}), 500
+
+
+@assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>/attachments/<int:attachment_id>', methods=['DELETE'])
+@jwt_required()
+def delete_assignment_attachment(class_id, assignment_id, attachment_id):
+    """Allows an instructor to delete a specific guide file attachment"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+    if not classroom:
+        return jsonify({"error": "Unauthorized or classroom not found"}), 403
+
+    attachment = AssignmentAttachment.query.filter_by(id=attachment_id, assignment_id=assignment_id).first()
+    if not attachment:
+        return jsonify({"error": "Attachment not found"}), 404
+
+    try:
+        if attachment.file_path and os.path.exists(attachment.file_path):
+            try:
+                os.remove(attachment.file_path)
+            except Exception as fe:
+                print(f"Could not remove physical file: {fe}")
+
+        db.session.delete(attachment)
+        db.session.commit()
+        return jsonify({"message": "Attachment deleted successfully", "id": attachment_id}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete attachment"}), 500
 
 
 @assignments_bp.route('/<int:class_id>/assignments/<int:assignment_id>', methods=['DELETE'])
