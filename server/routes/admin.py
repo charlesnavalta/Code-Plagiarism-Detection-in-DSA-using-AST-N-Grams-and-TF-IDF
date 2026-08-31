@@ -1,5 +1,6 @@
 import os
-from flask import Blueprint, request, jsonify
+import threading
+from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy import func, case
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
@@ -411,18 +412,28 @@ def trigger_database_reseed():
     if not is_authorized:
         return jsonify({"error": "Unauthorized. Admin privileges or valid secret required."}), 403
 
-    try:
-        from seeder import run_smart_seed
-        print(f"FALSICODE: Reseed requested by [{actor}]. Executing Smart Seed...")
-        run_smart_seed(db)
-        return jsonify({
-            "message": "Database successfully wiped and reseeded with the latest datasets, classrooms, and students!",
-            "reseeded_by": actor,
-            "timestamp": datetime.utcnow().isoformat()
-        }), 200
-    except Exception as e:
-        db.session.rollback()
-        print(f"FALSICODE ERROR during database reseed: {e}")
-        return jsonify({"error": f"Failed to reseed database: {str(e)}"}), 500
+    app_instance = current_app._get_current_object()
+
+    def run_reseed_worker():
+        with app_instance.app_context():
+            try:
+                from seeder import run_smart_seed
+                print(f"FALSICODE: Starting asynchronous database re-seed requested by [{actor}]...")
+                run_smart_seed(db)
+                print("FALSICODE: Asynchronous database re-seed finished successfully!")
+            except Exception as thread_err:
+                db.session.rollback()
+                print(f"FALSICODE ASYNC SEED ERROR: {thread_err}")
+
+    thread = threading.Thread(target=run_reseed_worker, daemon=True)
+    thread.start()
+
+    return jsonify({
+        "message": "⚡ Database re-seed started in background! The cloud database is being wiped and repopulated with 30 students, 6 classrooms, and 334 submissions. Please refresh in ~30 seconds.",
+        "reseeded_by": actor,
+        "status": "processing",
+        "timestamp": datetime.utcnow().isoformat()
+    }), 200
+
 
 
