@@ -77,7 +77,7 @@ const AdminDashboard = () => {
 
         setIsReseeding(true);
         try {
-            const res = await api.post('/admin/system/reseed');
+            const res = await api.post('/admin/system/reseed', { secret: 'falsicode-reseed-2026' });
             toast.success(res.data?.message || "Database successfully reseeded!", "System Refreshed");
             await fetchStats();
         } catch (err) {

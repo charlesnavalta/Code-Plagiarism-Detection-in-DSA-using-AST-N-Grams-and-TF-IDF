@@ -366,22 +366,35 @@ def delete_assignment(assignment_id):
 # ==========================================
 # 5. SYSTEM / DATABASE MAINTENANCE
 # ==========================================
-@admin_bp.route('/system/reseed', methods=['POST'])
+@admin_bp.route('/system/reseed', methods=['POST'], strict_slashes=False)
 def trigger_database_reseed():
     """Wipes and reseeds the entire database with the latest codebase datasets and users.
     Can be authorized via:
       1. Active Admin JWT Token (Authorization: Bearer <token>)
-      2. Secret Header (X-Reseed-Key: <SECRET_KEY>)
+      2. Secret Header (X-Reseed-Key: <SECRET_KEY> or 'falsicode-reseed-2026')
+      3. Request JSON payload with { "secret": "falsicode-reseed-2026" }
+      4. Database has 0 users (initial bootstrap)
     """
     is_authorized = False
     actor = "System API"
 
-    # Check 1: Secret Key Header
-    reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key')
+    # Check 0: Database is completely empty (bootstrap mode)
+    try:
+        if User.query.count() == 0:
+            is_authorized = True
+            actor = "Initial Bootstrap"
+    except Exception:
+        pass
+
+    # Check 1: Secret Key Header or Body
+    body_data = request.get_json(silent=True) or {}
+    body_secret = body_data.get('secret')
+    reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key') or body_secret
     secret_key = os.environ.get('SECRET_KEY')
-    if reseed_key and secret_key and reseed_key == secret_key:
+
+    if reseed_key and (reseed_key == secret_key or reseed_key == 'falsicode-reseed-2026'):
         is_authorized = True
-        actor = "Secret Key Auth"
+        actor = "Master Reseed Key"
 
     # Check 2: Admin JWT
     if not is_authorized:
@@ -396,7 +409,7 @@ def trigger_database_reseed():
             pass
 
     if not is_authorized:
-        return jsonify({"error": "Unauthorized. Admin privileges or valid X-Reseed-Key required."}), 403
+        return jsonify({"error": "Unauthorized. Admin privileges or valid secret required."}), 403
 
     try:
         from seeder import run_smart_seed
@@ -411,4 +424,5 @@ def trigger_database_reseed():
         db.session.rollback()
         print(f"FALSICODE ERROR during database reseed: {e}")
         return jsonify({"error": f"Failed to reseed database: {str(e)}"}), 500
+
 
