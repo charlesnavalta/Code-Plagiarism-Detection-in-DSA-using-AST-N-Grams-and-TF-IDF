@@ -69,7 +69,8 @@ const StudentAssignmentView = () => {
         };
 
         fetchAssignmentData();
-    }, [classId, assignmentId, navigate, toast]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [classId, assignmentId]);
 
     const fileExtension = assignment ? getFileExtension(assignment.language) : '.py';
     const displayLanguage = assignment ? formatLanguageDisplay(assignment.language) : 'Python';
