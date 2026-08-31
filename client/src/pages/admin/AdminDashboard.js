@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import api from '../../services/api'; 
 import { useTheme } from '../../hooks/useTheme';
 import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
+import { useToast } from '../../context/NotificationContext';
 import { AdminDashboardSkeleton } from './components/AdminSkeleton';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const toast = useToast();
     const [stats, setStats] = useState({
         users: { total: 0, students: 0, instructors: 0, pending: 0 },
         classrooms: { total: 0 },
@@ -19,52 +21,71 @@ const AdminDashboard = () => {
         }
     });
     const [loading, setLoading] = useState(true);
+    const [isReseeding, setIsReseeding] = useState(false);
     const dashboardRef = useRef(null);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            setLoading(true);
-            const startTime = Date.now();
+    const fetchStats = useCallback(async () => {
+        setLoading(true);
+        const startTime = Date.now();
+        try {
+            const res = await api.get('/admin/stats');
+            setStats(res.data);
+        } catch (error) {
+            // Seamless fallback to /auth/users and /classrooms while backend finishes deploying
             try {
-                const res = await api.get('/admin/stats');
-                setStats(res.data);
-            } catch (error) {
-                // Seamless fallback to /auth/users and /classrooms while backend finishes deploying
-                try {
-                    const [userRes, classRes] = await Promise.allSettled([
-                        api.get('/auth/users'),
-                        api.get('/classrooms')
-                    ]);
-                    const users = (userRes.status === 'fulfilled' && userRes.value?.data) ? userRes.value.data : [];
-                    const classes = (classRes.status === 'fulfilled' && classRes.value?.data) ? classRes.value.data : [];
+                const [userRes, classRes] = await Promise.allSettled([
+                    api.get('/auth/users'),
+                    api.get('/classrooms')
+                ]);
+                const users = (userRes.status === 'fulfilled' && userRes.value?.data) ? userRes.value.data : [];
+                const classes = (classRes.status === 'fulfilled' && classRes.value?.data) ? classRes.value.data : [];
 
-                    setStats(prev => ({
-                        ...prev,
-                        users: {
-                            total: users.length,
-                            students: users.filter(u => u.role === 'student').length,
-                            instructors: users.filter(u => u.role === 'instructor' && u.status === 'active').length,
-                            pending: users.filter(u => u.status === 'pending').length
-                        },
-                        classrooms: {
-                            total: classes.length
-                        }
-                    }));
-                } catch (_) {}
-            } finally {
-                const elapsed = Date.now() - startTime;
-                const minDelay = 350;
-                if (elapsed < minDelay) {
-                    await new Promise(r => setTimeout(r, minDelay - elapsed));
-                }
-                setLoading(false);
+                setStats(prev => ({
+                    ...prev,
+                    users: {
+                        total: users.length,
+                        students: users.filter(u => u.role === 'student').length,
+                        instructors: users.filter(u => u.role === 'instructor' && u.status === 'active').length,
+                        pending: users.filter(u => u.status === 'pending').length
+                    },
+                    classrooms: {
+                        total: classes.length
+                    }
+                }));
+            } catch (_) {}
+        } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 350;
+            if (elapsed < minDelay) {
+                await new Promise(r => setTimeout(r, minDelay - elapsed));
             }
-        };
-
-        fetchStats();
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchStats();
+    }, [fetchStats]);
+
+    const handleReseed = async () => {
+        const confirm = window.confirm(
+            "⚡ RESEED DATABASE?\n\nThis will wipe and reseed the database with:\n• 30 Students (Mary..Stark)\n• 6 Classrooms (Sir Renz & Sir Ba)\n• 42 Assignments\n• 334 Benchmark & Multiple-Files Submissions\n\nDo you want to proceed?"
+        );
+        if (!confirm) return;
+
+        setIsReseeding(true);
+        try {
+            const res = await api.post('/admin/system/reseed');
+            toast.success(res.data?.message || "Database successfully reseeded!", "System Refreshed");
+            await fetchStats();
+        } catch (err) {
+            toast.error(err.response?.data?.error || "Failed to reseed database.", "Reseed Error");
+        } finally {
+            setIsReseeding(false);
+        }
+    };
 
     // Risk percentages calculation
     const riskTotal = stats.analytics?.risk?.total || 0;
@@ -110,9 +131,20 @@ const AdminDashboard = () => {
                             <p>Global Root Control Node & System Telemetry</p>
                         </div>
                         
-                        <div className="live-status-indicator static-indicator">
-                            <div className="blinking-dot"></div>
-                            <span>SYSTEM OPERATIONAL</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                            <button
+                                className="btn-reseed-db"
+                                onClick={handleReseed}
+                                disabled={isReseeding}
+                                title="Wipe and populate the database with the latest datasets, 30 students, classrooms, and assignments"
+                            >
+                                {isReseeding ? '⚡ Reseeding Database...' : '⚡ Reseed Database'}
+                            </button>
+
+                            <div className="live-status-indicator static-indicator">
+                                <div className="blinking-dot"></div>
+                                <span>SYSTEM OPERATIONAL</span>
+                            </div>
                         </div>
                     </div>
                 </header>

@@ -361,3 +361,54 @@ def delete_assignment(assignment_id):
         db.session.rollback()
         print(f"Error deleting assignment: {e}")
         return jsonify({"error": "Database error while deleting assignment."}), 500
+
+
+# ==========================================
+# 5. SYSTEM / DATABASE MAINTENANCE
+# ==========================================
+@admin_bp.route('/system/reseed', methods=['POST'])
+def trigger_database_reseed():
+    """Wipes and reseeds the entire database with the latest codebase datasets and users.
+    Can be authorized via:
+      1. Active Admin JWT Token (Authorization: Bearer <token>)
+      2. Secret Header (X-Reseed-Key: <SECRET_KEY>)
+    """
+    is_authorized = False
+    actor = "System API"
+
+    # Check 1: Secret Key Header
+    reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key')
+    secret_key = os.environ.get('SECRET_KEY')
+    if reseed_key and secret_key and reseed_key == secret_key:
+        is_authorized = True
+        actor = "Secret Key Auth"
+
+    # Check 2: Admin JWT
+    if not is_authorized:
+        try:
+            from flask_jwt_extended import verify_jwt_in_request
+            verify_jwt_in_request(optional=True)
+            admin = verify_admin()
+            if admin:
+                is_authorized = True
+                actor = admin.username
+        except Exception:
+            pass
+
+    if not is_authorized:
+        return jsonify({"error": "Unauthorized. Admin privileges or valid X-Reseed-Key required."}), 403
+
+    try:
+        from seeder import run_smart_seed
+        print(f"FALSICODE: Reseed requested by [{actor}]. Executing Smart Seed...")
+        run_smart_seed(db)
+        return jsonify({
+            "message": "Database successfully wiped and reseeded with the latest datasets, classrooms, and students!",
+            "reseeded_by": actor,
+            "timestamp": datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"FALSICODE ERROR during database reseed: {e}")
+        return jsonify({"error": f"Failed to reseed database: {str(e)}"}), 500
+
