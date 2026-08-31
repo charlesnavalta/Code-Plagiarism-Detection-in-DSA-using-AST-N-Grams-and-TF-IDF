@@ -4,9 +4,7 @@ from flask_bcrypt import generate_password_hash
 users_to_seed = [
     {"email": "admin@test.com", "username": "admin", "password": "admin123", "role": "admin", "status": "active", "is_verified": True},
     {"email": "renz@gmail.com", "username": "Renz", "password": "renz123", "role": "instructor", "status": "active", "is_verified": True},
-    {"email": "doca@gmail.com", "username": "Doca", "password": "doca123", "role": "instructor", "status": "active", "is_verified": True},
     {"email": "ba@gmail.com", "username": "Ba", "password": "ba123", "role": "instructor", "status": "active", "is_verified": True},
-    {"email": "janus@gmail.com", "username": "Janus", "password": "janus123", "role": "instructor", "status": "active", "is_verified": True},
     {"email": "mary@gmail.com", "username": "Mary", "password": "mary123", "role": "student", "status": "active", "is_verified": True},
     {"email": "charles@gmail.com", "username": "Charles", "password": "charles123", "role": "student", "status": "active", "is_verified": True},
     {"email": "nicolo@gmail.com", "username": "Nicolo", "password": "nicolo123", "role": "student", "status": "active", "is_verified": True},
@@ -23,6 +21,20 @@ users_to_seed = [
     {"email": "sam@gmail.com", "username": "Sam", "password": "sam123", "role": "student", "status": "active", "is_verified": True},
     {"email": "chris@gmail.com", "username": "Chris", "password": "chris123", "role": "student", "status": "active", "is_verified": True},
     {"email": "jake@gmail.com", "username": "Jake", "password": "jake123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "kyle@gmail.com", "username": "Kyle", "password": "kyle123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "cyrus@gmail.com", "username": "Cyrus", "password": "cyrus123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "jr@gmail.com", "username": "Jr", "password": "jr123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "andrei@gmail.com", "username": "Andrei", "password": "andrei123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "tricia@gmail.com", "username": "Tricia", "password": "tricia123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "tatin@gmail.com", "username": "Tatin", "password": "tatin123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "pauline@gmail.com", "username": "Pauline", "password": "pauline123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "che@gmail.com", "username": "Che", "password": "che123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "kiko@gmail.com", "username": "Kiko", "password": "kiko123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "darrel@gmail.com", "username": "Darrel", "password": "darrel123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "edrian@gmail.com", "username": "Edrian", "password": "edrian123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "sean@gmail.com", "username": "Sean", "password": "sean123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "hannah@gmail.com", "username": "Hannah", "password": "hannah123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "stark@gmail.com", "username": "Stark", "password": "stark123", "role": "student", "status": "active", "is_verified": True},
 ]
 
 def seed_users(db):

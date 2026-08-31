@@ -737,6 +737,367 @@ python_submissions = [
         "file_path": "datasets/python_source-code/Multiple-C2/exact_copy_1.py",
     },
 
+    # ==========================================
+        # ==========================================
+    # Multiple-D 1: Quick Sort (Large Cohort)
+    # 24 organic · 1 exact copy · 2 renamed · 2 structural · 1 mixed (30 students)
+    # ==========================================
+    {
+        "student_username": "Mary",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_1.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_1.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_2.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_2.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_3.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_3.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_4.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_4.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_5.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_5.py",
+    },
+    {
+        "student_username": "Jude",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_6.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_6.py",
+    },
+    {
+        "student_username": "Jm",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_7.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_7.py",
+    },
+    {
+        "student_username": "Patrick",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_8.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_8.py",
+    },
+    {
+        "student_username": "Rachel",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_9.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_9.py",
+    },
+    {
+        "student_username": "Karo",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_10.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_10.py",
+    },
+    {
+        "student_username": "Sol",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_11.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_11.py",
+    },
+    {
+        "student_username": "Ramil",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_12.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_12.py",
+    },
+    {
+        "student_username": "Alex",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_13.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_13.py",
+    },
+    {
+        "student_username": "Sam",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_14.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_14.py",
+    },
+    {
+        "student_username": "Chris",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_15.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_15.py",
+    },
+    {
+        "student_username": "Jake",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_16.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_16.py",
+    },
+    {
+        "student_username": "Kyle",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_17.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_17.py",
+    },
+    {
+        "student_username": "Cyrus",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_18.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_18.py",
+    },
+    {
+        "student_username": "Jr",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_19.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_19.py",
+    },
+    {
+        "student_username": "Andrei",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_20.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_20.py",
+    },
+    {
+        "student_username": "Tricia",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_21.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_21.py",
+    },
+    {
+        "student_username": "Tatin",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_22.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_22.py",
+    },
+    {
+        "student_username": "Pauline",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_23.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_23.py",
+    },
+    {
+        "student_username": "Che",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "organic_24.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/organic_24.py",
+    },
+    {
+        "student_username": "Kiko",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "exact_copy_1.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/exact_copy_1.py",
+    },
+    {
+        "student_username": "Darrel",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "renamed_1.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/renamed_1.py",
+    },
+    {
+        "student_username": "Edrian",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "renamed_2.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/renamed_2.py",
+    },
+    {
+        "student_username": "Sean",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "structural_1.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/structural_1.py",
+    },
+    {
+        "student_username": "Hannah",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "structural_2.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/structural_2.py",
+    },
+    {
+        "student_username": "Stark",
+        "assignment_title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "filename": "mixed_attack_1.py",
+        "file_path": "datasets/python_source-code/Multiple-D1/mixed_attack_1.py",
+    },
+    # ==========================================
+    # DSA Clone Benchmarks (Python - 3CSD)
+    # ==========================================
+    # BST: Clone Benchmark (Python)
+    {
+        "student_username": "Mary",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "original.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/original.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "type_1_exact.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/type_1_exact.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "type_2_renamed.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/type_2_renamed.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "type_2_renamed2.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/type_2_renamed2.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "type_3_structural.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/type_3_structural.py",
+    },
+    {
+        "student_username": "Jude",
+        "assignment_title": "BST: Clone Benchmark (Python)",
+        "filename": "type_3_structural2.py",
+        "file_path": "datasets/python_source-code/binary_search_tree/type_3_structural2.py",
+    },
+    # Binary Tree: Clone Benchmark (Python)
+    {
+        "student_username": "Mary",
+        "assignment_title": "Binary Tree: Clone Benchmark (Python)",
+        "filename": "original.py",
+        "file_path": "datasets/python_source-code/binary_tree/original.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "Binary Tree: Clone Benchmark (Python)",
+        "filename": "type_2_renamed.py",
+        "file_path": "datasets/python_source-code/binary_tree/type_2_renamed.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "Binary Tree: Clone Benchmark (Python)",
+        "filename": "type_2_renamed2.py",
+        "file_path": "datasets/python_source-code/binary_tree/type_2_renamed2.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "Binary Tree: Clone Benchmark (Python)",
+        "filename": "type_3_structural.py",
+        "file_path": "datasets/python_source-code/binary_tree/type_3_structural.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "Binary Tree: Clone Benchmark (Python)",
+        "filename": "type_3_structural2.py",
+        "file_path": "datasets/python_source-code/binary_tree/type_3_structural2.py",
+    },
+    # Linked List: Clone Benchmark (Python)
+    {
+        "student_username": "Mary",
+        "assignment_title": "Linked List: Clone Benchmark (Python)",
+        "filename": "original.py",
+        "file_path": "datasets/python_source-code/linked_list/original.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "Linked List: Clone Benchmark (Python)",
+        "filename": "type_1_exact.py",
+        "file_path": "datasets/python_source-code/linked_list/type_1_exact.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "Linked List: Clone Benchmark (Python)",
+        "filename": "type_2_renamed.py",
+        "file_path": "datasets/python_source-code/linked_list/type_2_renamed.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "Linked List: Clone Benchmark (Python)",
+        "filename": "type_2_renamed2.py",
+        "file_path": "datasets/python_source-code/linked_list/type_2_renamed2.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "Linked List: Clone Benchmark (Python)",
+        "filename": "type_3_structural.py",
+        "file_path": "datasets/python_source-code/linked_list/type_3_structural.py",
+    },
+    # Merge Sort: Clone Benchmark (Python)
+    {
+        "student_username": "Mary",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "original.py",
+        "file_path": "datasets/python_source-code/merge_sort/original.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "type_1_exact.py",
+        "file_path": "datasets/python_source-code/merge_sort/type_1_exact.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "type_2_renamed.py",
+        "file_path": "datasets/python_source-code/merge_sort/type_2_renamed.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "type_2_renamed2.py",
+        "file_path": "datasets/python_source-code/merge_sort/type_2_renamed2.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "type_3_structural.py",
+        "file_path": "datasets/python_source-code/merge_sort/type_3_structural.py",
+    },
+    {
+        "student_username": "Jude",
+        "assignment_title": "Merge Sort: Clone Benchmark (Python)",
+        "filename": "type_3_structural2.py",
+        "file_path": "datasets/python_source-code/merge_sort/type_3_structural2.py",
+    },
+    # Quick Sort: Clone Benchmark (Python)
+    {
+        "student_username": "Mary",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "original.py",
+        "file_path": "datasets/python_source-code/quick_sort/original.py",
+    },
+    {
+        "student_username": "Charles",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "type_1_exact_copy.py",
+        "file_path": "datasets/python_source-code/quick_sort/type_1_exact_copy.py",
+    },
+    {
+        "student_username": "Nicolo",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "type_2_renamed.py",
+        "file_path": "datasets/python_source-code/quick_sort/type_2_renamed.py",
+    },
+    {
+        "student_username": "Dan",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "type_2_renamed2.py",
+        "file_path": "datasets/python_source-code/quick_sort/type_2_renamed2.py",
+    },
+    {
+        "student_username": "Ramon",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "type_3_structural.py",
+        "file_path": "datasets/python_source-code/quick_sort/type_3_structural.py",
+    },
+    {
+        "student_username": "Jude",
+        "assignment_title": "Quick Sort: Clone Benchmark (Python)",
+        "filename": "type_3_structural2.py",
+        "file_path": "datasets/python_source-code/quick_sort/type_3_structural2.py",
+    },
 ]
 
 def seed_python_submissions(db):

@@ -153,6 +153,14 @@ assignments_to_seed = [
         "language": "python",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
+    {
+        "title": "Multiple-D 1: Quick Sort (Large Cohort)",
+        "description": "Large Cohort Benchmark: Write a Quick Sort program. This realistic classroom test features 30 diverse submissions from 30 students, testing system scalability, heatmap rendering, and detection of Type 1, Type 2, Type 3, and mixed cheating attacks within a large cohort.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
     
     # ==========================================
     # TS-A (java)
@@ -301,6 +309,100 @@ assignments_to_seed = [
         "description": "The Final Test: Write a Breadth-First Search program for a graph. This combines every cheating trick at once—renaming, reordering, control-flow swaps (queue to recursion), dead code, and stacked combinations—to see if disguises that individually evade detection still get caught when layered together.",
         "max_score": 100,
         "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-D 1: Quick Sort (Large Cohort) Java",
+        "description": "Large Cohort Benchmark: Write a Quick Sort program. This realistic classroom test features 30 diverse submissions from 30 students, testing system scalability, heatmap rendering, and detection of Type 1, Type 2, Type 3, and mixed cheating attacks within a large cohort.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # DSA Clone Benchmarks (Python - 3CSD)
+    # ==========================================
+    {
+        "title": "BST: Clone Benchmark (Python)",
+        "description": "Ground-truth clone detection benchmark on Binary Search Tree containing Type 1 verbatim copies, Type 2 lexical renames, and Type 3 structural modifications.",
+        "max_score": 100,
+        "classroom_name": "3CSD - DSA Clone Benchmarks",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Binary Tree: Clone Benchmark (Python)",
+        "description": "Ground-truth clone detection benchmark on Binary Tree implementations evaluating Type 2 renaming and Type 3 structural changes.",
+        "max_score": 100,
+        "classroom_name": "3CSD - DSA Clone Benchmarks",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Linked List: Clone Benchmark (Python)",
+        "description": "Ground-truth clone detection benchmark on Singly Linked List operations evaluating Type 1, 2, and 3 plagiarism detection.",
+        "max_score": 100,
+        "classroom_name": "3CSD - DSA Clone Benchmarks",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Merge Sort: Clone Benchmark (Python)",
+        "description": "Ground-truth clone detection benchmark on Divide-and-Conquer Merge Sort evaluating Type 1, 2, and 3 plagiarism variants.",
+        "max_score": 100,
+        "classroom_name": "3CSD - DSA Clone Benchmarks",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Quick Sort: Clone Benchmark (Python)",
+        "description": "Ground-truth clone detection benchmark on Quick Sort evaluating multi-variation Type 1, Type 2, and Type 3 clones.",
+        "max_score": 100,
+        "classroom_name": "3CSD - DSA Clone Benchmarks",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # DSA Clone Benchmarks (Java - 4CSC)
+    # ==========================================
+    {
+        "title": "BST: Clone Benchmark (Java)",
+        "description": "Ground-truth clone detection benchmark on Java Binary Search Tree containing Type 1, 2, and 3 academic clones.",
+        "max_score": 100,
+        "classroom_name": "4CSC - DSA Clone Benchmarks (Java)",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Binary Tree: Clone Benchmark (Java)",
+        "description": "Ground-truth clone detection benchmark on Java Binary Tree implementations evaluating Type 2 renaming and Type 3 structural changes.",
+        "max_score": 100,
+        "classroom_name": "4CSC - DSA Clone Benchmarks (Java)",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Linked List: Clone Benchmark (Java)",
+        "description": "Ground-truth clone detection benchmark on Java Linked List operations evaluating Type 1, 2, and 3 plagiarism detection.",
+        "max_score": 100,
+        "classroom_name": "4CSC - DSA Clone Benchmarks (Java)",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Merge Sort: Clone Benchmark (Java)",
+        "description": "Ground-truth clone detection benchmark on Java Divide-and-Conquer Merge Sort evaluating Type 1, 2, and 3 plagiarism variants.",
+        "max_score": 100,
+        "classroom_name": "4CSC - DSA Clone Benchmarks (Java)",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Quick Sort: Clone Benchmark (Java)",
+        "description": "Ground-truth clone detection benchmark on Java Quick Sort evaluating Type 1, 2, and 3 clones.",
+        "max_score": 100,
+        "classroom_name": "4CSC - DSA Clone Benchmarks (Java)",
         "language": "java",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },

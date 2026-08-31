@@ -141,8 +141,10 @@ def create_app():
             run_smart_seed(db)
             print("Falsicode CLI: Smart Seed complete.")
 
-    # 5. Base Route (Health Check)
+    # 5. Base Route (Health Check & Cold-Start Warmup)
     @app.route('/')
+    @app.route('/health')
+    @app.route('/api/health')
     def home():
         return {
             "status": "healthy",

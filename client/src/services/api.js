@@ -62,4 +62,20 @@ api.interceptors.response.use(
   },
 );
 
+// Helper to silently ping backend to wake it up from cold sleep (e.g., Render free tier)
+export const warmUpServer = () => {
+  try {
+    const rawBase = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:5000`;
+    const serverRoot = rawBase.replace(/\/api\/?$/, '');
+    
+    // 1. Silent fetch to root endpoint
+    fetch(`${serverRoot}/`, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+    
+    // 2. Health check via axios instance
+    api.get('/health', { timeout: 30000 }).catch(() => {});
+  } catch (e) {
+    // Ignore warmup errors
+  }
+};
+
 export default api;

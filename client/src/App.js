@@ -38,9 +38,18 @@ import UserManagement from './pages/admin/UserManagement';
 import ClassroomManagement from './pages/admin/ClassroomManagement';
 import AssignmentManagement from './pages/admin/AssignmentManagement';
 
+import { warmUpServer } from './services/api';
+
 function AppContent() {
   useTheme();
   const toast = useToast();
+
+  // ==========================================
+  // EARLY SERVER WARM-UP (COLD START REDUCTION)
+  // ==========================================
+  useEffect(() => {
+    warmUpServer();
+  }, []);
 
   // ==========================================
   // GLOBAL INACTIVITY TIMER (AUTO-LOGOUT)

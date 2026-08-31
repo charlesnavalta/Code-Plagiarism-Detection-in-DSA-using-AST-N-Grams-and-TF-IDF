@@ -3,8 +3,10 @@ from models import Classroom, User
 classrooms_to_seed = [
     {"name": "3CSB - Different Scenarios", "instructor_username": "Renz"},
     {"name": "3CSC - Multiple Files", "instructor_username": "Renz"},
+    {"name": "3CSD - DSA Clone Benchmarks", "instructor_username": "Renz"},
     {"name": "4CSA - Different Scenarios", "instructor_username": "Ba"},
     {"name": "4CSB - Multiple Files", "instructor_username": "Ba"},
+    {"name": "4CSC - DSA Clone Benchmarks (Java)", "instructor_username": "Ba"},
 ]
 
 def seed_classrooms(db):

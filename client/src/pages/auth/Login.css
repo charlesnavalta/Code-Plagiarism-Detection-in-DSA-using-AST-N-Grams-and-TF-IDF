@@ -224,6 +224,24 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 
+.auth-warmup-notice {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.auth-warmup-notice .warmup-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
 /* =========================================
    📱 RESPONSIVE BREAKPOINTS (Tablet & Mobile)
    ========================================= */

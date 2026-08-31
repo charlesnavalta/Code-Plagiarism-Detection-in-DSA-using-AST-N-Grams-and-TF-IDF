@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import authService from '../../services/authService';
+import { warmUpServer } from '../../services/api';
 import { useToast } from '../../context/NotificationContext';
 import './Login.css';
 
@@ -13,17 +14,30 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isWarmingUp, setIsWarmingUp] = useState(false);
     const toast = useToast();
     
     const navigate = useNavigate();
 
+    // Trigger pre-warming when the user opens the login screen
+    useEffect(() => {
+        warmUpServer();
+    }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setIsWarmingUp(false);
         const startTime = Date.now();
+
+        // If backend takes longer than 3.5s (due to free tier cold start), update UI status
+        const warmupTimer = setTimeout(() => {
+            setIsWarmingUp(true);
+        }, 3500);
 
         try {
             const data = await authService.login(email, password);
+            clearTimeout(warmupTimer);
             
             const userString = JSON.stringify(data.user);
             const token = data.access_token;
@@ -49,6 +63,7 @@ const Login = () => {
             }, 300);
 
         } catch (err) {
+            clearTimeout(warmupTimer);
             const elapsed = Date.now() - startTime;
             if (elapsed < 450) {
                 await new Promise(r => setTimeout(r, 450 - elapsed));
@@ -57,7 +72,9 @@ const Login = () => {
             const errorMessage = err.response?.data?.error || err.response?.data?.message || "Invalid email or password.";
             toast.error(errorMessage, "Login Failed");
         } finally {
+            clearTimeout(warmupTimer);
             setLoading(false);
+            setIsWarmingUp(false);
         }
     };
 
@@ -144,9 +161,16 @@ const Login = () => {
                             <Link to="/forgot-password" className="auth-link">Forgot password?</Link>
                         </div>
 
-                        <AuthButton loading={loading} loadingText="Logging in...">
+                        <AuthButton loading={loading} loadingText={isWarmingUp ? "Waking up server..." : "Logging in..."}>
                             Log In
                         </AuthButton>
+
+                        {isWarmingUp && loading && (
+                            <div className="auth-warmup-notice fade-in-up">
+                                <span className="warmup-icon">⚡</span>
+                                <span>Waking up cloud server from sleep mode. This takes a few seconds on initial connection...</span>
+                            </div>
+                        )}
                     </form>
 
                     <div className="auth-divider">
