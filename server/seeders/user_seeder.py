@@ -35,6 +35,18 @@ users_to_seed = [
     {"email": "sean@gmail.com", "username": "Sean", "password": "sean123", "role": "student", "status": "active", "is_verified": True},
     {"email": "hannah@gmail.com", "username": "Hannah", "password": "hannah123", "role": "student", "status": "active", "is_verified": True},
     {"email": "stark@gmail.com", "username": "Stark", "password": "stark123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "juan@gmail.com", "username": "Juan", "password": "juan123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "jose@gmail.com", "username": "Jose", "password": "jose123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "angelo@gmail.com", "username": "Angelo", "password": "angelo123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "joshua@gmail.com", "username": "Joshua", "password": "joshua123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "bea@gmail.com", "username": "Bea", "password": "bea123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "danica@gmail.com", "username": "Danica", "password": "danica123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "erika@gmail.com", "username": "Erika", "password": "erika123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "francine@gmail.com", "username": "Francine", "password": "francine123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "gabriel@gmail.com", "username": "Gabriel", "password": "gabriel123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "justine@gmail.com", "username": "Justine", "password": "justine123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "liezel@gmail.com", "username": "Liezel", "password": "liezel123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "miguel@gmail.com", "username": "Miguel", "password": "miguel123", "role": "student", "status": "active", "is_verified": True},
 ]
 
 def seed_users(db):

@@ -1,14 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Falsicode</title>
-    </head>
+    <!-- Prevent Flash of Unstyled Content (FOUC) / White Flash on Refresh -->
+    <style>
+        html, body {
+            background-color: #030712;
+            color: #f9fafb;
+            margin: 0;
+            padding: 0;
+        }
+        html[data-theme='light'], body[data-theme='light'] {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('app-theme') || 'dark';
+                var theme = saved;
+                if (saved === 'system') {
+                    theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.style.backgroundColor = theme === 'light' ? '#f1f5f9' : '#030712';
+            } catch(e) {}
+        })();
+    </script>
+</head>
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    
     <div id="root"></div>
-
 </body>
 </html>

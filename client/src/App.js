@@ -33,16 +33,18 @@ import StudentClassroomView from './pages/student/StudentClassroomView';
 import StudentAssignmentView from './pages/student/StudentAssignmentView';
 import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
+import InstructorCreateAssignmentView from './pages/instructor/InstructorCreateAssignmentView';
+import InstructorEditAssignmentView from './pages/instructor/InstructorEditAssignmentView';
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ClassroomManagement from './pages/admin/ClassroomManagement';
 import AssignmentManagement from './pages/admin/AssignmentManagement';
+import SessionTimeoutManager from './components/common/SessionTimeoutManager';
 
 import { warmUpServer } from './services/api';
 
 function AppContent() {
   useTheme();
-  const toast = useToast();
 
   // ==========================================
   // EARLY SERVER WARM-UP (COLD START REDUCTION)
@@ -51,42 +53,11 @@ function AppContent() {
     warmUpServer();
   }, []);
 
-  // ==========================================
-  // GLOBAL INACTIVITY TIMER (AUTO-LOGOUT)
-  // ==========================================
-  useEffect(() => {
-    let inactivityTimer;
-    const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 mins
-
-    const handleLogout = () => {
-      const user = localStorage.getItem('user');
-      if (user) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        toast.warning("You have been logged out due to inactivity.", "Session Timeout");
-        window.location.href = '/login';
-      }
-    };
-
-    const resetTimer = () => {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(handleLogout, INACTIVITY_LIMIT);
-    };
-
-    const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
-    activityEvents.forEach(event => window.addEventListener(event, resetTimer));
-    resetTimer();
-
-    return () => {
-      clearTimeout(inactivityTimer);
-      activityEvents.forEach(event => window.removeEventListener(event, resetTimer));
-    };
-  }, [toast]);
-
   return (
     <Router>
       <Navbar /> 
       <ToastContainer />
+      <SessionTimeoutManager />
       
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -113,6 +84,9 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<InstructorDash />} />
               <Route path="class/:id" element={<InstructorClassroomView />} />
+              <Route path="class/:id/assignment/new" element={<InstructorCreateAssignmentView />} />
+              <Route path="class/:id/create-assignment" element={<InstructorCreateAssignmentView />} />
+              <Route path="class/:id/assignment/:assignmentId/edit" element={<InstructorEditAssignmentView />} />
               <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>
