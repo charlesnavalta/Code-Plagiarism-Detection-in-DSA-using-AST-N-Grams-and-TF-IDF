@@ -81,16 +81,20 @@ def submit_assignment(class_id, assignment_id):
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
     
     try:
-        file.save(filepath)
-        
         if is_resubmit:
-            # Clean up the old physical file on server disk
-            if os.path.exists(existing_submission.file_path):
-                try:
-                    os.remove(existing_submission.file_path)
-                except Exception as file_err:
-                    print(f"Warning: Failed to delete old file {existing_submission.file_path}: {file_err}")
-                
+            # Clean up the old physical file only if it is at a different location
+            old_raw_path = getattr(existing_submission, 'file_path', None)
+            if old_raw_path:
+                resolved_old = resolve_submission_path(old_raw_path) or old_raw_path
+                if os.path.exists(resolved_old) and os.path.abspath(resolved_old) != os.path.abspath(filepath):
+                    try:
+                        os.remove(resolved_old)
+                    except Exception as file_err:
+                        print(f"Warning: Failed to delete old file {resolved_old}: {file_err}")
+
+            # Save the newly uploaded file to disk
+            file.save(filepath)
+
             # Overwrite the existing database record
             existing_submission.filename = original_filename
             existing_submission.file_path = filepath
@@ -105,6 +109,7 @@ def submit_assignment(class_id, assignment_id):
             }), 200
         else:
             # First time submission
+            file.save(filepath)
             new_submission = Submission(
                 assignment_id=assignment.id,
                 student_id=user.id,

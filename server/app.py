@@ -103,34 +103,40 @@ def create_app():
 
     # 4. --- DATABASE INITIALIZATION & SEEDING ---
     with app.app_context():
-        # Fast, non-blocking connection ping (max 3 retries, 1s sleep)
-        retries = 3
+        # Fast connection ping & table creation (max 5 retries, 2s sleep)
+        retries = 5
         connected = False
         while retries > 0:
             try:
                 db.session.execute(db.text('SELECT 1'))
                 connected = True
                 print("Falsicode: Database connected successfully!")
+                
+                # Ensure all models and tables exist
+                import models
+                db.create_all()
+                print("Falsicode: Database tables verified/created successfully.")
                 break
             except Exception as e:
                 retries -= 1
                 if retries > 0:
-                    print(f"Falsicode: Database warming up... retrying ({3-retries}/3)")
-                    time.sleep(1)
+                    print(f"Falsicode: Database warming up... retrying ({5-retries}/5)")
+                    time.sleep(2)
                 else:
                     print(f"Falsicode: Database connection notice: {e}")
         
-        # Only run auto-seeding if explicitly enabled via AUTO_SEED=true or SEED_ON_START=true
-        auto_seed = os.environ.get('AUTO_SEED', 'false').lower() in ('true', '1', 't') or os.environ.get('SEED_ON_START', 'false').lower() in ('true', '1', 't')
-        if connected and auto_seed:
+        # Auto-seed if database is empty or if explicitly requested
+        auto_seed_env = os.environ.get('AUTO_SEED', 'true').lower() in ('true', '1', 't')
+        if connected:
             try:
-                if User.query.count() == 0:
-                    print("Falsicode: Empty database detected & AUTO_SEED enabled, running seeder...")
+                user_count = User.query.count()
+                if user_count == 0 and auto_seed_env:
+                    print("Falsicode: Empty database detected, running smart seeder...")
                     run_smart_seed(db)
                 else:
-                    print("Falsicode: Database already populated, skipping seeder.")
+                    print(f"Falsicode: Database already populated ({user_count} users), skipping seeder.")
             except Exception as e:
-                print(f"Falsicode Seeder Notice: {e}")
+                print(f"Falsicode Auto-Seed Error/Notice: {e}")
 
     # Add CLI seed command: `flask seed`
     @app.cli.command('seed')

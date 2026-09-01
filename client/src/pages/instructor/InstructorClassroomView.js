@@ -11,9 +11,7 @@ import InstructorWrapper from './components/InstructorWrapper';
 import ClassroomViewSkeleton from './components/ClassroomViewSkeleton';
 
 // Modals
-import CreateAssignmentModal from '../../modals/instructor/CreateAssignmentModal';
 import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
-import EditAssignmentModal from '../../modals/instructor/EditAssignmentModal';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -24,14 +22,11 @@ const InstructorClassroomView = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [showCreateModal, setShowCreateModal] = useState(false);
     const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
     const [currentSubmissions, setCurrentSubmissions] = useState([]);
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [analysisResults, setAnalysisResults] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    
-    const [editingAssignment, setEditingAssignment] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -77,20 +72,17 @@ const InstructorClassroomView = () => {
         try {
             const data = await analysisService.runAnalysis(selectedAssignment.id);
             setAnalysisResults(data.results);
+            // Refresh submissions in state so code comparison and table reflect the latest resubmitted code
+            try {
+                const refreshedSubs = await analysisService.getAssignmentSubmissions(id, selectedAssignment.id);
+                setCurrentSubmissions(refreshedSubs);
+            } catch (_) {}
             toast.success("Structural plagiarism audit completed successfully!", "Analysis Complete");
         } catch (error) {
             toast.error("Analysis failed: " + (error.response?.data?.error || error.message), "Engine Failure");
         } finally {
             setIsAnalyzing(false);
         }
-    };
-
-    const handleAssignmentUpdated = (updatedAssignment) => {
-        setAssignments(assignments.map(a => a.id === updatedAssignment.id ? updatedAssignment : a));
-    };
-
-    const handleAssignmentDeleted = (deletedAssignmentId) => {
-        setAssignments(currentAssignments => currentAssignments.filter(a => a.id !== deletedAssignmentId));
     };
 
     if (loading) return <ClassroomViewSkeleton role="instructor" />;
@@ -142,7 +134,7 @@ const InstructorClassroomView = () => {
                         <div className="header-titles">
                             <h2>Assignment(s)</h2>
                         </div>
-                        <button className="btn-primary-falsicode" onClick={() => setShowCreateModal(true)}>
+                        <button className="btn-primary-falsicode" onClick={() => navigate(`/instructor/class/${id}/assignment/new`)}>
                             {/* 🌟 ADDED: The Plus Icon for the primary action */}
                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
@@ -161,7 +153,7 @@ const InstructorClassroomView = () => {
                                 <div 
                                     key={assignment.id} 
                                     className="assignment-item-row clickable-row"
-                                    onClick={() => setEditingAssignment(assignment)}
+                                    onClick={() => navigate(`/instructor/class/${id}/assignment/${assignment.id}/edit`)}
                                 >
                                     <div className="assignment-meta-top">
                                         <span className="task-id">
@@ -178,9 +170,9 @@ const InstructorClassroomView = () => {
                                     <button 
                                         className={`btn-glass-action ${hasSubmissions ? 'ready-to-audit' : ''}`} 
                                         onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            handleViewSubmissions(assignment);
-                                        }}
+                                             e.stopPropagation(); 
+                                             handleViewSubmissions(assignment);
+                                         }}
                                     >
                                         {hasSubmissions ? 'Launch Plagiarism Audit →' : 'View Workspace →'}
                                     </button>
@@ -191,13 +183,6 @@ const InstructorClassroomView = () => {
                 </main>
             </div>
 
-            <CreateAssignmentModal 
-                isOpen={showCreateModal} 
-                onClose={() => setShowCreateModal(false)} 
-                classroomId={id}
-                onAssignmentCreated={(newAssignment) => setAssignments([...assignments, newAssignment])}
-            />
-
             <SubmissionsAuditModal 
                 isOpen={showSubmissionsModal}
                 onClose={() => setShowSubmissionsModal(false)}
@@ -207,15 +192,6 @@ const InstructorClassroomView = () => {
                 onRunAnalysis={handleRunAnalysis}
                 classroomId={id} 
                 assignmentId={selectedAssignment?.id} 
-            />
-
-            <EditAssignmentModal
-                isOpen={!!editingAssignment}
-                assignment={editingAssignment}
-                onClose={() => setEditingAssignment(null)}
-                onAssignmentUpdated={handleAssignmentUpdated}
-                onAssignmentDeleted={handleAssignmentDeleted} 
-                classroomId={id} 
             />
         </InstructorWrapper>
     );

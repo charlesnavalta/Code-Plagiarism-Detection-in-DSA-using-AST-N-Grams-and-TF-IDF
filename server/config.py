@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # Get the absolute path of the directory this file is in
@@ -39,6 +40,7 @@ class Config:
     # 1. Security Keys
     SECRET_KEY = os.environ.get('SECRET_KEY', 'falsicode_fallback_secret_key_2026')
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', SECRET_KEY)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
 
     # 2. Database Setup
     SQLALCHEMY_DATABASE_URI = get_database_uri()
