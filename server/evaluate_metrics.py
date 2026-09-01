@@ -53,89 +53,94 @@ def get_ground_truth(filename):
 
 
 def run_benchmark_for_language(language="python"):
-    """Evaluates labeled benchmark datasets for a specified language."""
+    """Evaluates labeled benchmark datasets for a specified language.
+
+    Loads all files in each topic together as a single batch so TF-IDF has a
+    real corpus context (IDF is computed across the full topic, not just 2 files).
+    This is the correct simulation of how compare_all_files runs in production
+    (all classroom submissions together), and it lets min_df / max_df work as
+    intended.
+    """
     lang_folder = "python_source-code" if language == "python" else "java_source-code"
     base_path = os.path.join(BASE_DIR, "datasets", lang_folder)
     ext = ".py" if language == "python" else ".java"
     preprocess_fn = process_python_file if language == "python" else process_java_file
+    ngram_bounds = (3, 5)
 
-    pairs_to_test = []
-    baseline_files = {}
+    confusion_matrix = {actual: {pred: 0 for pred in CLASSES} for actual in CLASSES}
+    detailed_results = []
 
-    # 1. Collect within-topic clone pairs (Positive Plagiarism Pairs)
+    # -------------------------------------------------------------------------
+    # POSITIVE PAIRS: within-topic batch evaluation
+    # -------------------------------------------------------------------------
+    # Load every topic's files together into one compare_all_files call so that
+    # TF-IDF has a meaningful corpus (5-7 files) and IDF weights are sensible.
+    # We then look up only the (orig, clone) pairwise result we care about.
+    # -------------------------------------------------------------------------
+    baseline_files = {}   # topic -> (orig_name, orig_path)
+
     for topic in BENCHMARK_TOPICS:
         topic_path = os.path.join(base_path, topic)
         if not os.path.exists(topic_path):
             continue
 
         files = [f for f in os.listdir(topic_path) if f.endswith(ext)]
-        # Find baseline original
         orig_candidates = [f for f in files if "orig" in f.lower()]
-        if not orig_candidates:
-            orig = files[0]
-        else:
-            orig = orig_candidates[0]
-
+        orig = orig_candidates[0] if orig_candidates else files[0]
         baseline_files[topic] = (orig, os.path.join(topic_path, orig))
 
-        for f in files:
-            if f == orig:
+        # Build the full batch for this topic (orig + all variants)
+        batch_file_data = []
+        for fname in files:
+            fpath = os.path.join(topic_path, fname)
+            try:
+                with open(fpath, "r", encoding="utf-8", errors="ignore") as fh:
+                    content = fh.read()
+                if not content.strip():
+                    continue
+                doc_str, tokens = preprocess_fn(content)
+                if doc_str and tokens:
+                    batch_file_data.append({
+                        "id": fname,
+                        "name": fname,
+                        "doc": doc_str,
+                        "tokens": tokens,
+                        "content": content,
+                    })
+            except Exception:
                 continue
-            gt = get_ground_truth(f)
-            if gt in ["Type 1", "Type 2", "Type 3"]:
-                pairs_to_test.append({
-                    "topic": topic,
-                    "file_a_name": orig,
-                    "file_a_path": os.path.join(topic_path, orig),
-                    "file_b_name": f,
-                    "file_b_path": os.path.join(topic_path, f),
-                    "ground_truth": gt
-                })
 
-    # 2. Collect cross-topic distinct algorithm pairs (Negative Non-Plagiarized Controls)
-    # Exclude exact_copy_testing from cross-topic comparisons as its code is a clone of binary_search_tree
-    distinct_topics = [t for t in baseline_files.keys() if t != "exact_copy_testing"]
-    for i in range(len(distinct_topics)):
-        for j in range(i + 1, len(distinct_topics)):
-            t1, t2 = distinct_topics[i], distinct_topics[j]
-            orig1, path1 = baseline_files[t1]
-            orig2, path2 = baseline_files[t2]
-            pairs_to_test.append({
-                "topic": f"{t1}_vs_{t2}",
-                "file_a_name": f"{t1}/{orig1}",
-                "file_a_path": path1,
-                "file_b_name": f"{t2}/{orig2}",
-                "file_b_path": path2,
-                "ground_truth": "Non-Plagiarized"
-            })
+        if len(batch_file_data) < 2:
+            continue
 
-    # 3. Evaluate each pair using the plagiarism engine
-    confusion_matrix = {actual: {pred: 0 for pred in CLASSES} for actual in CLASSES}
-    detailed_results = []
-
-    for pair in pairs_to_test:
-        with open(pair["file_a_path"], "r", encoding="utf-8", errors="ignore") as fa:
-            content_a = fa.read()
-        with open(pair["file_b_path"], "r", encoding="utf-8", errors="ignore") as fb:
-            content_b = fb.read()
-
-        doc_a, tokens_a = preprocess_fn(content_a)
-        doc_b, tokens_b = preprocess_fn(content_b)
-
-        file_data = [
-            {"id": 1, "name": pair["file_a_name"], "doc": doc_a, "tokens": tokens_a, "content": content_a},
-            {"id": 2, "name": pair["file_b_name"], "doc": doc_b, "tokens": tokens_b, "content": content_b},
-        ]
-
+        # Run compare_all_files on the whole topic batch
         try:
-            results = compare_all_files(file_data, ngram_bounds=(3, 5))
-            if results and len(results) > 0:
-                sim_res = results[0]
+            batch_results = compare_all_files(batch_file_data, ngram_bounds)
+        except Exception:
+            batch_results = []
+
+        # Build a lookup: frozenset({name_a, name_b}) -> result dict
+        result_lookup = {}
+        for r in batch_results:
+            key = frozenset({r["file1"], r["file2"]})
+            result_lookup[key] = r
+
+        # Now score each (orig, clone) pair using the batch result
+        for fname in files:
+            if fname == orig:
+                continue
+            gt = get_ground_truth(fname)
+            if gt not in ["Type 1", "Type 2", "Type 3"]:
+                continue
+
+            pair_key = frozenset({orig, fname})
+            sim_res = result_lookup.get(pair_key)
+
+            if sim_res:
                 status = sim_res.get("status", "Low")
                 score = sim_res.get("score", 0.0)
                 plag_type_str = sim_res.get("plagiarism_type", "N/A")
 
-                # Map engine output to 4 classification bins
                 if status == "Low" or score < 25.0 or plag_type_str == "N/A":
                     predicted = "Non-Plagiarized"
                 elif "Type 1" in plag_type_str:
@@ -146,24 +151,86 @@ def run_benchmark_for_language(language="python"):
                     predicted = "Type 3"
                 else:
                     predicted = "Non-Plagiarized"
-            else:
-                score = 0.0
-                predicted = "Non-Plagiarized"
-        except Exception:
-            score = 0.0
-            predicted = "Non-Plagiarized"
 
-        actual = pair["ground_truth"]
-        confusion_matrix[actual][predicted] += 1
-        detailed_results.append({
-            "pair": f"{pair['file_a_name']} <=> {pair['file_b_name']}",
-            "actual": actual,
-            "predicted": predicted,
-            "score": score,
-            "correct": (actual == predicted)
-        })
+                score_out = score
+            else:
+                predicted = "Non-Plagiarized"
+                score_out = 0.0
+
+            confusion_matrix[gt][predicted] += 1
+            detailed_results.append({
+                "pair": f"{orig} <=> {fname}",
+                "actual": gt,
+                "predicted": predicted,
+                "score": score_out,
+                "correct": (gt == predicted),
+            })
+
+    # -------------------------------------------------------------------------
+    # NEGATIVE CONTROLS: cross-topic baseline comparisons
+    # -------------------------------------------------------------------------
+    # Evaluate each cross-topic pair as its own 2-file batch. Since these are
+    # structurally different algorithms (BST vs merge sort) the cosine score is
+    # expected to be low and the high/med thresholds will catch them correctly.
+    # -------------------------------------------------------------------------
+    distinct_topics = [t for t in baseline_files.keys() if t != "exact_copy_testing"]
+    for i in range(len(distinct_topics)):
+        for j in range(i + 1, len(distinct_topics)):
+            t1, t2 = distinct_topics[i], distinct_topics[j]
+            orig1, path1 = baseline_files[t1]
+            orig2, path2 = baseline_files[t2]
+
+            try:
+                with open(path1, "r", encoding="utf-8", errors="ignore") as fa:
+                    content_a = fa.read()
+                with open(path2, "r", encoding="utf-8", errors="ignore") as fb:
+                    content_b = fb.read()
+
+                doc_a, tokens_a = preprocess_fn(content_a)
+                doc_b, tokens_b = preprocess_fn(content_b)
+
+                file_data = [
+                    {"id": 1, "name": f"{t1}/{orig1}", "doc": doc_a, "tokens": tokens_a, "content": content_a},
+                    {"id": 2, "name": f"{t2}/{orig2}", "doc": doc_b, "tokens": tokens_b, "content": content_b},
+                ]
+
+                results = compare_all_files(file_data, ngram_bounds)
+                if results:
+                    sim_res = results[0]
+                    status = sim_res.get("status", "Low")
+                    score = sim_res.get("score", 0.0)
+                    plag_type_str = sim_res.get("plagiarism_type", "N/A")
+
+                    if status == "Low" or score < 25.0 or plag_type_str == "N/A":
+                        predicted = "Non-Plagiarized"
+                    elif "Type 1" in plag_type_str:
+                        predicted = "Type 1"
+                    elif "Type 2" in plag_type_str:
+                        predicted = "Type 2"
+                    elif "Type 3" in plag_type_str:
+                        predicted = "Type 3"
+                    else:
+                        predicted = "Non-Plagiarized"
+                    score_out = score
+                else:
+                    predicted = "Non-Plagiarized"
+                    score_out = 0.0
+
+            except Exception:
+                predicted = "Non-Plagiarized"
+                score_out = 0.0
+
+            confusion_matrix["Non-Plagiarized"][predicted] += 1
+            detailed_results.append({
+                "pair": f"{t1}/{orig1} <=> {t2}/{orig2}",
+                "actual": "Non-Plagiarized",
+                "predicted": predicted,
+                "score": score_out,
+                "correct": (predicted == "Non-Plagiarized"),
+            })
 
     return confusion_matrix, detailed_results
+
 
 
 def print_evaluation_report(language, matrix, detailed_results):

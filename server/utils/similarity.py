@@ -169,29 +169,41 @@ def compare_all_files(file_data, ngram_bounds):
     filenames = [f['name'] for f in file_data]
     tokens_list = [f['tokens'] for f in file_data]
 
-    # Dynamic max_df: suppresses universally-common structural boilerplate.
-    # With only 2 documents (common in isolated benchmark pairs), IDF for a
-    # universal n-gram is log(2/2)+1 = 1.0 — the maximum — so the boilerplate
-    # filter was effectively disabled at small batch sizes. Lowering to 0.75
-    # ensures that n-grams appearing in more than 75% of submissions are
-    # downweighted regardless of batch size, which is particularly important for
-    # DSA prompts where all students use the same control-flow skeleton.
+    # Dynamic min_df / max_df: both values must be set together so that
+    # sklearn's constraint (effective max_df docs >= min_df docs) is never
+    # violated, regardless of batch size.
     #
-    # min_df=2: n-grams that appear in only 1 document are excluded. In a
-    # 2-document batch these contribute zero cosine similarity anyway, but in
-    # larger batches a singleton n-gram gets a sky-high IDF weight that inflates
-    # scores for pairs that coincidentally share a rare-but-innocent pattern.
-    if len(documents) <= 5:
-        dynamic_max_df = 0.75  # Boilerplate filter active even for tiny batches
+    # The math for a proportion-based max_df is: effective_max = floor(max_df * n).
+    # If floor(max_df * n) < min_df, sklearn raises a ValueError and the entire
+    # comparison silently returns [] — every pair becomes "Non-Plagiarized".
+    #
+    # Tier breakdown:
+    #   n == 2  (isolated pair / benchmark) — no proportion filtering is
+    #           mathematically safe; use raw overlap and rely on score thresholds.
+    #   3–5     (small group / topic batch) — activate boilerplate suppression
+    #           at 85% so floor(0.85*3)=2 >= min_df=2.
+    #   > 5     (full classroom run) — tighter 80% filter; floor(0.80*6)=4 >= 2.
+    n_docs = len(documents)
+    if n_docs <= 2:
+        # 2-doc batch: proportion filtering always collapses to ≤1 doc,
+        # which is below any meaningful min_df. Disable both filters.
+        dynamic_max_df = 1.0
+        dynamic_min_df = 1
+    elif n_docs <= 5:
+        # Small batch: boilerplate suppression active; floor(0.85*3)=2 == min_df
+        dynamic_max_df = 0.85
+        dynamic_min_df = 2
     else:
-        dynamic_max_df = 0.85  # Tighter filter for full classroom runs
+        # Full classroom: tighter filter; floor(0.80*6)=4 > min_df=2
+        dynamic_max_df = 0.80
+        dynamic_min_df = 2
 
     # Initialize the TF-IDF Vectorizer
     vectorizer = TfidfVectorizer(
         ngram_range=ngram_bounds,
-        sublinear_tf=True,       # Applies sublinear scaling (1 + log(tf)) to dampen the effect of high-frequency tokens
-        max_df=dynamic_max_df,
-        min_df=2                 # Exclude n-grams that appear in only 1 document (avoids phantom high-IDF features)
+        sublinear_tf=True,        # Sublinear TF scaling: 1 + log(tf) dampens high-frequency tokens
+        max_df=dynamic_max_df,    # Suppress near-universal boilerplate n-grams
+        min_df=dynamic_min_df     # Exclude singleton n-grams to avoid phantom high-IDF features
     )
 
     try:
