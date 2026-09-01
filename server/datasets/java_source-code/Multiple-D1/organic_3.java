@@ -1,37 +1,22 @@
-/*
- * Quick Sort - Organic Submission #3
- * Lomuto variant using the first element as pivot.
- */
-
-class Solution {
-    public static int partitionFirst(int[] arr, int low, int high) {
-        int pivot = arr[low];
-        int swapIndex = low;
-        for (int i = low + 1; i <= high; i++) {
-            if (arr[i] < pivot) {
-                swapIndex++;
-                int temp = arr[swapIndex];
-                arr[swapIndex] = arr[i];
-                arr[i] = temp;
+// Organic Student Submission 3
+public class DutchNationalFlagSort {
+    public static void sort3Way(int[] a, int lo, int hi) {
+        if (hi <= lo) return;
+        int lt = lo, gt = hi;
+        int v = a[lo];
+        int i = lo + 1;
+        while (i <= gt) {
+            if (a[i] < v) {
+                int t = a[lt]; a[lt] = a[i]; a[i] = t;
+                lt++; i++;
+            } else if (a[i] > v) {
+                int t = a[i]; a[i] = a[gt]; a[gt] = t;
+                gt--;
+            } else {
+                i++;
             }
         }
-        int temp = arr[low];
-        arr[low] = arr[swapIndex];
-        arr[swapIndex] = temp;
-        return swapIndex;
-    }
-
-    public static void quickSortFirst(int[] arr, int low, int high) {
-        if (low < high) {
-            int p = partitionFirst(arr, low, high);
-            quickSortFirst(arr, low, p - 1);
-            quickSortFirst(arr, p + 1, high);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] nums = {38, 27, 43, 3, 9, 82, 10};
-        quickSortFirst(nums, 0, nums.length - 1);
-        System.out.println(java.util.Arrays.toString(nums));
+        sort3Way(a, lo, lt - 1);
+        sort3Way(a, gt + 1, hi);
     }
 }

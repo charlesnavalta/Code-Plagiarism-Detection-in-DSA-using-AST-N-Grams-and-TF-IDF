@@ -1,37 +1,33 @@
-/*
- * Quick Sort - Organic Submission #21
- * Individual student implementation #21 with custom coding conventions.
- */
-
-class Solution21 {
-    public static int splitSegment21(int[] dataArray, int startBound, int endBound) {
-        int pivotRef = dataArray[endBound];
-        int partitionIdx = startBound - 1;
-        for (int scanPtr = startBound; scanPtr < endBound; scanPtr++) {
-            if (dataArray[scanPtr] <= pivotRef) {
-                partitionIdx++;
-                int hold = dataArray[partitionIdx];
-                dataArray[partitionIdx] = dataArray[scanPtr];
-                dataArray[scanPtr] = hold;
+// Organic Student Submission 21
+public class DualPivotQuickSort {
+    public static void dualPivotSort(int[] arr, int low, int high) {
+        if (low < high) {
+            if (arr[low] > arr[high]) {
+                int temp = arr[low]; arr[low] = arr[high]; arr[high] = temp;
             }
+            int p = arr[low], q = arr[high];
+            int l = low + 1, g = high - 1, k = l;
+            while (k <= g) {
+                if (arr[k] < p) {
+                    int t = arr[k]; arr[k] = arr[l]; arr[l] = t;
+                    l++;
+                } else if (arr[k] >= q) {
+                    while (arr[g] > q && k < g) g--;
+                    int t = arr[k]; arr[k] = arr[g]; arr[g] = t;
+                    g--;
+                    if (arr[k] < p) {
+                        int t2 = arr[k]; arr[k] = arr[l]; arr[l] = t2;
+                        l++;
+                    }
+                }
+                k++;
+            }
+            l--; g++;
+            int t1 = arr[low]; arr[low] = arr[l]; arr[l] = t1;
+            int t2 = arr[high]; arr[high] = arr[g]; arr[g] = t2;
+            dualPivotSort(arr, low, l - 1);
+            dualPivotSort(arr, l + 1, g - 1);
+            dualPivotSort(arr, g + 1, high);
         }
-        int hold = dataArray[partitionIdx + 1];
-        dataArray[partitionIdx + 1] = dataArray[endBound];
-        dataArray[endBound] = hold;
-        return partitionIdx + 1;
-    }
-
-    public static void performQuicksort21(int[] dataArray, int startBound, int endBound) {
-        if (startBound < endBound) {
-            int splitLoc = splitSegment21(dataArray, startBound, endBound);
-            performQuicksort21(dataArray, startBound, splitLoc - 1);
-            performQuicksort21(dataArray, splitLoc + 1, endBound);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] sample = {47, 13, 31, 14, 28, 42};
-        performQuicksort21(sample, 0, sample.length - 1);
-        System.out.println(java.util.Arrays.toString(sample));
     }
 }

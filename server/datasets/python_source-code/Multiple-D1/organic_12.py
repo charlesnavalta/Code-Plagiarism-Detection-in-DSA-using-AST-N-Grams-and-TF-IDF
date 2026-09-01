@@ -1,29 +1,28 @@
-"""
-Quick Sort - Organic Submission #12
-Tail-call optimized Quick Sort (recurse on smaller half, loop on larger).
-"""
+# Organic Student Submission 12: Independent Algorithm Paradigm
+class QuickSortEngineWithAudit:
+    def __init__(self, dataset):
+        self.dataset = list(dataset)
+        self.history = []
 
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
+    def log_event(self, action, a, b):
+        self.history.append((action, a, b))
 
-def quick_sort_tail(arr, low, high):
-    while low < high:
-        pi = partition(arr, low, high)
-        if pi - low < high - pi:
-            quick_sort_tail(arr, low, pi - 1)
-            low = pi + 1
-        else:
-            quick_sort_tail(arr, pi + 1, high)
-            high = pi - 1
+    def partition_segment(self, start, end):
+        pivot = self.dataset[end]
+        idx = start - 1
+        for cursor in range(start, end):
+            if self.dataset[cursor] <= pivot:
+                idx += 1
+                self.dataset[idx], self.dataset[cursor] = self.dataset[cursor], self.dataset[idx]
+                self.log_event("swap", idx, cursor)
+        self.dataset[idx + 1], self.dataset[end] = self.dataset[end], self.dataset[idx + 1]
+        self.log_event("pivot_placed", idx + 1, end)
+        return idx + 1
 
-if __name__ == "__main__":
-    nums = [10, 7, 8, 9, 1, 5]
-    quick_sort_tail(nums, 0, len(nums) - 1)
-    print(nums)
+    def execute(self, start=0, end=None):
+        if end is None: end = len(self.dataset) - 1
+        if start < end:
+            p = self.partition_segment(start, end)
+            self.execute(start, p - 1)
+            self.execute(p + 1, end)
+        return self.dataset

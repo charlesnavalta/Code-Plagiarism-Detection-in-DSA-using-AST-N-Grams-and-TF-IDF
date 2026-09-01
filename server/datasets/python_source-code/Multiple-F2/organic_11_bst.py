@@ -1,46 +1,20 @@
-# Standard iterative/recursive BST
-class CustomNode_10:
-    def __init__(self, item_val=0, left=None, right=None):
-        self.item_val = item_val
-        self.left = left
-        self.right = right
+# Organic BST Student Submission 11
+class LinkedParentBST:
+    class PNode:
+        def __init__(self, key, parent=None):
+            self.key = key; self.left = None; self.right = None; self.parent = parent
+    
+    def __init__(self): self.root = None
 
-class BST:
-    def __init__(self):
-        self.root = None
-
-    def insert(self, val):
+    def insert(self, key):
         if not self.root:
-            self.root = CustomNode_10(val)
-            return self.root
+            self.root = self.PNode(key); return
         curr = self.root
         while True:
-            if val < curr.item_val:
-                if not curr.left:
-                    curr.left = CustomNode_10(val)
-                    break
+            if key < curr.key:
+                if not curr.left: curr.left = self.PNode(key, curr); break
                 curr = curr.left
-            else:
-                if not curr.right:
-                    curr.right = CustomNode_10(val)
-                    break
+            elif key > curr.key:
+                if not curr.right: curr.right = self.PNode(key, curr); break
                 curr = curr.right
-        return self.root
-
-    def search(self, val):
-        curr = self.root
-        while curr:
-            if curr.item_val == val:
-                return True
-            curr = curr.left if val < curr.item_val else curr.right
-        return False
-
-    def inorder(self):
-        res = []
-        def traverse(node):
-            if node:
-                traverse(node.left)
-                res.append(node.item_val)
-                traverse(node.right)
-        traverse(self.root)
-        return res
+            else: break

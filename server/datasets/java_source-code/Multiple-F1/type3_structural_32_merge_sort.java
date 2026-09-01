@@ -1,19 +1,41 @@
-import java.util.Arrays;
+// MergeSort Suite: Structural Method Restructuring
+// Author: Structural Variant (Type 3 of Mary)
+public class MergeSortSuite {
+    private int[] data;
 
-public class Solution {
-    public int[] mergeSort(int[] nums) {
-        if (nums == null || nums.length <= 1) return nums;
-        int mid = nums.length / 2;
-        int[] left = mergeSort(Arrays.copyOfRange(nums, 0, mid));
-        int[] right = mergeSort(Arrays.copyOfRange(nums, mid, nums.length));
-        
+    public MergeSortSuite(int[] input) {
+        this.data = (input != null) ? input.clone() : new int[0];
+    }
+
+    public static int[] mergeHelper(int[] a, int[] b) {
+        int[] out = new int[a.length + b.length];
         int i = 0, j = 0, k = 0;
-        while (i < left.length && j < right.length) {
-            if (left[i] < right[j]) nums[k++] = left[i++];
-            else nums[k++] = right[j++];
+        while (i < a.length && j < b.length) {
+            out[k++] = (a[i] <= b[j]) ? a[i++] : b[j++];
         }
-        for (int p = i; p < left.length; p++) nums[k++] = left[p];
-        for (int q = j; q < right.length; q++) nums[k++] = right[q];
-        return nums;
+        while (i < a.length) out[k++] = a[i++];
+        while (j < b.length) out[k++] = b[j++];
+        return out;
+    }
+
+    public boolean isSorted() {
+        for (int i = 0; i < this.data.length - 1; i++) {
+            if (this.data[i] > this.data[i + 1]) return false;
+        }
+        return true;
+    }
+
+    public int[] executeSort() {
+        if (this.data.length > 1) this.data = sortRecursive(this.data);
+        return this.data;
+    }
+
+    private int[] sortRecursive(int[] arr) {
+        if (arr.length <= 1) return arr;
+        int m = arr.length / 2;
+        int[] l = new int[m], r = new int[arr.length - m];
+        System.arraycopy(arr, 0, l, 0, m);
+        System.arraycopy(arr, m, r, 0, arr.length - m);
+        return mergeHelper(sortRecursive(l), sortRecursive(r));
     }
 }

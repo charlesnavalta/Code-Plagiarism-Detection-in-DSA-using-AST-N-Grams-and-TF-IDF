@@ -1,25 +1,21 @@
-"""
-Quick Sort - Organic Submission #3
-Lomuto variant using the first element as pivot.
-"""
+# Organic Student Submission 3: Independent Algorithm Paradigm
+import random
+def randomized_partition(arr, low, high):
+    r = random.randint(low, high)
+    arr[r], arr[high] = arr[high], arr[r]
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
 
-def partition_first(arr, low, high):
-    pivot = arr[low]
-    swap_index = low
-    for i in range(low + 1, high + 1):
-        if arr[i] < pivot:
-            swap_index += 1
-            arr[swap_index], arr[i] = arr[i], arr[swap_index]
-    arr[low], arr[swap_index] = arr[swap_index], arr[low]
-    return swap_index
-
-def quick_sort_first(arr, low, high):
+def random_quicksort(arr, low=0, high=None):
+    if high is None: high = len(arr) - 1
     if low < high:
-        p = partition_first(arr, low, high)
-        quick_sort_first(arr, low, p - 1)
-        quick_sort_first(arr, p + 1, high)
-
-if __name__ == "__main__":
-    nums = [38, 27, 43, 3, 9, 82, 10]
-    quick_sort_first(nums, 0, len(nums) - 1)
-    print(nums)
+        pi = randomized_partition(arr, low, high)
+        random_quicksort(arr, low, pi - 1)
+        random_quicksort(arr, pi + 1, high)
+    return arr

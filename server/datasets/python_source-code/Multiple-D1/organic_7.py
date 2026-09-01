@@ -1,17 +1,27 @@
-"""
-Quick Sort - Organic Submission #7
-Functional-style list comprehension Quick Sort.
-"""
+# Organic Student Submission 7: Independent Algorithm Paradigm
+def insertion_sort_slice(arr, low, high):
+    for i in range(low + 1, high + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= low and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
 
-def quick_sort_pythonic(arr):
-    if len(arr) <= 1:
+def hybrid_quicksort(arr, low=0, high=None, threshold=10):
+    if high is None: high = len(arr) - 1
+    if high - low + 1 <= threshold:
+        insertion_sort_slice(arr, low, high)
         return arr
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    return quick_sort_pythonic(left) + middle + quick_sort_pythonic(right)
-
-if __name__ == "__main__":
-    nums = [33, 10, 55, 71, 29, 62]
-    print(quick_sort_pythonic(nums))
+    if low < high:
+        pivot = arr[high]
+        i = low - 1
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+        pi = i + 1
+        hybrid_quicksort(arr, low, pi - 1, threshold)
+        hybrid_quicksort(arr, pi + 1, high, threshold)
+    return arr

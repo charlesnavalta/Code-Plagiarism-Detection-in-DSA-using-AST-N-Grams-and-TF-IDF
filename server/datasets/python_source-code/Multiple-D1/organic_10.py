@@ -1,32 +1,20 @@
-"""
-Quick Sort - Organic Submission #10
-Encapsulated Object-Oriented QuickSorter class.
-"""
+# Organic Student Submission 10: Independent Algorithm Paradigm
+def streaming_partition(collection, pivot_val):
+    left_items = []
+    mid_items = []
+    right_items = []
+    for item in collection:
+        if item < pivot_val:
+            left_items.append(item)
+        elif item == pivot_val:
+            mid_items.append(item)
+        else:
+            right_items.append(item)
+    return left_items, mid_items, right_items
 
-class QuickSorter:
-    def __init__(self, data):
-        self.data = list(data)
-
-    def _partition(self, low, high):
-        pivot = self.data[high]
-        i = low - 1
-        for j in range(low, high):
-            if self.data[j] <= pivot:
-                i += 1
-                self.data[i], self.data[j] = self.data[j], self.data[i]
-        self.data[i + 1], self.data[high] = self.data[high], self.data[i + 1]
-        return i + 1
-
-    def _sort(self, low, high):
-        if low < high:
-            pi = self._partition(low, high)
-            self._sort(low, pi - 1)
-            self._sort(pi + 1, high)
-
-    def sort(self):
-        self._sort(0, len(self.data) - 1)
-        return self.data
-
-if __name__ == "__main__":
-    sorter = QuickSorter([5, 2, 9, 1, 7, 6, 3])
-    print(sorter.sort())
+def stream_quicksort(data_list):
+    if len(data_list) <= 1:
+        return data_list
+    mid_idx = len(data_list) // 2
+    l, m, r = streaming_partition(data_list, data_list[mid_idx])
+    return stream_quicksort(l) + m + stream_quicksort(r)

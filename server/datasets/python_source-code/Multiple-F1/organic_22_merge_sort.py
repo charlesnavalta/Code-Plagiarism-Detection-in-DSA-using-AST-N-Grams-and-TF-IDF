@@ -1,20 +1,20 @@
-# Standard recursive merge sort
-def merge_sort(items_21):
-    if len(items_21) <= 1:
-        return items_21
-    half_21 = len(items_21) // 2
-    left = merge_sort(items_21[:half_21])
-    right = merge_sort(items_21[half_21:])
-    
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] <= right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
+# Organic MergeSort Student Submission 22
+def iterative_merge_sort(arr):
+    n = len(arr)
+    width = 1
+    while width < n:
+        for i in range(0, n, 2 * width):
+            left = arr[i:i + width]
+            right = arr[i + width:i + 2 * width]
+            merged = []
+            l = r = 0
+            while l < len(left) and r < len(right):
+                if left[l] <= right[r]:
+                    merged.append(left[l]); l += 1
+                else:
+                    merged.append(right[r]); r += 1
+            merged.extend(left[l:])
+            merged.extend(right[r:])
+            arr[i:i + len(merged)] = merged
+        width *= 2
+    return arr

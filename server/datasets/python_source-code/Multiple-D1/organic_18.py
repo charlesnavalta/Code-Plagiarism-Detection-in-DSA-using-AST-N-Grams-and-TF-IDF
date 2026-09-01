@@ -1,31 +1,27 @@
-"""
-Quick Sort - Organic Submission #18
-Individual student implementation #18 with custom coding conventions.
-"""
+# Organic Student Submission 18: Independent Algorithm Paradigm
+def insertion_sort_slice(arr, low, high):
+    for i in range(low + 1, high + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= low and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
 
-def split_segment_18(data_array, start_bound, end_bound):
-    pivot_reference = data_array[end_bound]
-    partition_index = start_bound - 1
-    for scan_pointer in range(start_bound, end_bound):
-        if data_array[scan_pointer] <= pivot_reference:
-            partition_index += 1
-            data_array[partition_index], data_array[scan_pointer] = (
-                data_array[scan_pointer],
-                data_array[partition_index],
-            )
-    data_array[partition_index + 1], data_array[end_bound] = (
-        data_array[end_bound],
-        data_array[partition_index + 1],
-    )
-    return partition_index + 1
-
-def perform_quicksort_18(data_array, start_bound, end_bound):
-    if start_bound < end_bound:
-        split_loc = split_segment_18(data_array, start_bound, end_bound)
-        perform_quicksort_18(data_array, start_bound, split_loc - 1)
-        perform_quicksort_18(data_array, split_loc + 1, end_bound)
-
-if __name__ == "__main__":
-    sample_data = [26, 4, 48, 14, 28, 42]
-    perform_quicksort_18(sample_data, 0, len(sample_data) - 1)
-    print("Sorted #18:", sample_data)
+def hybrid_quicksort(arr, low=0, high=None, threshold=10):
+    if high is None: high = len(arr) - 1
+    if high - low + 1 <= threshold:
+        insertion_sort_slice(arr, low, high)
+        return arr
+    if low < high:
+        pivot = arr[high]
+        i = low - 1
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+        pi = i + 1
+        hybrid_quicksort(arr, low, pi - 1, threshold)
+        hybrid_quicksort(arr, pi + 1, high, threshold)
+    return arr

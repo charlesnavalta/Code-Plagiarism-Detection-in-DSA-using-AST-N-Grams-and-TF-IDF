@@ -1,25 +1,31 @@
-import java.util.Arrays;
-
-public class Solution {
-    public int[] mergeSort(int[] dataList) {
-        if (dataList == null || dataList.length <= 1) return dataList;
-        int n = dataList.length;
-        for (int step = 1; step < n; step *= 2) {
-            for (int offset = 0; offset < n; offset += 2 * step) {
-                int mid = Math.min(offset + step, n);
-                int end = Math.min(offset + 2 * step, n);
-                if (mid >= end) break;
-                int[] l = Arrays.copyOfRange(dataList, offset, mid);
-                int[] r = Arrays.copyOfRange(dataList, mid, end);
-                int i = 0, j = 0, k = offset;
-                while (i < l.length && j < r.length) {
-                    if (l[i] <= r[j]) dataList[k++] = l[i++];
-                    else dataList[k++] = r[j++];
+// Organic MergeSort Student Submission 09
+public class NaturalMergeSort {
+    public static void sort(int[] arr) {
+        if (arr.length <= 1) return;
+        boolean sorted = false;
+        int[] aux = new int[arr.length];
+        while (!sorted) {
+            sorted = true;
+            int lo = 0;
+            while (lo < arr.length) {
+                int mid = lo;
+                while (mid < arr.length - 1 && arr[mid] <= arr[mid + 1]) mid++;
+                if (mid == arr.length - 1 && lo == 0) return;
+                int hi = mid + 1;
+                while (hi < arr.length - 1 && arr[hi] <= arr[hi + 1]) hi++;
+                if (mid < arr.length - 1) {
+                    merge(arr, aux, lo, mid, Math.min(hi, arr.length - 1));
+                    sorted = false;
                 }
-                while (i < l.length) dataList[k++] = l[i++];
-                while (j < r.length) dataList[k++] = r[j++];
+                lo = hi + 1;
             }
         }
-        return dataList;
+    }
+    private static void merge(int[] a, int[] aux, int lo, int mid, int hi) {
+        int i = lo, j = mid + 1, k = lo;
+        while (i <= mid && j <= hi) aux[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];
+        while (i <= mid) aux[k++] = a[i++];
+        while (j <= hi) aux[k++] = a[j++];
+        for (int p = lo; p <= hi; p++) a[p] = aux[p];
     }
 }

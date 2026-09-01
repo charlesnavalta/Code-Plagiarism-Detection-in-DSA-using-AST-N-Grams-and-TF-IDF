@@ -1,59 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
-
-class CustomNode_16 {
-    int item_val;
-    CustomNode_16 left;
-    CustomNode_16 right;
-    CustomNode_16(int item_val) { this.item_val = item_val; }
-}
-
-public class BST {
-    CustomNode_16 root;
-    // Standard iterative/recursive BST
-public void insert(int val) {
-        if (root == null) {
-            root = new CustomNode_16(val);
-            return;
-        }
-        CustomNode_16 curr = root;
-        while (true) {
-            if (val < curr.item_val) {
-                if (curr.left == null) {
-                    curr.left = new CustomNode_16(val);
-                    break;
-                }
-                curr = curr.left;
-            } else {
-                if (curr.right == null) {
-                    curr.right = new CustomNode_16(val);
-                    break;
-                }
-                curr = curr.right;
-            }
-        }
+// Organic BST Student Submission 17
+public class AVLBalancedBST {
+    public static class AVLNode {
+        public int val, height = 1;
+        public AVLNode left, right;
+        public AVLNode(int v) { this.val = v; }
     }
-
+    private AVLNode root;
+    private int height(AVLNode n) { return n == null ? 0 : n.height; }
+    public void insert(int val) { root = insert(root, val); }
+    private AVLNode insert(AVLNode n, int val) {
+        if (n == null) return new AVLNode(val);
+        if (val < n.val) n.left = insert(n.left, val);
+        else if (val > n.val) n.right = insert(n.right, val);
+        n.height = 1 + Math.max(height(n.left), height(n.right));
+        return n;
+    }
     public boolean search(int val) {
-        CustomNode_16 curr = root;
-        while (curr != null) {
-            if (curr.item_val == val) return true;
-            curr = (val < curr.item_val) ? curr.left : curr.right;
+        AVLNode c = root;
+        while (c != null) {
+            if (c.val == val) return true;
+            c = (val < c.val) ? c.left : c.right;
         }
         return false;
-    }
-
-    public List<Integer> inorder() {
-        List<Integer> res = new ArrayList<>();
-        traverse(root, res);
-        return res;
-    }
-
-    private void traverse(CustomNode_16 node, List<Integer> res) {
-        if (node != null) {
-            traverse(node.left, res);
-            res.add(node.item_val);
-            traverse(node.right, res);
-        }
     }
 }

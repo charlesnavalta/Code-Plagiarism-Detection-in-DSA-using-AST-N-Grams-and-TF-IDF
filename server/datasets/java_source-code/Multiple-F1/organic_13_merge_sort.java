@@ -1,24 +1,31 @@
-import java.util.Arrays;
-
-public class Solution {
-    // Standard recursive merge sort
-public int[] mergeSort(int[] items_12) {
-        if (items_12 == null || items_12.length <= 1) return items_12;
-        int mid = items_12.length / 2;
-        int[] left = mergeSort(Arrays.copyOfRange(items_12, 0, mid));
-        int[] right = mergeSort(Arrays.copyOfRange(items_12, mid, items_12.length));
-        
-        int[] result = new int[items_12.length];
-        int i = 0, j = 0, k = 0;
-        while (i < left.length && j < right.length) {
-            if (left[i] <= right[j]) {
-                result[k++] = left[i++];
-            } else {
-                result[k++] = right[j++];
+// Organic MergeSort Student Submission 13
+public class NaturalMergeSort {
+    public static void sort(int[] arr) {
+        if (arr.length <= 1) return;
+        boolean sorted = false;
+        int[] aux = new int[arr.length];
+        while (!sorted) {
+            sorted = true;
+            int lo = 0;
+            while (lo < arr.length) {
+                int mid = lo;
+                while (mid < arr.length - 1 && arr[mid] <= arr[mid + 1]) mid++;
+                if (mid == arr.length - 1 && lo == 0) return;
+                int hi = mid + 1;
+                while (hi < arr.length - 1 && arr[hi] <= arr[hi + 1]) hi++;
+                if (mid < arr.length - 1) {
+                    merge(arr, aux, lo, mid, Math.min(hi, arr.length - 1));
+                    sorted = false;
+                }
+                lo = hi + 1;
             }
         }
-        while (i < left.length) result[k++] = left[i++];
-        while (j < right.length) result[k++] = right[j++];
-        return result;
+    }
+    private static void merge(int[] a, int[] aux, int lo, int mid, int hi) {
+        int i = lo, j = mid + 1, k = lo;
+        while (i <= mid && j <= hi) aux[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];
+        while (i <= mid) aux[k++] = a[i++];
+        while (j <= hi) aux[k++] = a[j++];
+        for (int p = lo; p <= hi; p++) a[p] = aux[p];
     }
 }

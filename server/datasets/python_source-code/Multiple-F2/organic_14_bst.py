@@ -1,19 +1,22 @@
-def create_tree_node_13(key_value):
-    return {'k': key_value, 'left_child': None, 'right_child': None}
+# Organic BST Student Submission 14
+def persistent_insert(node, val):
+    if node is None:
+        return (val, None, None)
+    v, left, right = node
+    if val < v:
+        return (v, persistent_insert(left, val), right)
+    elif val > v:
+        return (v, left, persistent_insert(right, val))
+    return node
 
-def put_tree_item_13(tree_dict, key_value):
-    if not tree_dict: return create_tree_node_13(key_value)
-    if key_value < tree_dict['k']:
-        tree_dict['left_child'] = put_tree_item_13(tree_dict['left_child'], key_value)
-    else:
-        tree_dict['right_child'] = put_tree_item_13(tree_dict['right_child'], key_value)
-    return tree_dict
+def persistent_search(node, val):
+    while node:
+        v, left, right = node
+        if v == val: return True
+        node = left if val < v else right
+    return False
 
-def has_tree_item_13(tree_dict, key_value):
-    if not tree_dict: return False
-    if tree_dict['k'] == key_value: return True
-    return has_tree_item_13(tree_dict['left_child'], key_value) if key_value < tree_dict['k'] else has_tree_item_13(tree_dict['right_child'], key_value)
-
-def dump_sorted_tree_13(tree_dict):
-    if not tree_dict: return []
-    return dump_sorted_tree_13(tree_dict['left_child']) + [tree_dict['k']] + dump_sorted_tree_13(tree_dict['right_child'])
+def persistent_inorder(node):
+    if not node: return []
+    v, left, right = node
+    return persistent_inorder(left) + [v] + persistent_inorder(right)

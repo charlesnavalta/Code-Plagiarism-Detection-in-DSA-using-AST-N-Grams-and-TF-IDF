@@ -1,25 +1,56 @@
 """
-Quick Sort - Organic Submission #1
-Standard recursive Lomuto partition with last element as pivot.
+QuickSort Suite: In-place Lomuto partition with Median-of-Three pivot selection
+Author: Mary (organic_1.py)
 """
+from typing import List, Optional
 
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
+class QuickSortSuite:
+    def __init__(self, data: Optional[List[int]] = None):
+        self.data = list(data) if data is not None else []
+        self.comparisons = 0
+        self.swaps = 0
 
-def quick_sort(arr, low, high):
-    if low < high:
-        pi = partition(arr, low, high)
-        quick_sort(arr, low, pi - 1)
-        quick_sort(arr, pi + 1, high)
+    def _median_of_three(self, arr: List[int], low: int, high: int) -> int:
+        mid = (low + high) // 2
+        a, b, c = arr[low], arr[mid], arr[high]
+        if (a <= b <= c) or (c <= b <= a):
+            return mid
+        if (b <= a <= c) or (c <= a <= b):
+            return low
+        return high
 
-if __name__ == "__main__":
-    data = [64, 25, 12, 22, 11, 90]
-    quick_sort(data, 0, len(data) - 1)
-    print("Sorted:", data)
+    def _partition(self, arr: List[int], low: int, high: int) -> int:
+        pivot_idx = self._median_of_three(arr, low, high)
+        arr[pivot_idx], arr[high] = arr[high], arr[pivot_idx]
+        self.swaps += 1
+        pivot = arr[high]
+        
+        i = low - 1
+        for j in range(low, high):
+            self.comparisons += 1
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+                self.swaps += 1
+        
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+        self.swaps += 1
+        return i + 1
+
+    def _quicksort_recursive(self, arr: List[int], low: int, high: int) -> None:
+        if low < high:
+            pi = self._partition(arr, low, high)
+            self._quicksort_recursive(arr, low, pi - 1)
+            self._quicksort_recursive(arr, pi + 1, high)
+
+    def sort(self, inplace: bool = True) -> List[int]:
+        target = self.data if inplace else list(self.data)
+        if len(target) > 1:
+            self._quicksort_recursive(target, 0, len(target) - 1)
+        return target
+
+    def is_sorted(self) -> bool:
+        for k in range(len(self.data) - 1):
+            if self.data[k] > self.data[k + 1]:
+                return False
+        return True

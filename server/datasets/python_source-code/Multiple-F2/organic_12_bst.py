@@ -1,19 +1,23 @@
-def create_tree_node_11(key_value):
-    return {'k': key_value, 'left_child': None, 'right_child': None}
+# Organic BST Student Submission 12
+def make_bst_node(key):
+    return {"key": key, "left": None, "right": None}
 
-def put_tree_item_11(tree_dict, key_value):
-    if not tree_dict: return create_tree_node_11(key_value)
-    if key_value < tree_dict['k']:
-        tree_dict['left_child'] = put_tree_item_11(tree_dict['left_child'], key_value)
-    else:
-        tree_dict['right_child'] = put_tree_item_11(tree_dict['right_child'], key_value)
-    return tree_dict
+def bst_insert_dict(tree, key):
+    if tree is None:
+        return make_bst_node(key)
+    if key < tree["key"]:
+        tree["left"] = bst_insert_dict(tree["left"], key)
+    elif key > tree["key"]:
+        tree["right"] = bst_insert_dict(tree["right"], key)
+    return tree
 
-def has_tree_item_11(tree_dict, key_value):
-    if not tree_dict: return False
-    if tree_dict['k'] == key_value: return True
-    return has_tree_item_11(tree_dict['left_child'], key_value) if key_value < tree_dict['k'] else has_tree_item_11(tree_dict['right_child'], key_value)
+def bst_search_dict(tree, key):
+    curr = tree
+    while curr:
+        if curr["key"] == key: return True
+        curr = curr["left"] if key < curr["key"] else curr["right"]
+    return False
 
-def dump_sorted_tree_11(tree_dict):
-    if not tree_dict: return []
-    return dump_sorted_tree_11(tree_dict['left_child']) + [tree_dict['k']] + dump_sorted_tree_11(tree_dict['right_child'])
+def bst_inorder_dict(tree):
+    if not tree: return []
+    return bst_inorder_dict(tree["left"]) + [tree["key"]] + bst_inorder_dict(tree["right"])

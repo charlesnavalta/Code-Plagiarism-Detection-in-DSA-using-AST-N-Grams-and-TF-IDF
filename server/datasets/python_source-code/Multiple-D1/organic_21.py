@@ -1,31 +1,20 @@
-"""
-Quick Sort - Organic Submission #21
-Individual student implementation #21 with custom coding conventions.
-"""
+# Organic Student Submission 21: Independent Algorithm Paradigm
+def streaming_partition(collection, pivot_val):
+    left_items = []
+    mid_items = []
+    right_items = []
+    for item in collection:
+        if item < pivot_val:
+            left_items.append(item)
+        elif item == pivot_val:
+            mid_items.append(item)
+        else:
+            right_items.append(item)
+    return left_items, mid_items, right_items
 
-def split_segment_21(data_array, start_bound, end_bound):
-    pivot_reference = data_array[end_bound]
-    partition_index = start_bound - 1
-    for scan_pointer in range(start_bound, end_bound):
-        if data_array[scan_pointer] <= pivot_reference:
-            partition_index += 1
-            data_array[partition_index], data_array[scan_pointer] = (
-                data_array[scan_pointer],
-                data_array[partition_index],
-            )
-    data_array[partition_index + 1], data_array[end_bound] = (
-        data_array[end_bound],
-        data_array[partition_index + 1],
-    )
-    return partition_index + 1
-
-def perform_quicksort_21(data_array, start_bound, end_bound):
-    if start_bound < end_bound:
-        split_loc = split_segment_21(data_array, start_bound, end_bound)
-        perform_quicksort_21(data_array, start_bound, split_loc - 1)
-        perform_quicksort_21(data_array, split_loc + 1, end_bound)
-
-if __name__ == "__main__":
-    sample_data = [47, 13, 31, 14, 28, 42]
-    perform_quicksort_21(sample_data, 0, len(sample_data) - 1)
-    print("Sorted #21:", sample_data)
+def stream_quicksort(data_list):
+    if len(data_list) <= 1:
+        return data_list
+    mid_idx = len(data_list) // 2
+    l, m, r = streaming_partition(data_list, data_list[mid_idx])
+    return stream_quicksort(l) + m + stream_quicksort(r)

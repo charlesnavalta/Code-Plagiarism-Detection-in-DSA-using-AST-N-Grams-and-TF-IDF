@@ -1,24 +1,29 @@
-import java.util.Arrays;
-
-public class Solution {
-    // Standard recursive merge sort
-public int[] mergeSort(int[] items_6) {
-        if (items_6 == null || items_6.length <= 1) return items_6;
-        int mid = items_6.length / 2;
-        int[] left = mergeSort(Arrays.copyOfRange(items_6, 0, mid));
-        int[] right = mergeSort(Arrays.copyOfRange(items_6, mid, items_6.length));
-        
-        int[] result = new int[items_6.length];
-        int i = 0, j = 0, k = 0;
-        while (i < left.length && j < right.length) {
-            if (left[i] <= right[j]) {
-                result[k++] = left[i++];
+// Organic MergeSort Student Submission 07
+public class InPlaceIndexMergeSort {
+    private static void mergeInPlace(int[] arr, int start, int mid, int end) {
+        int start2 = mid + 1;
+        if (arr[mid] <= arr[start2]) return;
+        while (start <= mid && start2 <= end) {
+            if (arr[start] <= arr[start2]) {
+                start++;
             } else {
-                result[k++] = right[j++];
+                int val = arr[start2];
+                int idx = start2;
+                while (idx != start) {
+                    arr[idx] = arr[idx - 1];
+                    idx--;
+                }
+                arr[start] = val;
+                start++; mid++; start2++;
             }
         }
-        while (i < left.length) result[k++] = left[i++];
-        while (j < right.length) result[k++] = right[j++];
-        return result;
+    }
+    public static void sort(int[] arr, int l, int r) {
+        if (l < r) {
+            int m = l + (r - l) / 2;
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+            mergeInPlace(arr, l, m, r);
+        }
     }
 }

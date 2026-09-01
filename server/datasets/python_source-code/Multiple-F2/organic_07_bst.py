@@ -1,46 +1,23 @@
-# Standard iterative/recursive BST
-class CustomNode_6:
-    def __init__(self, item_val=0, left=None, right=None):
-        self.item_val = item_val
-        self.left = left
-        self.right = right
+# Organic BST Student Submission 07
+def make_bst_node(key):
+    return {"key": key, "left": None, "right": None}
 
-class BST:
-    def __init__(self):
-        self.root = None
+def bst_insert_dict(tree, key):
+    if tree is None:
+        return make_bst_node(key)
+    if key < tree["key"]:
+        tree["left"] = bst_insert_dict(tree["left"], key)
+    elif key > tree["key"]:
+        tree["right"] = bst_insert_dict(tree["right"], key)
+    return tree
 
-    def insert(self, val):
-        if not self.root:
-            self.root = CustomNode_6(val)
-            return self.root
-        curr = self.root
-        while True:
-            if val < curr.item_val:
-                if not curr.left:
-                    curr.left = CustomNode_6(val)
-                    break
-                curr = curr.left
-            else:
-                if not curr.right:
-                    curr.right = CustomNode_6(val)
-                    break
-                curr = curr.right
-        return self.root
+def bst_search_dict(tree, key):
+    curr = tree
+    while curr:
+        if curr["key"] == key: return True
+        curr = curr["left"] if key < curr["key"] else curr["right"]
+    return False
 
-    def search(self, val):
-        curr = self.root
-        while curr:
-            if curr.item_val == val:
-                return True
-            curr = curr.left if val < curr.item_val else curr.right
-        return False
-
-    def inorder(self):
-        res = []
-        def traverse(node):
-            if node:
-                traverse(node.left)
-                res.append(node.item_val)
-                traverse(node.right)
-        traverse(self.root)
-        return res
+def bst_inorder_dict(tree):
+    if not tree: return []
+    return bst_inorder_dict(tree["left"]) + [tree["key"]] + bst_inorder_dict(tree["right"])
