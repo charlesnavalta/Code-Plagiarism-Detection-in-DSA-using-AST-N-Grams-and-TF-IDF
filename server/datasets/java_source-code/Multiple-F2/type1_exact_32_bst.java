@@ -1,58 +1,67 @@
+// Binary Search Tree Suite: OOP Tree with Node, Height, and Traversals
+// Author: Mary (organic_01_bst.java)
 import java.util.ArrayList;
 import java.util.List;
 
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int val) { this.val = val; }
-}
-
-public class BST {
-    TreeNode root;
-    public void insert(int val) {
-        if (root == null) {
-            root = new TreeNode(val);
-            return;
-        }
-        TreeNode curr = root;
-        while (true) {
-            if (val < curr.val) {
-                if (curr.left == null) {
-                    curr.left = new TreeNode(val);
-                    break;
-                }
-                curr = curr.left;
-            } else {
-                if (curr.right == null) {
-                    curr.right = new TreeNode(val);
-                    break;
-                }
-                curr = curr.right;
-            }
-        }
+public class BinarySearchTreeSuite {
+    public static class TreeNode {
+        public int val;
+        public TreeNode left;
+        public TreeNode right;
+        public TreeNode(int v) { this.val = v; }
     }
 
-    public boolean search(int val) {
-        TreeNode curr = root;
+    private TreeNode root;
+    private int size;
+
+    public BinarySearchTreeSuite() {
+        this.root = null;
+        this.size = 0;
+    }
+
+    public void insert(int val) {
+        this.root = insertRec(this.root, val);
+    }
+
+    private TreeNode insertRec(TreeNode node, int val) {
+        if (node == null) {
+            this.size++;
+            return new TreeNode(val);
+        }
+        if (val < node.val) node.left = insertRec(node.left, val);
+        else if (val > node.val) node.right = insertRec(node.right, val);
+        return node;
+    }
+
+    public boolean search(int target) {
+        TreeNode curr = this.root;
         while (curr != null) {
-            if (curr.val == val) return true;
-            curr = (val < curr.val) ? curr.left : curr.right;
+            if (curr.val == target) return true;
+            curr = (target < curr.val) ? curr.left : curr.right;
         }
         return false;
     }
 
-    public List<Integer> inorder() {
+    public List<Integer> inorderTraversal() {
         List<Integer> res = new ArrayList<>();
-        traverse(root, res);
+        inorderRec(this.root, res);
         return res;
     }
 
-    private void traverse(TreeNode node, List<Integer> res) {
+    private void inorderRec(TreeNode node, List<Integer> res) {
         if (node != null) {
-            traverse(node.left, res);
+            inorderRec(node.left, res);
             res.add(node.val);
-            traverse(node.right, res);
+            inorderRec(node.right, res);
         }
+    }
+
+    public int getHeight() {
+        return heightRec(this.root);
+    }
+
+    private int heightRec(TreeNode node) {
+        if (node == null) return 0;
+        return 1 + Math.max(heightRec(node.left), heightRec(node.right));
     }
 }

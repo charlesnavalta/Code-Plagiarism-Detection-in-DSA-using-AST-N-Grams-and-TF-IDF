@@ -1,33 +1,20 @@
-/*
- * Quick Sort - Organic Submission #7
- * Functional-style partitioned List Quick Sort.
- */
-
-import java.util.*;
-
-class Solution {
-    public static List<Integer> quickSortList(List<Integer> list) {
-        if (list.size() <= 1) return list;
-        int pivot = list.get(list.size() / 2);
-        List<Integer> left = new ArrayList<>();
-        List<Integer> middle = new ArrayList<>();
-        List<Integer> right = new ArrayList<>();
-
-        for (int x : list) {
-            if (x < pivot) left.add(x);
-            else if (x == pivot) middle.add(x);
-            else right.add(x);
+// Organic Student Submission 7
+public class HoareQuickSort {
+    public static int partition(int[] arr, int low, int high) {
+        int pivot = arr[low];
+        int i = low - 1, j = high + 1;
+        while (true) {
+            do { i++; } while (arr[i] < pivot);
+            do { j--; } while (arr[j] > pivot);
+            if (i >= j) return j;
+            int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
         }
-
-        List<Integer> result = new ArrayList<>();
-        result.addAll(quickSortList(left));
-        result.addAll(middle);
-        result.addAll(quickSortList(right));
-        return result;
     }
-
-    public static void main(String[] args) {
-        List<Integer> nums = Arrays.asList(33, 10, 55, 71, 29, 62);
-        System.out.println(quickSortList(nums));
+    public static void sort(int[] arr, int low, int high) {
+        if (low < high) {
+            int p = partition(arr, low, high);
+            sort(arr, low, p);
+            sort(arr, p + 1, high);
+        }
     }
 }

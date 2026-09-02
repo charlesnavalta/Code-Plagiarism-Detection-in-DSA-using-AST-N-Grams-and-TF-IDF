@@ -1,37 +1,34 @@
-/*
- * Quick Sort - Organic Submission #15
- * Individual student implementation #15 with custom coding conventions.
- */
-
-class Solution15 {
-    public static int splitSegment15(int[] dataArray, int startBound, int endBound) {
-        int pivotRef = dataArray[endBound];
-        int partitionIdx = startBound - 1;
-        for (int scanPtr = startBound; scanPtr < endBound; scanPtr++) {
-            if (dataArray[scanPtr] <= pivotRef) {
-                partitionIdx++;
-                int hold = dataArray[partitionIdx];
-                dataArray[partitionIdx] = dataArray[scanPtr];
-                dataArray[scanPtr] = hold;
+// Organic Student Submission 15
+public class HybridQuickSort {
+    private static void insertionSort(int[] arr, int low, int high) {
+        for (int i = low + 1; i <= high; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= low && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
             }
-        }
-        int hold = dataArray[partitionIdx + 1];
-        dataArray[partitionIdx + 1] = dataArray[endBound];
-        dataArray[endBound] = hold;
-        return partitionIdx + 1;
-    }
-
-    public static void performQuicksort15(int[] dataArray, int startBound, int endBound) {
-        if (startBound < endBound) {
-            int splitLoc = splitSegment15(dataArray, startBound, endBound);
-            performQuicksort15(dataArray, startBound, splitLoc - 1);
-            performQuicksort15(dataArray, splitLoc + 1, endBound);
+            arr[j + 1] = key;
         }
     }
-
-    public static void main(String[] args) {
-        int[] sample = {5, 45, 15, 14, 28, 42};
-        performQuicksort15(sample, 0, sample.length - 1);
-        System.out.println(java.util.Arrays.toString(sample));
+    public static void sort(int[] arr, int low, int high) {
+        if (high - low + 1 <= 10) {
+            insertionSort(arr, low, high);
+            return;
+        }
+        if (low < high) {
+            int pivot = arr[high];
+            int i = low - 1;
+            for (int j = low; j < high; j++) {
+                if (arr[j] <= pivot) {
+                    i++;
+                    int t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+                }
+            }
+            int t2 = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = t2;
+            int pi = i + 1;
+            sort(arr, low, pi - 1);
+            sort(arr, pi + 1, high);
+        }
     }
 }

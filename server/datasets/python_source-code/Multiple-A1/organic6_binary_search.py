@@ -1,20 +1,36 @@
 """
-Binary Search - Submission by Patricia
-Approach: Delegates the heavy lifting to Python's built-in bisect
-module (bisect_left) instead of hand-rolling the loop.
+Binary Search Suite - Submission by Patricia
+Approach: Standard library bisect wrappers with custom validation and range counting.
 """
 
 import bisect
 
 
-def find_index(arr, target):
-    pos = bisect.bisect_left(arr, target)
-    if pos < len(arr) and arr[pos] == target:
-        return pos
-    return -1
+class BisectSearcher:
+    def __init__(self, data_list):
+        self.data = list(data_list)
+        self.size = len(self.data)
+
+    def find_index(self, target):
+        idx = bisect.bisect_left(self.data, target)
+        if idx < self.size and self.data[idx] == target:
+            return idx
+        return -1
+
+    def find_span(self, target):
+        start = bisect.bisect_left(self.data, target)
+        if start >= self.size or self.data[start] != target:
+            return (None, None, 0)
+        end = bisect.bisect_right(self.data, target) - 1
+        count = (end - start) + 1
+        return (start, end, count)
+
+    def contains(self, target):
+        return self.find_index(target) != -1
 
 
 if __name__ == "__main__":
-    ARR = [2, 5, 8, 12, 16, 23, 38, 45, 56, 72, 91]
-    TARGET = 23
-    print("bisect result ->", find_index(ARR, TARGET))
+    sample = [2, 5, 8, 12, 12, 12, 23, 38, 45, 56, 72, 91]
+    searcher = BisectSearcher(sample)
+    print("Found 12 at:", searcher.find_index(12))
+    print("Span of 12:", searcher.find_span(12))

@@ -1,46 +1,25 @@
-# Standard iterative/recursive BST
-class CustomNode_4:
-    def __init__(self, item_val=0, left=None, right=None):
-        self.item_val = item_val
-        self.left = left
-        self.right = right
+# Organic BST Student Submission 05
+class AVLReadyBST:
+    class AVLNode:
+        def __init__(self, val):
+            self.val = val; self.left = None; self.right = None; self.h = 1
+    
+    def __init__(self): self.root = None
 
-class BST:
-    def __init__(self):
-        self.root = None
+    def height(self, node): return node.h if node else 0
 
     def insert(self, val):
-        if not self.root:
-            self.root = CustomNode_4(val)
-            return self.root
-        curr = self.root
-        while True:
-            if val < curr.item_val:
-                if not curr.left:
-                    curr.left = CustomNode_4(val)
-                    break
-                curr = curr.left
-            else:
-                if not curr.right:
-                    curr.right = CustomNode_4(val)
-                    break
-                curr = curr.right
-        return self.root
+        def _ins(node, val):
+            if not node: return self.AVLNode(val)
+            if val < node.val: node.left = _ins(node.left, val)
+            elif val > node.val: node.right = _ins(node.right, val)
+            node.h = 1 + max(self.height(node.left), self.height(node.right))
+            return node
+        self.root = _ins(self.root, val)
 
     def search(self, val):
         curr = self.root
         while curr:
-            if curr.item_val == val:
-                return True
-            curr = curr.left if val < curr.item_val else curr.right
+            if curr.val == val: return True
+            curr = curr.left if val < curr.val else curr.right
         return False
-
-    def inorder(self):
-        res = []
-        def traverse(node):
-            if node:
-                traverse(node.left)
-                res.append(node.item_val)
-                traverse(node.right)
-        traverse(self.root)
-        return res

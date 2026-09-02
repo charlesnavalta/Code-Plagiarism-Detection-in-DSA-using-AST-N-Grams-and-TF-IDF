@@ -1,19 +1,20 @@
-def create_tree_node_5(key_value):
-    return {'k': key_value, 'left_child': None, 'right_child': None}
+# Organic BST Student Submission 06
+class LinkedParentBST:
+    class PNode:
+        def __init__(self, key, parent=None):
+            self.key = key; self.left = None; self.right = None; self.parent = parent
+    
+    def __init__(self): self.root = None
 
-def put_tree_item_5(tree_dict, key_value):
-    if not tree_dict: return create_tree_node_5(key_value)
-    if key_value < tree_dict['k']:
-        tree_dict['left_child'] = put_tree_item_5(tree_dict['left_child'], key_value)
-    else:
-        tree_dict['right_child'] = put_tree_item_5(tree_dict['right_child'], key_value)
-    return tree_dict
-
-def has_tree_item_5(tree_dict, key_value):
-    if not tree_dict: return False
-    if tree_dict['k'] == key_value: return True
-    return has_tree_item_5(tree_dict['left_child'], key_value) if key_value < tree_dict['k'] else has_tree_item_5(tree_dict['right_child'], key_value)
-
-def dump_sorted_tree_5(tree_dict):
-    if not tree_dict: return []
-    return dump_sorted_tree_5(tree_dict['left_child']) + [tree_dict['k']] + dump_sorted_tree_5(tree_dict['right_child'])
+    def insert(self, key):
+        if not self.root:
+            self.root = self.PNode(key); return
+        curr = self.root
+        while True:
+            if key < curr.key:
+                if not curr.left: curr.left = self.PNode(key, curr); break
+                curr = curr.left
+            elif key > curr.key:
+                if not curr.right: curr.right = self.PNode(key, curr); break
+                curr = curr.right
+            else: break

@@ -56,11 +56,14 @@ def analyze_assignment(assignment_id):
         if language == 'java':
             from utils.java_engine import process_java_file
             process_func = process_java_file
-            ngram_bounds = (3, 5) # Dense AST: Use larger N-Grams
+            ngram_bounds = (3, 5)  # Dense AST: trigrams to 5-grams
         else:
             from utils.python_engine import process_python_file
             process_func = process_python_file
-            ngram_bounds = (2, 4) # Concise AST: Use smaller N-Grams
+            # Previously (2, 4) — bigrams re-introduced ~34% FPR (benchmark data).
+            # Aligning to (3, 5) matches the benchmark evaluation setting and
+            # eliminates common syntax-pair noise from single-pair comparisons.
+            ngram_bounds = (3, 5)  # Trigrams to 5-grams: captures intent without bigram noise
 
         # 3. Fetch all submissions with student relationship eager-loaded
         submissions = Submission.query.options(

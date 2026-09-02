@@ -1,24 +1,29 @@
-import java.util.ArrayList;
-import java.util.List;
-
-public class Solution {
-    public List<Integer> sortArray(List<Integer> data) {
-        if (data == null || data.size() < 2) return data;
-        int m = data.size() / 2;
-        List<Integer> left = sortArray(new ArrayList<>(data.subList(0, m)));
-        List<Integer> right = sortArray(new ArrayList<>(data.subList(m, data.size())));
-        return combine(left, right);
-    }
-
-    private List<Integer> combine(List<Integer> a, List<Integer> b) {
-        List<Integer> res = new ArrayList<>();
-        int i = 0, j = 0;
-        while (i < a.size() && j < b.size()) {
-            if (a.get(i) < b.get(j)) res.add(a.get(i++));
-            else res.add(b.get(j++));
+// Organic MergeSort Student Submission 11
+public class InPlaceIndexMergeSort {
+    private static void mergeInPlace(int[] arr, int start, int mid, int end) {
+        int start2 = mid + 1;
+        if (arr[mid] <= arr[start2]) return;
+        while (start <= mid && start2 <= end) {
+            if (arr[start] <= arr[start2]) {
+                start++;
+            } else {
+                int val = arr[start2];
+                int idx = start2;
+                while (idx != start) {
+                    arr[idx] = arr[idx - 1];
+                    idx--;
+                }
+                arr[start] = val;
+                start++; mid++; start2++;
+            }
         }
-        while (i < a.size()) res.add(a.get(i++));
-        while (j < b.size()) res.add(b.get(j++));
-        return res;
+    }
+    public static void sort(int[] arr, int l, int r) {
+        if (l < r) {
+            int m = l + (r - l) / 2;
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+            mergeInPlace(arr, l, m, r);
+        }
     }
 }

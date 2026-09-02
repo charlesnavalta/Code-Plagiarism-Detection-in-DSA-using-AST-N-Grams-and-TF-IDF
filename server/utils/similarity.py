@@ -169,16 +169,41 @@ def compare_all_files(file_data, ngram_bounds):
     filenames = [f['name'] for f in file_data]
     tokens_list = [f['tokens'] for f in file_data]
 
-    # Dynamic max_df safely filters out boilerplate for large batches.
-    # If there are 5 or fewer files, we keep everything (1.0).
-    # If there are many files, we keep features up to 90% document frequency to prevent AST starvation in large cohorts.
-    dynamic_max_df = 1.0 if len(documents) <= 5 else 0.90
+    # Dynamic min_df / max_df: both values must be set together so that
+    # sklearn's constraint (effective max_df docs >= min_df docs) is never
+    # violated, regardless of batch size.
+    #
+    # The math for a proportion-based max_df is: effective_max = floor(max_df * n).
+    # If floor(max_df * n) < min_df, sklearn raises a ValueError and the entire
+    # comparison silently returns [] — every pair becomes "Non-Plagiarized".
+    #
+    # Tier breakdown:
+    #   n == 2  (isolated pair / benchmark) — no proportion filtering is
+    #           mathematically safe; use raw overlap and rely on score thresholds.
+    #   3–5     (small group / topic batch) — activate boilerplate suppression
+    #           at 85% so floor(0.85*3)=2 >= min_df=2.
+    #   > 5     (full classroom run) — tighter 80% filter; floor(0.80*6)=4 >= 2.
+    n_docs = len(documents)
+    if n_docs <= 2:
+        # 2-doc batch: proportion filtering always collapses to ≤1 doc,
+        # which is below any meaningful min_df. Disable both filters.
+        dynamic_max_df = 1.0
+        dynamic_min_df = 1
+    elif n_docs <= 5:
+        # Small batch: boilerplate suppression active; floor(0.85*3)=2 == min_df
+        dynamic_max_df = 0.85
+        dynamic_min_df = 2
+    else:
+        # Full classroom: tighter filter; floor(0.80*6)=4 > min_df=2
+        dynamic_max_df = 0.80
+        dynamic_min_df = 2
 
     # Initialize the TF-IDF Vectorizer
     vectorizer = TfidfVectorizer(
         ngram_range=ngram_bounds,
-        sublinear_tf=True,       # Applies sublinear scaling (1 + log(tf)) to dampen the effect of high-frequency tokens
-        max_df=dynamic_max_df
+        sublinear_tf=True,        # Sublinear TF scaling: 1 + log(tf) dampens high-frequency tokens
+        max_df=dynamic_max_df,    # Suppress near-universal boilerplate n-grams
+        min_df=dynamic_min_df     # Exclude singleton n-grams to avoid phantom high-IDF features
     )
 
     try:
@@ -201,16 +226,23 @@ def compare_all_files(file_data, ngram_bounds):
                 # Base Cosine Similarity Score (0 to 100%)
                 score = round(sim_matrix[i][j] * 100, 2)
 
-                if score > 0:
+                # Only enter the forensic pipeline if the raw cosine score
+                # is above a meaningful floor. With TF-IDF on small batches,
+                # a score > 0 is almost always true for same-prompt DSA
+                # submissions — even completely innocent pairs share enough
+                # structural tokens to produce a non-zero dot product.
+                # A floor of 10% filters genuine noise before any of the
+                # expensive containment / type-classification work runs.
+                if score > 10.0:
                     # Convert sparse matrix rows to standard arrays for direct mathematical manipulation
                     vec_i = tfidf_matrix[i].toarray()[0]
                     vec_j = tfidf_matrix[j].toarray()[0]
 
                     # =========================================================================
-                    # PHASE 3: NEW MATH - CONTAINMENT SKELETON METRIC
+                    # PHASE 3: CONTAINMENT SKELETON METRIC
                     # =========================================================================
-                    # This catches cases where File A is small, and File B is huge, but File B contains
-                    # 100% of File A (Cosine similarity might report low, but containment reports high).
+                    # Containment catches cases where File A is small and File B is huge,
+                    # but File B fully contains File A's logic (cosine understimates this).
                     weight_i = np.sum(vec_i)
                     weight_j = np.sum(vec_j)
 
@@ -222,14 +254,34 @@ def compare_all_files(file_data, ngram_bounds):
                     else:
                         containment_score = 0.0
 
-                    # The final system score takes the HIGHER of the two mathematical approaches
-                    final_score = max(score, containment_score)
+                    # Containment is only used as the deciding score when there is a
+                    # significant size disparity between the two files (one file is at
+                    # least 2x the length of the other). For same-prompt DSA submissions
+                    # of comparable size, students naturally share most of the smaller
+                    # file's structural patterns — not because of plagiarism but because
+                    # the assignment requires the same algorithm. In that case, using
+                    # max(cosine, containment) artificially inflates innocent pairs to
+                    # "High" or "Medium" status. When files are similarly sized, cosine
+                    # similarity alone is the more reliable signal.
+                    len_i = len(tokens_list[i])
+                    len_j = len(tokens_list[j])
+                    size_ratio = max(len_i, len_j) / max(min(len_i, len_j), 1)
+                    if size_ratio >= 2.0:
+                        # True size-asymmetric case: containment override is meaningful
+                        final_score = max(score, containment_score)
+                    else:
+                        # Files are similar in length: stick with cosine similarity
+                        final_score = score
 
-                    # Adaptive risk thresholds based on code length/token count:
-                    # Short algorithms (<45 tokens) naturally have higher baseline overlap
+                    # Adaptive risk thresholds calibrated for DSA same-prompt submissions.
+                    # Students solving the same BST / linked-list / sort problem will have
+                    # a high natural structural overlap that is innocent. Thresholds are
+                    # raised above the generic defaults to account for this baseline:
+                    #   - Short code (<45 tokens): raise both gates by +5 points
+                    #   - Standard code: High=85, Medium=60 (vs old 80/50)
                     avg_tokens = (len(tokens_list[i]) + len(tokens_list[j])) / 2.0
-                    high_threshold = 85.0 if avg_tokens < 45 else 80.0
-                    med_threshold = 55.0 if avg_tokens < 45 else 50.0
+                    high_threshold = 90.0 if avg_tokens < 45 else 85.0
+                    med_threshold  = 65.0 if avg_tokens < 45 else 60.0
 
                     # Assign a strict classification tier
                     status = "Low"

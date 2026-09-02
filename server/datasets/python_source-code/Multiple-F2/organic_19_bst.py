@@ -1,46 +1,22 @@
-# Standard iterative/recursive BST
-class CustomNode_18:
-    def __init__(self, item_val=0, left=None, right=None):
-        self.item_val = item_val
-        self.left = left
-        self.right = right
+# Organic BST Student Submission 19
+def persistent_insert(node, val):
+    if node is None:
+        return (val, None, None)
+    v, left, right = node
+    if val < v:
+        return (v, persistent_insert(left, val), right)
+    elif val > v:
+        return (v, left, persistent_insert(right, val))
+    return node
 
-class BST:
-    def __init__(self):
-        self.root = None
+def persistent_search(node, val):
+    while node:
+        v, left, right = node
+        if v == val: return True
+        node = left if val < v else right
+    return False
 
-    def insert(self, val):
-        if not self.root:
-            self.root = CustomNode_18(val)
-            return self.root
-        curr = self.root
-        while True:
-            if val < curr.item_val:
-                if not curr.left:
-                    curr.left = CustomNode_18(val)
-                    break
-                curr = curr.left
-            else:
-                if not curr.right:
-                    curr.right = CustomNode_18(val)
-                    break
-                curr = curr.right
-        return self.root
-
-    def search(self, val):
-        curr = self.root
-        while curr:
-            if curr.item_val == val:
-                return True
-            curr = curr.left if val < curr.item_val else curr.right
-        return False
-
-    def inorder(self):
-        res = []
-        def traverse(node):
-            if node:
-                traverse(node.left)
-                res.append(node.item_val)
-                traverse(node.right)
-        traverse(self.root)
-        return res
+def persistent_inorder(node):
+    if not node: return []
+    v, left, right = node
+    return persistent_inorder(left) + [v] + persistent_inorder(right)

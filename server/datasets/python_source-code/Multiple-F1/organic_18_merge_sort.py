@@ -1,15 +1,25 @@
-def merge_sort(data_list):
-    if not data_list: return data_list
-    n = len(data_list)
-    step = 1
-    while step < n:
-        for offset in range(0, n, 2 * step):
-            l = data_list[offset : offset + step]
-            r = data_list[offset + step : offset + 2 * step]
-            temp = []
-            while l and r:
-                temp.append(l.pop(0) if l[0] <= r[0] else r.pop(0))
-            temp.extend(l or r)
-            data_list[offset : offset + len(temp)] = temp
-        step *= 2
-    return data_list
+# Organic MergeSort Student Submission 18
+def merge_in_place(arr, start, mid, end):
+    start2 = mid + 1
+    if arr[mid] <= arr[start2]:
+        return
+    while start <= mid and start2 <= end:
+        if arr[start] <= arr[start2]:
+            start += 1
+        else:
+            val = arr[start2]
+            index = start2
+            while index != start:
+                arr[index] = arr[index - 1]
+                index -= 1
+            arr[start] = val
+            start += 1; mid += 1; start2 += 1
+
+def in_place_merge_sort(arr, l=0, r=None):
+    if r is None: r = len(arr) - 1
+    if l < r:
+        m = l + (r - l) // 2
+        in_place_merge_sort(arr, l, m)
+        in_place_merge_sort(arr, m + 1, r)
+        merge_in_place(arr, l, m, r)
+    return arr

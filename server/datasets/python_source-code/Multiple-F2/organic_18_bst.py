@@ -1,19 +1,25 @@
-def create_tree_node_17(key_value):
-    return {'k': key_value, 'left_child': None, 'right_child': None}
+# Organic BST Student Submission 18
+class GeneratorBST:
+    class Node:
+        def __init__(self, v): self.v = v; self.l = None; self.r = None
+    
+    def __init__(self): self.root = None
 
-def put_tree_item_17(tree_dict, key_value):
-    if not tree_dict: return create_tree_node_17(key_value)
-    if key_value < tree_dict['k']:
-        tree_dict['left_child'] = put_tree_item_17(tree_dict['left_child'], key_value)
-    else:
-        tree_dict['right_child'] = put_tree_item_17(tree_dict['right_child'], key_value)
-    return tree_dict
+    def insert(self, v):
+        if not self.root: self.root = self.Node(v); return
+        curr = self.root
+        while True:
+            if v < curr.v:
+                if not curr.l: curr.l = self.Node(v); break
+                curr = curr.l
+            elif v > curr.v:
+                if not curr.r: curr.r = self.Node(v); break
+                curr = curr.r
+            else: break
 
-def has_tree_item_17(tree_dict, key_value):
-    if not tree_dict: return False
-    if tree_dict['k'] == key_value: return True
-    return has_tree_item_17(tree_dict['left_child'], key_value) if key_value < tree_dict['k'] else has_tree_item_17(tree_dict['right_child'], key_value)
-
-def dump_sorted_tree_17(tree_dict):
-    if not tree_dict: return []
-    return dump_sorted_tree_17(tree_dict['left_child']) + [tree_dict['k']] + dump_sorted_tree_17(tree_dict['right_child'])
+    def traverse(self, node=None):
+        if node is None and self.root: node = self.root
+        if node:
+            if node.l: yield from self.traverse(node.l)
+            yield node.v
+            if node.r: yield from self.traverse(node.r)

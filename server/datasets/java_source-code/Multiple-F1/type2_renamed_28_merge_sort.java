@@ -1,24 +1,51 @@
-import java.util.Arrays;
+// MergeSort Suite: Renamed Identifiers
+// Author: Renamed Variant (Type 2 of Mary)
+public class ListMergerEngine {
+    private int[] rawItems;
+    private long invCounter;
 
-public class Solution {
-    // Standard recursive merge sort
-public int[] mergeSort(int[] dataset_collection) {
-        if (dataset_collection == null || dataset_collection.length <= 1) return dataset_collection;
-        int split_point = dataset_collection.length / 2;
-        int[] first_partition = mergeSort(Arrays.copyOfRange(dataset_collection, 0, split_point));
-        int[] second_partition = mergeSort(Arrays.copyOfRange(dataset_collection, split_point, dataset_collection.length));
-        
-        int[] result = new int[dataset_collection.length];
-        int i = 0, j = 0, k = 0;
-        while (i < first_partition.length && j < second_partition.length) {
-            if (first_partition[i] <= second_partition[j]) {
-                result[k++] = first_partition[i++];
+    public ListMergerEngine(int[] initial) {
+        this.rawItems = (initial != null) ? initial.clone() : new int[0];
+        this.invCounter = 0;
+    }
+
+    private int[] combineHalves(int[] leftPart, int[] rightPart) {
+        int[] mergedBuffer = new int[leftPart.length + rightPart.length];
+        int ptrA = 0, ptrB = 0, cursor = 0;
+        while (ptrA < leftPart.length && ptrB < rightPart.length) {
+            if (leftPart[ptrA] <= rightPart[ptrB]) {
+                mergedBuffer[cursor++] = leftPart[ptrA++];
             } else {
-                result[k++] = second_partition[j++];
+                mergedBuffer[cursor++] = rightPart[ptrB++];
+                this.invCounter += (leftPart.length - ptrA);
             }
         }
-        while (i < first_partition.length) result[k++] = first_partition[i++];
-        while (j < second_partition.length) result[k++] = second_partition[j++];
-        return result;
+        while (ptrA < leftPart.length) mergedBuffer[cursor++] = leftPart[ptrA++];
+        while (ptrB < rightPart.length) mergedBuffer[cursor++] = rightPart[ptrB++];
+        return mergedBuffer;
+    }
+
+    private int[] divideAndSort(int[] sequence) {
+        if (sequence.length <= 1) return sequence;
+        int center = sequence.length / 2;
+        int[] partL = new int[center];
+        int[] partR = new int[sequence.length - center];
+        System.arraycopy(sequence, 0, partL, 0, center);
+        System.arraycopy(sequence, center, partR, 0, sequence.length - center);
+        return combineHalves(divideAndSort(partL), divideAndSort(partR));
+    }
+
+    public int[] runMergeSort() {
+        if (this.rawItems.length > 1) {
+            this.rawItems = divideAndSort(this.rawItems);
+        }
+        return this.rawItems;
+    }
+
+    public boolean isMonotonic() {
+        for (int p = 0; p < this.rawItems.length - 1; p++) {
+            if (this.rawItems[p] > this.rawItems[p + 1]) return false;
+        }
+        return true;
     }
 }

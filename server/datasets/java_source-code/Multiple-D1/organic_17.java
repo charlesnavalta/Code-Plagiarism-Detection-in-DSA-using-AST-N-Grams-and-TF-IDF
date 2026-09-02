@@ -1,37 +1,20 @@
-/*
- * Quick Sort - Organic Submission #17
- * Individual student implementation #17 with custom coding conventions.
- */
-
-class Solution17 {
-    public static int splitSegment17(int[] dataArray, int startBound, int endBound) {
-        int pivotRef = dataArray[endBound];
-        int partitionIdx = startBound - 1;
-        for (int scanPtr = startBound; scanPtr < endBound; scanPtr++) {
-            if (dataArray[scanPtr] <= pivotRef) {
-                partitionIdx++;
-                int hold = dataArray[partitionIdx];
-                dataArray[partitionIdx] = dataArray[scanPtr];
-                dataArray[scanPtr] = hold;
-            }
-        }
-        int hold = dataArray[partitionIdx + 1];
-        dataArray[partitionIdx + 1] = dataArray[endBound];
-        dataArray[endBound] = hold;
-        return partitionIdx + 1;
-    }
-
-    public static void performQuicksort17(int[] dataArray, int startBound, int endBound) {
-        if (startBound < endBound) {
-            int splitLoc = splitSegment17(dataArray, startBound, endBound);
-            performQuicksort17(dataArray, startBound, splitLoc - 1);
-            performQuicksort17(dataArray, splitLoc + 1, endBound);
+// Organic Student Submission 17
+public class HoareQuickSort {
+    public static int partition(int[] arr, int low, int high) {
+        int pivot = arr[low];
+        int i = low - 1, j = high + 1;
+        while (true) {
+            do { i++; } while (arr[i] < pivot);
+            do { j--; } while (arr[j] > pivot);
+            if (i >= j) return j;
+            int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
         }
     }
-
-    public static void main(String[] args) {
-        int[] sample = {19, 1, 37, 14, 28, 42};
-        performQuicksort17(sample, 0, sample.length - 1);
-        System.out.println(java.util.Arrays.toString(sample));
+    public static void sort(int[] arr, int low, int high) {
+        if (low < high) {
+            int p = partition(arr, low, high);
+            sort(arr, low, p);
+            sort(arr, p + 1, high);
+        }
     }
 }

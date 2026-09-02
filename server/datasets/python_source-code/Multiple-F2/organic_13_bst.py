@@ -1,46 +1,25 @@
-# Standard iterative/recursive BST
-class CustomNode_12:
-    def __init__(self, item_val=0, left=None, right=None):
-        self.item_val = item_val
-        self.left = left
-        self.right = right
+# Organic BST Student Submission 13
+class GeneratorBST:
+    class Node:
+        def __init__(self, v): self.v = v; self.l = None; self.r = None
+    
+    def __init__(self): self.root = None
 
-class BST:
-    def __init__(self):
-        self.root = None
-
-    def insert(self, val):
-        if not self.root:
-            self.root = CustomNode_12(val)
-            return self.root
+    def insert(self, v):
+        if not self.root: self.root = self.Node(v); return
         curr = self.root
         while True:
-            if val < curr.item_val:
-                if not curr.left:
-                    curr.left = CustomNode_12(val)
-                    break
-                curr = curr.left
-            else:
-                if not curr.right:
-                    curr.right = CustomNode_12(val)
-                    break
-                curr = curr.right
-        return self.root
+            if v < curr.v:
+                if not curr.l: curr.l = self.Node(v); break
+                curr = curr.l
+            elif v > curr.v:
+                if not curr.r: curr.r = self.Node(v); break
+                curr = curr.r
+            else: break
 
-    def search(self, val):
-        curr = self.root
-        while curr:
-            if curr.item_val == val:
-                return True
-            curr = curr.left if val < curr.item_val else curr.right
-        return False
-
-    def inorder(self):
-        res = []
-        def traverse(node):
-            if node:
-                traverse(node.left)
-                res.append(node.item_val)
-                traverse(node.right)
-        traverse(self.root)
-        return res
+    def traverse(self, node=None):
+        if node is None and self.root: node = self.root
+        if node:
+            if node.l: yield from self.traverse(node.l)
+            yield node.v
+            if node.r: yield from self.traverse(node.r)

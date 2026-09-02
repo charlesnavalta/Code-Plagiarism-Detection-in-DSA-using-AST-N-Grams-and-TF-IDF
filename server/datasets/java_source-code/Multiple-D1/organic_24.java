@@ -1,37 +1,27 @@
-/*
- * Quick Sort - Organic Submission #24
- * Individual student implementation #24 with custom coding conventions.
- */
-
-class Solution24 {
-    public static int splitSegment24(int[] dataArray, int startBound, int endBound) {
-        int pivotRef = dataArray[endBound];
-        int partitionIdx = startBound - 1;
-        for (int scanPtr = startBound; scanPtr < endBound; scanPtr++) {
-            if (dataArray[scanPtr] <= pivotRef) {
-                partitionIdx++;
-                int hold = dataArray[partitionIdx];
-                dataArray[partitionIdx] = dataArray[scanPtr];
-                dataArray[scanPtr] = hold;
+// Organic Student Submission 24
+import java.util.Stack;
+public class IterativeQuickSort {
+    public static void quickSort(int[] arr) {
+        if (arr == null || arr.length <= 1) return;
+        Stack<int[]> stack = new Stack<>();
+        stack.push(new int[]{0, arr.length - 1});
+        while (!stack.isEmpty()) {
+            int[] range = stack.pop();
+            int low = range[0], high = range[1];
+            if (low < high) {
+                int pivot = arr[high];
+                int i = low - 1;
+                for (int j = low; j < high; j++) {
+                    if (arr[j] <= pivot) {
+                        i++;
+                        int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+                    }
+                }
+                int t = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = t;
+                int pi = i + 1;
+                stack.push(new int[]{low, pi - 1});
+                stack.push(new int[]{pi + 1, high});
             }
         }
-        int hold = dataArray[partitionIdx + 1];
-        dataArray[partitionIdx + 1] = dataArray[endBound];
-        dataArray[endBound] = hold;
-        return partitionIdx + 1;
-    }
-
-    public static void performQuicksort24(int[] dataArray, int startBound, int endBound) {
-        if (startBound < endBound) {
-            int splitLoc = splitSegment24(dataArray, startBound, endBound);
-            performQuicksort24(dataArray, startBound, splitLoc - 1);
-            performQuicksort24(dataArray, splitLoc + 1, endBound);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] sample = {18, 22, 14, 14, 28, 42};
-        performQuicksort24(sample, 0, sample.length - 1);
-        System.out.println(java.util.Arrays.toString(sample));
     }
 }

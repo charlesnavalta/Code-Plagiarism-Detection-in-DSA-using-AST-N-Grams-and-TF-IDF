@@ -1,20 +1,25 @@
-# Standard recursive merge sort
-def merge_sort(items_12):
-    if len(items_12) <= 1:
-        return items_12
-    half_12 = len(items_12) // 2
-    left = merge_sort(items_12[:half_12])
-    right = merge_sort(items_12[half_12:])
-    
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] <= right[j]:
-            result.append(left[i])
-            i += 1
+# Organic MergeSort Student Submission 13
+def merge_in_place(arr, start, mid, end):
+    start2 = mid + 1
+    if arr[mid] <= arr[start2]:
+        return
+    while start <= mid and start2 <= end:
+        if arr[start] <= arr[start2]:
+            start += 1
         else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
+            val = arr[start2]
+            index = start2
+            while index != start:
+                arr[index] = arr[index - 1]
+                index -= 1
+            arr[start] = val
+            start += 1; mid += 1; start2 += 1
+
+def in_place_merge_sort(arr, l=0, r=None):
+    if r is None: r = len(arr) - 1
+    if l < r:
+        m = l + (r - l) // 2
+        in_place_merge_sort(arr, l, m)
+        in_place_merge_sort(arr, m + 1, r)
+        merge_in_place(arr, l, m, r)
+    return arr

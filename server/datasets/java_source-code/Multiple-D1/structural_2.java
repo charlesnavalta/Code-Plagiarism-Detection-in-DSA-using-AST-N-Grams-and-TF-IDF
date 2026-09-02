@@ -1,53 +1,65 @@
-/*
- * Quick Sort - Structural Modification #2
- * Derived from organic_5: inverted conditional, swapped recursion order.
- */
+// QuickSort Suite: Structural Method Extraction & Reordering
+// Author: Hannah (structural_1.java - Type 3 of Mary)
+public class QuickSortSuite {
+    private int[] data;
+    private int comparisons;
+    private int swaps;
 
-class Solution {
-    private static int calcMedian(int[] items, int start, int end) {
-        int center = (start + end) / 2;
-        if (items[center] < items[start]) { int t = items[start]; items[start] = items[center]; items[center] = t; }
-        if (items[end] < items[start]) { int t = items[start]; items[start] = items[end]; items[end] = t; }
-        if (items[end] < items[center]) { int t = items[center]; items[center] = items[end]; items[end] = t; }
-        int t = items[center]; items[center] = items[end - 1]; items[end - 1] = t;
-        return items[end - 1];
+    public QuickSortSuite(int[] input) {
+        this.data = (input != null) ? input.clone() : new int[0];
+        this.comparisons = 0;
+        this.swaps = 0;
     }
 
-    public static int splitMedian(int[] items, int start, int end) {
-        int anchor = calcMedian(items, start, end);
-        int lPtr = start;
-        int rPtr = end - 1;
-        while (lPtr < rPtr) {
-            while (items[++lPtr] < anchor);
-            while (items[--rPtr] > anchor);
-            if (lPtr >= rPtr) break;
-            int t = items[lPtr]; items[lPtr] = items[rPtr]; items[rPtr] = t;
+    private static void performSwap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public boolean isSorted() {
+        int k = 0;
+        while (k < this.data.length - 1) {
+            if (this.data[k] > this.data[k + 1]) return false;
+            k++;
         }
-        int t = items[lPtr]; items[lPtr] = items[end - 1]; items[end - 1] = t;
-        return lPtr;
+        return true;
     }
 
-    public static void quickSortMedian(int[] items, int start, int end) {
-        if (end - start < 10) {
-            for (int idx = start + 1; idx <= end; idx++) {
-                int val = items[idx];
-                int pos = idx - 1;
-                while (pos >= start && items[pos] > val) {
-                    items[pos + 1] = items[pos];
-                    pos--;
-                }
-                items[pos + 1] = val;
+    public int[] sort(boolean inPlace) {
+        int[] target = inPlace ? this.data : this.data.clone();
+        if (target.length > 1) {
+            quicksortRecursive(target, 0, target.length - 1);
+        }
+        return target;
+    }
+
+    private int partition(int[] arr, int low, int high) {
+        int mid = (low + high) / 2;
+        int pIdx = ((arr[low] <= arr[mid] && arr[mid] <= arr[high]) || (arr[high] <= arr[mid] && arr[mid] <= arr[low])) ? mid : low;
+        performSwap(arr, pIdx, high);
+        this.swaps++;
+        
+        int pivot = arr[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            this.comparisons++;
+            if (arr[j] <= pivot) {
+                i++;
+                performSwap(arr, i, j);
+                this.swaps++;
             }
-        } else {
-            int pivotIdx = splitMedian(items, start, end);
-            quickSortMedian(items, pivotIdx + 1, end);
-            quickSortMedian(items, start, pivotIdx - 1);
         }
+        performSwap(arr, i + 1, high);
+        this.swaps++;
+        return i + 1;
     }
 
-    public static void main(String[] args) {
-        int[] vals = {24, 2, 45, 20, 56, 75, 2, 56, 99, 53, 12};
-        quickSortMedian(vals, 0, vals.length - 1);
-        System.out.println(java.util.Arrays.toString(vals));
+    private void quicksortRecursive(int[] arr, int low, int high) {
+        if (low < high) {
+            int pi = partition(arr, low, high);
+            quicksortRecursive(arr, low, pi - 1);
+            quicksortRecursive(arr, pi + 1, high);
+        }
     }
 }
