@@ -1,11 +1,25 @@
-def sort_array(seq_7):
-    def divide(seq):
-        if len(seq) < 2: return seq
-        m = len(seq) // 2
-        return combine(divide(seq[:m]), divide(seq[m:]))
-    def combine(a, b):
-        merged = []
-        while a and b:
-            merged.append(a.pop(0) if a[0] < b[0] else b.pop(0))
-        return merged + a + b
-    return divide(seq_7)
+# Organic MergeSort Student Submission 08
+def merge_in_place(arr, start, mid, end):
+    start2 = mid + 1
+    if arr[mid] <= arr[start2]:
+        return
+    while start <= mid and start2 <= end:
+        if arr[start] <= arr[start2]:
+            start += 1
+        else:
+            val = arr[start2]
+            index = start2
+            while index != start:
+                arr[index] = arr[index - 1]
+                index -= 1
+            arr[start] = val
+            start += 1; mid += 1; start2 += 1
+
+def in_place_merge_sort(arr, l=0, r=None):
+    if r is None: r = len(arr) - 1
+    if l < r:
+        m = l + (r - l) // 2
+        in_place_merge_sort(arr, l, m)
+        in_place_merge_sort(arr, m + 1, r)
+        merge_in_place(arr, l, m, r)
+    return arr

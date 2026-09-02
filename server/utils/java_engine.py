@@ -72,27 +72,54 @@ def process_java_file(content):
     # New: Analyze reachability before extracting tokens
     dead_node_ids = find_dead_nodes_java(tree)
 
+    # Exclusion set: Java AST node types that are syntactically mandatory in
+    # virtually every Java program regardless of algorithmic approach.
+    # Including these in TF-IDF gives them high IDF weight and causes innocent
+    # pairs to accumulate shared tokens that look suspicious but are just
+    # required Java boilerplate.
+    #
+    # TypeArgument       — generic type parameter, e.g. List<Node>
+    # BasicType          — primitive types: int, boolean, char, etc.
+    # ReferenceType      — object types: String, Node, etc.
+    # TypeDeclaration    — top-level class/interface wrapper node
+    # PackageDeclaration — mandatory "package foo.bar;" header
+    # Annotation         — @Override, @SuppressWarnings, etc.
+    # BlockStatement     — every method body is wrapped in a BlockStatement
+    # StatementExpression— expression statements (i++, foo(), etc.)
+    # ArrayCreator       — "new int[n]" / "new Node[n]" allocation
+    # ClassCreator       — "new Node()" / "new LinkedList()" allocation
+    # FormalParameter    — method parameter declarations
+    JAVA_BOILERPLATE_NODES = {
+        'TypeArgument', 'BasicType', 'ReferenceType', 'TypeDeclaration',
+        'PackageDeclaration', 'Annotation', 'BlockStatement',
+        'StatementExpression', 'ArrayCreator', 'ClassCreator',
+        'FormalParameter',
+    }
+
     tokens = []
     for path, node in tree:
         # Skip token generation for any dead code branches
         if any(id(p) in dead_node_ids for p in path) or id(node) in dead_node_ids:
             continue
-            
+
         node_type = type(node).__name__
-        
-        if node_type not in ['TypeArgument']:
-            token_str = java_to_python_map.get(node_type, node_type)
-            lineno = node.position.line if hasattr(node, 'position') and node.position else -1
 
-            raw_value = None
-            if node_type == "VariableDeclarator":
-                raw_value = getattr(node, 'name', None)
-            elif node_type == "MemberReference":
-                raw_value = getattr(node, 'member', None)
-            elif node_type == "Literal":
-                raw_value = getattr(node, 'value', None)
+        # Skip mandatory Java boilerplate nodes (see exclusion set above)
+        if node_type in JAVA_BOILERPLATE_NODES:
+            continue
 
-            tokens.append((token_str, lineno, raw_value))
-            
+        token_str = java_to_python_map.get(node_type, node_type)
+        lineno = node.position.line if hasattr(node, 'position') and node.position else -1
+
+        raw_value = None
+        if node_type == "VariableDeclarator":
+            raw_value = getattr(node, 'name', None)
+        elif node_type == "MemberReference":
+            raw_value = getattr(node, 'member', None)
+        elif node_type == "Literal":
+            raw_value = getattr(node, 'value', None)
+
+        tokens.append((token_str, lineno, raw_value))
+
     doc_str = " ".join([t[0] for t in tokens])
-    return doc_str, tokens
+    return doc_str, tokens

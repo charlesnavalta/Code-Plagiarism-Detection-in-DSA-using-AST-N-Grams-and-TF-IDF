@@ -1,19 +1,25 @@
-def create_tree_node_9(key_value):
-    return {'k': key_value, 'left_child': None, 'right_child': None}
+# Organic BST Student Submission 10
+class AVLReadyBST:
+    class AVLNode:
+        def __init__(self, val):
+            self.val = val; self.left = None; self.right = None; self.h = 1
+    
+    def __init__(self): self.root = None
 
-def put_tree_item_9(tree_dict, key_value):
-    if not tree_dict: return create_tree_node_9(key_value)
-    if key_value < tree_dict['k']:
-        tree_dict['left_child'] = put_tree_item_9(tree_dict['left_child'], key_value)
-    else:
-        tree_dict['right_child'] = put_tree_item_9(tree_dict['right_child'], key_value)
-    return tree_dict
+    def height(self, node): return node.h if node else 0
 
-def has_tree_item_9(tree_dict, key_value):
-    if not tree_dict: return False
-    if tree_dict['k'] == key_value: return True
-    return has_tree_item_9(tree_dict['left_child'], key_value) if key_value < tree_dict['k'] else has_tree_item_9(tree_dict['right_child'], key_value)
+    def insert(self, val):
+        def _ins(node, val):
+            if not node: return self.AVLNode(val)
+            if val < node.val: node.left = _ins(node.left, val)
+            elif val > node.val: node.right = _ins(node.right, val)
+            node.h = 1 + max(self.height(node.left), self.height(node.right))
+            return node
+        self.root = _ins(self.root, val)
 
-def dump_sorted_tree_9(tree_dict):
-    if not tree_dict: return []
-    return dump_sorted_tree_9(tree_dict['left_child']) + [tree_dict['k']] + dump_sorted_tree_9(tree_dict['right_child'])
+    def search(self, val):
+        curr = self.root
+        while curr:
+            if curr.val == val: return True
+            curr = curr.left if val < curr.val else curr.right
+        return False

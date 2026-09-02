@@ -1,39 +1,27 @@
-/*
- * Quick Sort - Organic Submission #9
- * Uses modular helper functions for swap and bounds check.
- */
-
-class Solution {
-    private static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    public static int partition(int[] arr, int low, int high) {
-        int pivot = arr[high];
-        int idx = low;
-        for (int k = low; k < high; k++) {
-            if (arr[k] < pivot) {
-                swap(arr, idx, k);
-                idx++;
+// Organic Student Submission 9
+import java.util.Stack;
+public class IterativeQuickSort {
+    public static void quickSort(int[] arr) {
+        if (arr == null || arr.length <= 1) return;
+        Stack<int[]> stack = new Stack<>();
+        stack.push(new int[]{0, arr.length - 1});
+        while (!stack.isEmpty()) {
+            int[] range = stack.pop();
+            int low = range[0], high = range[1];
+            if (low < high) {
+                int pivot = arr[high];
+                int i = low - 1;
+                for (int j = low; j < high; j++) {
+                    if (arr[j] <= pivot) {
+                        i++;
+                        int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+                    }
+                }
+                int t = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = t;
+                int pi = i + 1;
+                stack.push(new int[]{low, pi - 1});
+                stack.push(new int[]{pi + 1, high});
             }
         }
-        swap(arr, idx, high);
-        return idx;
-    }
-
-    public static void quickSortModular(int[] arr, int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            quickSortModular(arr, low, pi - 1);
-            quickSortModular(arr, pi + 1, high);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] nums = {8, 4, 7, 2, 5, 1, 9, 3, 6};
-        quickSortModular(nums, 0, nums.length - 1);
-        System.out.println(java.util.Arrays.toString(nums));
     }
 }

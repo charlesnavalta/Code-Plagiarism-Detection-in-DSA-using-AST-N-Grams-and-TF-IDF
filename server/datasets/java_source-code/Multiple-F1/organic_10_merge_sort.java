@@ -1,24 +1,22 @@
-import java.util.Arrays;
-
-public class Solution {
-    // Standard recursive merge sort
-public int[] mergeSort(int[] items_9) {
-        if (items_9 == null || items_9.length <= 1) return items_9;
-        int mid = items_9.length / 2;
-        int[] left = mergeSort(Arrays.copyOfRange(items_9, 0, mid));
-        int[] right = mergeSort(Arrays.copyOfRange(items_9, mid, items_9.length));
-        
-        int[] result = new int[items_9.length];
-        int i = 0, j = 0, k = 0;
-        while (i < left.length && j < right.length) {
-            if (left[i] <= right[j]) {
-                result[k++] = left[i++];
-            } else {
-                result[k++] = right[j++];
+// Organic MergeSort Student Submission 10
+public class BottomUpMergeSort {
+    public static void sort(int[] a) {
+        int n = a.length;
+        int[] aux = new int[n];
+        for (int sz = 1; sz < n; sz = sz + sz) {
+            for (int lo = 0; lo < n - sz; lo += sz + sz) {
+                merge(a, aux, lo, lo + sz - 1, Math.min(lo + sz + sz - 1, n - 1));
             }
         }
-        while (i < left.length) result[k++] = left[i++];
-        while (j < right.length) result[k++] = right[j++];
-        return result;
+    }
+    private static void merge(int[] a, int[] aux, int lo, int mid, int hi) {
+        for (int k = lo; k <= hi; k++) aux[k] = a[k];
+        int i = lo, j = mid + 1;
+        for (int k = lo; k <= hi; k++) {
+            if (i > mid) a[k] = aux[j++];
+            else if (j > hi) a[k] = aux[i++];
+            else if (aux[j] < aux[i]) a[k] = aux[j++];
+            else a[k] = aux[i++];
+        }
     }
 }

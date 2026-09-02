@@ -1,11 +1,20 @@
-def sort_array(seq_1):
-    def divide(seq):
-        if len(seq) < 2: return seq
-        m = len(seq) // 2
-        return combine(divide(seq[:m]), divide(seq[m:]))
-    def combine(a, b):
-        merged = []
-        while a and b:
-            merged.append(a.pop(0) if a[0] < b[0] else b.pop(0))
-        return merged + a + b
-    return divide(seq_1)
+# Organic MergeSort Student Submission 02
+def iterative_merge_sort(arr):
+    n = len(arr)
+    width = 1
+    while width < n:
+        for i in range(0, n, 2 * width):
+            left = arr[i:i + width]
+            right = arr[i + width:i + 2 * width]
+            merged = []
+            l = r = 0
+            while l < len(left) and r < len(right):
+                if left[l] <= right[r]:
+                    merged.append(left[l]); l += 1
+                else:
+                    merged.append(right[r]); r += 1
+            merged.extend(left[l:])
+            merged.extend(right[r:])
+            arr[i:i + len(merged)] = merged
+        width *= 2
+    return arr

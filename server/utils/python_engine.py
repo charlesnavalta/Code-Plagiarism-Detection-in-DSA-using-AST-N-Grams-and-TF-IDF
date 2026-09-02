@@ -106,5 +106,5 @@ def process_python_file(content):
         tokens = extractor.tokens
         doc_str = " ".join([t[0] for t in tokens])
         return doc_str, tokens
-    except SyntaxError:
+    except (SyntaxError, Exception):
         return "", []

@@ -1,31 +1,9 @@
-"""
-Quick Sort - Organic Submission #17
-Individual student implementation #17 with custom coding conventions.
-"""
-
-def split_segment_17(data_array, start_bound, end_bound):
-    pivot_reference = data_array[end_bound]
-    partition_index = start_bound - 1
-    for scan_pointer in range(start_bound, end_bound):
-        if data_array[scan_pointer] <= pivot_reference:
-            partition_index += 1
-            data_array[partition_index], data_array[scan_pointer] = (
-                data_array[scan_pointer],
-                data_array[partition_index],
-            )
-    data_array[partition_index + 1], data_array[end_bound] = (
-        data_array[end_bound],
-        data_array[partition_index + 1],
-    )
-    return partition_index + 1
-
-def perform_quicksort_17(data_array, start_bound, end_bound):
-    if start_bound < end_bound:
-        split_loc = split_segment_17(data_array, start_bound, end_bound)
-        perform_quicksort_17(data_array, start_bound, split_loc - 1)
-        perform_quicksort_17(data_array, split_loc + 1, end_bound)
-
-if __name__ == "__main__":
-    sample_data = [19, 1, 37, 14, 28, 42]
-    perform_quicksort_17(sample_data, 0, len(sample_data) - 1)
-    print("Sorted #17:", sample_data)
+# Organic Student Submission 17: Independent Algorithm Paradigm
+def functional_quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    less = [x for x in arr if x < pivot]
+    equal = [x for x in arr if x == pivot]
+    greater = [x for x in arr if x > pivot]
+    return functional_quicksort(less) + equal + functional_quicksort(greater)

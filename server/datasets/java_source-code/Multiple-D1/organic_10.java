@@ -1,47 +1,34 @@
-/*
- * Quick Sort - Organic Submission #10
- * Encapsulated Object-Oriented QuickSorter class.
- */
-
-class QuickSorter {
-    private int[] data;
-
-    public QuickSorter(int[] input) {
-        this.data = input.clone();
-    }
-
-    private int partition(int low, int high) {
-        int pivot = this.data[high];
-        int i = low - 1;
-        for (int j = low; j < high; j++) {
-            if (this.data[j] <= pivot) {
-                i++;
-                int temp = this.data[i];
-                this.data[i] = this.data[j];
-                this.data[j] = temp;
+// Organic Student Submission 10
+public class HybridQuickSort {
+    private static void insertionSort(int[] arr, int low, int high) {
+        for (int i = low + 1; i <= high; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= low && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
             }
+            arr[j + 1] = key;
         }
-        int temp = this.data[i + 1];
-        this.data[i + 1] = this.data[high];
-        this.data[high] = temp;
-        return i + 1;
     }
-
-    private void sortHelper(int low, int high) {
+    public static void sort(int[] arr, int low, int high) {
+        if (high - low + 1 <= 10) {
+            insertionSort(arr, low, high);
+            return;
+        }
         if (low < high) {
-            int pi = partition(low, high);
-            sortHelper(low, pi - 1);
-            sortHelper(pi + 1, high);
+            int pivot = arr[high];
+            int i = low - 1;
+            for (int j = low; j < high; j++) {
+                if (arr[j] <= pivot) {
+                    i++;
+                    int t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+                }
+            }
+            int t2 = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = t2;
+            int pi = i + 1;
+            sort(arr, low, pi - 1);
+            sort(arr, pi + 1, high);
         }
-    }
-
-    public int[] sort() {
-        sortHelper(0, this.data.length - 1);
-        return this.data;
-    }
-
-    public static void main(String[] args) {
-        QuickSorter sorter = new QuickSorter(new int[]{5, 2, 9, 1, 7, 6, 3});
-        System.out.println(java.util.Arrays.toString(sorter.sort()));
     }
 }

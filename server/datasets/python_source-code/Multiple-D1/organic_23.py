@@ -1,31 +1,28 @@
-"""
-Quick Sort - Organic Submission #23
-Individual student implementation #23 with custom coding conventions.
-"""
+# Organic Student Submission 23: Independent Algorithm Paradigm
+class QuickSortEngineWithAudit:
+    def __init__(self, dataset):
+        self.dataset = list(dataset)
+        self.history = []
 
-def split_segment_23(data_array, start_bound, end_bound):
-    pivot_reference = data_array[end_bound]
-    partition_index = start_bound - 1
-    for scan_pointer in range(start_bound, end_bound):
-        if data_array[scan_pointer] <= pivot_reference:
-            partition_index += 1
-            data_array[partition_index], data_array[scan_pointer] = (
-                data_array[scan_pointer],
-                data_array[partition_index],
-            )
-    data_array[partition_index + 1], data_array[end_bound] = (
-        data_array[end_bound],
-        data_array[partition_index + 1],
-    )
-    return partition_index + 1
+    def log_event(self, action, a, b):
+        self.history.append((action, a, b))
 
-def perform_quicksort_23(data_array, start_bound, end_bound):
-    if start_bound < end_bound:
-        split_loc = split_segment_23(data_array, start_bound, end_bound)
-        perform_quicksort_23(data_array, start_bound, split_loc - 1)
-        perform_quicksort_23(data_array, split_loc + 1, end_bound)
+    def partition_segment(self, start, end):
+        pivot = self.dataset[end]
+        idx = start - 1
+        for cursor in range(start, end):
+            if self.dataset[cursor] <= pivot:
+                idx += 1
+                self.dataset[idx], self.dataset[cursor] = self.dataset[cursor], self.dataset[idx]
+                self.log_event("swap", idx, cursor)
+        self.dataset[idx + 1], self.dataset[end] = self.dataset[end], self.dataset[idx + 1]
+        self.log_event("pivot_placed", idx + 1, end)
+        return idx + 1
 
-if __name__ == "__main__":
-    sample_data = [11, 19, 3, 14, 28, 42]
-    perform_quicksort_23(sample_data, 0, len(sample_data) - 1)
-    print("Sorted #23:", sample_data)
+    def execute(self, start=0, end=None):
+        if end is None: end = len(self.dataset) - 1
+        if start < end:
+            p = self.partition_segment(start, end)
+            self.execute(start, p - 1)
+            self.execute(p + 1, end)
+        return self.dataset

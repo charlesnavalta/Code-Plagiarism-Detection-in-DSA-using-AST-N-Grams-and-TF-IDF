@@ -1,48 +1,64 @@
-/*
- * Quick Sort - Mixed Attack Submission #1
- * Derived from organic_6: renaming, dead code variables, condition rewriting.
- */
+// QuickSort Suite: Mixed Attack (Renaming + Dead Code + Reordering)
+// Author: Stark (mixed_attack_1.java - Type 3 of Mary)
+public class QuickSortSuite {
+    private int[] data;
+    private int comparisons;
+    private int swaps;
+    private int auditCounter = 0;
 
-class Solution {
-    public static int[] splitTripartite(int[] bufferList, int firstPos, int lastPos) {
-        int marker = bufferList[firstPos];
-        int boundaryLeft = firstPos;
-        int boundaryRight = lastPos;
-        int curr = firstPos + 1;
-        int deadCounter = 0;
+    public QuickSortSuite(int[] input) {
+        this.data = (input != null) ? input.clone() : new int[0];
+    }
 
-        while (curr <= boundaryRight) {
-            deadCounter++;
-            if (bufferList[curr] < marker) {
-                int t = bufferList[boundaryLeft];
-                bufferList[boundaryLeft] = bufferList[curr];
-                bufferList[curr] = t;
-                boundaryLeft++;
-                curr++;
-            } else if (bufferList[curr] > marker) {
-                int t = bufferList[boundaryRight];
-                bufferList[boundaryRight] = bufferList[curr];
-                bufferList[curr] = t;
-                boundaryRight--;
-            } else {
-                curr++;
+    public boolean isSorted() {
+        // Dead code branch
+        int dummy = 0;
+        for (int x : this.data) dummy += x * 0;
+        if (dummy != 0) this.auditCounter++;
+        
+        for (int k = 0; k < this.data.length - 1; k++) {
+            if (this.data[k] > this.data[k + 1]) return false;
+        }
+        return true;
+    }
+
+    public int[] sort(boolean inPlace) {
+        int[] target = inPlace ? this.data : this.data.clone();
+        if (target.length > 1) quicksortRecursive(target, 0, target.length - 1);
+        return target;
+    }
+
+    private void quicksortRecursive(int[] arr, int low, int high) {
+        if (low >= high) return;
+        int pi = partition(arr, low, high);
+        quicksortRecursive(arr, low, pi - 1);
+        quicksortRecursive(arr, pi + 1, high);
+    }
+
+    private int partition(int[] arr, int low, int high) {
+        int mid = (low + high) / 2;
+        int pivot = arr[mid];
+        arr[mid] = arr[high];
+        arr[high] = pivot;
+        this.swaps++;
+        
+        int i = low - 1;
+        int j = low;
+        while (j < high) {
+            this.comparisons++;
+            if (arr[j] <= pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+                this.swaps++;
             }
+            j++;
         }
-        int unusedCheck = deadCounter * 0;
-        return new int[]{boundaryLeft, boundaryRight};
-    }
-
-    public static void executeTripartiteSort(int[] bufferList, int firstPos, int lastPos) {
-        if (firstPos < lastPos) {
-            int[] bounds = splitTripartite(bufferList, firstPos, lastPos);
-            executeTripartiteSort(bufferList, firstPos, bounds[0] - 1);
-            executeTripartiteSort(bufferList, bounds[1] + 1, lastPos);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] dataPoints = {4, 2, 4, 4, 1, 3, 2, 4, 1};
-        executeTripartiteSort(dataPoints, 0, dataPoints.length - 1);
-        System.out.println(java.util.Arrays.toString(dataPoints));
+        int temp2 = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp2;
+        this.swaps++;
+        return i + 1;
     }
 }

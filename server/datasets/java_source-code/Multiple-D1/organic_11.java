@@ -1,19 +1,12 @@
-/*
- * Quick Sort - Organic Submission #11
- * Dual-pivot Quick Sort algorithm.
- */
-
-class Solution {
-    public static void dualPivotQuickSort(int[] arr, int low, int high) {
+// Organic Student Submission 11
+public class DualPivotQuickSort {
+    public static void dualPivotSort(int[] arr, int low, int high) {
         if (low < high) {
             if (arr[low] > arr[high]) {
-                int t = arr[low]; arr[low] = arr[high]; arr[high] = t;
+                int temp = arr[low]; arr[low] = arr[high]; arr[high] = temp;
             }
-            int p = arr[low];
-            int q = arr[high];
-            int l = low + 1;
-            int g = high - 1;
-            int k = low + 1;
+            int p = arr[low], q = arr[high];
+            int l = low + 1, g = high - 1, k = l;
             while (k <= g) {
                 if (arr[k] < p) {
                     int t = arr[k]; arr[k] = arr[l]; arr[l] = t;
@@ -29,20 +22,12 @@ class Solution {
                 }
                 k++;
             }
-            l--;
-            g++;
-            int t = arr[low]; arr[low] = arr[l]; arr[l] = t;
-            t = arr[high]; arr[high] = arr[g]; arr[g] = t;
-
-            dualPivotQuickSort(arr, low, l - 1);
-            dualPivotQuickSort(arr, l + 1, g - 1);
-            dualPivotQuickSort(arr, g + 1, high);
+            l--; g++;
+            int t1 = arr[low]; arr[low] = arr[l]; arr[l] = t1;
+            int t2 = arr[high]; arr[high] = arr[g]; arr[g] = t2;
+            dualPivotSort(arr, low, l - 1);
+            dualPivotSort(arr, l + 1, g - 1);
+            dualPivotSort(arr, g + 1, high);
         }
-    }
-
-    public static void main(String[] args) {
-        int[] nums = {24, 8, 42, 75, 29, 77, 38, 57};
-        dualPivotQuickSort(nums, 0, nums.length - 1);
-        System.out.println(java.util.Arrays.toString(nums));
     }
 }

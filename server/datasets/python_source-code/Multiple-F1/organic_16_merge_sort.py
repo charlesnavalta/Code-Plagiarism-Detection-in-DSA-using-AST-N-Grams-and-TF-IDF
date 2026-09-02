@@ -1,20 +1,15 @@
-# Standard recursive merge sort
-def merge_sort(items_15):
-    if len(items_15) <= 1:
-        return items_15
-    half_15 = len(items_15) // 2
-    left = merge_sort(items_15[:half_15])
-    right = merge_sort(items_15[half_15:])
-    
-    result = []
+# Organic MergeSort Student Submission 16
+def functional_merge(left, right, key=lambda x: x):
+    res = []
     i = j = 0
     while i < len(left) and j < len(right):
-        if left[i] <= right[j]:
-            result.append(left[i])
-            i += 1
+        if key(left[i]) <= key(right[j]):
+            res.append(left[i]); i += 1
         else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
+            res.append(right[j]); j += 1
+    return res + left[i:] + right[j:]
+
+def key_mergesort(arr, key=lambda x: x):
+    if len(arr) <= 1: return arr
+    m = len(arr) // 2
+    return functional_merge(key_mergesort(arr[:m], key), key_mergesort(arr[m:], key), key)

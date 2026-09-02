@@ -1,24 +1,21 @@
-import java.util.ArrayList;
-import java.util.List;
-
-public class Solution {
-    public List<Integer> sortArray(List<Integer> data) {
-        if (data == null || data.size() < 2) return data;
-        int m = data.size() / 2;
-        List<Integer> left = sortArray(new ArrayList<>(data.subList(0, m)));
-        List<Integer> right = sortArray(new ArrayList<>(data.subList(m, data.size())));
-        return combine(left, right);
-    }
-
-    private List<Integer> combine(List<Integer> a, List<Integer> b) {
-        List<Integer> res = new ArrayList<>();
-        int i = 0, j = 0;
-        while (i < a.size() && j < b.size()) {
-            if (a.get(i) < b.get(j)) res.add(a.get(i++));
-            else res.add(b.get(j++));
+// Organic MergeSort Student Submission 20
+import java.util.LinkedList;
+import java.util.Queue;
+public class QueueMergeSort {
+    public static int[] sortQueue(int[] data) {
+        if (data == null || data.length <= 1) return data;
+        Queue<int[]> q = new LinkedList<>();
+        for (int x : data) q.add(new int[]{x});
+        while (q.size() > 1) {
+            int[] a = q.poll();
+            int[] b = q.poll();
+            int[] res = new int[a.length + b.length];
+            int i = 0, j = 0, k = 0;
+            while (i < a.length && j < b.length) res[k++] = (a[i] <= b[j]) ? a[i++] : b[j++];
+            while (i < a.length) res[k++] = a[i++];
+            while (j < b.length) res[k++] = b[j++];
+            q.add(res);
         }
-        while (i < a.size()) res.add(a.get(i++));
-        while (j < b.size()) res.add(b.get(j++));
-        return res;
+        return q.poll();
     }
 }

@@ -1,38 +1,20 @@
-/*
- * Quick Sort - Organic Submission #12
- * Tail-call optimized Quick Sort (recurse on smaller half, loop on larger).
- */
-
-class Solution {
+// Organic Student Submission 12
+public class HoareQuickSort {
     public static int partition(int[] arr, int low, int high) {
-        int pivot = arr[high];
-        int i = low - 1;
-        for (int j = low; j < high; j++) {
-            if (arr[j] <= pivot) {
-                i++;
-                int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
-            }
-        }
-        int temp = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = temp;
-        return i + 1;
-    }
-
-    public static void quickSortTail(int[] arr, int low, int high) {
-        while (low < high) {
-            int pi = partition(arr, low, high);
-            if (pi - low < high - pi) {
-                quickSortTail(arr, low, pi - 1);
-                low = pi + 1;
-            } else {
-                quickSortTail(arr, pi + 1, high);
-                high = pi - 1;
-            }
+        int pivot = arr[low];
+        int i = low - 1, j = high + 1;
+        while (true) {
+            do { i++; } while (arr[i] < pivot);
+            do { j--; } while (arr[j] > pivot);
+            if (i >= j) return j;
+            int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
         }
     }
-
-    public static void main(String[] args) {
-        int[] nums = {10, 7, 8, 9, 1, 5};
-        quickSortTail(nums, 0, nums.length - 1);
-        System.out.println(java.util.Arrays.toString(nums));
+    public static void sort(int[] arr, int low, int high) {
+        if (low < high) {
+            int p = partition(arr, low, high);
+            sort(arr, low, p);
+            sort(arr, p + 1, high);
+        }
     }
 }

@@ -1,25 +1,29 @@
-import java.util.Arrays;
-
-public class Solution {
-    public int[] mergeSort(int[] dataList) {
-        if (dataList == null || dataList.length <= 1) return dataList;
-        int n = dataList.length;
-        for (int step = 1; step < n; step *= 2) {
-            for (int offset = 0; offset < n; offset += 2 * step) {
-                int mid = Math.min(offset + step, n);
-                int end = Math.min(offset + 2 * step, n);
-                if (mid >= end) break;
-                int[] l = Arrays.copyOfRange(dataList, offset, mid);
-                int[] r = Arrays.copyOfRange(dataList, mid, end);
-                int i = 0, j = 0, k = offset;
-                while (i < l.length && j < r.length) {
-                    if (l[i] <= r[j]) dataList[k++] = l[i++];
-                    else dataList[k++] = r[j++];
+// Organic MergeSort Student Submission 03
+public class InPlaceIndexMergeSort {
+    private static void mergeInPlace(int[] arr, int start, int mid, int end) {
+        int start2 = mid + 1;
+        if (arr[mid] <= arr[start2]) return;
+        while (start <= mid && start2 <= end) {
+            if (arr[start] <= arr[start2]) {
+                start++;
+            } else {
+                int val = arr[start2];
+                int idx = start2;
+                while (idx != start) {
+                    arr[idx] = arr[idx - 1];
+                    idx--;
                 }
-                while (i < l.length) dataList[k++] = l[i++];
-                while (j < r.length) dataList[k++] = r[j++];
+                arr[start] = val;
+                start++; mid++; start2++;
             }
         }
-        return dataList;
+    }
+    public static void sort(int[] arr, int l, int r) {
+        if (l < r) {
+            int m = l + (r - l) / 2;
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+            mergeInPlace(arr, l, m, r);
+        }
     }
 }

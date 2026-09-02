@@ -1,28 +1,32 @@
-"""
-Quick Sort - Organic Submission #9
-Uses modular helper functions for swap and bounds check.
-"""
-
-def swap(arr, i, j):
-    arr[i], arr[j] = arr[j], arr[i]
-
-def partition(arr, low, high):
-    pivot = arr[high]
-    idx = low
-    for k in range(low, high):
-        if arr[k] < pivot:
-            swap(arr, idx, k)
-            idx += 1
-    swap(arr, idx, high)
-    return idx
-
-def quick_sort_modular(arr, low, high):
+# Organic Student Submission 9: Independent Algorithm Paradigm
+def dual_pivot_quicksort(arr, low=0, high=None):
+    if high is None: high = len(arr) - 1
     if low < high:
-        pi = partition(arr, low, high)
-        quick_sort_modular(arr, low, pi - 1)
-        quick_sort_modular(arr, pi + 1, high)
-
-if __name__ == "__main__":
-    nums = [8, 4, 7, 2, 5, 1, 9, 3, 6]
-    quick_sort_modular(nums, 0, len(nums) - 1)
-    print(nums)
+        if arr[low] > arr[high]:
+            arr[low], arr[high] = arr[high], arr[low]
+        p = arr[low]
+        q = arr[high]
+        l = low + 1
+        g = high - 1
+        k = l
+        while k <= g:
+            if arr[k] < p:
+                arr[k], arr[l] = arr[l], arr[k]
+                l += 1
+            elif arr[k] >= q:
+                while arr[g] > q and k < g:
+                    g -= 1
+                arr[k], arr[g] = arr[g], arr[k]
+                g -= 1
+                if arr[k] < p:
+                    arr[k], arr[l] = arr[l], arr[k]
+                    l += 1
+            k += 1
+        l -= 1
+        g += 1
+        arr[low], arr[l] = arr[l], arr[low]
+        arr[high], arr[g] = arr[g], arr[high]
+        dual_pivot_quicksort(arr, low, l - 1)
+        dual_pivot_quicksort(arr, l + 1, g - 1)
+        dual_pivot_quicksort(arr, g + 1, high)
+    return arr

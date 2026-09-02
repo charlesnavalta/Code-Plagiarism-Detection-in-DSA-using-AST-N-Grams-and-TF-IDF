@@ -1,33 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
-
-class DictNode_1 {
-    int keyVal;
-    DictNode_1 leftChild, rightChild;
-    DictNode_1(int k) { this.keyVal = k; }
-}
-
-public class BST {
-    public DictNode_1 putTreeItem(DictNode_1 node, int val) {
-        if (node == null) return new DictNode_1(val);
-        if (val < node.keyVal) node.leftChild = putTreeItem(node.leftChild, val);
-        else node.rightChild = putTreeItem(node.rightChild, val);
-        return node;
+// Organic BST Student Submission 02
+public class AVLBalancedBST {
+    public static class AVLNode {
+        public int val, height = 1;
+        public AVLNode left, right;
+        public AVLNode(int v) { this.val = v; }
     }
-
-    public boolean hasTreeItem(DictNode_1 node, int val) {
-        if (node == null) return false;
-        if (node.keyVal == val) return true;
-        return (val < node.keyVal) ? hasTreeItem(node.leftChild, val) : hasTreeItem(node.rightChild, val);
+    private AVLNode root;
+    private int height(AVLNode n) { return n == null ? 0 : n.height; }
+    public void insert(int val) { root = insert(root, val); }
+    private AVLNode insert(AVLNode n, int val) {
+        if (n == null) return new AVLNode(val);
+        if (val < n.val) n.left = insert(n.left, val);
+        else if (val > n.val) n.right = insert(n.right, val);
+        n.height = 1 + Math.max(height(n.left), height(n.right));
+        return n;
     }
-
-    public List<Integer> dumpSorted(DictNode_1 node) {
-        List<Integer> res = new ArrayList<>();
-        if (node != null) {
-            res.addAll(dumpSorted(node.leftChild));
-            res.add(node.keyVal);
-            res.addAll(dumpSorted(node.rightChild));
+    public boolean search(int val) {
+        AVLNode c = root;
+        while (c != null) {
+            if (c.val == val) return true;
+            c = (val < c.val) ? c.left : c.right;
         }
-        return res;
+        return false;
     }
 }

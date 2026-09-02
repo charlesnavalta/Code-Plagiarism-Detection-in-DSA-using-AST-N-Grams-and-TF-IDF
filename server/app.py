@@ -11,15 +11,17 @@ from database import setup_db, db
 from models import User, Classroom, Assignment 
 
 # Import the Seeder Logic
-from seeder import run_smart_seed
+from seeders import run_smart_seed
 
 # Blueprints (Controllers)
-from routes.analysis import analysis_bp
-from routes.auth import auth_bp
-from routes.classrooms import classrooms_bp
-from routes.assignments import assignments_bp
-from routes.submissions import submissions_bp
-from routes.admin import admin_bp
+from routes import (
+    analysis_bp,
+    auth_bp,
+    classrooms_bp,
+    assignments_bp,
+    submissions_bp,
+    admin_bp
+)
 
 def create_app():
     app = Flask(__name__)

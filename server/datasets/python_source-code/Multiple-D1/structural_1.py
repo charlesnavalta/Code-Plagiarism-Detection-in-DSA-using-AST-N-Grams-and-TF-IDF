@@ -1,35 +1,60 @@
 """
-Quick Sort - Structural Modification #1
-Derived from organic_4: helper swap extracted, statement reordered.
+QuickSort Suite: Method Extraction & Helper Restructuring
+Author: Hannah (structural_1.py - Type 3 of Mary)
 """
+from typing import List, Optional
 
-import random
+def perform_swap(arr: List[int], i: int, j: int) -> None:
+    temp = arr[i]
+    arr[i] = arr[j]
+    arr[j] = temp
 
-def swap(arr, a, b):
-    temp = arr[a]
-    arr[a] = arr[b]
-    arr[b] = temp
+def evaluate_bounds(a: int, b: int, c: int) -> bool:
+    return (a <= b <= c) or (c <= b <= a)
 
-def partition_random(arr, low, high):
-    chosen = random.randint(low, high)
-    swap(arr, chosen, high)
-    target = arr[high]
-    border = low - 1
-    for step in range(low, high):
-        if arr[step] <= target:
-            border += 1
-            swap(arr, border, step)
-    swap(arr, border + 1, high)
-    return border + 1
+class QuickSortSuite:
+    def __init__(self, data: Optional[List[int]] = None):
+        self.data = list(data) if data is not None else []
+        self.comparisons = 0
+        self.swaps = 0
 
-def randomized_quick_sort(arr, low, high):
-    if low >= high:
-        return
-    idx = partition_random(arr, low, high)
-    randomized_quick_sort(arr, idx + 1, high)
-    randomized_quick_sort(arr, low, idx - 1)
+    def _pick_pivot(self, arr: List[int], low: int, high: int) -> int:
+        mid = (low + high) // 2
+        if evaluate_bounds(arr[low], arr[mid], arr[high]):
+            return mid
+        if evaluate_bounds(arr[mid], arr[low], arr[high]):
+            return low
+        return high
 
-if __name__ == "__main__":
-    nums = [10, 80, 30, 90, 40, 50, 70]
-    randomized_quick_sort(nums, 0, len(nums) - 1)
-    print(nums)
+    def _partition(self, arr: List[int], low: int, high: int) -> int:
+        p_idx = self._pick_pivot(arr, low, high)
+        perform_swap(arr, p_idx, high)
+        self.swaps += 1
+        pivot = arr[high]
+        
+        i = low - 1
+        for j in range(low, high):
+            self.comparisons += 1
+            if arr[j] <= pivot:
+                i += 1
+                perform_swap(arr, i, j)
+                self.swaps += 1
+        
+        perform_swap(arr, i + 1, high)
+        self.swaps += 1
+        return i + 1
+
+    def _quicksort_recursive(self, arr: List[int], low: int, high: int) -> None:
+        if low < high:
+            pi = self._partition(arr, low, high)
+            self._quicksort_recursive(arr, low, pi - 1)
+            self._quicksort_recursive(arr, pi + 1, high)
+
+    def sort(self, inplace: bool = True) -> List[int]:
+        target = self.data if inplace else list(self.data)
+        if len(target) > 1:
+            self._quicksort_recursive(target, 0, len(target) - 1)
+        return target
+
+    def is_sorted(self) -> bool:
+        return all(self.data[k] <= self.data[k + 1] for k in range(len(self.data) - 1))

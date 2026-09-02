@@ -1,25 +1,21 @@
-import java.util.Arrays;
-
-public class Solution {
-    public int[] mergeSort(int[] dataList) {
-        if (dataList == null || dataList.length <= 1) return dataList;
-        int n = dataList.length;
-        for (int step = 1; step < n; step *= 2) {
-            for (int offset = 0; offset < n; offset += 2 * step) {
-                int mid = Math.min(offset + step, n);
-                int end = Math.min(offset + 2 * step, n);
-                if (mid >= end) break;
-                int[] l = Arrays.copyOfRange(dataList, offset, mid);
-                int[] r = Arrays.copyOfRange(dataList, mid, end);
-                int i = 0, j = 0, k = offset;
-                while (i < l.length && j < r.length) {
-                    if (l[i] <= r[j]) dataList[k++] = l[i++];
-                    else dataList[k++] = r[j++];
-                }
-                while (i < l.length) dataList[k++] = l[i++];
-                while (j < r.length) dataList[k++] = r[j++];
-            }
+// Organic MergeSort Student Submission 12
+import java.util.LinkedList;
+import java.util.Queue;
+public class QueueMergeSort {
+    public static int[] sortQueue(int[] data) {
+        if (data == null || data.length <= 1) return data;
+        Queue<int[]> q = new LinkedList<>();
+        for (int x : data) q.add(new int[]{x});
+        while (q.size() > 1) {
+            int[] a = q.poll();
+            int[] b = q.poll();
+            int[] res = new int[a.length + b.length];
+            int i = 0, j = 0, k = 0;
+            while (i < a.length && j < b.length) res[k++] = (a[i] <= b[j]) ? a[i++] : b[j++];
+            while (i < a.length) res[k++] = a[i++];
+            while (j < b.length) res[k++] = b[j++];
+            q.add(res);
         }
-        return dataList;
+        return q.poll();
     }
 }

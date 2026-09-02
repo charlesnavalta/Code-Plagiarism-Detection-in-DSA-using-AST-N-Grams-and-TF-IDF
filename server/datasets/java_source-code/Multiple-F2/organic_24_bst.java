@@ -1,33 +1,22 @@
-import java.util.ArrayList;
-import java.util.List;
-
-class DictNode_23 {
-    int keyVal;
-    DictNode_23 leftChild, rightChild;
-    DictNode_23(int k) { this.keyVal = k; }
-}
-
-public class BST {
-    public DictNode_23 putTreeItem(DictNode_23 node, int val) {
-        if (node == null) return new DictNode_23(val);
-        if (val < node.keyVal) node.leftChild = putTreeItem(node.leftChild, val);
-        else node.rightChild = putTreeItem(node.rightChild, val);
-        return node;
+// Organic BST Student Submission 24
+public class ParentLinkedBST {
+    public static class Node {
+        public int key;
+        public Node left, right, parent;
+        public Node(int k, Node p) { this.key = k; this.parent = p; }
     }
-
-    public boolean hasTreeItem(DictNode_23 node, int val) {
-        if (node == null) return false;
-        if (node.keyVal == val) return true;
-        return (val < node.keyVal) ? hasTreeItem(node.leftChild, val) : hasTreeItem(node.rightChild, val);
-    }
-
-    public List<Integer> dumpSorted(DictNode_23 node) {
-        List<Integer> res = new ArrayList<>();
-        if (node != null) {
-            res.addAll(dumpSorted(node.leftChild));
-            res.add(node.keyVal);
-            res.addAll(dumpSorted(node.rightChild));
+    private Node root = null;
+    public void insert(int k) {
+        if (root == null) { root = new Node(k, null); return; }
+        Node curr = root;
+        while (true) {
+            if (k < curr.key) {
+                if (curr.left == null) { curr.left = new Node(k, curr); break; }
+                curr = curr.left;
+            } else if (k > curr.key) {
+                if (curr.right == null) { curr.right = new Node(k, curr); break; }
+                curr = curr.right;
+            } else break;
         }
-        return res;
     }
 }

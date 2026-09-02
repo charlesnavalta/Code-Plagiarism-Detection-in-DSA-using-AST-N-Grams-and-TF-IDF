@@ -1,11 +1,15 @@
-def sort_array(seq_10):
-    def divide(seq):
-        if len(seq) < 2: return seq
-        m = len(seq) // 2
-        return combine(divide(seq[:m]), divide(seq[m:]))
-    def combine(a, b):
-        merged = []
-        while a and b:
-            merged.append(a.pop(0) if a[0] < b[0] else b.pop(0))
-        return merged + a + b
-    return divide(seq_10)
+# Organic MergeSort Student Submission 11
+def functional_merge(left, right, key=lambda x: x):
+    res = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if key(left[i]) <= key(right[j]):
+            res.append(left[i]); i += 1
+        else:
+            res.append(right[j]); j += 1
+    return res + left[i:] + right[j:]
+
+def key_mergesort(arr, key=lambda x: x):
+    if len(arr) <= 1: return arr
+    m = len(arr) // 2
+    return functional_merge(key_mergesort(arr[:m], key), key_mergesort(arr[m:], key), key)

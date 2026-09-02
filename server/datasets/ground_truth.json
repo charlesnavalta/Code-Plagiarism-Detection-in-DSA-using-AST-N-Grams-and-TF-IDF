@@ -1,0 +1,836 @@
+{
+  "TS-A_LEVEL1": {
+    "title": "TS-A 1: Merge Sort (Exact Copy)",
+    "series": "3.1 TS-A Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-A_Level1.py",
+        "file2": "TS-A_Level1-ExactCopy.py",
+        "type": "Type 1",
+        "desc": "Exact Copy of Mary"
+      }
+    ]
+  },
+  "TS-A_LEVEL2": {
+    "title": "TS-A 2: Quick Sort (Renaming Variables)",
+    "series": "3.1 TS-A Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-A_Level2.py",
+        "file2": "TS-A_Level2-LexicalObfuscation.py",
+        "type": "Type 2",
+        "desc": "Renamed of Mary"
+      }
+    ]
+  },
+  "TS-A_LEVEL3": {
+    "title": "TS-A 3: Binary Search (Changing Spacing)",
+    "series": "3.1 TS-A Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-A_Level3.py",
+        "file2": "TS-A_Level3-FormattingManipulation.py",
+        "type": "Type 1",
+        "desc": "Spacing/Formatting of Mary"
+      }
+    ]
+  },
+  "TS-B_LEVEL1": {
+    "title": "TS-B 1: Fibonacci (Swapping Lines)",
+    "series": "3.2 TS-B Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-B_Level1.py",
+        "file2": "TS-B_Level1-StatementReordering.py",
+        "type": "Type 3",
+        "desc": "Statement Reordering of Mary"
+      }
+    ]
+  },
+  "TS-B_LEVEL2": {
+    "title": "TS-B 2: Sorting (Breaking into Functions)",
+    "series": "3.2 TS-B Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-B_Level2.py",
+        "file2": "TS-B_Level2-MethodExtraction.py",
+        "type": "Type 3",
+        "desc": "Method Extraction of Mary"
+      }
+    ]
+  },
+  "TS-B_LEVEL3": {
+    "title": "TS-B 3: Loops (Swapping Loop Types)",
+    "series": "3.2 TS-B Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-B_Level3.py",
+        "file2": "TS-B_Level3-ControlFlowReplacement.py",
+        "type": "Type 3",
+        "desc": "Control Flow (while loop) of Mary"
+      }
+    ]
+  },
+  "TS-C_LEVEL1": {
+    "title": "TS-C 1: Quick Sort (Adding Fake Code)",
+    "series": "3.3 TS-C Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-C_Level1.py",
+        "file2": "TS-C_Level1-DeadCode.py",
+        "type": "Type 3",
+        "desc": "Dead Code Injection of Mary"
+      }
+    ]
+  },
+  "TS-C_LEVEL2": {
+    "title": "TS-C 2: Linked List (Swapping Math Logic)",
+    "series": "3.3 TS-C Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-C_Level2.py",
+        "file2": "TS-C_Level2-Substitution.py",
+        "type": "Type 3",
+        "desc": "Logic Substitution of Mary"
+      }
+    ]
+  },
+  "TS-C_LEVEL3": {
+    "title": "TS-C 3: Binary Search Tree (Mixed Tricks)",
+    "series": "3.3 TS-C Series",
+    "positive_pairs": [
+      {
+        "file1": "TS-C_Level3.py",
+        "file2": "TS-C_Level3-MixedAttack.py",
+        "type": "Type 3",
+        "desc": "Mixed Attack (Rename+Reorder+Dead Code) of Mary"
+      }
+    ]
+  },
+  "Multiple-A1": {
+    "title": "Multiple-A 1: Binary Search (Control Group)",
+    "series": "3.4 Multiple-A Series",
+    "positive_pairs": [
+      {
+        "file1": "unique1_binary_search.py",
+        "file2": "exact_copy1_binary_search.py",
+        "type": "Type 1",
+        "desc": "Karo: Type 1 Exact Copy of Rachel"
+      }
+    ]
+  },
+  "Multiple-A2": {
+    "title": "Multiple-A 2: Bubble Sort (Renamed & Reformatted)",
+    "series": "3.4 Multiple-A Series",
+    "positive_pairs": [
+      {
+        "file1": "unique1_bubble_sort.py",
+        "file2": "exact_copy1_bubble_sort.py",
+        "type": "Type 1",
+        "desc": "Karo: Type 1 Exact Copy of Rachel"
+      },
+      {
+        "file1": "unique1_bubble_sort.py",
+        "file2": "renamed1_bubble_sort.py",
+        "type": "Type 2",
+        "desc": "Sol: Type 2 Renamed of Rachel"
+      },
+      {
+        "file1": "unique1_bubble_sort.py",
+        "file2": "reformatted1_bubble_sort.py",
+        "type": "Type 1",
+        "desc": "Jake: Type 1 Whitespace/Format of Rachel"
+      }
+    ]
+  },
+  "Multiple-A3": {
+    "title": "Multiple-A 3: 0/1 Knapsack / BST (High-Diversity Control)",
+    "series": "3.4 Multiple-A Series",
+    "positive_pairs": [
+      {
+        "file1": "organic_1.py",
+        "file2": "reordered_1.py",
+        "type": "Type 3",
+        "desc": "Ramil: Type 3 Statement Reordering of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "method_extracted_1.py",
+        "type": "Type 3",
+        "desc": "Alex: Type 3 Method Extraction of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "control_flow_swapped_1.py",
+        "type": "Type 3",
+        "desc": "Sam: Type 3 Control Flow of Mary"
+      }
+    ]
+  },
+  "Multiple-B1": {
+    "title": "Multiple-B 1: Linked List Reversal",
+    "series": "3.5 Multiple-B Series",
+    "positive_pairs": [
+      {
+        "file1": "unique_recursive_1.py",
+        "file2": "exact_copy_recursive_1.py",
+        "type": "Type 1",
+        "desc": "Alex: Type 1 Copy of Sol (Recursive)"
+      },
+      {
+        "file1": "unique_iterative_1.py",
+        "file2": "exact_copy_iterative_1.py",
+        "type": "Type 1",
+        "desc": "Sam: Type 1 Copy of Ramil (Iterative)"
+      },
+      {
+        "file1": "unique_iterative_1.py",
+        "file2": "structural_rename_iterative_1.py",
+        "type": "Type 3",
+        "desc": "Chris: Type 3 Structural + Rename of Ramil"
+      }
+    ]
+  },
+  "Multiple-B2": {
+    "title": "Multiple-B 2: Binary Tree Traversal",
+    "series": "3.5 Multiple-B Series",
+    "positive_pairs": [
+      {
+        "file1": "unique_1.py",
+        "file2": "exact_copy_1.py",
+        "type": "Type 1",
+        "desc": "Sol: Type 1 Copy of Karo"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "dead_code_injected_1.py",
+        "type": "Type 3",
+        "desc": "Ramil: Type 3 Dead Code of Karo"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "logic_substituted_1.py",
+        "type": "Type 3",
+        "desc": "Alex: Type 3 Logic Substitution of Karo"
+      }
+    ]
+  },
+  "Multiple-C1": {
+    "title": "Multiple-C 1: Two Sum",
+    "series": "3.6 Multiple-C Series",
+    "positive_pairs": [
+      {
+        "file1": "unique_1.py",
+        "file2": "exact_copy_1.py",
+        "type": "Type 1",
+        "desc": "Ramil: Type 1 Copy of Sol"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "renamed_1.py",
+        "type": "Type 2",
+        "desc": "Alex: Type 2 Renamed of Sol"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "recursive_1.py",
+        "type": "Type 3",
+        "desc": "Sam: Type 3 Recursion of Sol"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "mixed_attack_1.py",
+        "type": "Type 3",
+        "desc": "Chris: Mixed Attack of Sol"
+      },
+      {
+        "file1": "unique_1.py",
+        "file2": "triple_combo_1.py",
+        "type": "Type 3",
+        "desc": "Jake: Triple Combo Attack of Sol"
+      }
+    ]
+  },
+  "Multiple-C2": {
+    "title": "Multiple-C 2: Graph BFS",
+    "series": "3.6 Multiple-C Series",
+    "positive_pairs": [
+      {
+        "file1": "unique_1.py",
+        "file2": "exact_copy_1.py",
+        "type": "Type 1",
+        "desc": "Sol: Type 1 Exact Copy of Karo"
+      }
+    ]
+  },
+  "Multiple-D1": {
+    "title": "Multiple-D 1: Quick Sort (Large Cohort)",
+    "series": "3.7 Multiple-D Series",
+    "positive_pairs": [
+      {
+        "file1": "organic_1.py",
+        "file2": "exact_copy_1.py",
+        "type": "Type 1",
+        "desc": "Kiko: Type 1 Exact Copy of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "renamed_1.py",
+        "type": "Type 2",
+        "desc": "Darrel: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "renamed_2.py",
+        "type": "Type 2",
+        "desc": "Edrian: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "reordered_1.py",
+        "type": "Type 3",
+        "desc": "Sean: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "structural_1.py",
+        "type": "Type 3",
+        "desc": "Hannah: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_1.py",
+        "file2": "mixed_attack_1.py",
+        "type": "Type 3",
+        "desc": "Stark: Mixed Attack of Mary"
+      }
+    ]
+  },
+  "Multiple-E1": {
+    "title": "Multiple-E 1: Grid DFS",
+    "series": "3.8 Multiple-E Series",
+    "positive_pairs": [
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "exact_copy_1_grid_dfs.py",
+        "type": "Type 1",
+        "desc": "Dan: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "exact_copy_2_grid_dfs.py",
+        "type": "Type 1",
+        "desc": "Ramon: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "renamed_1_grid_dfs.py",
+        "type": "Type 2",
+        "desc": "Jude: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "renamed_2_grid_dfs.py",
+        "type": "Type 2",
+        "desc": "Jm: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "structural_stack_1_grid_dfs.py",
+        "type": "Type 3",
+        "desc": "Patrick: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "structural_unroll_1_grid_dfs.py",
+        "type": "Type 3",
+        "desc": "Rachel: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_grid_dfs.py",
+        "file2": "structural_visited_1_grid_dfs.py",
+        "type": "Type 3",
+        "desc": "Karo: Type 3 Structural"
+      }
+    ]
+  },
+  "Multiple-E2": {
+    "title": "Multiple-E 2: Frequency Counter / Valid Parentheses",
+    "series": "3.8 Multiple-E Series",
+    "positive_pairs": [
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "exact_copy_1_valid_parentheses.py",
+        "type": "Type 1",
+        "desc": "Dan: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "exact_copy_2_valid_parentheses.py",
+        "type": "Type 1",
+        "desc": "Ramon: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "renamed_1_valid_parentheses.py",
+        "type": "Type 2",
+        "desc": "Jude: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "renamed_2_valid_parentheses.py",
+        "type": "Type 2",
+        "desc": "Jm: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "structural_array_1_valid_parentheses.py",
+        "type": "Type 3",
+        "desc": "Patrick: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "structural_cascading_if_1_valid_parentheses.py",
+        "type": "Type 3",
+        "desc": "Rachel: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_valid_parentheses.py",
+        "file2": "structural_lookup_buffer_1_valid_parentheses.py",
+        "type": "Type 3",
+        "desc": "Karo: Type 3 Structural"
+      }
+    ]
+  },
+  "Multiple-E3": {
+    "title": "Multiple-E 3: Range Accumulator / Max Subarray",
+    "series": "3.8 Multiple-E Series",
+    "positive_pairs": [
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "exact_copy_1_max_subarray.py",
+        "type": "Type 1",
+        "desc": "Dan: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "exact_copy_2_max_subarray.py",
+        "type": "Type 1",
+        "desc": "Ramon: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "renamed_1_max_subarray.py",
+        "type": "Type 2",
+        "desc": "Jude: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "renamed_2_max_subarray.py",
+        "type": "Type 2",
+        "desc": "Jm: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "structural_brute_force_1_max_subarray.py",
+        "type": "Type 3",
+        "desc": "Patrick: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "structural_dynamic_arr_1_max_subarray.py",
+        "type": "Type 3",
+        "desc": "Rachel: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_max_subarray.py",
+        "file2": "structural_two_pointer_1_max_subarray.py",
+        "type": "Type 3",
+        "desc": "Karo: Type 3 Structural"
+      }
+    ]
+  },
+  "Multiple-E4": {
+    "title": "Multiple-E 4: Substring Search",
+    "series": "3.8 Multiple-E Series",
+    "positive_pairs": [
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "exact_copy_1_substring_search.py",
+        "type": "Type 1",
+        "desc": "Dan: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "exact_copy_2_substring_search.py",
+        "type": "Type 1",
+        "desc": "Ramon: Type 1 Copy"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "renamed_1_substring_search.py",
+        "type": "Type 2",
+        "desc": "Jude: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "renamed_2_substring_search.py",
+        "type": "Type 2",
+        "desc": "Jm: Type 2 Renamed"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "structural_indexer_1_substring_search.py",
+        "type": "Type 3",
+        "desc": "Patrick: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "structural_rabin_karp_1_substring_search.py",
+        "type": "Type 3",
+        "desc": "Rachel: Type 3 Structural"
+      },
+      {
+        "file1": "original_1_substring_search.py",
+        "file2": "structural_sliding_window_1_substring_search.py",
+        "type": "Type 3",
+        "desc": "Karo: Type 3 Structural"
+      }
+    ]
+  },
+  "Multiple-F1": {
+    "title": "Multiple-F 1: Merge Sort (36 Submissions)",
+    "series": "3.9 Multiple-F Series",
+    "positive_pairs": [
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "exact_copy_25_merge_sort.py",
+        "type": "Type 1",
+        "desc": "Student 25: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "exact_copy_26_merge_sort.py",
+        "type": "Type 1",
+        "desc": "Student 26: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "exact_copy_27_merge_sort.py",
+        "type": "Type 1",
+        "desc": "Student 27: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "renamed_28_merge_sort.py",
+        "type": "Type 2",
+        "desc": "Student 28: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "renamed_29_merge_sort.py",
+        "type": "Type 2",
+        "desc": "Student 29: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "renamed_30_merge_sort.py",
+        "type": "Type 2",
+        "desc": "Student 30: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "structural_31_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 31: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "structural_32_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 32: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "structural_33_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 33: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "structural_34_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 34: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "mixed_attack_35_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 35: Mixed Attack of Mary"
+      },
+      {
+        "file1": "organic_01_merge_sort.py",
+        "file2": "mixed_attack_36_merge_sort.py",
+        "type": "Type 3",
+        "desc": "Student 36: Mixed Attack of Mary"
+      }
+    ]
+  },
+  "Multiple-F2": {
+    "title": "Multiple-F 2: BST (42 Submissions)",
+    "series": "3.9 Multiple-F Series",
+    "positive_pairs": [
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "exact_copy_29_bst.py",
+        "type": "Type 1",
+        "desc": "Student 29: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "exact_copy_30_bst.py",
+        "type": "Type 1",
+        "desc": "Student 30: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "exact_copy_31_bst.py",
+        "type": "Type 1",
+        "desc": "Student 31: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "exact_copy_32_bst.py",
+        "type": "Type 1",
+        "desc": "Student 32: Type 1 Copy of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "renamed_33_bst.py",
+        "type": "Type 2",
+        "desc": "Student 33: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "renamed_34_bst.py",
+        "type": "Type 2",
+        "desc": "Student 34: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "renamed_35_bst.py",
+        "type": "Type 2",
+        "desc": "Student 35: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "renamed_36_bst.py",
+        "type": "Type 2",
+        "desc": "Student 36: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "structural_37_bst.py",
+        "type": "Type 3",
+        "desc": "Student 37: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "structural_38_bst.py",
+        "type": "Type 3",
+        "desc": "Student 38: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "structural_39_bst.py",
+        "type": "Type 3",
+        "desc": "Student 39: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "structural_40_bst.py",
+        "type": "Type 3",
+        "desc": "Student 40: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "mixed_attack_41_bst.py",
+        "type": "Type 3",
+        "desc": "Student 41: Mixed Attack of Mary"
+      },
+      {
+        "file1": "organic_01_bst.py",
+        "file2": "mixed_attack_42_bst.py",
+        "type": "Type 3",
+        "desc": "Student 42: Mixed Attack of Mary"
+      }
+    ]
+  },
+  "binary_search_tree": {
+    "title": "BST: Clone Benchmark",
+    "series": "3.10 Standard DSA Benchmarks",
+    "positive_pairs": [
+      {
+        "file1": "original.py",
+        "file2": "type_1_exact.py",
+        "type": "Type 1",
+        "desc": "Charles: Type 1 Exact Copy of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed.py",
+        "type": "Type 2",
+        "desc": "Nicolo: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed2.py",
+        "type": "Type 2",
+        "desc": "Dan: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_reordered.py",
+        "type": "Type 3",
+        "desc": "Ramon: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_structural.py",
+        "type": "Type 3",
+        "desc": "Jude: Type 3 Structural of Mary"
+      }
+    ]
+  },
+  "binary_tree": {
+    "title": "Binary Tree: Clone Benchmark",
+    "series": "3.10 Standard DSA Benchmarks",
+    "positive_pairs": [
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed.py",
+        "type": "Type 2",
+        "desc": "Charles: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed2.py",
+        "type": "Type 2",
+        "desc": "Nicolo: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_reordered.py",
+        "type": "Type 3",
+        "desc": "Dan: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_structural.py",
+        "type": "Type 3",
+        "desc": "Ramon: Type 3 Structural of Mary"
+      }
+    ]
+  },
+  "linked_list": {
+    "title": "Linked List: Clone Benchmark",
+    "series": "3.10 Standard DSA Benchmarks",
+    "positive_pairs": [
+      {
+        "file1": "original.py",
+        "file2": "type_1_exact.py",
+        "type": "Type 1",
+        "desc": "Charles: Type 1 Exact Copy of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed.py",
+        "type": "Type 2",
+        "desc": "Nicolo: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed2.py",
+        "type": "Type 2",
+        "desc": "Dan: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_structural.py",
+        "type": "Type 3",
+        "desc": "Ramon: Type 3 Structural of Mary"
+      }
+    ]
+  },
+  "merge_sort": {
+    "title": "Merge Sort: Clone Benchmark",
+    "series": "3.10 Standard DSA Benchmarks",
+    "positive_pairs": [
+      {
+        "file1": "original.py",
+        "file2": "type_1_exact.py",
+        "type": "Type 1",
+        "desc": "Charles: Type 1 Exact Copy of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed.py",
+        "type": "Type 2",
+        "desc": "Nicolo: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed2.py",
+        "type": "Type 2",
+        "desc": "Dan: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_reordered.py",
+        "type": "Type 3",
+        "desc": "Ramon: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_structural.py",
+        "type": "Type 3",
+        "desc": "Jude: Type 3 Structural of Mary"
+      }
+    ]
+  },
+  "quick_sort": {
+    "title": "Quick Sort: Clone Benchmark",
+    "series": "3.10 Standard DSA Benchmarks",
+    "positive_pairs": [
+      {
+        "file1": "original.py",
+        "file2": "type_1_exact_copy.py",
+        "type": "Type 1",
+        "desc": "Charles: Type 1 Exact Copy of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed.py",
+        "type": "Type 2",
+        "desc": "Nicolo: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_2_renamed2.py",
+        "type": "Type 2",
+        "desc": "Dan: Type 2 Renamed of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_reordered.py",
+        "type": "Type 3",
+        "desc": "Ramon: Type 3 Structural of Mary"
+      },
+      {
+        "file1": "original.py",
+        "file2": "type_3_structural.py",
+        "type": "Type 3",
+        "desc": "Jude: Type 3 Structural of Mary"
+      }
+    ]
+  }
+}

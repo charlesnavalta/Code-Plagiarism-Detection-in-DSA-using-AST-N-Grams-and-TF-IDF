@@ -1,40 +1,19 @@
-"""
-Quick Sort - Organic Submission #11
-Dual-pivot Quick Sort algorithm.
-"""
-
-def dual_pivot_quick_sort(arr, low, high):
-    if low < high:
-        if arr[low] > arr[high]:
-            arr[low], arr[high] = arr[high], arr[low]
-        p = arr[low]
-        q = arr[high]
-        l = low + 1
-        g = high - 1
-        k = low + 1
-        while k <= g:
-            if arr[k] < p:
-                arr[k], arr[l] = arr[l], arr[k]
-                l += 1
-            elif arr[k] >= q:
-                while arr[g] > q and k < g:
-                    g -= 1
-                arr[k], arr[g] = arr[g], arr[k]
-                g -= 1
-                if arr[k] < p:
-                    arr[k], arr[l] = arr[l], arr[k]
-                    l += 1
-            k += 1
-        l -= 1
-        g += 1
-        arr[low], arr[l] = arr[l], arr[low]
-        arr[high], arr[g] = arr[g], arr[high]
-
-        dual_pivot_quick_sort(arr, low, l - 1)
-        dual_pivot_quick_sort(arr, l + 1, g - 1)
-        dual_pivot_quick_sort(arr, g + 1, high)
-
-if __name__ == "__main__":
-    nums = [24, 8, 42, 75, 29, 77, 38, 57]
-    dual_pivot_quick_sort(nums, 0, len(nums) - 1)
-    print(nums)
+# Organic Student Submission 11: Independent Algorithm Paradigm
+def tail_recursive_quicksort(arr, low=0, high=None):
+    if high is None: high = len(arr) - 1
+    while low < high:
+        pivot = arr[high]
+        i = low - 1
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+        pi = i + 1
+        if pi - low < high - pi:
+            tail_recursive_quicksort(arr, low, pi - 1)
+            low = pi + 1
+        else:
+            tail_recursive_quicksort(arr, pi + 1, high)
+            high = pi - 1
+    return arr
