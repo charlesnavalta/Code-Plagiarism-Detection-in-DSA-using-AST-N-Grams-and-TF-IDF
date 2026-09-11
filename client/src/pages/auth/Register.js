@@ -28,6 +28,7 @@ const Register = () => {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
     const [termsModalTab, setTermsModalTab] = useState('terms');
+
     const [loading, setLoading] = useState(false);
     const [sendingCode, setSendingCode] = useState(false);
     const [cooldown, setCooldown] = useState(0);
@@ -234,6 +235,11 @@ const Register = () => {
                                 <div 
                                     className={`role-card ${formData.role === 'student' ? 'active' : ''}`}
                                     onClick={() => setFormData({ ...formData, role: 'student' })}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={formData.role === 'student'}
+                                    aria-label="Select Student account type"
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFormData({ ...formData, role: 'student' }); } }}
                                 >
                                     <div className="role-card-header">
                                         <div className="role-radio">
@@ -247,6 +253,11 @@ const Register = () => {
                                 <div 
                                     className={`role-card ${formData.role === 'instructor' ? 'active' : ''}`}
                                     onClick={() => setFormData({ ...formData, role: 'instructor' })}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={formData.role === 'instructor'}
+                                    aria-label="Select Instructor account type"
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFormData({ ...formData, role: 'instructor' }); } }}
                                 >
                                     <div className="role-card-header">
                                         <div className="role-radio">
@@ -304,11 +315,12 @@ const Register = () => {
                                     }
                                 />
                             </div>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 className="auth-send-code-btn"
-                                onClick={handleSendCode} 
+                                onClick={handleSendCode}
                                 disabled={sendingCode || !formData.email || cooldown > 0}
+                                aria-label={sendingCode ? 'Sending verification code' : cooldown > 0 ? `Resend available in ${cooldown} seconds` : 'Send email verification code'}
                             >
                                 {sendingCode ? (
                                     <span className="btn-spinner"></span>
@@ -318,6 +330,7 @@ const Register = () => {
                                     "Send Code"
                                 )}
                             </button>
+
                         </div>
 
                         {/* 6-Digit Code */}
@@ -406,34 +419,57 @@ const Register = () => {
                             </div>
                         )}
 
-                        {/* Terms checkbox */}
+                        {/* Form Consent — 4 policies */}
                         <div className="auth-terms-row">
                             <label className="auth-checkbox-container">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     checked={agreedToTerms}
                                     onChange={(e) => setAgreedToTerms(e.target.checked)}
+                                    aria-label="I agree to the Terms of Service, Privacy Policy, Cookie Policy, and Refund Policy, and consent to the processing of my data for academic purposes"
                                 />
                                 <span>
                                     I agree to the{' '}
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         className="auth-inline-link"
                                         onClick={() => handleOpenTerms('terms')}
+                                        aria-label="Read Terms of Service"
                                     >
                                         Terms of Service
                                     </button>
-                                    {' '}and{' '}
-                                    <button 
-                                        type="button" 
+                                    {', '}
+                                    <button
+                                        type="button"
                                         className="auth-inline-link"
                                         onClick={() => handleOpenTerms('privacy')}
+                                        aria-label="Read Privacy Policy"
                                     >
                                         Privacy Policy
                                     </button>
+                                    {', '}
+                                    <button
+                                        type="button"
+                                        className="auth-inline-link"
+                                        onClick={() => handleOpenTerms('cookies')}
+                                        aria-label="Read Cookie Policy"
+                                    >
+                                        Cookie Policy
+                                    </button>
+                                    {', and '}
+                                    <button
+                                        type="button"
+                                        className="auth-inline-link"
+                                        onClick={() => handleOpenTerms('refund')}
+                                        aria-label="Read Refund Policy"
+                                    >
+                                        Refund Policy
+                                    </button>
+                                    {'. I consent to the collection and processing of my data for the academic purposes described therein.'}
                                 </span>
                             </label>
                         </div>
+
 
                         {/* Submit Button */}
                         <AuthButton variant="accent" loading={loading} loadingText="Creating Account...">

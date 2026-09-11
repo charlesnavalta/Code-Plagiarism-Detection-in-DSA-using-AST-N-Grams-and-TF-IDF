@@ -162,7 +162,8 @@ html[data-theme='light'] .terms-tab-bar {
 
 .terms-tabs-group {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .terms-tab-btn {
@@ -498,4 +499,81 @@ html[data-theme='light'] .terms-tab-bar {
         justify-content: center;
         padding: 12px;
     }
+}
+
+/* --- New Notice Variants for Cookie & Refund Tabs --- */
+.legal-formal-notice.notice-cookies {
+    background: rgba(234, 179, 8, 0.07);
+    border-color: rgba(234, 179, 8, 0.28);
+}
+
+[data-theme='light'] .legal-formal-notice.notice-cookies {
+    background: #fefce8;
+    border-color: #fde047;
+    color: #713f12;
+}
+
+.notice-cookies .notice-icon-box {
+    color: #eab308;
+}
+
+.legal-formal-notice.notice-refund {
+    background: rgba(59, 130, 246, 0.07);
+    border-color: rgba(59, 130, 246, 0.25);
+}
+
+[data-theme='light'] .legal-formal-notice.notice-refund {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e3a5f;
+}
+
+.notice-refund .notice-icon-box {
+    color: #3b82f6;
+}
+
+/* --- Inline Button for In-Content Tab Navigation --- */
+.legal-tab-inline-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #818cf8;
+    text-decoration: underline;
+    font-weight: 600;
+    font-size: inherit;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: inherit;
+}
+
+.legal-tab-inline-link:hover {
+    color: #a5b4fc;
+}
+
+[data-theme='light'] .legal-tab-inline-link {
+    color: #4f46e5;
+}
+
+[data-theme='light'] .legal-tab-inline-link:hover {
+    color: #4338ca;
+}
+
+/* --- Hide mobile-only drag handle on desktop --- */
+.terms-sheet-handle-bar {
+    display: none;
+    justify-content: center;
+    padding: 10px 0 6px;
+    flex-shrink: 0;
+}
+
+.terms-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+}
+
+[data-theme='light'] .terms-sheet-handle {
+    background: #cbd5e1;
 }

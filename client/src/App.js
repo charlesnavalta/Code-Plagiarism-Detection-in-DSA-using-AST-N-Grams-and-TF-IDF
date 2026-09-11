@@ -40,6 +40,7 @@ import UserManagement from './pages/admin/UserManagement';
 import ClassroomManagement from './pages/admin/ClassroomManagement';
 import AssignmentManagement from './pages/admin/AssignmentManagement';
 import SessionTimeoutManager from './components/common/SessionTimeoutManager';
+import CookieConsentBanner from './components/common/CookieConsentBanner';
 
 import { warmUpServer } from './services/api';
 
@@ -58,6 +59,7 @@ function AppContent() {
       <Navbar /> 
       <ToastContainer />
       <SessionTimeoutManager />
+      <CookieConsentBanner />
       
       <Routes>
         <Route path="/" element={<LandingPage />} />
