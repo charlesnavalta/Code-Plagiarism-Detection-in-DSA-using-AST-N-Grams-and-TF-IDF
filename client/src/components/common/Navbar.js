@@ -123,13 +123,20 @@ const Navbar = () => {
 
                 <div className="navbar-right desktop-only">
                     <div className="profile-menu">
-                        <button className="profile-trigger-nexus" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            <div className="user-avatar-mini">{displayName.charAt(0).toUpperCase()}</div>
+                        <button
+                            className="profile-trigger-nexus"
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            aria-label={`${displayName} account menu`}
+                            aria-expanded={dropdownOpen}
+                            aria-haspopup="true"
+                        >
+                            <div className="user-avatar-mini" aria-hidden="true">{displayName.charAt(0).toUpperCase()}</div>
                             <span className="user-name-nexus">{displayName}</span>
-                            <svg className={`chevron-nexus ${dropdownOpen ? 'open' : ''}`} width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className={`chevron-nexus ${dropdownOpen ? 'open' : ''}`} width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
+
 
                         {/* DESKTOP DROPDOWN */}
                         {dropdownOpen && (
@@ -194,9 +201,9 @@ const Navbar = () => {
                                 <div className="dropdown-divider-nexus"></div>
                                 
                                 {/* Logout Button */}
-                                <button onClick={handleLogout} className="dropdown-item-nexus logout-nexus">
+                                <button onClick={handleLogout} className="dropdown-item-nexus logout-nexus" aria-label="Log out of your account">
                                     <span className="item-icon">
-                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                                             <polyline points="16 17 21 12 16 7"></polyline>
                                             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -204,6 +211,7 @@ const Navbar = () => {
                                     </span>
                                     <span>Logout</span>
                                 </button>
+
                             </div>
                         )}
                     </div>
@@ -227,17 +235,18 @@ const Navbar = () => {
                 </Link>
 
                 {/* 🌟 3-WAY CYCLE ON MOBILE: Dark -> Light -> Device */}
-                <button className="app-nav-item" onClick={cycleTheme} title={`Current: ${themePreference}`}>
+                <button className="app-nav-item" onClick={cycleTheme} title={`Current: ${themePreference}`} aria-label={`Switch theme, currently ${themePreference}`}>
                     {getThemeIcon(themePreference)}
                     <span>{themePreference === 'system' ? 'Device' : themePreference === 'light' ? 'Light' : 'Dark'}</span>
                 </button>
 
-                <button className="app-nav-item text-danger" onClick={handleLogout}>
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <button className="app-nav-item text-danger" onClick={handleLogout} aria-label="Log out of your account">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
                     <span>Logout</span>
                 </button>
+
             </nav>
         </>
     );

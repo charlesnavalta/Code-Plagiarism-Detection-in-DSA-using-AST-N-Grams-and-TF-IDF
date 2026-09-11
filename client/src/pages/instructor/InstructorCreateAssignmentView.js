@@ -335,17 +335,63 @@ const InstructorCreateAssignmentView = () => {
                                     />
                                 </div>
 
-                                <div className="workspace-form-group">
-                                    <label htmlFor="create-assign-score">Maximum Score (Points)</label>
-                                    <input
-                                        id="create-assign-score"
-                                        type="number"
-                                        className="workspace-input-text hide-arrows"
-                                        min={1}
-                                        value={maxScore}
-                                        onChange={(e) => setMaxScore(e.target.value)}
-                                        required
-                                    />
+                                <div className="workspace-form-group score-custom-group">
+                                    <div className="score-label-header">
+                                        <label htmlFor="create-assign-score">Maximum Score (Points)</label>
+                                        <span className="score-type-pill">Grading Cap</span>
+                                    </div>
+
+                                    <div className="score-stepper-control">
+                                        <button
+                                            type="button"
+                                            className="btn-score-step minus"
+                                            onClick={() => setMaxScore(prev => Math.max(1, (parseInt(prev, 10) || 0) - 5))}
+                                            disabled={Number(maxScore) <= 1}
+                                            title="Decrease by 5 points"
+                                        >
+                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+
+                                        <div className="score-input-container">
+                                            <input
+                                                id="create-assign-score"
+                                                type="number"
+                                                className="score-stepper-input hide-arrows"
+                                                min={1}
+                                                max={1000}
+                                                value={maxScore}
+                                                onChange={(e) => setMaxScore(e.target.value)}
+                                                required
+                                            />
+                                            <span className="score-unit-badge">PTS</span>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className="btn-score-step plus"
+                                            onClick={() => setMaxScore(prev => Math.min(1000, (parseInt(prev, 10) || 0) + 5))}
+                                            title="Increase by 5 points"
+                                        >
+                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div className="score-preset-chips">
+                                        {[20, 50, 100, 150].map((preset) => (
+                                            <button
+                                                key={preset}
+                                                type="button"
+                                                className={`btn-preset-chip ${Number(maxScore) === preset ? 'active' : ''}`}
+                                                onClick={() => setMaxScore(preset)}
+                                            >
+                                                {preset} pts
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 <div className="workspace-form-group">

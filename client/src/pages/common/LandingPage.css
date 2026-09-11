@@ -206,3 +206,94 @@ button {
     .match-percent { font-size: 1rem; }
     .match-label { font-size: 0.75rem; }
 }
+
+/* ─── Legal Footer ─── */
+.landing-footer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: auto;
+}
+
+.landing-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 4rem;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.footer-legal-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.footer-dot {
+    color: #334155;
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+.footer-legal-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.8rem;
+    color: #475569;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.18s ease;
+}
+
+.footer-legal-btn:hover {
+    color: #94a3b8;
+}
+
+.footer-legal-link {
+    font-size: 0.8rem;
+    color: #475569;
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.footer-legal-link:hover {
+    color: #94a3b8;
+}
+
+@media (max-width: 1024px) {
+    .landing-footer-inner {
+        padding: 12px 2.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .landing-footer {
+        /* On mobile the sticky bar is fixed, so the footer sits just above it */
+        padding-bottom: 130px;
+    }
+    .landing-footer-inner {
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 1rem;
+        gap: 8px;
+    }
+    .footer-copyright {
+        font-size: 0.75rem;
+    }
+    .footer-legal-btn,
+    .footer-legal-link {
+        font-size: 0.75rem;
+    }
+}
