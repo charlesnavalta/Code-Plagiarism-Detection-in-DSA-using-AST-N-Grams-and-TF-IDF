@@ -62,12 +62,16 @@
     width: 36px;
     height: 36px;
     background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    color: #60a5fa;
     flex-shrink: 0;
+}
+.pill-icon svg {
+    display: block;
 }
 
 .pill-text {
@@ -339,8 +343,14 @@
 }
 
 .match-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: 0.75rem;
     font-weight: 700;
+}
+.match-status svg {
+    flex-shrink: 0;
 }
 .match-success {
     color: #10b981;
@@ -479,7 +489,7 @@
 }
 
 /* =========================================
-   📱 RESPONSIVE BREAKPOINTS (Mobile & Tablet)
+   RESPONSIVE BREAKPOINTS (Mobile & Tablet)
    ========================================= */
 @media (max-width: 992px) {
     .register-split-wrapper {

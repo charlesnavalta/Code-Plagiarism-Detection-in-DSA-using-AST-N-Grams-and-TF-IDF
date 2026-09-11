@@ -41,6 +41,7 @@ import ClassroomManagement from './pages/admin/ClassroomManagement';
 import AssignmentManagement from './pages/admin/AssignmentManagement';
 import SessionTimeoutManager from './components/common/SessionTimeoutManager';
 import CookieConsentBanner from './components/common/CookieConsentBanner';
+import Footer from './components/common/Footer';
 
 import { warmUpServer } from './services/api';
 
@@ -120,6 +121,8 @@ function AppContent() {
         
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
+
+      <Footer />
     </Router>
   );
 }

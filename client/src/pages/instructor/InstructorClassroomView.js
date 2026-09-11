@@ -12,6 +12,10 @@ import ClassroomViewSkeleton from './components/ClassroomViewSkeleton';
 
 // Modals
 import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
+import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu';
+import EditClassroomModal from '../../modals/classroom/EditClassroomModal';
+import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
+import InstructorRosterModal from '../../modals/classroom/InstructorRosterModal';
 
 const InstructorClassroomView = () => {
     const { id } = useParams(); 
@@ -21,6 +25,18 @@ const InstructorClassroomView = () => {
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [rosterModalOpen, setRosterModalOpen] = useState(false);
+
+    const handleClassroomUpdated = (updated) => {
+        setClassroom(prev => ({ ...prev, ...updated }));
+    };
+
+    const handleClassroomDeleted = () => {
+        navigate('/instructor');
+    };
 
     const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
     const [currentSubmissions, setCurrentSubmissions] = useState([]);
@@ -99,32 +115,44 @@ const InstructorClassroomView = () => {
                                 </svg>
                                 Hub
                             </button>
-                            <div 
-                                className="glass-chip glass-chip-interactive"
-                                onClick={() => {
-                                    if (classroom?.invite_code) {
-                                        navigator.clipboard.writeText(classroom.invite_code);
-                                        toast.success(`Invite code "${classroom.invite_code}" copied to clipboard!`, "Code Copied");
-                                    }
-                                }}
-                                title="Click to copy invite code"
-                            >
-                                <span className="mono-label">INVITE CODE: {classroom?.invite_code}</span>
-                                <button
-                                    type="button"
-                                    className="btn-copy-code-inline"
-                                    title="Copy Invite Code"
-                                    aria-label="Copy Invite Code"
+                            <div className="header-actions-cluster">
+                                <div 
+                                    className="glass-chip glass-chip-interactive"
+                                    onClick={() => {
+                                        if (classroom?.invite_code) {
+                                            navigator.clipboard.writeText(classroom.invite_code);
+                                            toast.success(`Invite code "${classroom.invite_code}" copied to clipboard!`, "Code Copied");
+                                        }
+                                    }}
+                                    title="Click to copy invite code"
                                 >
-                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                    </svg>
-                                </button>
+                                    <span className="mono-label">INVITE CODE: {classroom?.invite_code}</span>
+                                    <button
+                                        type="button"
+                                        className="btn-copy-code-inline"
+                                        title="Copy Invite Code"
+                                        aria-label="Copy Invite Code"
+                                    >
+                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <ClassroomActionMenu
+                                    role="instructor"
+                                    classroom={classroom}
+                                    variant="header"
+                                    onEdit={() => setEditModalOpen(true)}
+                                    onViewRoster={() => setRosterModalOpen(true)}
+                                    onDelete={() => setDeleteModalOpen(true)}
+                                />
                             </div>
                         </div>
                         <h1 className="hero-title">{classroom?.name}</h1>
                         <div className="stat-badges">
                             <span className="b-label status-active">Status: ACTIVE HUB</span>
+                            <span className="b-label">{classroom?.student_count || 0} / 50 Students</span>
                         </div>
                     </div>
                 </header>
@@ -135,7 +163,7 @@ const InstructorClassroomView = () => {
                             <h2>Assignment(s)</h2>
                         </div>
                         <button className="btn-primary-falsicode" onClick={() => navigate(`/instructor/class/${id}/assignment/new`)}>
-                            {/* 🌟 ADDED: The Plus Icon for the primary action */}
+                            {/* Plus Icon for the primary action */}
                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -192,6 +220,27 @@ const InstructorClassroomView = () => {
                 onRunAnalysis={handleRunAnalysis}
                 classroomId={id} 
                 assignmentId={selectedAssignment?.id} 
+            />
+
+            {/* Classroom Modals */}
+            <EditClassroomModal
+                isOpen={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                classroom={classroom}
+                onClassroomUpdated={handleClassroomUpdated}
+            />
+
+            <DeleteClassroomModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                classroom={classroom}
+                onClassroomDeleted={handleClassroomDeleted}
+            />
+
+            <InstructorRosterModal
+                isOpen={rosterModalOpen}
+                onClose={() => setRosterModalOpen(false)}
+                classroom={classroom}
             />
         </InstructorWrapper>
     );

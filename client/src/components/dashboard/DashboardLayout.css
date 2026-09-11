@@ -376,7 +376,7 @@ button {
 
 .classroom-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
     gap: 20px;
 }
 .course-card {
@@ -412,12 +412,14 @@ button {
     color: var(--text-hero, #f9fafb);
 }
 
-/* 🌟 Structured Meta Row for Classroom Cards */
+/* Structured Meta Row for Classroom Cards */
 .course-card-meta-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    column-gap: 8px;
     margin-bottom: 18px;
     width: 100%;
 }
@@ -433,6 +435,7 @@ button {
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
+    flex-shrink: 0;
 }
 .card-code-pill:hover {
     background: rgba(59, 130, 246, 0.22);
@@ -477,7 +480,19 @@ button {
     font-weight: 600;
     color: var(--text-dim);
     white-space: nowrap;
+    flex-shrink: 0;
 }
+.card-top-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 8px;
+}
+.card-top-action-row .node-badge {
+    margin-bottom: 0;
+}
+
 .card-students-badge svg {
     color: var(--accent);
 }
@@ -992,6 +1007,14 @@ html[data-theme='light'] .skeleton-box {
         grid-template-columns: 1fr;
         gap: 12px;
         width: 100%;
+    }
+    .course-card .card-content {
+        padding: 18px 16px;
+    }
+    .course-card .course-title {
+        font-size: 1.1rem;
+        min-height: auto;
+        margin-bottom: 12px;
     }
     .course-card:active {
         transform: scale(0.98);

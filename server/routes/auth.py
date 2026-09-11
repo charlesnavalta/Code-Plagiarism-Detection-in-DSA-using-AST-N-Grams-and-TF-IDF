@@ -31,6 +31,25 @@ def is_valid_email_format(email_str):
         return False
     return True
 
+def is_valid_gmail_format(email_str):
+    """Validates that the email strictly conforms to the @gmail.com domain for registration."""
+    if not email_str or not isinstance(email_str, str):
+        return False
+    email_str = email_str.strip().lower()
+    if not email_str.endswith('@gmail.com'):
+        return False
+    parts = email_str.split('@')
+    if len(parts) != 2:
+        return False
+    username_part = parts[0]
+    if len(username_part) < 1 or len(username_part) > 64:
+        return False
+    if not re.match(r'^[a-zA-Z0-9._%+-]+$', username_part):
+        return False
+    if username_part.startswith('.') or username_part.endswith('.') or '..' in username_part:
+        return False
+    return True
+
 # In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
 PENDING_REGISTRATIONS = {}
 PENDING_EMAIL_UPDATES = {}
@@ -50,8 +69,8 @@ def request_code():
         if not email:
             return jsonify({"error": "Email is required"}), 400
 
-        if not is_valid_email_format(email):
-            return jsonify({"error": "Invalid email format. Please enter a valid email address (e.g. name@gmail.com or user@example.com)."}), 400
+        if not is_valid_gmail_format(email):
+            return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
 
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
@@ -94,8 +113,8 @@ def register():
     if not username or not email or not password:
         return jsonify({"error": "Username, email, and password are required fields."}), 400
 
-    if not is_valid_email_format(email):
-        return jsonify({"error": "Invalid email format. Please enter a valid email address (e.g. name@gmail.com or user@example.com)."}), 400
+    if not is_valid_gmail_format(email):
+        return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
 
     if not code:
         return jsonify({"error": "Please enter the 6-digit verification code sent to your email."}), 400

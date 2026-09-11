@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useToast } from '../../context/NotificationContext';
 
-// 🌟 DRY: Shared Dashboard Components
+// DRY: Shared Dashboard Components
 import DashboardLayout from '../../components/dashboard/DashboardLayout';
 import ProfileCard from '../../components/dashboard/ProfileCard';
 import StatCard from '../../components/dashboard/StatCard';
@@ -12,6 +12,12 @@ import ClassroomCardSkeleton, { EmptyClassroomSkeleton } from '../../components/
 
 // Utilities
 import { getUserData } from '../../utils/authUtils';
+
+// Classroom Management & Modals
+import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu';
+import EditClassroomModal from '../../modals/classroom/EditClassroomModal';
+import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
+import InstructorRosterModal from '../../modals/classroom/InstructorRosterModal';
 
 const InstructorDashboard = () => {
     const currentUser = getUserData();
@@ -37,6 +43,28 @@ const InstructorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const toast = useToast();
     const navigate = useNavigate();
+
+    // Modal States
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [rosterModalOpen, setRosterModalOpen] = useState(false);
+    const [targetClassroom, setTargetClassroom] = useState(null);
+
+    const handleClassroomUpdated = (updated) => {
+        setClassrooms(prev => {
+            const next = prev.map(c => c.id === updated.id ? { ...c, ...updated } : c);
+            localStorage.setItem(cacheKeyClasses, JSON.stringify(next));
+            return next;
+        });
+    };
+
+    const handleClassroomDeleted = (deletedId) => {
+        setClassrooms(prev => {
+            const next = prev.filter(c => c.id !== deletedId);
+            localStorage.setItem(cacheKeyClasses, JSON.stringify(next));
+            return next;
+        });
+    };
 
     const displayName = currentUser.name || currentUser.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
@@ -149,7 +177,11 @@ const InstructorDashboard = () => {
                             )
                         ) : classrooms.length === 0 ? (
                             <div className="spatial-card empty-card" style={{ padding: '40px', textAlign: 'center' }}>
-                                <div className="empty-icon" style={{ fontSize: '3rem', marginBottom: '10px' }}>📁</div>
+                                <div className="empty-icon" style={{ marginBottom: '14px', color: 'var(--text-dim)' }}>
+                                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                </div>
                                 <h3>No Classrooms Found</h3>
                                 <p style={{ color: 'var(--text-dim)' }}>Provision a new classroom above to get started.</p>
                             </div>
@@ -163,7 +195,16 @@ const InstructorDashboard = () => {
                                     >
                                         <div className="card-glass-layer"></div>
                                         <div className="card-content flex-col">
-                                            <span className="node-badge">Classroom</span>
+                                            <div className="card-top-action-row">
+                                                <span className="node-badge">Classroom</span>
+                                                <ClassroomActionMenu
+                                                    role="instructor"
+                                                    classroom={cls}
+                                                    onEdit={(c) => { setTargetClassroom(c); setEditModalOpen(true); }}
+                                                    onViewRoster={(c) => { setTargetClassroom(c); setRosterModalOpen(true); }}
+                                                    onDelete={(c) => { setTargetClassroom(c); setDeleteModalOpen(true); }}
+                                                />
+                                            </div>
                                             <h3 className="course-title">{cls.name}</h3>
 
                                             <div className="course-card-meta-row">
@@ -187,7 +228,7 @@ const InstructorDashboard = () => {
                                                     <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                                     </svg>
-                                                    <span>{cls.student_count || 0} Students</span>
+                                                    <span>{cls.student_count || 0} / 50 Students</span>
                                                 </div>
                                             </div>
 
@@ -203,6 +244,27 @@ const InstructorDashboard = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Classroom Modals */}
+            <EditClassroomModal
+                isOpen={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                classroom={targetClassroom}
+                onClassroomUpdated={handleClassroomUpdated}
+            />
+
+            <DeleteClassroomModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                classroom={targetClassroom}
+                onClassroomDeleted={handleClassroomDeleted}
+            />
+
+            <InstructorRosterModal
+                isOpen={rosterModalOpen}
+                onClose={() => setRosterModalOpen(false)}
+                classroom={targetClassroom}
+            />
         </DashboardLayout>
     );
 };

@@ -99,7 +99,7 @@ class Assignment(db.Model):
     description = db.Column(db.Text, nullable=True)
     max_score = db.Column(db.Integer, nullable=False, default=100)
     
-    # --- 🌟 NEW: Deadline Column ---
+    # --- Deadline Column ---
     # Stores the exact date and time the assignment is due. 
     # Nullable=True allows for assignments with no strict deadline.
     deadline = db.Column(db.DateTime, nullable=True)
@@ -151,7 +151,7 @@ class Enrollment(db.Model):
     enrolled_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     student = db.relationship('User', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
-    classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True))
+    classroom = db.relationship('Classroom', backref=db.backref('enrollments', lazy=True, cascade="all, delete-orphan"))
 
     def __init__(self, student_id, classroom_id):
         self.student_id = student_id
@@ -180,7 +180,7 @@ class Submission(db.Model):
     score = db.Column(db.String(20), nullable=True)
     max_score = db.Column(db.Integer, nullable=True, default=100)
     
-    # 🌟 NEW: The Resubmission Gatekeeper
+    # The Resubmission Gatekeeper
     allow_resubmit = db.Column(db.Boolean, default=False)
     
     # File Storage Data
@@ -207,7 +207,7 @@ class Submission(db.Model):
             'student_id': self.student_id,
             'score': self.score,
             'filename': self.filename,
-            'allow_resubmit': self.allow_resubmit, # 🌟 Send this state to React
+            'allow_resubmit': self.allow_resubmit, # Send this state to React
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
         }
 
@@ -215,7 +215,7 @@ class Submission(db.Model):
         return f'<Submission {self.filename} | Time: {self.submitted_at} | Resubmit: {self.allow_resubmit}>'
 
 # ==============================================================================
-# 🌟 NEW: ASSIGNMENT ATTACHMENT MODEL (Instructor Guide Files)
+# ASSIGNMENT ATTACHMENT MODEL (Instructor Guide Files)
 # ==============================================================================
 class AssignmentAttachment(db.Model):
     __tablename__ = 'assignment_attachments'

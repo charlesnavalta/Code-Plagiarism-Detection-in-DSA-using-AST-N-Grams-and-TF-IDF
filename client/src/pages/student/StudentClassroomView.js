@@ -11,6 +11,11 @@ import { formatDeadline } from '../../utils/dateUtils';
 import InstructorWrapper from '../instructor/components/InstructorWrapper';
 import ClassroomViewSkeleton from '../instructor/components/ClassroomViewSkeleton';
 
+// Classroom Management & Modals
+import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu';
+import StudentClassmatesModal from '../../modals/classroom/StudentClassmatesModal';
+import LeaveClassroomModal from '../../modals/classroom/LeaveClassroomModal';
+
 const StudentClassroomView = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
@@ -21,6 +26,13 @@ const StudentClassroomView = () => {
     const [loading, setLoading] = useState(true);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
+
+    const [classmatesModalOpen, setClassmatesModalOpen] = useState(false);
+    const [leaveModalOpen, setLeaveModalOpen] = useState(false);
+
+    const handleClassroomLeft = () => {
+        navigate('/student');
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,8 +79,17 @@ const StudentClassroomView = () => {
                                 </svg>
                                 Hub
                             </button>
-                            <div className="glass-chip">
-                                <span className="mono-label">STUDENT WORKSPACE</span>
+                            <div className="header-actions-cluster">
+                                <div className="glass-chip">
+                                    <span className="mono-label">STUDENT WORKSPACE</span>
+                                </div>
+                                <ClassroomActionMenu
+                                    role="student"
+                                    classroom={classroom}
+                                    variant="header"
+                                    onViewClassmates={() => setClassmatesModalOpen(true)}
+                                    onLeave={() => setLeaveModalOpen(true)}
+                                />
                             </div>
                         </div>
                         
@@ -102,7 +123,7 @@ const StudentClassroomView = () => {
                             const isSubmitted = assignment.has_submitted;
                             const isOverdue = assignment.deadline && new Date() > new Date(assignment.deadline);
                             
-                            // 🌟 THE FIX: Read the flag from the backend
+                            // Read resubmission flag from backend
                             const isUnlocked = assignment.allow_resubmit; 
                             
                             // Only disable the card if they are completely locked out
@@ -189,6 +210,20 @@ const StudentClassroomView = () => {
                     </div>
                 </main>
             </div>
+
+            {/* Student Classroom Modals */}
+            <StudentClassmatesModal
+                isOpen={classmatesModalOpen}
+                onClose={() => setClassmatesModalOpen(false)}
+                classroom={classroom}
+            />
+
+            <LeaveClassroomModal
+                isOpen={leaveModalOpen}
+                onClose={() => setLeaveModalOpen(false)}
+                classroom={classroom}
+                onClassroomLeft={handleClassroomLeft}
+            />
         </InstructorWrapper>
     );
 };

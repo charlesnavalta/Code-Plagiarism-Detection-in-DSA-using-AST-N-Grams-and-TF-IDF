@@ -9,11 +9,17 @@ import AuthInput from '../../components/auth/shared/AuthInput';
 import AuthButton from '../../components/auth/shared/AuthButton';
 import TermsAndPrivacyModal from '../../modals/shared/TermsAndPrivacyModal';
 
-// Email format validation: requires user@domain.tld (e.g. name@gmail.com or user@example.com)
-const isValidEmail = (email) => {
+// Email format validation: registration strictly requires @gmail.com format at the end
+const isValidGmail = (email) => {
     if (!email || typeof email !== 'string') return false;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email.trim());
+    const trimmed = email.trim().toLowerCase();
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(trimmed)) return false;
+    const localPart = trimmed.slice(0, -10); // Strip '@gmail.com'
+    if (!localPart || localPart.startsWith('.') || localPart.endsWith('.') || localPart.includes('..')) {
+        return false;
+    }
+    return true;
 };
 
 const Register = () => {
@@ -70,17 +76,17 @@ const Register = () => {
     const handleSendCode = async () => {
         const trimmedEmail = (formData.email || '').trim().toLowerCase();
         if (!trimmedEmail) {
-            toast.warning("Please enter an email address first.", "Email Required");
+            toast.warning("Please enter your Gmail address first.", "Email Required");
             return;
         }
-        if (!isValidEmail(trimmedEmail)) {
-            toast.error("Please enter a valid email address (e.g. name@gmail.com or name@example.com).", "Invalid Email Format");
+        if (!isValidGmail(trimmedEmail)) {
+            toast.error("Registration requires an email ending with @gmail.com (e.g. name@gmail.com).", "Invalid Email Format");
             return;
         }
         setSendingCode(true);
         try {
             const data = await authService.requestCode(trimmedEmail);
-            toast.success(data.message || "Verification code sent! Please check your email inbox.", "Code Dispatched");
+            toast.success(data.message || "Verification code sent! Please check your Gmail inbox.", "Code Dispatched");
             setCodeRequested(true);
             setCooldown(60);
         } catch (err) {
@@ -100,8 +106,8 @@ const Register = () => {
             toast.warning("Please enter a username.", "Validation Error");
             return;
         }
-        if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
-            toast.error("Please enter a valid email address (e.g. name@gmail.com or name@example.com).", "Invalid Email Format");
+        if (!trimmedEmail || !isValidGmail(trimmedEmail)) {
+            toast.error("Registration requires an email ending with @gmail.com (e.g. name@gmail.com).", "Invalid Email Format");
             return;
         }
         if (formData.password !== formData.confirmPassword) {
@@ -164,7 +170,11 @@ const Register = () => {
                 <div className="left-pane-content fade-in-up">
                     <div className="mobile-center-content">
                         <div className="brand-logo">
-                            <span className="logo-icon">⎔</span> Falsicode.
+                            <span className="logo-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                            </span> Falsicode.
                         </div>
                         
                         <h1 className="hero-heading">
@@ -180,7 +190,11 @@ const Register = () => {
                     {/* Interactive Value Proposition Cluster */}
                     <div className="feature-cluster">
                         <div className="feature-pill">
-                            <div className="pill-icon">⚡</div>
+                            <div className="pill-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                            </div>
                             <div className="pill-text">
                                 <strong>Real-time AST Parsing</strong>
                                 <span>Detects renamed variables & structural alterations</span>
@@ -188,7 +202,11 @@ const Register = () => {
                         </div>
 
                         <div className="feature-pill">
-                            <div className="pill-icon">🛡️</div>
+                            <div className="pill-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
                             <div className="pill-text">
                                 <strong>Role-based Workspaces</strong>
                                 <span>Dedicated student portals and instructor audit hubs</span>
@@ -303,7 +321,7 @@ const Register = () => {
                                 <AuthInput 
                                     type="email" 
                                     name="email" 
-                                    placeholder="Institutional / Personal Email"
+                                    placeholder="yourname@gmail.com"
                                     value={formData.email} 
                                     required
                                     onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -410,10 +428,21 @@ const Register = () => {
                                         Strength: {passwordStrength.label}
                                     </span>
                                     {passwordsMatch && (
-                                        <span className="match-status match-success">✓ Passwords match</span>
+                                        <span className="match-status match-success">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                            Passwords match
+                                        </span>
                                     )}
                                     {passwordsMismatch && (
-                                        <span className="match-status match-error">✕ Passwords do not match</span>
+                                        <span className="match-status match-error">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                            Passwords do not match
+                                        </span>
                                     )}
                                 </div>
                             </div>
