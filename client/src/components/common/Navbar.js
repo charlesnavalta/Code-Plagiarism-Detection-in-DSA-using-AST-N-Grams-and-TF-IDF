@@ -10,6 +10,7 @@ const Navbar = () => {
     
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
     const [user, setUser] = useState(() => {
         const rawUser = localStorage.getItem('user');
@@ -37,6 +38,15 @@ const Navbar = () => {
             window.removeEventListener('auth-state-changed', syncUser);
             window.removeEventListener('storage', syncUser);
         };
+    }, []);
+
+    // Hide mobile bottom nav when profile avatar modal is open
+    useEffect(() => {
+        const handleAvatarModal = (e) => {
+            setIsAvatarModalOpen(e.detail?.open ?? false);
+        };
+        window.addEventListener('avatar-modal-state', handleAvatarModal);
+        return () => window.removeEventListener('avatar-modal-state', handleAvatarModal);
     }, []);
 
     // Re-check authentication & user profile on every route transition (e.g. after login/logout)
@@ -266,7 +276,7 @@ const Navbar = () => {
             </nav>
 
             {/* --- 📱 MOBILE BOTTOM NAV (App-like) --- */}
-            <nav className={`mobile-bottom-nav ${!isVisible ? 'nav-hidden-mobile' : ''}`}>
+            <nav className={`mobile-bottom-nav ${(!isVisible || isAvatarModalOpen) ? 'nav-hidden-mobile' : ''}`}>
                 <Link to={targetDashboard} className={`app-nav-item ${isActive(targetDashboard)}`}>
                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>

@@ -52,6 +52,15 @@ const Profile = () => {
 
     // --- Avatar Management States ---
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+
+    const openAvatarModal = () => {
+        setIsAvatarModalOpen(true);
+        window.dispatchEvent(new CustomEvent('avatar-modal-state', { detail: { open: true } }));
+    };
+    const closeAvatarModal = () => {
+        setIsAvatarModalOpen(false);
+        window.dispatchEvent(new CustomEvent('avatar-modal-state', { detail: { open: false } }));
+    };
     const [avatarDraft, setAvatarDraft] = useState(currentUser.avatar_url || null);
     const [isSavingAvatar, setIsSavingAvatar] = useState(false);
 
@@ -115,7 +124,7 @@ const Profile = () => {
             window.dispatchEvent(new Event('storage'));
             window.dispatchEvent(new CustomEvent('user-avatar-changed', { detail: updatedUser }));
             toast.success(res.data.message || "Profile avatar updated successfully!", "Avatar Updated");
-            setIsAvatarModalOpen(false);
+            closeAvatarModal();
         } catch (err) {
             toast.error(err.response?.data?.error || "Failed to update avatar.", "Update Failed");
         } finally {
@@ -280,7 +289,7 @@ const Profile = () => {
                                     className="avatar-edit-badge"
                                     onClick={() => {
                                         setAvatarDraft(currentUser.avatar_url || null);
-                                        setIsAvatarModalOpen(true);
+                                        openAvatarModal();
                                     }}
                                     title="Update Profile Avatar"
                                     type="button"
@@ -509,7 +518,7 @@ const Profile = () => {
 
             {/* AVATAR SELECTION & UPLOAD MODAL */}
             {isAvatarModalOpen && (
-                <div className="avatar-modal-backdrop" onClick={() => setIsAvatarModalOpen(false)}>
+                <div className="avatar-modal-backdrop" onClick={() => closeAvatarModal()}>
                     <div className="avatar-modal-sheet" onClick={(e) => e.stopPropagation()}>
                         <div className="avatar-modal-header">
                             <div>
@@ -518,7 +527,7 @@ const Profile = () => {
                             </div>
                             <button 
                                 className="avatar-modal-close-btn" 
-                                onClick={() => setIsAvatarModalOpen(false)}
+                                onClick={() => closeAvatarModal()}
                                 type="button"
                                 aria-label="Close"
                             >
@@ -598,7 +607,7 @@ const Profile = () => {
                             <button 
                                 type="button" 
                                 className="nexus-btn-secondary" 
-                                onClick={() => setIsAvatarModalOpen(false)}
+                                onClick={() => closeAvatarModal()}
                                 disabled={isSavingAvatar}
                             >
                                 Cancel
