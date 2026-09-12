@@ -5,6 +5,39 @@ import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import './Profile.css';
 import api from '../../services/api'; 
 
+const DEVELOPER_AVATAR_PRESETS = [
+    {
+        id: 'terminal',
+        name: 'Terminal',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%230f172a"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%2338bdf8" stroke-width="3"/><path d="M30 38l16 12-16 12M52 62h18" stroke="%2338bdf8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
+    },
+    {
+        id: 'tree',
+        name: 'Algorithm Tree',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%231e1b4b"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%23818cf8" stroke-width="3"/><circle cx="50" cy="30" r="10" fill="%23818cf8"/><circle cx="32" cy="68" r="9" fill="%23818cf8"/><circle cx="68" cy="68" r="9" fill="%23818cf8"/><path d="M44 38L34 60M56 38l10 22" stroke="%23818cf8" stroke-width="4" stroke-linecap="round"/></svg>`
+    },
+    {
+        id: 'binary',
+        name: 'Binary Node',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%23022c22"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%2334d399" stroke-width="3"/><text x="50" y="44" fill="%2334d399" font-size="22" font-family="monospace" font-weight="900" text-anchor="middle">101</text><text x="50" y="70" fill="%2334d399" font-size="22" font-family="monospace" font-weight="900" text-anchor="middle">010</text></svg>`
+    },
+    {
+        id: 'brackets',
+        name: 'Code Syntax',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%23451a03"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%23fbbf24" stroke-width="3"/><text x="50" y="62" fill="%23fbbf24" font-size="44" font-family="monospace" font-weight="900" text-anchor="middle">{ }</text></svg>`
+    },
+    {
+        id: 'chip',
+        name: 'System Core',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%232e1065"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%23c084fc" stroke-width="3"/><rect x="30" y="30" width="40" height="40" rx="8" fill="none" stroke="%23c084fc" stroke-width="5"/><rect x="40" y="40" width="20" height="20" rx="4" fill="%23c084fc"/><path d="M50 18v12M50 70v12M18 50h12M70 50h12" stroke="%23c084fc" stroke-width="5" stroke-linecap="round"/></svg>`
+    },
+    {
+        id: 'database',
+        name: 'Data Stack',
+        dataUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="%23172554"/><rect x="5" y="5" width="90" height="90" rx="45" fill="none" stroke="%2360a5fa" stroke-width="3"/><ellipse cx="50" cy="34" rx="26" ry="10" fill="none" stroke="%2360a5fa" stroke-width="4"/><path d="M24 34v16c0 5.5 11.6 10 26 10s26-4.5 26-10V34M24 50v16c0 5.5 11.6 10 26 10s26-4.5 26-10V50" fill="none" stroke="%2360a5fa" stroke-width="4"/></svg>`
+    }
+];
+
 const Profile = () => {
     const [currentUser, setCurrentUser] = useState(() => {
         const rawUser = localStorage.getItem('user');
@@ -12,9 +45,83 @@ const Profile = () => {
     });
 
     const dashboardRef = useRef(null);
+    const fileInputRef = useRef(null);
     const toast = useToast();
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
+
+    // --- Avatar Management States ---
+    const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+    const [avatarDraft, setAvatarDraft] = useState(currentUser.avatar_url || null);
+    const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+
+    const compressImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const size = 180;
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    const minSide = Math.min(img.width, img.height);
+                    const sx = (img.width - minSide) / 2;
+                    const sy = (img.height - minSide) / 2;
+
+                    ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    resolve(dataUrl);
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    };
+
+    const handleFileSelect = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            return toast.warning("Please choose an image file (PNG, JPG, or WEBP).", "Invalid File");
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            return toast.warning("Image file size must be under 5MB.", "File Too Large");
+        }
+
+        try {
+            const compressed = await compressImage(file);
+            setAvatarDraft(compressed);
+        } catch (err) {
+            toast.error("Failed to process image.", "Error");
+        }
+    };
+
+    const handleSaveAvatar = async () => {
+        setIsSavingAvatar(true);
+        try {
+            const res = await api.put('/auth/profile/avatar', {
+                avatar_url: avatarDraft
+            });
+            const updatedUser = { ...currentUser, avatar_url: res.data.avatar_url };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setCurrentUser(updatedUser);
+            window.dispatchEvent(new Event('storage'));
+            window.dispatchEvent(new CustomEvent('user-avatar-changed', { detail: updatedUser }));
+            toast.success(res.data.message || "Profile avatar updated successfully!", "Avatar Updated");
+            setIsAvatarModalOpen(false);
+        } catch (err) {
+            toast.error(err.response?.data?.error || "Failed to update avatar.", "Update Failed");
+        } finally {
+            setIsSavingAvatar(false);
+        }
+    };
 
     // --- Email Update States ---
     const [newEmail, setNewEmail] = useState('');
@@ -146,7 +253,7 @@ const Profile = () => {
             </div>
 
             <div className="premium-profile-container fade-in-up">
-                <header className="action-banner-nexus spatial-card" style={{ marginBottom: '40px' }}>
+                <header className="action-banner-nexus spatial-card">
                     <div className="banner-content banner-header-split">
                         <div className="banner-text">
                             <h1>Account Overview</h1>
@@ -161,7 +268,30 @@ const Profile = () => {
                         <div className="card-glass-layer"></div>
                         <div className="avatar-banner"></div>
                         <div className="avatar-container">
-                            <div className="avatar-circle">{userInitial}</div>
+                            <div className="avatar-wrapper-relative">
+                                <div className="avatar-circle">
+                                    {currentUser.avatar_url ? (
+                                        <img src={currentUser.avatar_url} alt={currentUser.username || 'User'} className="profile-avatar-img" />
+                                    ) : (
+                                        userInitial
+                                    )}
+                                </div>
+                                <button 
+                                    className="avatar-edit-badge"
+                                    onClick={() => {
+                                        setAvatarDraft(currentUser.avatar_url || null);
+                                        setIsAvatarModalOpen(true);
+                                    }}
+                                    title="Update Profile Avatar"
+                                    type="button"
+                                    aria-label="Update profile avatar"
+                                >
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         
                         <div className="identity-details relative-z">
@@ -376,6 +506,115 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* AVATAR SELECTION & UPLOAD MODAL */}
+            {isAvatarModalOpen && (
+                <div className="avatar-modal-backdrop" onClick={() => setIsAvatarModalOpen(false)}>
+                    <div className="avatar-modal-sheet" onClick={(e) => e.stopPropagation()}>
+                        <div className="avatar-modal-header">
+                            <div>
+                                <h3 className="avatar-modal-title">Profile Avatar</h3>
+                                <p className="avatar-modal-subtitle">Select an identicon or upload a custom photo</p>
+                            </div>
+                            <button 
+                                className="avatar-modal-close-btn" 
+                                onClick={() => setIsAvatarModalOpen(false)}
+                                type="button"
+                                aria-label="Close"
+                            >
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="avatar-modal-body">
+                            {/* Live Preview & Upload Action */}
+                            <div className="avatar-preview-section">
+                                <div className="avatar-draft-circle">
+                                    {avatarDraft ? (
+                                        <img src={avatarDraft} alt="Avatar preview" className="profile-avatar-img" />
+                                    ) : (
+                                        <span className="avatar-draft-placeholder">{userInitial}</span>
+                                    )}
+                                </div>
+                                <div className="avatar-upload-actions">
+                                    <input 
+                                        type="file" 
+                                        ref={fileInputRef} 
+                                        onChange={handleFileSelect} 
+                                        accept="image/png,image/jpeg,image/webp" 
+                                        style={{ display: 'none' }} 
+                                    />
+                                    <div className="avatar-action-row">
+                                        <button 
+                                            type="button" 
+                                            className="nexus-btn-secondary avatar-action-btn"
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                            </svg>
+                                            Upload Photo
+                                        </button>
+                                        {avatarDraft && (
+                                            <button 
+                                                type="button" 
+                                                className="btn-avatar-remove"
+                                                onClick={() => setAvatarDraft(null)}
+                                            >
+                                                Remove Photo
+                                            </button>
+                                        )}
+                                    </div>
+                                    <span className="avatar-upload-hint">Supported: JPG, PNG, WEBP (Auto-scaled to square)</span>
+                                </div>
+                            </div>
+
+                            {/* Preset Identicons Grid */}
+                            <div className="avatar-presets-section">
+                                <label className="avatar-section-title">Developer Identicons</label>
+                                <div className="preset-avatars-grid">
+                                    {DEVELOPER_AVATAR_PRESETS.map((preset) => {
+                                        const isSelected = avatarDraft === preset.dataUrl;
+                                        return (
+                                            <button
+                                                key={preset.id}
+                                                type="button"
+                                                className={`preset-avatar-btn ${isSelected ? 'active' : ''}`}
+                                                onClick={() => setAvatarDraft(preset.dataUrl)}
+                                                title={preset.name}
+                                            >
+                                                <img src={preset.dataUrl} alt={preset.name} className="preset-thumb-img" />
+                                                <span className="preset-name">{preset.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="avatar-modal-footer">
+                            <button 
+                                type="button" 
+                                className="nexus-btn-secondary" 
+                                onClick={() => setIsAvatarModalOpen(false)}
+                                disabled={isSavingAvatar}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                type="button" 
+                                className="nexus-btn-primary" 
+                                onClick={handleSaveAvatar}
+                                disabled={isSavingAvatar || avatarDraft === currentUser.avatar_url}
+                            >
+                                {isSavingAvatar ? "Saving..." : "Save Changes"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

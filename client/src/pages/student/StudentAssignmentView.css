@@ -686,6 +686,125 @@ html[data-theme='light'] .receipt-row strong,
     line-height: 1.4;
 }
 
+/* INSTRUCTOR REMARKS / FEEDBACK CARD */
+.instructor-remarks-card {
+    background: var(--bg-card, #0f172a);
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.1));
+    border-left: 4px solid #3b82f6;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+}
+
+[data-theme='light'] .instructor-remarks-card,
+html[data-theme='light'] .instructor-remarks-card,
+.assignment-view-container.light .instructor-remarks-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.remarks-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.remarks-badge-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    color: #60a5fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+[data-theme='light'] .remarks-badge-icon,
+html[data-theme='light'] .remarks-badge-icon,
+.assignment-view-container.light .remarks-badge-icon {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.2);
+    color: #2563eb;
+}
+
+.remarks-header-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+}
+
+.remarks-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #60a5fa;
+    text-align: left;
+}
+
+[data-theme='light'] .remarks-tag,
+html[data-theme='light'] .remarks-tag,
+.assignment-view-container.light .remarks-tag {
+    color: #2563eb;
+}
+
+.remarks-instructor-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-main, #ffffff);
+    text-align: left;
+}
+
+[data-theme='light'] .remarks-instructor-name,
+html[data-theme='light'] .remarks-instructor-name,
+.assignment-view-container.light .remarks-instructor-name {
+    color: #0f172a;
+}
+
+.remarks-body {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: left;
+}
+
+[data-theme='light'] .remarks-body,
+html[data-theme='light'] .remarks-body,
+.assignment-view-container.light .remarks-body {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.remarks-text {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-main, #f1f5f9);
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left;
+    font-family: inherit;
+}
+
+[data-theme='light'] .remarks-text,
+html[data-theme='light'] .remarks-text,
+.assignment-view-container.light .remarks-text {
+    color: #1e293b;
+}
+
 /* Skeletons */
 .view-loading-skeleton-hero {
     height: 180px;
@@ -715,6 +834,10 @@ html[data-theme='light'] .receipt-row strong,
 
 /* Responsive */
 @media (max-width: 992px) {
+    .assignment-view-container {
+        padding-bottom: 24px;
+    }
+
     .assignment-view-grid {
         grid-template-columns: 1fr;
     }
@@ -729,7 +852,7 @@ html[data-theme='light'] .receipt-row strong,
         padding-top: 16px;
         padding-left: 14px;
         padding-right: 14px;
-        padding-bottom: 100px;
+        padding-bottom: 20px;
     }
 
     .assignment-hero-card {

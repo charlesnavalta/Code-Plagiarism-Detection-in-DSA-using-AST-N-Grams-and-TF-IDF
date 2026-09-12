@@ -3,22 +3,24 @@
     min-height: 100vh;
     min-height: 100dvh;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #ffffff;
+    background-color: #0f172a;
     position: relative;
-    overflow-x: hidden;
 }
 
 /* --- Left Pane Layout --- */
+.login-split-wrapper .split-left-pane,
 .split-left-pane {
     flex: 1.1;
+    align-self: stretch;
     background-color: #0f172a;
     color: white;
-    position: relative;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 60px 48px;
+    padding: 48px 48px;
+    box-sizing: border-box;
+    position: relative;
+    min-height: 100%;
 }
 
 .left-pane-content {
@@ -29,8 +31,10 @@
 }
 
 /* --- Right Pane Layout --- */
+.login-split-wrapper .split-right-pane,
 .split-right-pane {
     flex: 1;
+    align-self: stretch;
     background-color: #ffffff;
     display: flex;
     align-items: center;
@@ -38,7 +42,8 @@
     padding: 48px;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05); 
     z-index: 10;
-    overflow-y: auto;
+    box-sizing: border-box;
+    min-height: 100%;
 }
 
 .form-container {
@@ -138,13 +143,18 @@
     font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     box-sizing: border-box;
 }
 .btn-create-account:hover {
     background-color: #eff6ff;
     border-color: #93c5fd;
     color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+}
+.btn-create-account:active {
+    transform: scale(0.98);
 }
 
 .auth-page-footer {
@@ -160,6 +170,7 @@
     height: 200px;
     max-width: 420px;
     margin-top: 36px;
+    perspective: 1000px;
 }
 .abstract-card {
     position: absolute;
@@ -176,6 +187,8 @@
     border: 1px solid rgba(16, 185, 129, 0.3);
     z-index: 1;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    animation: floatBack 7s ease-in-out infinite;
+    animation-delay: 0.8s;
 }
 .card-front {
     top: 0;
@@ -185,13 +198,17 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
     z-index: 2;
     box-shadow: 15px 20px 40px rgba(0, 0, 0, 0.5);
+    animation: floatFront 6s ease-in-out infinite;
+    animation-delay: 0.6s;
 }
 .graphic-cluster:hover .card-front {
-    transform: translateY(-6px) translateX(-6px);
+    animation-play-state: paused;
+    transform: translateY(-8px) translateX(-6px);
     box-shadow: 20px 30px 50px rgba(0, 0, 0, 0.6);
 }
 .graphic-cluster:hover .card-back {
-    transform: translateY(6px) translateX(6px);
+    animation-play-state: paused;
+    transform: translateY(8px) translateX(6px);
 }
 .abstract-card code {
     display: block;
@@ -206,7 +223,12 @@
     background: rgba(255, 255, 255, 0.15);
     border-radius: 4px;
     margin-bottom: 8px;
+    animation: pulseCodeLine 3.5s ease-in-out infinite;
 }
+.dummy-code-line.w-75 { animation-delay: 0.5s; }
+.dummy-code-line.w-50 { animation-delay: 1s; }
+.dummy-code-line.w-100 { animation-delay: 1.5s; }
+
 .w-100 { width: 100%; } .w-75 { width: 75%; } .w-50 { width: 50%; }
 .match-indicator {
     height: 8px;
@@ -214,14 +236,110 @@
     background: #10b981;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    animation: fillMatchIndicator 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.6s;
 }
 
+/* =========================================
+   AUTHENTICATION CASCADE ANIMATIONS
+   ========================================= */
 .fade-in-up {
     animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Left Hero Pane Cascading Stagger */
+.left-pane-content .brand-logo {
+    animation: authFadeDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.05s;
+}
+.left-pane-content .hero-heading {
+    animation: authFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.15s;
+}
+.left-pane-content .hero-subtitle {
+    animation: authFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.25s;
+}
+.left-pane-content .graphic-cluster {
+    animation: authFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.35s;
+}
+
+/* Right Form Pane Cascading Stagger */
+.form-container .auth-title {
+    animation: authFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.08s;
+}
+.form-container .auth-subtitle {
+    animation: authFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.16s;
+}
+.form-container form > *:nth-child(1) {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.24s;
+}
+.form-container form > *:nth-child(2) {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.32s;
+}
+.form-container .auth-options-row {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.40s;
+}
+.form-container form > button,
+.form-container form > .auth-submit-btn {
+    animation: authFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.46s;
+}
+.form-container .auth-divider {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.52s;
+}
+.form-container .register-container {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.58s;
+}
+.form-container .auth-page-footer {
+    animation: authFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.64s;
+}
+
+/* Keyframes */
 @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes authFadeUp {
+    0% { opacity: 0; transform: translateY(18px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes authFadeDown {
+    0% { opacity: 0; transform: translateY(-14px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes floatFront {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(0.4deg); }
+}
+@keyframes floatBack {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(7px) rotate(-0.4deg); }
+}
+@keyframes fillMatchIndicator {
+    0% { width: 0%; opacity: 0.2; }
+    100% { width: 94.2%; opacity: 1; }
+}
+@keyframes pulseCodeLine {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-front, .card-back, .dummy-code-line, .match-indicator,
+    .left-pane-content *, .form-container * {
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
 .auth-warmup-notice {
@@ -243,18 +361,19 @@
 }
 
 /* =========================================
-   📱 RESPONSIVE BREAKPOINTS (Tablet & Mobile)
+   RESPONSIVE BREAKPOINTS (Tablet & Mobile)
    ========================================= */
 @media (max-width: 992px) {
     .login-split-wrapper {
+        min-height: 100dvh;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
         background-color: #0f172a;
         padding: 48px 20px max(48px, env(safe-area-inset-bottom));
-        min-height: 100dvh;
     }
 
+    .login-split-wrapper .split-left-pane,
     .split-left-pane {
         flex: none;
         width: 100%;
@@ -279,6 +398,7 @@
     .graphic-cluster { display: none; }
 
     /* The Floating Sheet Card */
+    .login-split-wrapper .split-right-pane,
     .split-right-pane {
         flex: none;
         width: 100%;

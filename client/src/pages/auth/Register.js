@@ -212,6 +212,22 @@ const Register = () => {
                                 <span>Dedicated student portals and instructor audit hubs</span>
                             </div>
                         </div>
+
+                        <div className="feature-pill">
+                            <div className="pill-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="18" r="3"></circle>
+                                    <circle cx="6" cy="6" r="3"></circle>
+                                    <circle cx="18" cy="6" r="3"></circle>
+                                    <path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path>
+                                    <path d="M12 12v3"></path>
+                                </svg>
+                            </div>
+                            <div className="pill-text">
+                                <strong>TF-IDF & Lexical Vectorization</strong>
+                                <span>Identifies token frequency patterns & obfuscated boilerplate</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="graphic-cluster">

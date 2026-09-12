@@ -37,6 +37,18 @@ button {
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+@media (min-width: 641px) and (max-width: 1024px) {
+    .nexus-wrapper {
+        padding-top: 54px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .nexus-wrapper {
+        padding-top: 50px !important;
+    }
+}
+
 .nexus-wrapper.light {
     --bg-app: #f1f5f9;
     --bg-card: rgba(255, 255, 255, 0.95);
@@ -88,8 +100,8 @@ button {
         gap: 36px;
     }
     .classroom-grid {
-        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
-        gap: 24px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 20px !important;
     }
 }
 
@@ -123,48 +135,56 @@ button {
    SIDEBAR (Profile & Stat Cards)
    ========================================= */
 .nexus-sidebar {
-    width: 290px;
+    width: 250px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
 }
 
-/* 🌟 HERO PROFILE CARD (Bigger & Prominent) */
+/* 🌟 PROFILE CARD */
 .profile-card {
+    border-radius: 16px;
     border: 1px solid rgba(59, 130, 246, 0.18);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 .profile-card .card-content {
-    padding: 28px 22px;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 .avatar-hologram {
-    width: 78px;
-    height: 78px;
-    margin: 0 auto 16px;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 10px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .avatar-core {
-    width: 62px;
-    height: 62px;
+    width: 48px;
+    height: 48px;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     border-radius: 50%;
     color: white;
     font-weight: 900;
-    font-size: 1.55rem;
+    font-size: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 2;
     box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    overflow: hidden;
+}
+.profile-card-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 .avatar-ring-1 {
     position: absolute;
@@ -179,62 +199,65 @@ button {
 }
 
 .user-display-name {
-    font-size: 1.3rem;
+    font-size: 1.12rem;
     font-weight: 800;
-    margin: 0 0 4px;
+    margin: 0 0 3px;
     text-align: center;
     color: var(--text-main);
     letter-spacing: -0.3px;
 }
 .user-role-text {
-    font-size: 0.76rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
     text-align: center;
-    margin: 0 0 16px 0;
+    margin: 0 0 10px 0;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.8px;
 }
 .system-status {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 800;
     color: #10b981;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     justify-content: center;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     background: rgba(16, 185, 129, 0.1);
-    padding: 5px 14px;
+    padding: 3px 10px;
     border-radius: 20px;
     border: 1px solid rgba(16, 185, 129, 0.25);
 }
 .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     background: #10b981;
     border-radius: 50%;
     box-shadow: 0 0 8px #10b981;
 }
 
 /* 🌟 STAT CARD */
+.stat-card {
+    border-radius: 16px;
+}
 .stat-card .card-content {
-    padding: 22px 24px;
+    padding: 18px 18px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 .stat-label {
-    font-size: 0.74rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
     color: var(--text-dim);
     font-weight: 800;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     margin: 0;
     display: block;
 }
 .stat-value {
-    font-size: 2.3rem;
+    font-size: 1.85rem;
     font-weight: 900;
     line-height: 1;
     color: var(--text-main);
@@ -255,20 +278,47 @@ button {
 }
 
 /* =========================================
-   HERO ACTION BANNER (COMPACT & CRISP)
+   HERO ACTION BANNER (REFINED HIGH-TECH CYBER-GLASS)
    ========================================= */
 .cinematic-banner-shared {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%) !important;
-    border: none !important;
-    box-shadow: 0 16px 36px -8px rgba(79, 70, 229, 0.35) !important;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 27, 75, 0.72) 48%, rgba(15, 23, 42, 0.96) 100%) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 20px 40px -15px rgba(0, 0, 0, 0.6),
+        0 0 32px -10px rgba(99, 102, 241, 0.22) !important;
     border-radius: 20px;
     width: 100%;
-    height: auto !important;
-    min-height: 0 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.cinematic-banner-shared::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 5%, rgba(99, 102, 241, 0.9) 30%, rgba(168, 85, 247, 0.9) 70%, transparent 95%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+[data-theme='light'] .cinematic-banner-shared,
+.nexus-wrapper.light .cinematic-banner-shared {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 52%, #eef2ff 100%) !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 12px 32px -6px rgba(59, 130, 246, 0.1) !important;
+}
+
+[data-theme='light'] .cinematic-banner-shared::before,
+.nexus-wrapper.light .cinematic-banner-shared::before {
+    background: linear-gradient(90deg, transparent 5%, rgba(59, 130, 246, 0.7) 30%, rgba(99, 102, 241, 0.7) 70%, transparent 95%);
 }
 
 .banner-content {
-    padding: 30px 34px;
+    padding: 24px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -283,33 +333,59 @@ button {
 }
 .banner-text h1 {
     color: #ffffff !important;
-    font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 65%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
     font-weight: 900;
     letter-spacing: -0.8px;
     margin: 0 0 4px 0;
     line-height: 1.2;
 }
+
+[data-theme='light'] .banner-text h1,
+.nexus-wrapper.light .banner-text h1 {
+    color: #0f172a !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .banner-subtitle {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: #94a3b8 !important;
     margin: 0;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     line-height: 1.4;
     display: block;
 }
 
-/* Action Form (Pill Container) */
+[data-theme='light'] .banner-subtitle,
+.nexus-wrapper.light .banner-subtitle {
+    color: #64748b !important;
+}
+
+/* Action Form (Cyber Glass Container) */
 .nexus-join-form {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 6px 6px 6px 14px;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 5px 6px 5px 14px;
     border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(99, 102, 241, 0.35);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
+
+[data-theme='light'] .nexus-join-form,
+.nexus-wrapper.light .nexus-join-form {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 .input-with-icon {
     position: relative;
     display: flex;
@@ -321,39 +397,58 @@ button {
     color: #ffffff !important;
     padding: 8px 12px;
     outline: none !important;
-    width: 180px;
-    font-size: 0.92rem;
+    width: 170px;
+    font-size: 0.88rem;
 }
+
+[data-theme='light'] .nexus-input,
+.nexus-wrapper.light .nexus-input {
+    color: #0f172a !important;
+}
+
 .code-input {
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 .nexus-input::placeholder {
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: #94a3b8 !important;
     letter-spacing: normal;
     text-transform: none;
+    opacity: 0.8;
+}
+
+[data-theme='light'] .nexus-input::placeholder,
+.nexus-wrapper.light .nexus-input::placeholder {
+    color: #64748b !important;
 }
 
 .nexus-btn-primary {
-    background: #ffffff !important;
-    color: #4f46e5 !important;
-    border: none !important;
-    padding: 10px 22px;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(168, 85, 247, 0.4) !important;
+    padding: 9px 20px;
     border-radius: 40px;
     font-weight: 800;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
 }
 .nexus-btn-primary:hover {
-    transform: scale(1.04);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
+}
+
+[data-theme='light'] .nexus-btn-primary,
+.nexus-wrapper.light .nexus-btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    border-color: #1d4ed8 !important;
+    color: #ffffff !important;
 }
 
 /* =========================================
@@ -376,35 +471,39 @@ button {
 
 .classroom-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 .course-card {
     cursor: pointer;
     height: 100%;
     display: flex;
     flex-direction: column;
+    border-radius: 16px;
+}
+.course-card .card-content {
+    padding: 16px 16px 14px;
 }
 .node-badge {
     background: rgba(59, 130, 246, 0.12);
     color: var(--accent);
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 6px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 800;
     align-self: flex-start;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     border: 1px solid rgba(59, 130, 246, 0.2);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .course-title {
-    font-size: 1.2rem;
+    font-size: 1.02rem;
     font-weight: 800;
-    margin: 0 0 14px;
-    letter-spacing: -0.4px;
-    line-height: 1.3;
-    min-height: 2.6rem;
+    margin: 0 0 10px;
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+    min-height: 2.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -418,20 +517,20 @@ button {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    row-gap: 8px;
-    column-gap: 8px;
-    margin-bottom: 18px;
+    row-gap: 6px;
+    column-gap: 6px;
+    margin-bottom: 12px;
     width: 100%;
 }
 
 .card-code-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 9px;
+    gap: 5px;
+    padding: 3px 8px;
     background: rgba(59, 130, 246, 0.1);
     border: 1px solid rgba(59, 130, 246, 0.25);
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
@@ -447,7 +546,7 @@ button {
 }
 
 .code-pill-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -455,7 +554,7 @@ button {
 }
 .code-pill-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: var(--text-main);
     letter-spacing: 0.5px;
@@ -471,12 +570,12 @@ button {
 .card-students-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 9px;
+    gap: 4px;
+    padding: 3px 8px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border-card);
-    border-radius: 8px;
-    font-size: 0.78rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--text-dim);
     white-space: nowrap;
@@ -487,7 +586,7 @@ button {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 .card-top-action-row .node-badge {
     margin-bottom: 0;
@@ -518,46 +617,64 @@ html[data-theme='light'] .card-students-badge {
 .card-instructor-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 .ins-mini-avatar {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     background: rgba(59, 130, 246, 0.15);
     color: var(--accent);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 800;
     flex-shrink: 0;
+    overflow: hidden;
+}
+.ins-mini-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
 }
 .ins-name {
-    font-size: 0.86rem;
+    font-size: 0.8rem;
     color: var(--text-dim);
     font-weight: 600;
 }
 
 .course-footer-nexus {
     margin-top: auto;
-    padding-top: 14px;
+    padding-top: 10px;
     border-top: 1px solid var(--border-card);
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: var(--text-dim);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
 }
 .course-card:hover .course-footer-nexus { color: var(--accent); }
-.arrow-icon { transition: transform 0.25s ease; }
+.arrow-icon { 
+    width: 15px; 
+    height: 15px; 
+    transition: transform 0.25s ease; 
+}
 .course-card:hover .arrow-icon { transform: translateX(5px); }
 
 /* =========================================
    RECENT SUBMISSIONS HISTORY
    ========================================= */
-.history-card { min-height: auto; }
+.history-card { 
+    min-height: auto; 
+    border-radius: 16px;
+}
+.history-card .card-content {
+    padding: 16px 16px;
+}
 .submission-history-list {
     list-style: none;
     padding: 0;
@@ -659,33 +776,37 @@ html[data-theme='light'] .skeleton-box {
 
 /* Skeleton Classroom Card */
 .skeleton-course-card {
-    min-height: 175px;
+    min-height: 140px;
     display: flex;
     flex-direction: column;
     pointer-events: none;
     cursor: default;
+    border-radius: 16px;
+}
+.skeleton-course-card .card-content {
+    padding: 16px 16px 14px;
 }
 .skeleton-badge {
-    width: 72px;
-    height: 20px;
+    width: 60px;
+    height: 18px;
     border-radius: 6px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 .skeleton-title {
     width: 80%;
-    height: 24px;
+    height: 20px;
     border-radius: 6px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 .skeleton-instructor {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 .skeleton-avatar {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -791,16 +912,16 @@ html[data-theme='light'] .skeleton-box {
 @media (max-width: 992px) {
     .nexus-layout {
         flex-direction: column;
-        padding: 20px 18px;
-        gap: 20px;
+        padding: 16px 20px 24px;
+        gap: 16px;
     }
     
-    /* On tablet: Profile Card is large & prominent on left, Stat Card on right */
+    /* On tablet: Profile Card on left, Stat Card on right */
     .nexus-sidebar {
         width: 100%;
         display: grid;
-        grid-template-columns: 1.5fr 1fr;
-        gap: 16px;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 14px;
         align-items: stretch;
     }
     .profile-card {
@@ -821,27 +942,42 @@ html[data-theme='light'] .skeleton-box {
         width: 100%;
     }
 
+    .cinematic-banner-shared {
+        border-radius: 16px;
+    }
     .banner-content {
-        padding: 24px 24px;
+        padding: 18px 22px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 14px;
     }
     .banner-text {
         width: 100%;
         text-align: left;
     }
     .banner-text h1 {
-        font-size: 1.85rem;
+        font-size: 1.45rem;
+    }
+    .banner-subtitle {
+        font-size: 0.82rem;
     }
     .nexus-join-form {
         width: 100%;
-        max-width: 480px;
+        max-width: 440px;
+        padding: 4px 5px 4px 12px;
         justify-content: space-between;
     }
     .nexus-input {
         flex-grow: 1;
         width: auto;
+    }
+    .nexus-btn-primary {
+        padding: 8px 18px;
+        font-size: 0.84rem;
+    }
+    .classroom-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
     }
 }
 
@@ -852,102 +988,120 @@ html[data-theme='light'] .skeleton-box {
     .nexus-layout {
         display: flex;
         flex-direction: column;
-        padding: 4px 14px 110px 14px;
-        gap: 12px;
+        padding: 6px 12px 20px 12px;
+        gap: 10px;
         width: 100%;
     }
     
+    /* 🌟 Compact 2-column header row on mobile: Profile (left) + Stats (right) */
     .nexus-sidebar {
-        display: contents;
+        order: 1;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 10px;
+        align-items: stretch;
     }
 
-    /* 🌟 1. Renz (Profile Card) */
     .profile-card {
-        order: 1;
         width: 100% !important;
-        border-radius: 16px;
+        height: 100%;
+        border-radius: 14px;
+        margin: 0;
     }
     .profile-card .card-content {
-        padding: 16px 14px;
+        padding: 12px 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
     }
     .avatar-hologram {
-        width: 56px;
-        height: 56px;
-        margin: 0 auto 8px;
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 4px;
     }
     .avatar-core {
-        width: 46px;
-        height: 46px;
-        font-size: 1.25rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.05rem;
     }
     .user-display-name {
-        font-size: 1.15rem;
+        font-size: 0.95rem;
         font-weight: 800;
-        margin: 0 0 2px;
+        margin: 0 0 1px;
     }
     .user-role-text {
-        font-size: 0.68rem;
-        margin: 0 0 8px 0;
-        letter-spacing: 0.8px;
+        font-size: 0.62rem;
+        margin: 0 0 4px 0;
+        letter-spacing: 0.6px;
     }
     .system-status {
-        font-size: 0.68rem;
-        padding: 3px 10px;
+        font-size: 0.62rem;
+        padding: 2px 8px;
     }
 
-    /* 🌟 2. Active Classes (Stat Card) */
     .stat-card {
-        order: 2;
         width: 100% !important;
-        border-radius: 16px;
+        height: 100%;
+        border-radius: 14px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .stat-card .card-content {
-        padding: 16px 18px;
+        padding: 12px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 2px;
     }
-    .stat-number {
-        font-size: 2.2rem;
-        line-height: 1.1;
+    .stat-number, .stat-value {
+        font-size: 1.85rem;
+        line-height: 1;
         margin-bottom: 2px;
     }
     .stat-label {
-        font-size: 0.72rem;
+        font-size: 0.64rem;
+        letter-spacing: 0.8px;
     }
 
-    /* 🌟 3. Instructor Hub & 4. My Classrooms (Main Section) */
+    /* 🌟 Main Hub Area */
     .nexus-main {
-        order: 3;
+        order: 2;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 12px;
         width: 100% !important;
     }
 
-    /* 🌟 5. Recent Submissions (At the very bottom) */
+    /* 🌟 Recent Submissions (At bottom) */
     .history-card {
-        order: 4;
-        margin-top: 4px;
+        order: 3;
+        margin-top: 2px;
         width: 100% !important;
-        border-radius: 18px;
+        border-radius: 14px;
     }
     .history-card .card-content {
-        padding: 18px 16px;
+        padding: 14px 14px;
     }
 
-    /* Mobile Hero Action Banner */
+    /* 🌟 Redesigned Compact Mobile Banner */
     .cinematic-banner-shared {
-        border-radius: 18px;
+        border-radius: 14px !important;
         height: auto !important;
         width: 100% !important;
+        margin-bottom: 0;
     }
     .banner-content {
-        padding: 20px 16px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
+        padding: 12px 14px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
         height: auto !important;
     }
     .banner-text {
@@ -955,66 +1109,97 @@ html[data-theme='light'] .skeleton-box {
         text-align: left;
     }
     .banner-text h1 {
-        font-size: 1.5rem;
+        font-size: 1.15rem !important;
         letter-spacing: -0.4px;
-        margin: 0 0 3px 0;
+        margin: 0 0 2px 0 !important;
         text-align: left;
     }
     .banner-subtitle {
-        font-size: 0.84rem;
-        color: rgba(255, 255, 255, 0.85) !important;
+        font-size: 0.76rem !important;
+        color: #94a3b8 !important;
         display: block !important;
         line-height: 1.35;
         text-align: left;
     }
+    [data-theme='light'] .banner-subtitle {
+        color: #64748b !important;
+    }
 
-    /* Mobile Form */
+    /* Sleek single-row mobile form */
     .nexus-join-form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        border-radius: 12px;
-        padding: 8px;
-        gap: 8px;
-        background: rgba(0, 0, 0, 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100% !important;
+        border-radius: 10px !important;
+        padding: 4px 5px !important;
+        gap: 6px !important;
+        background: rgba(15, 23, 42, 0.7) !important;
+        border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    }
+    [data-theme='light'] .nexus-join-form {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
     }
     .input-with-icon {
-        width: 100%;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        width: auto !important;
     }
     .nexus-input {
-        width: 100%;
-        text-align: center;
-        font-size: 0.92rem;
-        background: rgba(0, 0, 0, 0.2) !important;
-        border-radius: 8px !important;
-        padding: 10px;
+        width: 100% !important;
+        height: 34px !important;
+        padding: 4px 8px !important;
+        font-size: 0.82rem !important;
+        text-align: left !important;
+        background: transparent !important;
+        border-radius: 6px !important;
         color: #ffffff !important;
     }
+    [data-theme='light'] .nexus-input {
+        color: #0f172a !important;
+    }
+    .code-input {
+        letter-spacing: 1.5px;
+    }
     .nexus-btn-primary {
-        width: 100%;
-        padding: 11px;
-        border-radius: 8px;
-        font-size: 0.92rem;
-        font-weight: 800;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        height: 34px !important;
+        padding: 0 14px !important;
+        border-radius: 8px !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
     }
     .nexus-btn-primary:active {
         transform: scale(0.97);
     }
 
     /* Classroom Grid on Mobile */
+    .section-title-block {
+        margin-bottom: 10px;
+        gap: 8px;
+    }
+    .section-title-block h2 {
+        font-size: 1.05rem;
+    }
     .classroom-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
         width: 100%;
     }
+    @media (max-width: 520px) {
+        .classroom-grid {
+            grid-template-columns: 1fr;
+        }
+    }
     .course-card .card-content {
-        padding: 18px 16px;
+        padding: 14px 14px;
     }
     .course-card .course-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         min-height: auto;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
     .course-card:active {
         transform: scale(0.98);

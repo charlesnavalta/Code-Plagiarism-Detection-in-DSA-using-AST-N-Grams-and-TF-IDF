@@ -12,6 +12,20 @@ const Footer = () => {
     const [legalModalOpen, setLegalModalOpen] = useState(false);
     const [legalModalTab, setLegalModalTab] = useState('terms');
 
+    const [mobileOpenSections, setMobileOpenSections] = useState({
+        languages: false,
+        engine: false,
+        references: false,
+        legal: false
+    });
+
+    const toggleMobileSection = (key) => {
+        setMobileOpenSections(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
+
     // Automatically exclude footer on dedicated auth flows
     const hiddenRoutes = ['/login', '/register', '/forgot-password'];
     const isHidden = hiddenRoutes.some(path => location.pathname === path || location.pathname.startsWith(`${path}/`));
@@ -25,7 +39,7 @@ const Footer = () => {
     return (
         <footer className="nexus-footer" role="contentinfo" aria-label="Site Footer">
             <div className="nexus-footer-container">
-                {/* --- TOP BRAND & MISSION ROW (AlgoBlocks Inspired) --- */}
+                {/* --- TOP BRAND & MISSION ROW --- */}
                 <div className="footer-brand-section">
                     <div className="footer-brand-header">
                         <div className="footer-logo">
@@ -39,114 +53,172 @@ const Footer = () => {
                         <span className="brand-badge-pill">Academic & Research Platform</span>
                     </div>
 
-                    <h3 className="footer-brand-tagline">
-                        Algorithmic integrity, one syntax tree at a time.
-                    </h3>
+                    <div className="footer-brand-body">
+                        <h3 className="footer-brand-tagline">
+                            Algorithmic integrity, one syntax tree at a time.
+                        </h3>
 
-                    <p className="footer-description">
-                        An academic platform for detecting source code plagiarism in Data Structures & Algorithms coursework. Evaluates structural syntax trees (AST), token n-grams, and term frequency metrics to identify renamed identifiers, reordered logic, and algorithmic similarity.
-                    </p>
+                        <p className="footer-description">
+                            An academic platform for detecting source code plagiarism in Data Structures & Algorithms coursework. Evaluates structural syntax trees (AST), token n-grams, and term frequency metrics to identify renamed identifiers, reordered logic, and algorithmic similarity.
+                        </p>
+                    </div>
                 </div>
 
-                {/* --- 3-COLUMN LINK GRID --- */}
+                {/* --- 4-COLUMN RESPONSIVE LINK GRID --- */}
                 <div className="footer-grid-section">
                     {/* Column 1: Supported Languages */}
-                    <div className="footer-column">
-                        <h4 className="footer-column-title">Supported Languages</h4>
-                        <ul className="footer-links-list">
-                            {SUPPORTED_LANGUAGES.map((lang, idx) => (
-                                <li key={idx} className="footer-lang-item">
-                                    <span className="lang-name">{lang}</span>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className={`footer-column ${mobileOpenSections.languages ? 'is-open' : ''}`}>
+                        <button 
+                            type="button" 
+                            className="footer-column-header-btn"
+                            onClick={() => toggleMobileSection('languages')}
+                            aria-expanded={mobileOpenSections.languages}
+                        >
+                            <h4 className="footer-column-title">Supported Languages</h4>
+                            <span className="footer-accordion-icon" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div className="footer-column-content">
+                            <ul className="footer-links-list">
+                                {SUPPORTED_LANGUAGES.map((lang, idx) => (
+                                    <li key={idx} className="footer-lang-item">
+                                        <span className="lang-name">{lang}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
 
                     {/* Column 2: Detection Engine */}
-                    <div className="footer-column">
-                        <h4 className="footer-column-title">Detection Engine</h4>
-                        <ul className="footer-links-list">
-                            <li>AST Normalization</li>
-                            <li>N-Gram Token Analysis</li>
-                            <li>TF-IDF Vectorization</li>
-                            <li>Dead Code & Boilerplate Filter</li>
-                            <li>Algorithmic Similarity Scoring</li>
-                            <li>Side-by-Side Diff Inspection</li>
-                        </ul>
+                    <div className={`footer-column ${mobileOpenSections.engine ? 'is-open' : ''}`}>
+                        <button 
+                            type="button" 
+                            className="footer-column-header-btn"
+                            onClick={() => toggleMobileSection('engine')}
+                            aria-expanded={mobileOpenSections.engine}
+                        >
+                            <h4 className="footer-column-title">Detection Engine</h4>
+                            <span className="footer-accordion-icon" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div className="footer-column-content">
+                            <ul className="footer-links-list">
+                                <li>AST Normalization</li>
+                                <li>N-Gram Token Analysis</li>
+                                <li>TF-IDF Vectorization</li>
+                                <li>Dead Code & Boilerplate Filter</li>
+                                <li>Algorithmic Similarity Scoring</li>
+                                <li>Side-by-Side Diff Inspection</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    {/* Column 3: DSA References (W3Schools & Learning Resources) */}
-                    <div className="footer-column">
-                        <h4 className="footer-column-title">DSA References</h4>
-                        <ul className="footer-links-list">
-                            <li>
-                                <a href="https://www.w3schools.com/dsa/" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    W3Schools DSA Guide
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.w3schools.com/dsa/dsa_algo_simple.php" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    Sorting & Search Reference
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.w3schools.com/dsa/dsa_theory_trees.php" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    Binary Trees & Graphs
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.w3schools.com/dsa/" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    Dynamic Programming
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.w3schools.com/python/" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    Python Reference (W3Schools)
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.w3schools.com/java/" target="_blank" rel="noopener noreferrer" className="footer-link">
-                                    Java Reference (W3Schools)
-                                </a>
-                            </li>
-                        </ul>
+                    {/* Column 3: DSA References */}
+                    <div className={`footer-column ${mobileOpenSections.references ? 'is-open' : ''}`}>
+                        <button 
+                            type="button" 
+                            className="footer-column-header-btn"
+                            onClick={() => toggleMobileSection('references')}
+                            aria-expanded={mobileOpenSections.references}
+                        >
+                            <h4 className="footer-column-title">DSA References</h4>
+                            <span className="footer-accordion-icon" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div className="footer-column-content">
+                            <ul className="footer-links-list">
+                                <li>
+                                    <a href="https://www.w3schools.com/dsa/" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        W3Schools DSA Guide
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.w3schools.com/dsa/dsa_algo_simple.php" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        Sorting & Search Reference
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.w3schools.com/dsa/dsa_theory_trees.php" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        Binary Trees & Graphs
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.w3schools.com/dsa/" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        Dynamic Programming
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.w3schools.com/python/" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        Python Reference (W3Schools)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.w3schools.com/java/" target="_blank" rel="noopener noreferrer" className="footer-link">
+                                        Java Reference (W3Schools)
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     {/* Column 4: Legal & Privacy */}
-                    <div className="footer-column">
-                        <h4 className="footer-column-title">Legal & Compliance</h4>
-                        <ul className="footer-links-list">
-                            <li>
-                                <button type="button" className="footer-text-btn" onClick={() => openLegalModal('terms')}>
-                                    Terms of Service
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" className="footer-text-btn" onClick={() => openLegalModal('privacy')}>
-                                    Privacy Policy
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" className="footer-text-btn" onClick={() => openLegalModal('cookies')}>
-                                    Cookie Policy
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" className="footer-text-btn" onClick={() => openLegalModal('refund')}>
-                                    Refund Policy
-                                </button>
-                            </li>
-                            <li>
-                                <a 
-                                    href="https://mail.google.com/mail/?view=cm&fs=1&to=falsicode.web@gmail.com&su=Falsicode%20Support%20Inquiry" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    className="footer-link"
-                                >
-                                    Contact Support
-                                </a>
-                            </li>
-                        </ul>
+                    <div className={`footer-column ${mobileOpenSections.legal ? 'is-open' : ''}`}>
+                        <button 
+                            type="button" 
+                            className="footer-column-header-btn"
+                            onClick={() => toggleMobileSection('legal')}
+                            aria-expanded={mobileOpenSections.legal}
+                        >
+                            <h4 className="footer-column-title">Legal & Compliance</h4>
+                            <span className="footer-accordion-icon" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div className="footer-column-content">
+                            <ul className="footer-links-list">
+                                <li>
+                                    <button type="button" className="footer-text-btn" onClick={() => openLegalModal('terms')}>
+                                        Terms of Service
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" className="footer-text-btn" onClick={() => openLegalModal('privacy')}>
+                                        Privacy Policy
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" className="footer-text-btn" onClick={() => openLegalModal('cookies')}>
+                                        Cookie Policy
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" className="footer-text-btn" onClick={() => openLegalModal('refund')}>
+                                        Refund Policy
+                                    </button>
+                                </li>
+                                <li>
+                                    <a 
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=falsicode.web@gmail.com&su=Falsicode%20Support%20Inquiry" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="footer-link"
+                                    >
+                                        Contact Support
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 

@@ -383,6 +383,14 @@ html[data-theme='light'] .roster-item-card.is-you-card {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.roster-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .roster-user-details {

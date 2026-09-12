@@ -19,10 +19,23 @@ import StudentClassmatesModal from '../../modals/classroom/StudentClassmatesModa
 import LeaveClassroomModal from '../../modals/classroom/LeaveClassroomModal';
 
 const StudentDashboard = () => {
-    const currentUser = getUserData();
-    const userId = currentUser.id || currentUser.user_id || currentUser.username || 'student';
+    const [user, setUser] = useState(() => getUserData());
+    const userId = user.id || user.user_id || user.username || 'student';
     const cacheKeyClasses = `falsicode_student_classes_${userId}`;
     const cacheKeySubs = `falsicode_student_subs_${userId}`;
+
+    useEffect(() => {
+        const handleUserUpdate = (e) => {
+            if (e.detail) setUser(e.detail);
+            else setUser(getUserData());
+        };
+        window.addEventListener('user-avatar-changed', handleUserUpdate);
+        window.addEventListener('storage', handleUserUpdate);
+        return () => {
+            window.removeEventListener('user-avatar-changed', handleUserUpdate);
+            window.removeEventListener('storage', handleUserUpdate);
+        };
+    }, []);
 
     const getCached = (key) => {
         try {
@@ -56,7 +69,7 @@ const StudentDashboard = () => {
         });
     };
 
-    const displayName = currentUser.first_name || currentUser.name || currentUser.username || 'Student';
+    const displayName = user.first_name || user.name || user.username || 'Student';
     const userInitial = displayName.charAt(0).toUpperCase();
 
     const fetchDashboardData = async () => {
@@ -108,6 +121,7 @@ const StudentDashboard = () => {
                     <ProfileCard
                         displayName={displayName}
                         userInitial={userInitial}
+                        avatarUrl={user.avatar_url}
                         roleText="Student Workspace"
                         statusLabel="ONLINE"
                         profileLink="/student/profile"
@@ -198,7 +212,13 @@ const StudentDashboard = () => {
                                             <h3 className="course-title">{cls.name}</h3>
                                             <div className="course-card-meta-row">
                                                 <div className="card-instructor-pill">
-                                                    <div className="ins-mini-avatar">{cls.instructor.charAt(0).toUpperCase()}</div>
+                                                    <div className="ins-mini-avatar">
+                                                        {cls.instructor_avatar ? (
+                                                            <img src={cls.instructor_avatar} alt="" className="ins-mini-avatar-img" />
+                                                        ) : (
+                                                            cls.instructor.charAt(0).toUpperCase()
+                                                        )}
+                                                    </div>
                                                     <span className="ins-name">{cls.instructor}</span>
                                                 </div>
                                             </div>

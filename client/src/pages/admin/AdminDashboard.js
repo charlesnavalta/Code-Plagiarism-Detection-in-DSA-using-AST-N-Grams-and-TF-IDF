@@ -124,7 +124,7 @@ const AdminDashboard = () => {
             <div className="admin-max-width fade-in-up">
                 
                 {/* --- Header Banner --- */}
-                <header className="action-banner-nexus spatial-card" style={{ marginBottom: '32px' }}>
+                <header className="action-banner-nexus spatial-card">
                     <div className="banner-content banner-header-split">
                         <div className="banner-text">
                             <h1>System Overview</h1>

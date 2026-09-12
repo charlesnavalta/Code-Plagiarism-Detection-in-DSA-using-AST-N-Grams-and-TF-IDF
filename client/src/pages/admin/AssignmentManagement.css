@@ -1,76 +1,227 @@
 /* AssignmentManagement.css */
 
+/* TABLE SIZING & RESPONSIVENESS */
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.table-responsive-wrapper .nexus-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+/* Balanced cell padding across all columns to fit 7 columns comfortably */
+.table-responsive-wrapper .nexus-table th,
+.table-responsive-wrapper .nexus-table td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-card);
+}
+
+/* Column 1: Task Information */
+.table-responsive-wrapper .nexus-table th:first-child,
+.table-responsive-wrapper .nexus-table td:first-child {
+    padding-left: 18px;
+    min-width: 180px;
+    max-width: 250px;
+}
+
+/* Column 2: Classroom & Faculty */
+.table-responsive-wrapper .nexus-table th:nth-child(2),
+.table-responsive-wrapper .nexus-table td:nth-child(2) {
+    min-width: 140px;
+    max-width: 200px;
+}
+
+/* Column 3: Language */
+.table-responsive-wrapper .nexus-table th:nth-child(3),
+.table-responsive-wrapper .nexus-table td:nth-child(3) {
+    width: 75px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Column 4: Max Score */
+.table-responsive-wrapper .nexus-table th:nth-child(4),
+.table-responsive-wrapper .nexus-table td:nth-child(4) {
+    width: 70px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Column 5: Due Date */
+.table-responsive-wrapper .nexus-table th:nth-child(5),
+.table-responsive-wrapper .nexus-table td:nth-child(5) {
+    width: 110px;
+    white-space: nowrap;
+}
+
+/* Column 6: Submissions */
+.table-responsive-wrapper .nexus-table th:nth-child(6),
+.table-responsive-wrapper .nexus-table td:nth-child(6) {
+    width: 120px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Column 7: Actions (Seamlessly integrated into the table row) */
+.table-responsive-wrapper .nexus-table th:last-child,
+.table-responsive-wrapper .nexus-table td:last-child {
+    padding-right: 18px;
+    width: 80px;
+    white-space: nowrap;
+    text-align: right;
+}
+
+/* Task Title cell */
 .task-title-cell {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 .task-icon-box {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     background: rgba(99, 102, 241, 0.12);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
     flex-shrink: 0;
+    color: #818cf8;
 }
 .task-main-title {
-    font-weight: 800;
+    font-weight: 700;
     color: var(--text-main);
     display: block;
+    line-height: 1.3;
+    font-size: 0.88rem;
+    word-break: normal;
 }
 .task-id-sub {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-dim);
     font-family: 'JetBrains Mono', monospace;
 }
 
+/* Classroom & Faculty */
 .class-faculty-meta {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
 }
 .class-faculty-meta strong {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     color: var(--text-main);
+    line-height: 1.3;
 }
 .class-faculty-meta span {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-dim);
 }
 
+/* Language Pill */
 .lang-pill {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
     border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: 6px;
-    padding: 3px 8px;
-    font-size: 0.75rem;
+    padding: 2px 7px;
+    font-size: 0.7rem;
     font-weight: 700;
+    white-space: nowrap;
+    display: inline-block;
 }
 
+/* Score Pill */
 .score-pill-plain {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: var(--text-main);
+    white-space: nowrap;
 }
 
-.deadline-cell {
-    font-size: 0.82rem;
-    color: var(--text-dim);
+/* Due Date */
+.deadline-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 }
-.deadline-cell.overdue {
+.deadline-date {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+}
+.deadline-time {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+}
+.deadline-cell.overdue .deadline-date {
     color: #ef4444;
     font-weight: 700;
 }
 
+/* Submissions Pill */
 .count-pill.submissions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.2;
     background: rgba(6, 182, 212, 0.1);
     color: #06b6d4;
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    flex-shrink: 0;
+}
+
+/* Actions Cell Wrapper */
+.actions-cell-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.btn-icon-nexus {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border-card);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.btn-icon-nexus:hover.edit {
+    color: #3b82f6;
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.12);
+    transform: scale(1.05);
+}
+.btn-icon-nexus:hover.delete {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+    transform: scale(1.05);
 }
 
 .admin-textarea {
@@ -90,4 +241,114 @@ html[data-theme='light'] .admin-textarea {
     background: #f8fafc;
     border-color: #cbd5e1;
     color: #0f172a;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN: 4 DISTINCT DEVICE TIERS
+   ========================================= */
+
+/* TIER 1: LARGE DESKTOP (>= 1600px) */
+@media (min-width: 1600px) {
+    .table-responsive-wrapper .nexus-table th,
+    .table-responsive-wrapper .nexus-table td {
+        padding: 14px 14px;
+    }
+    .task-icon-box {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+    .task-main-title {
+        font-size: 0.92rem;
+    }
+}
+
+/* TIER 2: STANDARD WEB (1025px - 1599px) */
+@media (min-width: 1025px) and (max-width: 1599px) {
+    .table-responsive-wrapper .nexus-table th,
+    .table-responsive-wrapper .nexus-table td {
+        padding: 12px 10px;
+    }
+}
+
+/* TIER 3: TABLET (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .table-responsive-wrapper .nexus-table th,
+    .table-responsive-wrapper .nexus-table td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+    .task-icon-box {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    .task-main-title {
+        font-size: 0.82rem;
+    }
+}
+
+/* TIER 4: MOBILE PHONES (<= 640px) */
+@media (max-width: 640px) {
+    .table-responsive-wrapper .nexus-table th,
+    .table-responsive-wrapper .nexus-table td {
+        padding: 8px 6px;
+        font-size: 0.74rem;
+    }
+    .table-responsive-wrapper .nexus-table th:first-child,
+    .table-responsive-wrapper .nexus-table td:first-child {
+        padding-left: 10px;
+        min-width: 140px;
+    }
+    .table-responsive-wrapper .nexus-table th:last-child,
+    .table-responsive-wrapper .nexus-table td:last-child {
+        padding-right: 10px;
+        width: 70px;
+    }
+    .task-title-cell {
+        gap: 6px;
+    }
+    .task-icon-box {
+        width: 26px;
+        height: 26px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+    .task-main-title {
+        font-size: 0.78rem;
+    }
+    .task-id-sub {
+        font-size: 0.64rem;
+    }
+    .class-faculty-meta strong {
+        font-size: 0.78rem;
+    }
+    .class-faculty-meta span {
+        font-size: 0.66rem;
+    }
+    .lang-pill {
+        font-size: 0.64rem;
+        padding: 1px 5px;
+    }
+    .score-pill-plain {
+        font-size: 0.75rem;
+    }
+    .deadline-date {
+        font-size: 0.74rem;
+    }
+    .deadline-time {
+        font-size: 0.64rem;
+    }
+    .count-pill.submissions {
+        font-size: 0.66rem;
+        padding: 2px 7px;
+    }
+    .btn-icon-nexus {
+        width: 26px;
+        height: 26px;
+    }
+    .btn-icon-nexus svg {
+        width: 13px;
+        height: 13px;
+    }
 }

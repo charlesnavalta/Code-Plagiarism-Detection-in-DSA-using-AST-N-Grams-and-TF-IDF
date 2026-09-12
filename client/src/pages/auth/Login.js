@@ -47,6 +47,11 @@ const Login = () => {
             localStorage.setItem('user', userString); 
             localStorage.setItem('token', token);
 
+            // Notify top-level components (Navbar, Layouts) of newly authenticated user
+            window.dispatchEvent(new CustomEvent('auth-state-changed', { detail: data.user }));
+            window.dispatchEvent(new CustomEvent('user-avatar-changed', { detail: data.user }));
+            window.dispatchEvent(new Event('storage'));
+
             // Natural UX buffer to ensure smooth button loading state
             const elapsed = Date.now() - startTime;
             if (elapsed < 450) {

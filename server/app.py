@@ -118,6 +118,22 @@ def create_app():
                 import models
                 db.create_all()
                 print("Falsicode: Database tables verified/created successfully.")
+
+                # Ensure submissions table has feedback column
+                try:
+                    with db.engine.connect() as conn:
+                        conn.execute(db.text("ALTER TABLE submissions ADD COLUMN feedback TEXT NULL"))
+                        conn.commit()
+                except Exception:
+                    pass  # Column already exists
+
+                # Ensure users table has avatar_url column
+                try:
+                    with db.engine.connect() as conn:
+                        conn.execute(db.text("ALTER TABLE users ADD COLUMN avatar_url TEXT NULL"))
+                        conn.commit()
+                except Exception:
+                    pass  # Column already exists
                 break
             except Exception as e:
                 retries -= 1

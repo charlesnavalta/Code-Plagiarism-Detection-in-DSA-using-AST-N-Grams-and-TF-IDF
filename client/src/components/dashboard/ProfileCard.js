@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ProfileCard = ({ displayName, userInitial, roleText, statusLabel, profileLink, loading = false }) => {
+const ProfileCard = ({ displayName, userInitial, avatarUrl, roleText, statusLabel, profileLink, loading = false }) => {
     const navigate = useNavigate();
 
     return (
@@ -14,15 +14,21 @@ const ProfileCard = ({ displayName, userInitial, roleText, statusLabel, profileL
             <div className="card-content">
                 {loading ? (
                     <>
-                        <div className="skeleton-box skeleton-avatar" style={{ width: '62px', height: '62px', margin: '0 auto 16px', borderRadius: '50%' }}></div>
-                        <div className="skeleton-box" style={{ width: '120px', height: '22px', margin: '0 auto 8px', borderRadius: '6px' }}></div>
-                        <div className="skeleton-box" style={{ width: '140px', height: '14px', margin: '0 auto 16px', borderRadius: '4px' }}></div>
-                        <div className="skeleton-box skeleton-pill" style={{ width: '84px', height: '24px', margin: '0 auto', borderRadius: '20px' }}></div>
+                        <div className="skeleton-box skeleton-avatar" style={{ width: '48px', height: '48px', margin: '0 auto 10px', borderRadius: '50%' }}></div>
+                        <div className="skeleton-box" style={{ width: '100px', height: '18px', margin: '0 auto 6px', borderRadius: '6px' }}></div>
+                        <div className="skeleton-box" style={{ width: '120px', height: '12px', margin: '0 auto 10px', borderRadius: '4px' }}></div>
+                        <div className="skeleton-box skeleton-pill" style={{ width: '70px', height: '20px', margin: '0 auto', borderRadius: '20px' }}></div>
                     </>
                 ) : (
                     <>
                         <div className="avatar-hologram">
-                            <div className="avatar-core">{userInitial}</div>
+                            <div className="avatar-core">
+                                {avatarUrl ? (
+                                    <img src={avatarUrl} alt="" className="profile-card-avatar-img" />
+                                ) : (
+                                    userInitial
+                                )}
+                            </div>
                             <div className="avatar-ring-1"></div>
                         </div>
                         <h2 className="user-display-name">{displayName}</h2>

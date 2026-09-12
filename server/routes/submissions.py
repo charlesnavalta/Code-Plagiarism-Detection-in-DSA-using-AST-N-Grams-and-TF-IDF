@@ -161,13 +161,16 @@ def get_assignment_submissions(class_id, assignment_id):
                 print(f"Error reading file for {s.student.username if s.student else s.student_id}: {e}")
 
         student_name = s.student.username if s.student else f"Student #{s.student_id}"
+        student_avatar = getattr(s.student, 'avatar_url', None) if s.student else None
         submissions_data.append({
             "id": s.id,
             "student_name": student_name,
+            "student_avatar": student_avatar,
             "filename": s.filename,
             "content": content, 
             "raw_code": content,
             "score": s.score or "Pending",
+            "feedback": getattr(s, 'feedback', None) or "",
             "allow_resubmit": getattr(s, 'allow_resubmit', False),
             "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
         })
@@ -178,7 +181,7 @@ def get_assignment_submissions(class_id, assignment_id):
 @submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions/<int:submission_id>/grade', methods=['POST'])
 @jwt_required()
 def grade_submission(class_id, assignment_id, submission_id):
-    """Allows an instructor to save a manual grade for a student's submission"""
+    """Allows an instructor to save a manual grade (and optional feedback) for a student's submission"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
 
@@ -189,23 +192,64 @@ def grade_submission(class_id, assignment_id, submission_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
-    data = request.get_json()
+    data = request.get_json() or {}
     score = data.get('score')
+    feedback = data.get('feedback')
 
-    if not score:
-        return jsonify({"error": "Score is required."}), 400
+    if not score and feedback is None:
+        return jsonify({"error": "Score or feedback is required."}), 400
 
     submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
     if not submission:
         return jsonify({"error": "Submission not found."}), 404
 
     try:
-        submission.score = score
+        if score:
+            submission.score = score
+        if feedback is not None:
+            submission.feedback = feedback.strip() if isinstance(feedback, str) else ''
         db.session.commit()
-        return jsonify({"message": "Grade saved successfully!", "score": score}), 200
+        return jsonify({
+            "message": "Grade saved successfully!",
+            "score": submission.score,
+            "feedback": submission.feedback
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Database error occurred while saving grade."}), 500
+
+
+@submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions/<int:submission_id>/feedback', methods=['POST'])
+@jwt_required()
+def comment_submission(class_id, assignment_id, submission_id):
+    """Allows an instructor to leave or update comments/feedback for a student's submission"""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user or user.role != 'instructor':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
+    if not classroom:
+        return jsonify({"error": "Classroom not found or access denied"}), 404
+
+    data = request.get_json() or {}
+    feedback = data.get('feedback', '')
+
+    submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
+    if not submission:
+        return jsonify({"error": "Submission not found."}), 404
+
+    try:
+        submission.feedback = feedback.strip() if isinstance(feedback, str) else ''
+        db.session.commit()
+        return jsonify({
+            "message": "Feedback updated successfully!",
+            "feedback": submission.feedback
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred while saving feedback."}), 500
 
 
 @submissions_bp.route('/<int:class_id>/assignments/<int:assignment_id>/submissions/<int:submission_id>/allow-resubmit', methods=['PATCH'])

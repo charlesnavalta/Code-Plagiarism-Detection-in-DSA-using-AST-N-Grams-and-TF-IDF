@@ -11,11 +11,40 @@ const Navbar = () => {
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
 
-    const rawUser = localStorage.getItem('user');
-    const user = (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
+    const [user, setUser] = useState(() => {
+        const rawUser = localStorage.getItem('user');
+        return (rawUser && rawUser !== "undefined") ? JSON.parse(rawUser) : null;
+    });
     const displayName = user?.name || user?.username || 'User';
 
     const targetDashboard = user ? `/${user.role}` : '/';
+
+    useEffect(() => {
+        const syncUser = (e) => {
+            if (e && e.detail) {
+                setUser(e.detail);
+            } else {
+                const raw = localStorage.getItem('user');
+                setUser((raw && raw !== "undefined") ? JSON.parse(raw) : null);
+            }
+        };
+
+        window.addEventListener('user-avatar-changed', syncUser);
+        window.addEventListener('auth-state-changed', syncUser);
+        window.addEventListener('storage', syncUser);
+        return () => {
+            window.removeEventListener('user-avatar-changed', syncUser);
+            window.removeEventListener('auth-state-changed', syncUser);
+            window.removeEventListener('storage', syncUser);
+        };
+    }, []);
+
+    // Re-check authentication & user profile on every route transition (e.g. after login/logout)
+    useEffect(() => {
+        const raw = localStorage.getItem('user');
+        const parsed = (raw && raw !== "undefined") ? JSON.parse(raw) : null;
+        setUser(parsed);
+    }, [location.pathname]);
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -30,6 +59,12 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
+        // In admin portal, keep navbar persistently fixed at top to maintain alignment with the sticky side navigation
+        if (location.pathname.startsWith('/admin')) {
+            setIsVisible(true);
+            return;
+        }
+
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             if (currentScrollY > lastScrollY && currentScrollY > 65) {
@@ -42,7 +77,7 @@ const Navbar = () => {
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [lastScrollY]);
+    }, [lastScrollY, location.pathname]);
 
     const handleLogout = () => {
         setDropdownOpen(false); 
@@ -93,7 +128,7 @@ const Navbar = () => {
     return (
         <>
             {/* --- TOP NAVBAR (Responsive) --- */}
-            <nav className={`navbar-nexus ${!isVisible ? 'navbar-hidden' : ''}`} data-theme={theme}>
+            <nav className={`navbar-nexus ${location.pathname.startsWith('/admin') ? 'navbar-admin-mode' : ''} ${!isVisible ? 'navbar-hidden' : ''}`} data-theme={theme}>
                 <div className="navbar-left">
                     <Link to={targetDashboard} className="brand-anchor">
                         <div className="brand-logo-nexus">
@@ -130,7 +165,13 @@ const Navbar = () => {
                             aria-expanded={dropdownOpen}
                             aria-haspopup="true"
                         >
-                            <div className="user-avatar-mini" aria-hidden="true">{displayName.charAt(0).toUpperCase()}</div>
+                            <div className="user-avatar-mini" aria-hidden="true">
+                                {user?.avatar_url ? (
+                                    <img src={user.avatar_url} alt="" className="user-avatar-thumb" />
+                                ) : (
+                                    displayName.charAt(0).toUpperCase()
+                                )}
+                            </div>
                             <span className="user-name-nexus">{displayName}</span>
                             <svg className={`chevron-nexus ${dropdownOpen ? 'open' : ''}`} width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
@@ -142,7 +183,13 @@ const Navbar = () => {
                         {dropdownOpen && (
                             <div className="dropdown-panel-nexus fade-in-down">
                                 <div className="dropdown-user-card">
-                                    <div className="user-avatar-medium">{displayName.charAt(0).toUpperCase()}</div>
+                                    <div className="user-avatar-medium">
+                                        {user?.avatar_url ? (
+                                            <img src={user.avatar_url} alt="" className="user-avatar-thumb" />
+                                        ) : (
+                                            displayName.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
                                     <div className="user-meta-nexus">
                                         <div className="meta-name">{displayName}</div>
                                         <div className="meta-role-badge">{user.role}</div>
@@ -228,9 +275,13 @@ const Navbar = () => {
                 </Link>
 
                 <Link to={`/${user.role}/profile`} className={`app-nav-item ${isActive(`/${user.role}/profile`)}`}>
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
+                    {user?.avatar_url ? (
+                        <img src={user.avatar_url} alt="" className="user-avatar-mobile-thumb" />
+                    ) : (
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    )}
                     <span>Profile</span>
                 </Link>
 

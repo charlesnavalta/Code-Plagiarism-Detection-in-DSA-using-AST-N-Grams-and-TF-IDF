@@ -4,9 +4,9 @@ import { useSpatialSpotlight } from '../../hooks/useSpatialSpotlight';
 import { useToast } from '../../context/NotificationContext';
 import { AdminTableSkeleton } from './components/AdminSkeleton';
 import { formatLanguageDisplay } from '../../utils/fileUtils';
-import { formatDeadline } from '../../utils/dateUtils';
 import api from '../../services/api';
 import './AssignmentManagement.css';
+import './UserManagement.css';
 
 const AssignmentManagement = () => {
     const [assignments, setAssignments] = useState([]);
@@ -93,6 +93,20 @@ const AssignmentManagement = () => {
         });
     }, [assignments, searchTerm, languageFilter]);
 
+    // Format deadline into compact 2-line date/time stack
+    const renderDeadline = (deadline) => {
+        if (!deadline) return <span style={{ color: 'var(--text-dim)', fontSize: '0.78rem' }}>No Deadline</span>;
+        const d = new Date(deadline);
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        return (
+            <div className="deadline-stack">
+                <span className="deadline-date">{dateStr}</span>
+                <span className="deadline-time">{timeStr}</span>
+            </div>
+        );
+    };
+
     // Open Edit Modal
     const handleOpenEdit = (assignment) => {
         setActiveAssignment(assignment);
@@ -169,7 +183,7 @@ const AssignmentManagement = () => {
             <div className="admin-max-width fade-in-up">
                 
                 {/* --- Header Banner --- */}
-                <header className="action-banner-nexus spatial-card" style={{ marginBottom: '28px' }}>
+                <header className="action-banner-nexus spatial-card">
                     <div className="banner-content banner-header-split">
                         <div className="banner-text">
                             <h1>Assignment Registry</h1>
@@ -311,7 +325,7 @@ const AssignmentManagement = () => {
                                                     {/* Due Date */}
                                                     <td>
                                                         <div className={`deadline-cell ${isOverdue ? 'overdue' : ''}`}>
-                                                            <span>{formatDeadline(a.deadline)}</span>
+                                                            {renderDeadline(a.deadline)}
                                                         </div>
                                                     </td>
 

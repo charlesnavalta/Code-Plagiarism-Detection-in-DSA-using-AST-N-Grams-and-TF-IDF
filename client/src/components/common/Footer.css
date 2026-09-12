@@ -96,6 +96,12 @@ html[data-theme='light'] .nexus-footer {
     color: var(--f-accent);
 }
 
+.footer-brand-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .footer-brand-name {
     font-size: 1.3rem;
     font-weight: 800;
@@ -130,7 +136,7 @@ html[data-theme='light'] .nexus-footer {
 }
 
 /* ==============================================================================
-   2. MULTI-COLUMN LINK GRID (Compact & Balanced 4-Column Layout)
+   2. MULTI-COLUMN LINK GRID
    ============================================================================== */
 .footer-grid-section {
     display: grid;
@@ -145,6 +151,20 @@ html[data-theme='light'] .nexus-footer {
     flex-direction: column;
 }
 
+.footer-column-header-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    text-align: left;
+    cursor: default;
+    pointer-events: none;
+}
+
 .footer-column-title {
     font-size: 0.82rem;
     font-weight: 700;
@@ -152,6 +172,15 @@ html[data-theme='light'] .nexus-footer {
     text-transform: uppercase;
     letter-spacing: 0.8px;
     margin: 0 0 14px 0;
+}
+
+.footer-accordion-icon {
+    display: none;
+}
+
+.footer-column-content {
+    display: block;
+    width: 100%;
 }
 
 .footer-links-list {
@@ -201,7 +230,7 @@ html[data-theme='light'] .nexus-footer {
 }
 
 /* ==============================================================================
-   3. CONNECT & COMMUNITY BAR (Centered)
+   3. CONNECT & COMMUNITY BAR
    ============================================================================== */
 .footer-connect-bar {
     display: flex;
@@ -253,7 +282,7 @@ html[data-theme='light'] .nexus-footer {
 }
 
 /* ==============================================================================
-   4. EDUCATIONAL DISCLAIMER & COPYRIGHT BASE (Centered)
+   4. EDUCATIONAL DISCLAIMER & COPYRIGHT BASE
    ============================================================================== */
 .footer-base-section {
     display: flex;
@@ -292,40 +321,348 @@ html[data-theme='light'] .nexus-footer {
 }
 
 /* ==============================================================================
-   5. RESPONSIVE BREAKPOINTS (Tablet & Mobile)
+   5. TIER 1: EXTRA BIG SCREEN (>= 1600px)
+   Expansive panoramic layout, side-by-side brand hero, wide columns & large touch targets
    ============================================================================== */
-@media (max-width: 1024px) {
-    .footer-grid-section {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
-    }
-}
-
-@media (max-width: 768px) {
+@media (min-width: 1600px) {
     .nexus-footer-container {
-        padding: 36px 18px 72px;
+        max-width: 1560px;
+        padding: 68px 48px 40px;
     }
 
     .footer-brand-section {
-        padding: 20px;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 48px;
+        padding: 34px 44px;
+        align-items: center;
+        margin-bottom: 48px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     }
 
     .footer-brand-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: 14px;
+    }
+
+    .footer-brand-name {
+        font-size: 1.5rem;
+    }
+
+    .brand-badge-pill {
+        font-size: 0.8rem;
+        padding: 5px 14px;
+    }
+
+    .footer-brand-tagline {
+        font-size: 1.22rem;
+        line-height: 1.4;
+    }
+
+    .footer-description {
+        font-size: 0.94rem;
+        line-height: 1.75;
+    }
+
+    .footer-grid-section {
+        max-width: 100%;
+        grid-template-columns: 1fr 1.3fr 1.5fr 1.2fr;
+        gap: 60px;
+        margin-bottom: 48px;
+    }
+
+    .footer-column-title {
+        font-size: 0.88rem;
+        letter-spacing: 1.2px;
+        margin-bottom: 18px;
+    }
+
+    .footer-links-list {
+        gap: 13px;
+    }
+
+    .footer-links-list li,
+    .footer-links-list a,
+    .footer-text-btn {
+        font-size: 0.94rem;
     }
 
     .footer-connect-bar {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        max-width: 100%;
+        padding: 22px 0;
+        margin-bottom: 32px;
+        gap: 24px;
+    }
+
+    .connect-label {
+        font-size: 0.88rem;
+    }
+
+    .social-pill-btn {
+        padding: 9px 18px;
+        font-size: 0.88rem;
+        border-radius: 10px;
+    }
+
+    .footer-base-section {
+        max-width: 100%;
+    }
+
+    .footer-academic-disclaimer {
+        font-size: 0.86rem;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .footer-copyright {
+        font-size: 0.86rem;
     }
 }
 
-@media (max-width: 640px) {
+/* ==============================================================================
+   6. TIER 2: WEB / STANDARD DESKTOP (1025px - 1599px)
+   Standard balanced 4-column layout, compact cards, high-contrast typography
+   ============================================================================== */
+@media (min-width: 1025px) and (max-width: 1599px) {
+    .nexus-footer-container {
+        max-width: 1240px;
+        padding: 56px 24px 32px;
+    }
+
     .footer-grid-section {
-        grid-template-columns: 1fr;
-        gap: 24px;
+        grid-template-columns: 1fr 1.2fr 1.3fr 1.1fr;
+        gap: 36px;
+    }
+}
+
+/* ==============================================================================
+   7. TIER 3: TABLET (641px - 1024px)
+   Balanced 2x2 grid, optimized touch targets, clean centered brand card
+   ============================================================================== */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .nexus-footer-container {
+        max-width: 100%;
+        padding: 24px 24px 36px;
+    }
+
+    .footer-brand-section {
+        padding: 24px 26px;
+        margin-bottom: 32px;
+    }
+
+    .footer-brand-tagline {
+        font-size: 1.05rem;
+    }
+
+    .footer-description {
+        font-size: 0.86rem;
+        line-height: 1.6;
+    }
+
+    .footer-grid-section {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 36px 32px;
+        margin-bottom: 36px;
+    }
+
+    .footer-column-title {
+        font-size: 0.84rem;
+        margin-bottom: 14px;
+    }
+
+    .footer-links-list {
+        gap: 12px;
+    }
+
+    .footer-links-list li,
+    .footer-links-list a,
+    .footer-text-btn {
+        font-size: 0.9rem;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+    }
+
+    .footer-connect-bar {
+        padding: 20px 0;
+        gap: 18px;
+    }
+
+    .social-pill-btn {
+        padding: 9px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* ==============================================================================
+   8. TIER 4: MOBILE (<= 640px)
+   Accordion collapsible sections, full touch targets (>= 44px), bottom dock clearance
+   ============================================================================== */
+@media (max-width: 640px) {
+    .nexus-footer-container {
+        padding: 16px 14px 96px; /* Extra bottom clearance for mobile dock / bottom floating bar */
+    }
+
+    .footer-brand-section {
+        padding: 18px 16px;
+        border-radius: 14px;
+        margin-bottom: 22px;
+        text-align: center;
+    }
+
+    .footer-brand-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
+
+    .footer-brand-name {
+        font-size: 1.2rem;
+    }
+
+    .brand-badge-pill {
+        font-size: 0.7rem;
+        padding: 3px 10px;
+    }
+
+    .footer-brand-tagline {
+        font-size: 0.95rem;
+        text-align: center;
+        margin-top: 4px;
+    }
+
+    .footer-description {
+        font-size: 0.82rem;
+        line-height: 1.55;
+        text-align: center;
+    }
+
+    /* Mobile Accordion Column Structure */
+    .footer-grid-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 24px;
+    }
+
+    .footer-column {
+        border-bottom: 1px solid var(--f-card-border);
+    }
+
+    .footer-column:first-child {
+        border-top: 1px solid var(--f-card-border);
+    }
+
+    .footer-column-header-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 14px 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        pointer-events: auto; /* Active tap toggle on mobile */
+        color: var(--f-text-primary);
+        text-align: left;
+        transition: background 0.2s ease;
+    }
+
+    .footer-column-header-btn:active {
+        background: var(--f-card-bg);
+    }
+
+    .footer-column-title {
+        margin: 0;
+        font-size: 0.84rem;
+        letter-spacing: 0.5px;
+    }
+
+    .footer-accordion-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: var(--f-text-muted);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+    }
+
+    .footer-column.is-open .footer-accordion-icon {
+        transform: rotate(180deg);
+        color: var(--f-accent);
+    }
+
+    .footer-column-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, padding 0.25s ease;
+        opacity: 0;
+        padding: 0 6px;
+    }
+
+    .footer-column.is-open .footer-column-content {
+        max-height: 500px;
+        opacity: 1;
+        padding-bottom: 16px;
+    }
+
+    .footer-links-list {
+        gap: 10px;
+    }
+
+    .footer-links-list li,
+    .footer-links-list a,
+    .footer-text-btn {
+        font-size: 0.88rem;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        padding: 2px 0;
+    }
+
+    /* Connect Bar on Mobile */
+    .footer-connect-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        text-align: center;
+        padding: 18px 0;
+        margin-bottom: 22px;
+    }
+
+    .connect-label {
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .connect-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .social-pill-btn {
+        width: 100%;
+        justify-content: center;
+        height: 44px; /* Standard 44px mobile touch target */
+        font-size: 0.88rem;
+        border-radius: 10px;
+    }
+
+    .footer-academic-disclaimer {
+        font-size: 0.76rem;
+        line-height: 1.55;
+    }
+
+    .footer-copyright {
+        font-size: 0.75rem;
     }
 }

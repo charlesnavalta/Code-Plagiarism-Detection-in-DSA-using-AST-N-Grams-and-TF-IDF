@@ -162,7 +162,8 @@ def get_enrolled_classrooms():
     class_list = [{
         "id": e.classroom.id, 
         "name": e.classroom.name, 
-        "instructor": e.classroom.instructor.username if e.classroom.instructor else "Unknown"
+        "instructor": e.classroom.instructor.username if e.classroom.instructor else "Unknown",
+        "instructor_avatar": getattr(e.classroom.instructor, 'avatar_url', None) if e.classroom.instructor else None
     } for e in enrollments if e.classroom]
     
     return jsonify(class_list), 200
@@ -305,6 +306,7 @@ def get_classroom_roster(class_id):
             "id": enr.student.id,
             "username": enr.student.username,
             "email": enr.student.email,
+            "avatar_url": getattr(enr.student, 'avatar_url', None),
             "enrolled_at": enr.enrolled_at.isoformat() if enr.enrolled_at else None,
             "completed_assignments": completed_count
         })
@@ -410,6 +412,7 @@ def get_classroom_classmates(class_id):
         classmates.append({
             "id": enr.student.id,
             "username": enr.student.username,
+            "avatar_url": getattr(enr.student, 'avatar_url', None),
             "enrolled_at": enr.enrolled_at.isoformat() if enr.enrolled_at else None,
             "is_you": enr.student.id == user.id
         })

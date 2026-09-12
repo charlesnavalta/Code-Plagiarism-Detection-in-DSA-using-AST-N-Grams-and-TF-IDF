@@ -67,6 +67,7 @@ html[data-theme='light'] .admin-select-input {
     font-weight: 700;
     font-size: 0.82rem;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 .copy-code-pill:hover {
     background: rgba(59, 130, 246, 0.2);
@@ -77,6 +78,7 @@ html[data-theme='light'] .admin-select-input {
     display: flex;
     align-items: center;
     gap: 10px;
+    white-space: nowrap;
 }
 .faculty-avatar {
     width: 32px;
@@ -105,21 +107,26 @@ html[data-theme='light'] .admin-select-input {
 }
 
 .count-pill {
-    display: inline-block;
-    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 5px 14px;
     border-radius: 20px;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 700;
+    line-height: 1.2;
+    flex-shrink: 0;
 }
 .count-pill.students {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.25);
 }
 .count-pill.assignments {
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 /* Delete modal alerts */
@@ -155,4 +162,106 @@ html[data-theme='light'] .admin-select-input {
 .btn-danger-confirm:hover {
     background: #dc2626;
     transform: scale(1.03);
+}
+
+/* =========================================
+   RESPONSIVE DESIGN: 4 DISTINCT DEVICE TIERS
+   ========================================= */
+
+/* TIER 1: LARGE DESKTOP (>= 1600px) */
+@media (min-width: 1600px) {
+    .classroom-icon-box {
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
+    }
+    .classroom-main-title {
+        font-size: 0.95rem;
+    }
+}
+
+/* TIER 2: STANDARD WEB (1025px - 1599px) */
+@media (min-width: 1025px) and (max-width: 1599px) {
+    .classroom-icon-box {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* TIER 3: TABLET (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .admin-filter-dropdown-box {
+        gap: 8px;
+    }
+    .admin-select-input {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+    .classroom-icon-box {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+}
+
+/* TIER 4: MOBILE PHONES (<= 640px) */
+@media (max-width: 640px) {
+    .admin-filter-dropdown-box {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .admin-filter-dropdown-box label {
+        font-size: 0.74rem;
+        white-space: nowrap;
+    }
+    .admin-select-input {
+        flex: 1 1 auto;
+        width: auto;
+        height: 38px;
+        font-size: 0.78rem;
+        padding: 6px 10px;
+        border-radius: 10px;
+    }
+    .classroom-name-cell {
+        gap: 8px;
+    }
+    .classroom-icon-box {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        border-radius: 7px;
+    }
+    .classroom-main-title {
+        font-size: 0.82rem;
+    }
+    .classroom-id-sub {
+        font-size: 0.68rem;
+    }
+    .copy-code-pill {
+        padding: 2px 7px;
+        font-size: 0.72rem;
+        gap: 4px;
+    }
+    .faculty-cell {
+        gap: 6px;
+    }
+    .faculty-avatar {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+        border-radius: 6px;
+    }
+    .faculty-meta strong {
+        font-size: 0.78rem;
+    }
+    .faculty-meta span {
+        font-size: 0.66rem;
+    }
+    .count-pill {
+        padding: 3px 8px;
+        font-size: 0.68rem;
+    }
 }

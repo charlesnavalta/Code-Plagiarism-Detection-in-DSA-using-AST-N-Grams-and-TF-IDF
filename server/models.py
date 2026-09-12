@@ -19,6 +19,7 @@ class User(db.Model):
     # --- Roles & Status ---
     role = db.Column(db.String(20), nullable=False, default='student') 
     status = db.Column(db.String(20), nullable=False, default='active') 
+    avatar_url = db.Column(db.Text, nullable=True) 
     
     # --- OTP Verification Columns ---
     is_verified = db.Column(db.Boolean, default=False)
@@ -179,6 +180,7 @@ class Submission(db.Model):
     # Grading & Metadata
     score = db.Column(db.String(20), nullable=True)
     max_score = db.Column(db.Integer, nullable=True, default=100)
+    feedback = db.Column(db.Text, nullable=True)
     
     # The Resubmission Gatekeeper
     allow_resubmit = db.Column(db.Boolean, default=False)
@@ -193,11 +195,12 @@ class Submission(db.Model):
     assignment = db.relationship('Assignment', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
     student = db.relationship('User', backref=db.backref('submissions', lazy=True, cascade="all, delete-orphan"))
 
-    def __init__(self, assignment_id, student_id, filename, file_path):
+    def __init__(self, assignment_id, student_id, filename, file_path, feedback=None):
         self.assignment_id = assignment_id
         self.student_id = student_id
         self.filename = filename
         self.file_path = file_path
+        self.feedback = feedback
 
     def to_dict(self):
         """Helper to serialize submission data."""
@@ -206,6 +209,7 @@ class Submission(db.Model):
             'assignment_id': self.assignment_id,
             'student_id': self.student_id,
             'score': self.score,
+            'feedback': self.feedback,
             'filename': self.filename,
             'allow_resubmit': self.allow_resubmit, # Send this state to React
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None

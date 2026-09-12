@@ -20,10 +20,23 @@ import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
 import InstructorRosterModal from '../../modals/classroom/InstructorRosterModal';
 
 const InstructorDashboard = () => {
-    const currentUser = getUserData();
-    const userId = currentUser.id || currentUser.user_id || currentUser.username || 'instructor';
+    const [user, setUser] = useState(() => getUserData());
+    const userId = user.id || user.user_id || user.username || 'instructor';
     const cacheKeyClasses = `falsicode_instructor_classes_${userId}`;
     const cacheKeyActivity = `falsicode_instructor_activity_${userId}`;
+
+    useEffect(() => {
+        const handleUserUpdate = (e) => {
+            if (e.detail) setUser(e.detail);
+            else setUser(getUserData());
+        };
+        window.addEventListener('user-avatar-changed', handleUserUpdate);
+        window.addEventListener('storage', handleUserUpdate);
+        return () => {
+            window.removeEventListener('user-avatar-changed', handleUserUpdate);
+            window.removeEventListener('storage', handleUserUpdate);
+        };
+    }, []);
 
     const getCached = (key) => {
         try {
@@ -66,7 +79,7 @@ const InstructorDashboard = () => {
         });
     };
 
-    const displayName = currentUser.name || currentUser.username || 'Instructor';
+    const displayName = user.name || user.username || 'Instructor';
     const userInitial = displayName.charAt(0).toUpperCase();
 
     const fetchDashboardData = async () => {
@@ -116,6 +129,7 @@ const InstructorDashboard = () => {
                     <ProfileCard
                         displayName={displayName}
                         userInitial={userInitial}
+                        avatarUrl={user.avatar_url}
                         roleText="Instructor Workspace"
                         statusLabel="ACTIVE"
                         profileLink="/instructor/profile"

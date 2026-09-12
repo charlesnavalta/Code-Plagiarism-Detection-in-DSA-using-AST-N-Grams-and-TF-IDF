@@ -119,7 +119,11 @@ const InstructorRosterModal = ({ isOpen, onClose, classroom }) => {
                                 <div key={student.id} className="roster-item-card">
                                     <div className="roster-user-info">
                                         <div className="roster-avatar">
-                                            {student.username.charAt(0).toUpperCase()}
+                                            {student.avatar_url ? (
+                                                <img src={student.avatar_url} alt="" className="roster-avatar-img" />
+                                            ) : (
+                                                student.username.charAt(0).toUpperCase()
+                                            )}
                                         </div>
                                         <div className="roster-user-details">
                                             <div className="roster-username-row">

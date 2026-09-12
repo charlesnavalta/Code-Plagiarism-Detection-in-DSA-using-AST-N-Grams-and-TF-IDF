@@ -359,10 +359,30 @@ const StudentAssignmentView = () => {
                                             <div className="receipt-row">
                                                 <span>EVALUATION STATUS</span>
                                                 <strong className={assignment.score === 'Pending' ? 'text-warning' : 'text-success'}>
-                                                    {assignment.score === 'Pending' ? '⏳ Under Audit (Pending)' : `${assignment.score} Pts`}
+                                                    {assignment.score === 'Pending' ? 'Under Audit (Pending)' : `${assignment.score} Pts`}
                                                 </strong>
                                             </div>
                                         </div>
+
+                                        {/* INSTRUCTOR REMARKS / FEEDBACK CARD */}
+                                        {assignment.feedback && (
+                                            <div className="instructor-remarks-card">
+                                                <div className="remarks-card-header">
+                                                    <div className="remarks-badge-icon">
+                                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div className="remarks-header-meta">
+                                                        <span className="remarks-tag">INSTRUCTOR FEEDBACK</span>
+                                                        <span className="remarks-instructor-name">From: {assignment.instructor_name || 'Classroom Instructor'}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="remarks-body">
+                                                    <p className="remarks-text">{assignment.feedback}</p>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="locked-notice-banner">
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">

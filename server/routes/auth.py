@@ -235,6 +235,7 @@ def login():
                     "username": user.username,
                     "email": user.email,
                     "role": user.role,
+                    "avatar_url": getattr(user, 'avatar_url', None),
                     "first_name": getattr(user, 'first_name', ''),
                     "last_name": getattr(user, 'last_name', '')
                 }
@@ -680,7 +681,8 @@ def update_email():
             "id": user.id,
             "username": user.username,
             "email": user.email,
-            "role": user.role
+            "role": user.role,
+            "avatar_url": getattr(user, 'avatar_url', None)
         }
         return jsonify({
             "message": "Contact email updated successfully!",
@@ -689,3 +691,38 @@ def update_email():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Database error while updating email: " + str(e)}), 500
+
+
+# ==============================================================================
+# 🌟 UPDATE PROFILE AVATAR ENDPOINT
+# ==============================================================================
+@auth_bp.route('/profile/avatar', methods=['PUT'])
+@jwt_required()
+def update_avatar():
+    """Allows an authenticated user to save, change, or remove their profile avatar."""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    data = request.get_json() or {}
+    avatar_url = data.get('avatar_url')
+
+    try:
+        user.avatar_url = avatar_url.strip() if (avatar_url and isinstance(avatar_url, str) and avatar_url.strip()) else None
+        db.session.commit()
+        return jsonify({
+            "message": "Profile avatar updated successfully!",
+            "avatar_url": user.avatar_url,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "avatar_url": user.avatar_url
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred while updating avatar: " + str(e)}), 500

@@ -214,6 +214,7 @@ def get_assignment(class_id, assignment_id):
         "instructor_name": classroom.instructor.username if classroom.instructor else "Instructor",
         "has_submitted": False,
         "score": None,
+        "feedback": None,
         "submitted_at": None,
         "submitted_filename": None,
         "allow_resubmit": False,
@@ -225,6 +226,7 @@ def get_assignment(class_id, assignment_id):
         if sub:
             assignment_info["has_submitted"] = True
             assignment_info["score"] = getattr(sub, 'score', 'Pending')
+            assignment_info["feedback"] = getattr(sub, 'feedback', None)
             assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
             assignment_info["submitted_filename"] = getattr(sub, 'filename', None)
             assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)

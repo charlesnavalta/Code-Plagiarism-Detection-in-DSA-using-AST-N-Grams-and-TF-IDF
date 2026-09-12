@@ -5,6 +5,7 @@ import { useToast } from '../../context/NotificationContext';
 import { AdminTableSkeleton } from './components/AdminSkeleton';
 import api from '../../services/api';
 import './ClassroomManagement.css';
+import './UserManagement.css';
 
 const ClassroomManagement = () => {
     const [classrooms, setClassrooms] = useState([]);
@@ -153,7 +154,7 @@ const ClassroomManagement = () => {
             <div className="admin-max-width fade-in-up">
                 
                 {/* --- Header Banner --- */}
-                <header className="action-banner-nexus spatial-card" style={{ marginBottom: '28px' }}>
+                <header className="action-banner-nexus spatial-card">
                     <div className="banner-content banner-header-split">
                         <div className="banner-text">
                             <h1>Classroom Directory</h1>
