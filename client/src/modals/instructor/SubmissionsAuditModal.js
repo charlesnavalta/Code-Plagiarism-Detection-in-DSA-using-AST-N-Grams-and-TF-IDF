@@ -445,7 +445,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                     <th>COMPARISON PAIR</th>
                                     <th>SIMILARITY SCORE</th>
                                     <th>PLAGIARISM CLASSIFICATION</th>
-                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -482,11 +481,6 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                                 <span className={`badge-pill ${badgeClass}`}>
                                                     {result.plagiarism_type || 'Clean'}
                                                 </span>
-                                            </td>
-                                            <td>
-                                                <button className="btn-view-comparison" onClick={(e) => { e.stopPropagation(); setSelectedPair(result); }}>
-                                                    Audit Pair
-                                                </button>
                                             </td>
                                         </tr>
                                     );
