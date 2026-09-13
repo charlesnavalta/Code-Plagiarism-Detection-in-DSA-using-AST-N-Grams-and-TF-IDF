@@ -159,11 +159,6 @@ const InstructorRosterModal = ({ isOpen, onClose, classroom }) => {
                     )}
                 </div>
 
-                <div className="modal-action-footer">
-                    <button type="button" className="btn-modal-cancel" onClick={onClose}>
-                        Close
-                    </button>
-                </div>
             </div>
         </BaseModal>
     );
