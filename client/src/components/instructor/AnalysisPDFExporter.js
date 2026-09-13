@@ -18,13 +18,13 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
     const themeData = getPlagiarismDisplayData(selectedPair?.plagiarism_type);
 
     const pdfVerboseLabels = {
-        "Type I": "Type I: Exact Structural Copying",
-        "Type II": "Type II: Renamed Identifiers & Obfuscation",
-        "Type III": "Type III: Structural Sequence Modification",
-        "Safe": "Low Similarity Profile"
+        "Type 1": "Type 1: Exact Copy",
+        "Type 2": "Type 2: Renamed Variables",
+        "Type 3": "Type 3: Modified Structure",
+        "Safe": "Safe: Original Code"
     };
     
-    const reportLabel = pdfVerboseLabels[themeData.shortLabel] || (selectedPair.plagiarism_type || "Structural Analysis Profile");
+    const reportLabel = pdfVerboseLabels[themeData.shortLabel] || themeData.label || "Structural Analysis Profile";
     const generatedReportId = `FC-${Math.floor(10000 + Math.random() * 90000)}-${new Date().getFullYear()}`;
 
     // Extract top XAI AST patterns (Real data from analysis)

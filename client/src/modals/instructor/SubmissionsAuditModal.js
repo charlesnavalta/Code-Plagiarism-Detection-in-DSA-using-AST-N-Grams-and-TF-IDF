@@ -72,7 +72,17 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
         let results = analysisResults;
 
         if (filterType !== 'all') {
-            results = results.filter(r => r.plagiarism_type && r.plagiarism_type.includes(filterType));
+            if (filterType === 'Safe') {
+                results = results.filter(r => 
+                    !r.plagiarism_type || 
+                    r.plagiarism_type === 'N/A' || 
+                    r.plagiarism_type.toLowerCase().includes('safe') || 
+                    r.plagiarism_type.toLowerCase().includes('clean') ||
+                    (r.score !== undefined && Number(r.score) < 40)
+                );
+            } else {
+                results = results.filter(r => r.plagiarism_type && r.plagiarism_type.includes(filterType));
+            }
         }
 
         if (searchTerm.trim()) {
@@ -192,14 +202,15 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                             )}
                         </div>
 
-                        {/* Plagiarism Risk Filter Pills */}
+                        {/* Plagiarism Risk Filter Chips */}
                         {activeTab === 'report' && analysisResults && (
                             <div className="audit-filter-chips">
                                 {[
                                     { id: 'all', label: 'All Pairs' },
-                                    { id: 'Type 1', label: 'Type 1 (Exact)' },
-                                    { id: 'Type 2', label: 'Type 2 (Renamed)' },
-                                    { id: 'Type 3', label: 'Type 3 (Structural)' }
+                                    { id: 'Type 1', label: 'Type 1: Exact' },
+                                    { id: 'Type 2', label: 'Type 2: Renamed' },
+                                    { id: 'Type 3', label: 'Type 3: Structure' },
+                                    { id: 'Safe', label: 'Safe (Green)' }
                                 ].map(ft => (
                                     <button
                                         key={ft.id}
@@ -449,7 +460,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                             </thead>
                             <tbody>
                                 {filteredResults.map((result, idx) => {
-                                    const { badgeClass } = getPlagiarismDisplayData(result.plagiarism_type);
+                                    const { badgeClass, label } = getPlagiarismDisplayData(result.plagiarism_type);
                                     return (
                                         <tr 
                                             key={idx} 
@@ -479,7 +490,7 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                                             </td>
                                             <td>
                                                 <span className={`badge-pill ${badgeClass}`}>
-                                                    {result.plagiarism_type || 'Clean'}
+                                                    {label}
                                                 </span>
                                             </td>
                                         </tr>

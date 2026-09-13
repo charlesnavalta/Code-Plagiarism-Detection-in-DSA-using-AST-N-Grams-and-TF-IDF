@@ -1,17 +1,37 @@
 export const getPlagiarismDisplayData = (backendType) => {
-    const typeStr = backendType || "";
+    const typeStr = String(backendType || "");
 
-    if (typeStr.includes("Type 1")) {
-        return { color: "#dc2626", shortLabel: "Type I" }; 
+    if (typeStr.includes("Type 1") || typeStr.includes("Type I")) {
+        return { 
+            color: "#ef4444", 
+            badgeClass: "badge-type1",
+            label: "Type 1: Exact Copy",
+            shortLabel: "Type 1" 
+        }; 
     }
-    if (typeStr.includes("Type 2")) {
-        return { color: "#ea580c", shortLabel: "Type II" }; 
+    if (typeStr.includes("Type 2") || typeStr.includes("Type II")) {
+        return { 
+            color: "#f97316", 
+            badgeClass: "badge-type2",
+            label: "Type 2: Renamed Variables",
+            shortLabel: "Type 2" 
+        }; 
     }
-    if (typeStr.includes("Type 3")) {
-        return { color: "#ca8a04", shortLabel: "Type III" }; 
+    if (typeStr.includes("Type 3") || typeStr.includes("Type III")) {
+        return { 
+            color: "#eab308", 
+            badgeClass: "badge-type3",
+            label: "Type 3: Modified Structure",
+            shortLabel: "Type 3" 
+        }; 
     }
     
-    return { color: "#10b981", shortLabel: "Safe" }; 
+    return { 
+        color: "#10b981", 
+        badgeClass: "badge-safe",
+        label: "Safe: Original Code",
+        shortLabel: "Safe" 
+    }; 
 };
 
 // 🌟 NEW: Extracted AST Badge Logic

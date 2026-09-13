@@ -132,18 +132,18 @@ def classify_plagiarism_type(status, raw_identity_score, order_similarity_score,
     precedence over the Type 1 vs Type 2 distinction.
     """
     if status == "Low":
-        return "N/A"
+        return "Safe: Original Code"
 
     if order_similarity_score < ORDER_SIMILARITY_THRESHOLD:
-        return "Type 3 (Reordered / Structurally Modified)"
+        return "Type 3: Modified Structure"
 
     if struct_divergence_score > STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD:
-        return "Type 3 (Reordered / Structurally Modified)"
+        return "Type 3: Modified Structure"
 
     if raw_identity_score >= RAW_IDENTITY_TYPE1_THRESHOLD:
-        return "Type 1 (Verbatim / Near-Identical Copy)"
+        return "Type 1: Exact Copy"
 
-    return "Type 2 (Renamed Identifiers/Literals)"
+    return "Type 2: Renamed Variables"
 
 
 def compare_all_files(file_data, ngram_bounds):

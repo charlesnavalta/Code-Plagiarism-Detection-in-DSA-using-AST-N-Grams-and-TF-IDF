@@ -171,7 +171,9 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <div className="metric-block">
                             <span className="metric-label">Classification</span>
                             <div className="metric-classification">
-                                {selectedPair.plagiarism_type || 'N/A'}
+                                <span className={`badge-pill ${themeData.badgeClass}`}>
+                                    {themeData.label}
+                                </span>
                             </div>
                         </div>
                     </div>
