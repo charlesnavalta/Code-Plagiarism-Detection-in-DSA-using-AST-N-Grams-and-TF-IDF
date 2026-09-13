@@ -10,9 +10,9 @@
 
 /* Three Dots Button */
 .classroom-dots-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-dim, #94a3b8);
@@ -29,7 +29,7 @@
     background: rgba(59, 130, 246, 0.15);
     border-color: rgba(59, 130, 246, 0.4);
     color: var(--text-hero, #ffffff);
-    transform: scale(1.04);
+    transform: scale(1.03);
 }
 
 [data-theme='light'] .classroom-dots-btn,
@@ -48,35 +48,35 @@ html[data-theme='light'] .classroom-dots-btn.active {
     color: #2563eb;
 }
 
-/* Dropdown Menu */
+/* Dropdown Menu - Sleek, Compact & Proportional */
 .classroom-dropdown-menu {
     position: absolute;
-    top: calc(100% + 6px);
+    top: calc(100% + 4px);
     right: 0;
-    min-width: 175px;
-    background: #0f172a; /* 100% solid opaque background to prevent any text bleed */
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 6px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    min-width: 146px;
+    background: #0f172a; /* Solid opaque background to prevent text bleed */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9px;
+    padding: 4px;
+    box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 4px 12px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
     z-index: 100;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    animation: fadeInMenu 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 1px;
+    animation: fadeInMenu 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme='light'] .classroom-dropdown-menu,
 html[data-theme='light'] .classroom-dropdown-menu {
     background: #ffffff;
     border-color: #cbd5e1;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 @keyframes fadeInMenu {
     from {
         opacity: 0;
-        transform: translateY(-6px) scale(0.97);
+        transform: translateY(-4px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -84,33 +84,37 @@ html[data-theme='light'] .classroom-dropdown-menu {
     }
 }
 
-/* Dropdown Items */
+/* Dropdown Items - Compact row height, padding, and typography */
 .dropdown-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
-    padding: 8px 12px;
+    padding: 6px 9px;
     border: none;
     background: transparent;
-    border-radius: 7px;
+    border-radius: 6px;
     color: var(--text-secondary, #cbd5e1);
-    font-size: 0.84rem;
+    font-size: 0.77rem;
     font-weight: 500;
     text-align: left;
     cursor: pointer;
     transition: all 0.15s ease;
     box-sizing: border-box;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 .dropdown-item svg {
+    width: 13px;
+    height: 13px;
     flex-shrink: 0;
     opacity: 0.8;
     transition: opacity 0.15s ease;
 }
 
 .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.07);
     color: var(--text-hero, #ffffff);
 }
 
@@ -168,7 +172,7 @@ html[data-theme='light'] .dropdown-item.item-danger:hover {
 .dropdown-divider {
     height: 1px;
     background: var(--border-glass, rgba(255, 255, 255, 0.08));
-    margin: 4px 0;
+    margin: 3px 0;
 }
 
 [data-theme='light'] .dropdown-divider,
@@ -178,8 +182,9 @@ html[data-theme='light'] .dropdown-divider {
 
 /* Header Variant */
 .variant-header .classroom-dots-btn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.14);
 }
