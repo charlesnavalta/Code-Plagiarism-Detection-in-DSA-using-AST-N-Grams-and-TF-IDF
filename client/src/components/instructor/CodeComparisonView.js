@@ -17,12 +17,14 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
     };
 
-    const renderCodeWithHighlights = (code, highlightedLines = []) => {
+    const renderCodeWithHighlights = (code, highlightedLines = [], overallType = '') => {
         if (!code || code.startsWith("Code content not available")) {
             return <code>{code}</code>;
         }
 
         const lines = code.split('\n');
+        const isMixedAttack = overallType.includes('Type 3');
+
         return lines.map((line, index) => {
             const lineNumber = index + 1;
             
@@ -42,7 +44,9 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                     hoverText = 'Type 1: Exact / Near-identical copy';
                 } else if (matchType === 2) {
                     highlightClass = 'match-type-2';
-                    hoverText = 'Type 2: Renamed variables / Literals altered';
+                    hoverText = isMixedAttack
+                        ? 'Type 2 (within Type 3): Renamed identifier — structure matches, names differ'
+                        : 'Type 2: Renamed variables / Literals altered';
                 } else if (matchType === 3) {
                     highlightClass = 'match-type-3';
                     hoverText = 'Type 3: Rearranged structure / Reordered statements';
@@ -182,6 +186,24 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <div className="summary-sub-metrics">
                             <span className="sub-metric-item"><strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%</span>
                             <span className="sub-metric-item"><strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%</span>
+                            {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
+                                <span className="sub-metric-item sub-metric-renamed">
+                                    <strong>Renamed Lines:</strong> {selectedPair.renamed_line_count} line{selectedPair.renamed_line_count !== 1 ? 's' : ''} detected
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
+                        <div className="mixed-attack-legend">
+                            <span className="legend-item">
+                                <span className="legend-swatch swatch-type3"></span>
+                                Type 3: Reordered Structure
+                            </span>
+                            <span className="legend-divider">|</span>
+                            <span className="legend-item">
+                                <span className="legend-swatch swatch-type2"></span>
+                                Type 2 within Type 3: Renamed Identifier
+                            </span>
                         </div>
                     )}
                 </div>
@@ -229,7 +251,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <span className="file-badge student-a">{selectedPair.file1}</span>
                     </div>
                     <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1)}</pre> : renderASTStream(selectedPair.ast_xai_1)}
+                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_1)}
                     </div>
                 </div>
                 
@@ -238,7 +260,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <span className="file-badge student-b">{selectedPair.file2}</span>
                     </div>
                     <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2)}</pre> : renderASTStream(selectedPair.ast_xai_2)}
+                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_2)}
                     </div>
                 </div>
             </div>

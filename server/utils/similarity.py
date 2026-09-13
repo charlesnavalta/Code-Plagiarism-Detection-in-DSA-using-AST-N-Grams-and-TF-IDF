@@ -118,6 +118,102 @@ def structural_divergence(skeleton_i, skeleton_j):
     return round((diff / total) * 100, 2)
 
 
+def detect_renamed_line_pairs(tokens_i, tokens_j, flagged_lines_i, flagged_lines_j):
+    """Identifies lines within a Type 3 pair that also exhibit Type 2 (renamed
+    identifier) characteristics — i.e., the structural skeleton of the line
+    matches between the two files, but the actual identifier / literal names
+    differ.
+
+    Strategy:
+    1. Group tokens by line number for each file (restricted to flagged lines).
+    2. For each flagged line in file A, find the best-matching flagged line in
+       file B using structural skeleton similarity (difflib ratio on node-type
+       sequences, excluding Name_ID / Constant_CONST tokens).
+    3. If skeleton similarity >= SKELETON_MATCH_THRESHOLD but the raw-value
+       similarity (identifiers / literals only) is below RAW_IDENTITY_TYPE1_THRESHOLD,
+       the pair is a renamed-identifier line: mark both sides as Type 2.
+
+    Returns:
+        (list[int], list[int]) -- line numbers in file A and file B respectively
+        that are classified as Type 2 sub-patterns within the Type 3 pair.
+    """
+    SKELETON_MATCH_THRESHOLD = 0.70   # line skeletons must be >=70% similar
+    RAW_DIFF_THRESHOLD = 0.75         # raw id similarity below this = renamed (not verbatim)
+
+    # --- Group tokens by line ---
+    def tokens_by_line(tokens, flagged_set):
+        by_line = {}
+        for t in tokens:
+            ln = t[1]
+            if ln in flagged_set:
+                by_line.setdefault(ln, []).append(t)
+        return by_line
+
+    lines_map_i = tokens_by_line(tokens_i, flagged_lines_i)
+    lines_map_j = tokens_by_line(tokens_j, flagged_lines_j)
+
+    if not lines_map_i or not lines_map_j:
+        return [], []
+
+    # --- Per-line skeleton and raw-id signature helpers ---
+    def line_skeleton(line_tokens):
+        return [t[0] for t in line_tokens if t[0] not in STRUCTURAL_IGNORE_TYPES]
+
+    def line_raw_ids(line_tokens):
+        result = []
+        for t in line_tokens:
+            if t[0] in ("Name_ID", "Constant_CONST"):
+                raw = _get_raw_value(t)
+                result.append(raw if raw is not None else t[0])
+        return result
+
+    renamed_i = set()
+    renamed_j = set()
+
+    # Pre-compute skeletons and raw-id sigs for file J lines (avoid recomputing)
+    j_data = {
+        ln: (line_skeleton(toks), line_raw_ids(toks))
+        for ln, toks in lines_map_j.items()
+    }
+
+    for ln_i, toks_i in lines_map_i.items():
+        skel_i = line_skeleton(toks_i)
+        raw_i  = line_raw_ids(toks_i)
+
+        # Skip lines with no structural tokens (e.g. blank / comment-only lines)
+        if not skel_i:
+            continue
+
+        # Find the best-matching line in file J by skeleton similarity
+        best_skel_ratio = 0.0
+        best_ln_j = None
+        best_raw_ratio = 0.0
+
+        for ln_j, (skel_j, raw_j) in j_data.items():
+            if not skel_j:
+                continue
+            skel_ratio = difflib.SequenceMatcher(None, skel_i, skel_j).ratio()
+            if skel_ratio > best_skel_ratio:
+                best_skel_ratio = skel_ratio
+                best_ln_j = ln_j
+                # Compute raw-id similarity only for the best skeleton match so far
+                best_raw_ratio = (
+                    difflib.SequenceMatcher(None, raw_i, raw_j).ratio()
+                    if (raw_i or raw_j) else 1.0
+                )
+
+        # Classify as Type 2 sub-pattern if:
+        #   - the structural skeletons are highly similar (lines do the same thing)
+        #   - but the identifier names differ (below verbatim threshold)
+        if (best_ln_j is not None
+                and best_skel_ratio >= SKELETON_MATCH_THRESHOLD
+                and best_raw_ratio < RAW_DIFF_THRESHOLD):
+            renamed_i.add(ln_i)
+            renamed_j.add(best_ln_j)
+
+    return list(renamed_i), list(renamed_j)
+
+
 def classify_plagiarism_type(status, raw_identity_score, order_similarity_score, struct_divergence_score):
     """Exclusive single-label classification: every pair gets exactly one
     of Type 1, Type 2, Type 3, or N/A.
@@ -387,8 +483,31 @@ def compare_all_files(file_data, ngram_bounds):
                     elif "Type 3" in plagiarism_type:
                         match_type_num = 3
 
-                    formatted_lines_i = [{"line": ln, "type": match_type_num} for ln in lines_i]
-                    formatted_lines_j = [{"line": ln, "type": match_type_num} for ln in lines_j]
+                    # =========================================================================
+                    # PHASE 5b: MIXED-ATTACK SECONDARY ANNOTATION
+                    # For Type 3 pairs, detect which individual lines also exhibit Type 2
+                    # (renamed identifier) characteristics. Those lines are re-tagged as
+                    # type=2 in the output so the frontend highlights them in orange instead
+                    # of yellow, surfacing the mixed-attack pattern visually.
+                    # =========================================================================
+                    renamed_lines_i = []
+                    renamed_lines_j = []
+                    if "Type 3" in plagiarism_type and lines_i and lines_j:
+                        renamed_lines_i, renamed_lines_j = detect_renamed_line_pairs(
+                            tokens_i, tokens_j, set(lines_i), set(lines_j)
+                        )
+
+                    renamed_set_i = set(renamed_lines_i)
+                    renamed_set_j = set(renamed_lines_j)
+
+                    formatted_lines_i = [
+                        {"line": ln, "type": 2 if ln in renamed_set_i else match_type_num}
+                        for ln in lines_i
+                    ]
+                    formatted_lines_j = [
+                        {"line": ln, "type": 2 if ln in renamed_set_j else match_type_num}
+                        for ln in lines_j
+                    ]
 
                     # =========================================================================
                     # PHASE 6: XAI (EXPLAINABLE AI) PATTERN SAMPLING
@@ -442,6 +561,7 @@ def compare_all_files(file_data, ngram_bounds):
                         "raw_identity_score": raw_identity_score,
                         "order_similarity_score": order_similarity_score,
                         "struct_divergence_score": struct_divergence_score,
+                        "renamed_line_count": len(renamed_lines_i),
                         "lines1": formatted_lines_i,
                         "lines2": formatted_lines_j,
                         "ast_xai_1": top_shared_patterns,

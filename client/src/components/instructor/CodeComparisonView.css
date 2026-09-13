@@ -221,6 +221,62 @@ html[data-theme='light'] .summary-sub-metrics {
 [data-theme='light'] .sub-metric-item strong,
 html[data-theme='light'] .sub-metric-item strong { color: #0f172a; }
 
+/* Renamed-lines sub-metric — orange accent to match the Type 2 highlight color */
+.sub-metric-renamed { color: #ea580c !important; }
+.sub-metric-renamed strong { color: #ea580c !important; }
+[data-theme='light'] .sub-metric-renamed,
+html[data-theme='light'] .sub-metric-renamed { color: #c2410c !important; }
+[data-theme='light'] .sub-metric-renamed strong,
+html[data-theme='light'] .sub-metric-renamed strong { color: #c2410c !important; }
+
+/* --- Mixed-Attack Legend Strip --- */
+.mixed-attack-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    flex-wrap: wrap;
+}
+[data-theme='light'] .mixed-attack-legend,
+html[data-theme='light'] .mixed-attack-legend {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.swatch-type3 {
+    background-color: #eab308;
+}
+
+.swatch-type2 {
+    background-color: #ea580c;
+}
+
+.legend-divider {
+    color: var(--border-glass);
+    font-size: 0.9rem;
+    opacity: 0.5;
+}
+
 /* --- 📱 MOBILE PANE SWITCHER (Hidden on Desktop, Visible on Mobile) --- */
 .mobile-pane-switcher {
     display: none;
