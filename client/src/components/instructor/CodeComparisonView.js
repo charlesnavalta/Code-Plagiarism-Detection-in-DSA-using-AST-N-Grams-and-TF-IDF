@@ -164,48 +164,62 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
             {/* 🌟 2. Responsive Summary Bar */}
             {selectedPair && themeData && (
                 <div className="classification-summary-bar">
-                    <div className="summary-main-metrics">
-                        <div className="metric-block">
-                            <span className="metric-label">Overall Similarity</span>
-                            <div className="metric-score" style={{ color: themeData.color }}>
-                                {selectedPair.score}%
+
+                    {/* Left cluster: Score + Classification + Legend */}
+                    <div className="summary-left-cluster">
+                        <div className="summary-main-metrics">
+                            <div className="metric-block">
+                                <span className="metric-label">Overall Similarity</span>
+                                <div className="metric-score" style={{ color: themeData.color }}>
+                                    {selectedPair.score}%
+                                </div>
                             </div>
-                        </div>
-                        <div className="metric-divider"></div>
-                        <div className="metric-block">
-                            <span className="metric-label">Classification</span>
-                            <div className="metric-classification">
-                                <span className={`badge-pill ${themeData.badgeClass}`}>
-                                    {themeData.label}
-                                </span>
+                            <div className="metric-divider"></div>
+                            <div className="metric-block">
+                                <span className="metric-label">Classification</span>
+                                <div className="metric-classification">
+                                    <span className={`badge-pill ${themeData.badgeClass}`}>
+                                        {themeData.label}
+                                    </span>
+                                </div>
+                                {/* Mixed-attack legend inline under the badge */}
+                                {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
+                                    <div className="mixed-attack-legend">
+                                        <span className="legend-item">
+                                            <span className="legend-swatch swatch-type3"></span>
+                                            Reordered
+                                        </span>
+                                        <span className="legend-divider">+</span>
+                                        <span className="legend-item">
+                                            <span className="legend-swatch swatch-type2"></span>
+                                            Renamed
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
 
+                    {/* Right cluster: Forensic metric chips */}
                     {selectedPair.plagiarism_type && selectedPair.plagiarism_type !== 'N/A' && (
-                        <div className="summary-sub-metrics">
-                            <span className="sub-metric-item"><strong>Raw Identity:</strong> {selectedPair.raw_identity_score}%</span>
-                            <span className="sub-metric-item"><strong>Order Alignment:</strong> {selectedPair.order_similarity_score}%</span>
+                        <div className="summary-forensic-chips">
+                            <div className="forensic-chip">
+                                <span className="forensic-chip-label">Raw Identity</span>
+                                <span className="forensic-chip-value">{selectedPair.raw_identity_score}%</span>
+                            </div>
+                            <div className="forensic-chip">
+                                <span className="forensic-chip-label">Order Alignment</span>
+                                <span className="forensic-chip-value">{selectedPair.order_similarity_score}%</span>
+                            </div>
                             {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
-                                <span className="sub-metric-item sub-metric-renamed">
-                                    <strong>Renamed Lines:</strong> {selectedPair.renamed_line_count} line{selectedPair.renamed_line_count !== 1 ? 's' : ''} detected
-                                </span>
+                                <div className="forensic-chip forensic-chip-renamed">
+                                    <span className="forensic-chip-label">Renamed Lines</span>
+                                    <span className="forensic-chip-value">{selectedPair.renamed_line_count} line{selectedPair.renamed_line_count !== 1 ? 's' : ''}</span>
+                                </div>
                             )}
                         </div>
                     )}
-                    {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
-                        <div className="mixed-attack-legend">
-                            <span className="legend-item">
-                                <span className="legend-swatch swatch-type3"></span>
-                                Type 3: Reordered Structure
-                            </span>
-                            <span className="legend-divider">|</span>
-                            <span className="legend-item">
-                                <span className="legend-swatch swatch-type2"></span>
-                                Type 2 within Type 3: Renamed Identifier
-                            </span>
-                        </div>
-                    )}
+
                 </div>
             )}
 

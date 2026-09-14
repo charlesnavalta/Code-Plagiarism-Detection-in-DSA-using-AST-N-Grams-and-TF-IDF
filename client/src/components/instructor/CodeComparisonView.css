@@ -210,71 +210,110 @@ html[data-theme='light'] .metric-divider { background: #e2e8f0; }
 [data-theme='light'] .metric-classification,
 html[data-theme='light'] .metric-classification { color: #0f172a; }
 
-.summary-sub-metrics { display: flex; gap: 20px; font-size: 13px; color: var(--text-dim); background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: 8px; }
-[data-theme='light'] .summary-sub-metrics,
-html[data-theme='light'] .summary-sub-metrics {
+.summary-left-cluster {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Right cluster: forensic metric chips */
+.summary-forensic-chips {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.forensic-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    min-width: 96px;
+    text-align: center;
+}
+[data-theme='light'] .forensic-chip,
+html[data-theme='light'] .forensic-chip {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    color: #475569;
 }
-.sub-metric-item strong { color: var(--text-main); font-weight: 600; }
-[data-theme='light'] .sub-metric-item strong,
-html[data-theme='light'] .sub-metric-item strong { color: #0f172a; }
 
-/* Renamed-lines sub-metric — orange accent to match the Type 2 highlight color */
-.sub-metric-renamed { color: #ea580c !important; }
-.sub-metric-renamed strong { color: #ea580c !important; }
-[data-theme='light'] .sub-metric-renamed,
-html[data-theme='light'] .sub-metric-renamed { color: #c2410c !important; }
-[data-theme='light'] .sub-metric-renamed strong,
-html[data-theme='light'] .sub-metric-renamed strong { color: #c2410c !important; }
-
-/* --- Mixed-Attack Legend Strip --- */
-.mixed-attack-legend {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.78rem;
+.forensic-chip-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: var(--text-dim);
-    padding: 6px 14px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    line-height: 1;
+}
+[data-theme='light'] .forensic-chip-label,
+html[data-theme='light'] .forensic-chip-label { color: #64748b; }
+
+.forensic-chip-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1;
+}
+[data-theme='light'] .forensic-chip-value,
+html[data-theme='light'] .forensic-chip-value { color: #0f172a; }
+
+/* Renamed lines chip — orange accent */
+.forensic-chip-renamed {
+    border-color: rgba(234, 88, 12, 0.35);
+    background: rgba(234, 88, 12, 0.07);
+}
+.forensic-chip-renamed .forensic-chip-label { color: #ea580c; }
+.forensic-chip-renamed .forensic-chip-value { color: #ea580c; }
+[data-theme='light'] .forensic-chip-renamed,
+html[data-theme='light'] .forensic-chip-renamed {
+    background: #fff7ed;
+    border-color: rgba(194, 65, 12, 0.25);
+}
+[data-theme='light'] .forensic-chip-renamed .forensic-chip-label,
+html[data-theme='light'] .forensic-chip-renamed .forensic-chip-label { color: #c2410c; }
+[data-theme='light'] .forensic-chip-renamed .forensic-chip-value,
+html[data-theme='light'] .forensic-chip-renamed .forensic-chip-value { color: #c2410c; }
+
+/* --- Mixed-Attack Legend (inline, compact, under the badge) --- */
+.mixed-attack-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 5px;
     flex-wrap: wrap;
 }
 [data-theme='light'] .mixed-attack-legend,
-html[data-theme='light'] .mixed-attack-legend {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #475569;
-}
+html[data-theme='light'] .mixed-attack-legend { color: #64748b; }
 
 .legend-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
 .legend-swatch {
     display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
     flex-shrink: 0;
 }
 
-.swatch-type3 {
-    background-color: #eab308;
-}
-
-.swatch-type2 {
-    background-color: #ea580c;
-}
+.swatch-type3 { background-color: #eab308; }
+.swatch-type2 { background-color: #ea580c; }
 
 .legend-divider {
-    color: var(--border-glass);
-    font-size: 0.9rem;
-    opacity: 0.5;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    opacity: 0.45;
+    font-weight: 700;
 }
 
 /* --- 📱 MOBILE PANE SWITCHER (Hidden on Desktop, Visible on Mobile) --- */
@@ -717,17 +756,19 @@ html[data-theme='light'] .pattern-flow-arrow {
     .metric-classification { font-size: 0.82rem; line-height: 1.25; }
     .metric-label { font-size: 10px; margin-bottom: 2px; }
     
-    .summary-sub-metrics { 
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between; 
-        gap: 8px; 
-        padding: 6px 12px;
-        font-size: 0.76rem;
+    
+    .summary-forensic-chips {
         width: 100%;
-        border-radius: 8px;
+        justify-content: space-between;
     }
-    .sub-metric-item { display: inline-flex; align-items: center; gap: 4px; }
+    .forensic-chip {
+        flex: 1;
+        min-width: 0;
+        padding: 7px 10px;
+    }
+    .forensic-chip-value { font-size: 13px; }
+    .forensic-chip-label { font-size: 9px; }
+
 
     /* 🌟 Mobile Pane Switcher Navigation Tabs */
     .mobile-pane-switcher {
