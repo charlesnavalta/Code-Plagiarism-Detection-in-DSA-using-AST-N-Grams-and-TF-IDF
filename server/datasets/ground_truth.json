@@ -832,5 +832,6023 @@
         "desc": "Jude: Type 3 Structural of Mary"
       }
     ]
+  },
+  "Multiple-G1": {
+    "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
+    "baseline_file": "exact_copy_01_merge_sort.py",
+    "positive_pairs": [
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_02_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_03_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_04_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_05_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_06_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_03_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_04_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_05_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_06_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_04_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_05_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_06_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_05_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_06_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_06_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_07_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_08_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_merge_sort.py",
+        "file2": "exact_copy_09_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_merge_sort.py",
+        "file2": "exact_copy_10_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_merge_sort.py",
+        "file2": "exact_copy_11_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_merge_sort.py",
+        "file2": "exact_copy_12_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_12_merge_sort.py",
+        "file2": "exact_copy_13_merge_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_15_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_16_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_17_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_18_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_19_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_16_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_17_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_18_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_19_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_17_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_18_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_19_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_18_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_19_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_19_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "exact_copy_20_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "exact_copy_21_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "exact_copy_22_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "exact_copy_23_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "exact_copy_24_heap_sort.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_37_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_38_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_39_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_40_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_41_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_38_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_39_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_40_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_41_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_39_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_40_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_41_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_40_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_41_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_41_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_42_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_43_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_44_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_bst.py",
+        "file2": "renamed_45_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_bst.py",
+        "file2": "renamed_46_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_bst.py",
+        "file2": "renamed_47_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_bst.py",
+        "file2": "renamed_48_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_48_bst.py",
+        "file2": "renamed_49_bst.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_34_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_25_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_26_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_27_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_28_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_29_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_30_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_31_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_32_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_33_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_34_heap_sort.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_heap_sort.py",
+        "file2": "structural_35_heap_sort.py",
+        "type": "Type 3"
+      }
+    ]
+  },
+  "Multiple-G2": {
+    "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
+    "baseline_file": "exact_copy_01_trie.py",
+    "positive_pairs": [
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_02_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_03_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_04_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_05_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_06_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_03_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_04_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_05_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_06_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_04_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_05_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_06_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_05_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_06_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_06_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_07_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_08_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_trie.py",
+        "file2": "exact_copy_09_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_trie.py",
+        "file2": "exact_copy_10_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_trie.py",
+        "file2": "exact_copy_11_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_trie.py",
+        "file2": "exact_copy_12_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_12_trie.py",
+        "file2": "exact_copy_13_trie.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_15_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_16_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_17_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_18_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_19_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_16_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_17_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_18_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_19_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_17_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_18_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_19_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_18_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_19_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_19_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "exact_copy_20_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "exact_copy_21_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "exact_copy_22_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "exact_copy_23_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "exact_copy_24_avl_tree.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_37_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_38_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_39_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_40_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_41_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_38_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_39_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_40_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_41_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_39_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_40_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_41_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_40_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_41_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_41_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_42_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_43_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_44_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_hash_table.py",
+        "file2": "renamed_45_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_hash_table.py",
+        "file2": "renamed_46_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_hash_table.py",
+        "file2": "renamed_47_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_hash_table.py",
+        "file2": "renamed_48_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_48_hash_table.py",
+        "file2": "renamed_49_hash_table.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_34_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_25_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_26_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_27_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_28_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_29_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_30_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_31_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_32_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_33_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_34_avl_tree.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_avl_tree.py",
+        "file2": "structural_35_avl_tree.py",
+        "type": "Type 3"
+      }
+    ]
+  },
+  "Multiple-G3": {
+    "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
+    "baseline_file": "exact_copy_01_floyd_warshall.py",
+    "positive_pairs": [
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_02_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_03_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_04_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_05_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_06_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_01_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_03_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_04_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_05_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_06_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_02_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_04_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_05_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_06_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_03_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_05_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_06_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_04_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_06_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_05_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_07_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_06_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_08_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_07_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_floyd_warshall.py",
+        "file2": "exact_copy_09_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_08_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_floyd_warshall.py",
+        "file2": "exact_copy_10_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_09_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_floyd_warshall.py",
+        "file2": "exact_copy_11_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_10_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_floyd_warshall.py",
+        "file2": "exact_copy_12_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_11_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_12_floyd_warshall.py",
+        "file2": "exact_copy_13_floyd_warshall.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_15_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_16_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_17_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_18_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_19_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_16_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_17_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_18_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_19_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_17_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_18_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_19_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_18_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_19_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_19_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "exact_copy_20_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "exact_copy_21_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "exact_copy_22_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "exact_copy_23_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "exact_copy_24_dijkstra.py",
+        "type": "Type 1"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_37_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_38_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_39_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_40_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_41_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_36_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_38_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_39_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_40_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_41_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_37_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_39_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_40_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_41_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_38_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_40_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_41_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_39_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_41_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_40_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_42_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_41_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_43_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_42_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_44_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_43_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_dsu.py",
+        "file2": "renamed_45_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_44_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_dsu.py",
+        "file2": "renamed_46_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_45_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_dsu.py",
+        "file2": "renamed_47_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_46_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_dsu.py",
+        "file2": "renamed_48_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_47_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "renamed_48_dsu.py",
+        "file2": "renamed_49_dsu.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_25_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_26_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_27_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_28_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_29_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_30_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_31_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_32_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_33_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "structural_34_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 2"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_14_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_15_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_16_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_17_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_18_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_19_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_20_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_21_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_22_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_23_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_25_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_26_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_27_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_28_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_29_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_30_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_31_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_32_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_33_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_34_dijkstra.py",
+        "type": "Type 3"
+      },
+      {
+        "file1": "exact_copy_24_dijkstra.py",
+        "file2": "structural_35_dijkstra.py",
+        "type": "Type 3"
+      }
+    ]
   }
 }
