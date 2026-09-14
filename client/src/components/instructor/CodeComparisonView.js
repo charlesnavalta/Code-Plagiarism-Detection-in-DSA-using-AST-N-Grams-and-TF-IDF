@@ -66,8 +66,11 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         });
     };
 
-    const renderASTStream = (xaiData) => {
-        if (!xaiData || xaiData.length === 0) {
+    const renderASTStream = (xaiData, uniqueData = []) => {
+        const hasShared = xaiData && xaiData.length > 0;
+        const hasUnique = uniqueData && uniqueData.length > 0;
+
+        if (!hasShared && !hasUnique) {
             return (
                 <div className="empty-ast">
                     <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginBottom: '8px', opacity: 0.6 }}>
@@ -77,54 +80,86 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                 </div>
             );
         }
-        
+
+        const renderPatternCard = (patternData, patternIndex, isShared) => {
+            const realWeight = patternData.weight;
+            const { categoryLabel, badgeColor, badgeBg } = isShared
+                ? getASTBadgeStyle(realWeight, patternIndex, xaiData.length)
+                : { categoryLabel: 'Only in This File', badgeColor: '#94a3b8', badgeBg: 'rgba(148,163,184,0.12)' };
+
+            return (
+                <div
+                    key={`${isShared ? 'shared' : 'unique'}-${patternIndex}`}
+                    className={`ngram-pattern-card ${!isShared ? 'ngram-pattern-card-unique' : ''}`}
+                >
+                    {/* Pattern Header */}
+                    <div className="pattern-header-row">
+                        <div className="pattern-meta-left">
+                            <span className="sequence-badge">
+                                {isShared ? `Sequence #${patternIndex + 1}` : `Unique #${patternIndex + 1}`}
+                            </span>
+                            <span className="category-status-pill" style={{ color: badgeColor, backgroundColor: badgeBg }}>
+                                <span className="category-status-dot" style={{ backgroundColor: badgeColor }}></span>
+                                {categoryLabel}
+                            </span>
+                        </div>
+                        <div className="pattern-weight-chip">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>TF-IDF: <strong>{realWeight}</strong></span>
+                        </div>
+                    </div>
+
+                    {/* Connected AST Flow Pipeline */}
+                    <div className="pattern-tokens-container">
+                        {patternData.sequence.map((token, tokenIndex) => (
+                            <React.Fragment key={`token-${patternIndex}-${tokenIndex}`}>
+                                <div className={`ast-token-chip ${!isShared ? 'ast-token-chip-unique' : ''}`}>
+                                    <span className="token-step">{tokenIndex + 1}</span>
+                                    <span className="token-name">{token}</span>
+                                </div>
+                                {tokenIndex < patternData.sequence.length - 1 && (
+                                    <div className="pattern-flow-arrow">
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                        </svg>
+                                    </div>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         return (
             <div className="ast-pattern-stream">
-                {xaiData.map((patternData, patternIndex) => {
-                    const realWeight = patternData.weight;
-                    const { categoryLabel, badgeColor, badgeBg } = getASTBadgeStyle(realWeight, patternIndex, xaiData.length);
-
-                    return (
-                        <div key={`pattern-${patternIndex}`} className="ngram-pattern-card">
-                            {/* Sleek Sequence Header */}
-                            <div className="pattern-header-row">
-                                <div className="pattern-meta-left">
-                                    <span className="sequence-badge">Sequence #{patternIndex + 1}</span>
-                                    <span className="category-status-pill" style={{ color: badgeColor, backgroundColor: badgeBg }}>
-                                        <span className="category-status-dot" style={{ backgroundColor: badgeColor }}></span>
-                                        {categoryLabel}
-                                    </span>
-                                </div>
-                                <div className="pattern-weight-chip">
-                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                    </svg>
-                                    <span>TF-IDF: <strong>{realWeight}</strong></span>
-                                </div>
-                            </div>
-                            
-                            {/* Connected AST Flow Pipeline */}
-                            <div className="pattern-tokens-container">
-                                {patternData.sequence.map((token, tokenIndex) => (
-                                    <React.Fragment key={`token-${patternIndex}-${tokenIndex}`}>
-                                        <div className="ast-token-chip">
-                                            <span className="token-step">{tokenIndex + 1}</span>
-                                            <span className="token-name">{token}</span>
-                                        </div>
-                                        
-                                        {tokenIndex < patternData.sequence.length - 1 && (
-                                            <div className="pattern-flow-arrow">
-                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </div>
+                {/* Section 1: Matched / Shared Patterns */}
+                {hasShared && (
+                    <>
+                        <div className="ast-section-header ast-section-matched">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Matched Patterns — {xaiData.length} shared with other file
                         </div>
-                    );
-                })}
+                        {xaiData.map((patternData, idx) => renderPatternCard(patternData, idx, true))}
+                    </>
+                )}
+
+                {/* Section 2: Unique / Unmatched Patterns */}
+                {hasUnique && (
+                    <>
+                        <div className="ast-section-header ast-section-unique">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Unique Patterns — {uniqueData.length} not found in other file
+                        </div>
+                        {uniqueData.map((patternData, idx) => renderPatternCard(patternData, idx, false))}
+                    </>
+                )}
             </div>
         );
     };
@@ -265,7 +300,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <span className="file-badge student-a">{selectedPair.file1}</span>
                     </div>
                     <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_1)}
+                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_1, selectedPair.ast_unique_1 || [])}
                     </div>
                 </div>
                 
@@ -274,7 +309,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <span className="file-badge student-b">{selectedPair.file2}</span>
                     </div>
                     <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_2)}
+                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_2, selectedPair.ast_unique_2 || [])}
                     </div>
                 </div>
             </div>

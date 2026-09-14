@@ -693,6 +693,88 @@ html[data-theme='light'] .pattern-flow-arrow {
     opacity: 1;
 }
 
+/* Section Headers for Matched vs Unique AST Patterns */
+.ast-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-top: 6px;
+    margin-bottom: 2px;
+}
+
+.ast-section-matched {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+[data-theme='light'] .ast-section-matched,
+html[data-theme='light'] .ast-section-matched {
+    background: rgba(37, 99, 235, 0.08);
+    color: #1d4ed8;
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.ast-section-unique {
+    background: rgba(148, 163, 184, 0.08);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    margin-top: 14px;
+}
+[data-theme='light'] .ast-section-unique,
+html[data-theme='light'] .ast-section-unique {
+    background: rgba(100, 116, 139, 0.06);
+    color: #475569;
+    border-color: rgba(100, 116, 139, 0.2);
+}
+
+/* Unique / Unmatched Pattern Card Variations */
+.ngram-pattern-card-unique {
+    border-color: rgba(148, 163, 184, 0.15);
+    background: rgba(15, 23, 42, 0.4);
+    opacity: 0.88;
+}
+
+.ngram-pattern-card-unique:hover {
+    border-color: rgba(148, 163, 184, 0.35);
+    opacity: 1;
+}
+
+[data-theme='light'] .ngram-pattern-card-unique,
+html[data-theme='light'] .ngram-pattern-card-unique {
+    border-color: #e2e8f0;
+    background: #f8fafc;
+}
+
+.ast-token-chip-unique {
+    background: rgba(30, 41, 59, 0.45);
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+}
+
+.ast-token-chip-unique .token-step {
+    background: rgba(148, 163, 184, 0.2);
+    color: #cbd5e1;
+}
+
+[data-theme='light'] .ast-token-chip-unique,
+html[data-theme='light'] .ast-token-chip-unique {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+[data-theme='light'] .ast-token-chip-unique .token-step,
+html[data-theme='light'] .ast-token-chip-unique .token-step {
+    background: #cbd5e1;
+    color: #475569;
+}
+
 /* =========================================
    📱 RESPONSIVE ENGINE (iPhone 13 & Mobile Phones)
    ========================================= */

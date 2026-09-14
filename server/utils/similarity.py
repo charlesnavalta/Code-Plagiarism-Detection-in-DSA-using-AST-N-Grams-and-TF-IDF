@@ -548,8 +548,40 @@ def compare_all_files(file_data, ngram_bounds):
 
                         return representative_sample
 
+                    # Helper function to extract top UNIQUE patterns (n-grams in this file
+                    # but NOT in the shared set — evidence of structural differences)
+                    def get_top_unique_patterns(tokens_for_case, shared_set, all_ngram_set, ngram_size=3):
+                        extracted_patterns = {}
+                        max_possible_idf = np.log(len(documents)) + 1
+
+                        for k in range(len(tokens_for_case) - ngram_size + 1):
+                            original_sequence = [t[0] for t in tokens_for_case[k:k+ngram_size]]
+                            ngram_str = " ".join(s.lower() for s in original_sequence)
+
+                            # Only include if it's a known vocabulary n-gram but NOT in the shared set
+                            if (ngram_str in all_ngram_set
+                                    and ngram_str not in shared_set
+                                    and ngram_str not in extracted_patterns):
+                                real_weight = ngram_weight_map.get(ngram_str, 0.0)
+                                normalized_score = round((real_weight / max_possible_idf) * 100, 2) if max_possible_idf > 0 else 0
+
+                                extracted_patterns[ngram_str] = {
+                                    "sequence": original_sequence,
+                                    "weight": normalized_score,
+                                    "is_shared": False
+                                }
+
+                        # Sort by weight descending, return up to 8 unique patterns
+                        unique_patterns = sorted(extracted_patterns.values(), key=lambda x: x['weight'], reverse=True)
+                        return unique_patterns[:8]
+
+                    # Build the full n-gram vocabulary set for unique-pattern filtering
+                    all_ngrams_set = set(feature_names)
+
                     # Extract the structured XAI data for the React frontend
                     top_shared_patterns = get_top_shared_patterns(tokens_i, shared_ngrams, ngram_size=3)
+                    top_unique_patterns_i = get_top_unique_patterns(tokens_i, shared_ngrams, all_ngrams_set, ngram_size=3)
+                    top_unique_patterns_j = get_top_unique_patterns(tokens_j, shared_ngrams, all_ngrams_set, ngram_size=3)
 
                     # Append the final, highly structured forensic package to the results array
                     results.append({
@@ -565,7 +597,9 @@ def compare_all_files(file_data, ngram_bounds):
                         "lines1": formatted_lines_i,
                         "lines2": formatted_lines_j,
                         "ast_xai_1": top_shared_patterns,
-                        "ast_xai_2": top_shared_patterns
+                        "ast_xai_2": top_shared_patterns,
+                        "ast_unique_1": top_unique_patterns_i,
+                        "ast_unique_2": top_unique_patterns_j
                     })
 
         # Sort the final results from highest plagiarism score to lowest

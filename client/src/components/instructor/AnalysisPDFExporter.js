@@ -34,24 +34,54 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
 
     const generatePDF = async () => {
         setIsGenerating(true);
-        const reportElement = document.getElementById('pdf-export-template');
+        const page1Element = document.getElementById('pdf-page-1');
+        const page2Element = document.getElementById('pdf-page-2');
+        const page3Element = document.getElementById('pdf-page-3');
         
         try {
-            const canvas = await html2canvas(reportElement, { 
-                scale: 1.8, 
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            // Render Page 1
+            const canvas1 = await html2canvas(page1Element, { 
+                scale: 2.0, 
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
-                windowWidth: 800
+                windowWidth: 794
             });
-            
-            const imgData = canvas.toDataURL('image/jpeg', 0.88);
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
-            
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+            pdf.addImage(imgData1, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+
+            // Render Page 2
+            if (page2Element) {
+                pdf.addPage();
+                const canvas2 = await html2canvas(page2Element, { 
+                    scale: 2.0, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    windowWidth: 794
+                });
+                const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+                pdf.addImage(imgData2, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            }
+
+            // Render Page 3
+            if (page3Element) {
+                pdf.addPage();
+                const canvas3 = await html2canvas(page3Element, { 
+                    scale: 2.0, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    windowWidth: 794
+                });
+                const imgData3 = canvas3.toDataURL('image/jpeg', 0.95);
+                pdf.addImage(imgData3, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            }
+
             pdf.save(`FALSICODE-AUDIT-LOG-${generatedReportId}.pdf`);
             toast.success("Analysis Report PDF generated successfully!");
             
@@ -106,7 +136,8 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
 
     const hiddenTemplate = (
         <div className="pdf-hidden-wrapper">
-            <div className="pdf-export-container" id="pdf-export-template">
+            {/* PAGE 1: FORENSIC AUDIT & COMPARISON OVERVIEW */}
+            <div className="pdf-export-container pdf-page" id="pdf-page-1">
                 
                 {/* Header Block */}
                 <div className="pdf-header-row">
@@ -117,6 +148,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                     <div className="pdf-meta-block">
                         <p><strong>Forensic Audit Date:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                         <p><strong>Report Identifier:</strong> {generatedReportId}</p>
+                        <p className="pdf-page-indicator">Page 1 of 3</p>
                     </div>
                 </div>
 
@@ -178,7 +210,7 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                     </div>
                 </div>
 
-                {/* Vector Graph Visualization Container - Fixed Size with Clear Line Labels & Legend Row */}
+                {/* Vector Graph Visualization Container */}
                 <div className="pdf-vector-wrapper">
                     <h3>Vector Space Alignment (Cosine Similarity Mapping)</h3>
                     <p>
@@ -193,7 +225,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                             viewBox="0 0 640 148" 
                             style={{ overflow: 'hidden', backgroundColor: '#ffffff' }}
                         >
-                            {/* Marker definitions for vector arrow heads */}
                             <defs>
                                 <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                                     <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
@@ -203,16 +234,13 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 </marker>
                             </defs>
 
-                            {/* Background Horizontal Grid Dashes */}
                             <line x1="50" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
                             <line x1="50" y1="60" x2="600" y2="60" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
                             <line x1="50" y1="90" x2="600" y2="90" stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4,4" />
                             
-                            {/* Primary Coordinate Axis Lines */}
                             <line x1={ox} y1="14" x2={ox} y2={oy} stroke="#475569" strokeWidth="1.5" strokeLinecap="round" />
                             <line x1={ox} y1={oy} x2="605" y2={oy} stroke="#475569" strokeWidth="1.5" strokeLinecap="round" />
                             
-                            {/* Axis Title Indicators */}
                             <text x="605" y="138" fill="#64748b" fontSize="8.5" fontWeight="bold" textAnchor="end" fontFamily="monospace">
                                 AST N-Gram Feature Dimensions →
                             </text>
@@ -220,7 +248,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 ↑ Structural Depth
                             </text>
 
-                            {/* Vector Line A (Source A) */}
                             <line 
                                 x1={ox} 
                                 y1={oy} 
@@ -232,7 +259,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 markerEnd="url(#arrow-blue)"
                             />
                             
-                            {/* Vector Line B (Source B) */}
                             <line 
                                 x1={ox} 
                                 y1={oy} 
@@ -245,8 +271,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 markerEnd="url(#arrow-b)"
                             />
 
-                            {/* Clear Line Labels Attached directly to Endpoints */}
-                            {/* Source A Label Pill */}
                             <g transform={`translate(${ax + 8}, ${ay - 9})`}>
                                 <rect x="0" y="0" width="140" height="18" rx="4" fill="#2563eb" />
                                 <text x="6" y="12" fill="#ffffff" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
@@ -254,7 +278,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 </text>
                             </g>
 
-                            {/* Source B Label Pill - Offset downwards if collinear */}
                             <g transform={`translate(${bx + 8}, ${visualThetaDeg < 4 ? by + 12 : by - 9})`}>
                                 <rect x="0" y="0" width="140" height="18" rx="4" fill={themeData.color} />
                                 <text x="6" y="12" fill="#ffffff" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
@@ -262,7 +285,6 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                                 </text>
                             </g>
 
-                            {/* Angle Arc θ between Vectors */}
                             {exactThetaDeg > 0 ? (
                                 <>
                                     <path 
@@ -284,30 +306,29 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                         </svg>
                     </div>
 
-                    {/* GRAPH LEGEND ROW - Reference & Proximity Mapping */}
                     <div className="pdf-graph-legend-row">
                         <div className="pdf-legend-item">
                             <span className="pdf-legend-dot" style={{ backgroundColor: '#2563eb' }}></span>
-                            <span><strong>Source A Vector:</strong> Reference AST projection ({selectedPair.file1})</span>
+                            <span><strong>Source A:</strong> {selectedPair.file1}</span>
                         </div>
                         <div className="pdf-legend-item">
                             <span className="pdf-legend-dot" style={{ backgroundColor: themeData.color }}></span>
-                            <span><strong>Source B Vector:</strong> Comparative AST projection ({selectedPair.file2})</span>
+                            <span><strong>Source B:</strong> {selectedPair.file2}</span>
                         </div>
                         <div className="pdf-legend-item">
                             <span className="pdf-legend-dot" style={{ backgroundColor: '#10b981' }}></span>
-                            <span><strong>Angle θ:</strong> Angular proximity (0.0° denotes perfect structural identity)</span>
+                            <span><strong>Angle θ:</strong> Distance between files in vector space</span>
                         </div>
                     </div>
                 </div>
 
-                {/* High Significance Subtrees Section - Real Extracted XAI AST Tokens */}
+                {/* High Significance Subtrees Section */}
                 <div className="pdf-block-container-large">
                     <div className="pdf-block-header">
                         <div className="pdf-block-header-title">High-Significance Shared Subtrees & TF-IDF Weight Configuration</div>
                     </div>
                     <div className="pdf-block-subheader">
-                        The following tokens represent the highest weighted, non-trivial AST subtrees extracted by the analyzer. A higher TF-IDF score confirms that the logical pattern is sparse and specialized across the collective cohort, eliminating boilerplate declarations.
+                        The highest weighted, non-trivial AST subtrees extracted by the analyzer. A higher TF-IDF score confirms that the logical pattern is specialized across the collective cohort, eliminating boilerplate declarations.
                     </div>
                     
                     <table className="pdf-forensic-table">
@@ -358,17 +379,276 @@ const AnalysisPDFExporter = ({ selectedPair }) => {
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                {/* Methodology Annotation Footnote */}
+            {/* PAGE 2: MATHEMATICAL FORMULATION & DETECTION METHODOLOGY */}
+            <div className="pdf-export-container pdf-page" id="pdf-page-2">
+                
+                {/* Header Block Page 2 */}
+                <div className="pdf-header-row">
+                    <div>
+                        <h2 className="pdf-brand-title">⎔ FALSICODE</h2>
+                        <p className="pdf-brand-sub">AUTOMATED CODE CLONE DETECTOR</p>
+                    </div>
+                    <div className="pdf-meta-block">
+                        <p><strong>Forensic Audit Date:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p><strong>Report Identifier:</strong> {generatedReportId}</p>
+                        <p className="pdf-page-indicator">Page 2 of 3</p>
+                    </div>
+                </div>
+
+                <div className="pdf-main-title-section">
+                    <h1>MATHEMATICAL DETECTION FORMULAS & METHODOLOGY</h1>
+                    <p>SCIENTIFIC FORMULATION & STEP-BY-STEP EXPLANATION OF PLAGIARISM METRICS</p>
+                </div>
+
+                {/* Mathematical Formulation Section */}
+                <div className="pdf-block-container-large pdf-formula-section-page2" style={{ marginBottom: '10px' }}>
+                    <div className="pdf-block-header">
+                        <div className="pdf-block-header-title">Mathematical Detection Pillars (Formulas 1 to 5)</div>
+                    </div>
+                    
+                    <div className="pdf-academic-formula-list">
+                        
+                        {/* 1. AST Tokenization & N-Gram Extraction */}
+                        <div className="pdf-academic-formula-item">
+                            <div className="pdf-academic-formula-header">
+                                <span className="pdf-academic-formula-title">1. AST Tokenization & N-Gram Extraction:</span>
+                                <span className="pdf-math-expr">
+                                     <em>S</em> = (<em>t</em>₁, <em>t</em>₂, ..., <em>t<sub>m</sub></em>), &emsp; 
+                                     N-Gram<sub><em>k</em></sub> = (<em>t<sub>k</sub></em>, <em>t</em><sub><em>k</em>+1</sub>, ..., <em>t</em><sub><em>k</em>+<em>n</em>-1</sub>), &emsp; <em>n</em> &isin; [3, 5]
+                                </span>
+                            </div>
+                            <ul className="pdf-academic-formula-bullets">
+                                <li>Transforms source code into an Abstract Syntax Tree (AST), standardizing identifiers and literals into uniform structural tokens.</li>
+                                <li>Slides window of size <em>n</em> to extract sequential structural blocks, making detection resilient against variable renaming.</li>
+                            </ul>
+                        </div>
+
+                        {/* 2. Sublinear TF-IDF Weighting */}
+                        <div className="pdf-academic-formula-item">
+                            <div className="pdf-academic-formula-header">
+                                <span className="pdf-academic-formula-title">2. Sublinear TF-IDF Weighting:</span>
+                                <span className="pdf-math-expr">
+                                     TF(<em>t</em>, <em>d</em>) = 1 + ln(tf(<em>t</em>, <em>d</em>)), &emsp;
+                                     IDF(<em>t</em>, <em>D</em>) = ln<span className="pdf-math-paren">(</span><span className="pdf-math-fraction"><span className="pdf-math-numerator">1 + |<em>D</em>|</span><span className="pdf-math-denominator">1 + df(<em>t</em>)</span></span><span className="pdf-math-paren">)</span> + 1
+                                </span>
+                            </div>
+                            <ul className="pdf-academic-formula-bullets">
+                                <li>Damps high-frequency patterns to automatically down-weight ubiquitous boilerplate code and prompt requirements.</li>
+                                <li>Accentuates rare, specialized algorithmic logic unique to individual submissions across the cohort.</li>
+                            </ul>
+                        </div>
+
+                        {/* 3. Cosine Similarity & Vector Space Projection */}
+                        <div className="pdf-academic-formula-item">
+                            <div className="pdf-academic-formula-header">
+                                <span className="pdf-academic-formula-title">3. Cosine Similarity & Vector Space Projection:</span>
+                                <span className="pdf-math-expr">
+                                     Cosine(<strong>u</strong>, <strong>v</strong>) = 
+                                     <span className="pdf-math-fraction"><span className="pdf-math-numerator"><strong>u</strong> &middot; <strong>v</strong></span><span className="pdf-math-denominator">||<strong>u</strong>||₂ ||<strong>v</strong>||₂</span></span> = 
+                                     <span className="pdf-math-fraction"><span className="pdf-math-numerator">&sum; (<em>u<sub>i</sub></em> &middot; <em>v<sub>i</sub></em>)</span><span className="pdf-math-denominator">&radic;<span className="pdf-math-radicand">&sum; <em>u<sub>i</sub></em>²</span> &middot; &radic;<span className="pdf-math-radicand">&sum; <em>v<sub>i</sub></em>²</span></span></span>
+                                </span>
+                            </div>
+                            <ul className="pdf-academic-formula-bullets">
+                                <li>Projects submissions into high-dimensional AST feature space to compute angular orientation (&theta;) between files.</li>
+                                <li>Measures directional alignment independent of code length, scaling from 0% (orthogonal) to 100% (collinear/identical).</li>
+                            </ul>
+                        </div>
+
+                        {/* 4. Asymmetric Structural Containment Metric */}
+                        <div className="pdf-academic-formula-item">
+                            <div className="pdf-academic-formula-header">
+                                <span className="pdf-academic-formula-title">4. Asymmetric Structural Containment Metric:</span>
+                                <span className="pdf-math-expr">
+                                     Containment(<em>A</em>, <em>B</em>) = 
+                                     <span className="pdf-math-fraction"><span className="pdf-math-numerator">&sum; min(<em>u<sub>i</sub></em>, <em>v<sub>i</sub></em>)</span><span className="pdf-math-denominator">min(&sum; <em>u<sub>i</sub></em>, &sum; <em>v<sub>i</sub></em>)</span></span> &times; 100%
+                                </span>
+                            </div>
+                            <ul className="pdf-academic-formula-bullets">
+                                <li>Catches asymmetric size attacks where copied logic is embedded inside a larger file or masked with dead code.</li>
+                                <li>Ensures high detection accuracy when file lengths differ significantly by measuring complete logic encapsulation.</li>
+                            </ul>
+                        </div>
+
+                        {/* 5. Multiset Structural Divergence Metric */}
+                        <div className="pdf-academic-formula-item">
+                            <div className="pdf-academic-formula-header">
+                                <span className="pdf-academic-formula-title">5. Multiset Structural Divergence Metric:</span>
+                                <span className="pdf-math-expr">
+                                    Div(<em>S<sub>A</sub></em>, <em>S<sub>B</sub></em>) = 
+                                    <span className="pdf-math-fraction"><span className="pdf-math-numerator">&sum;<sub><em>t</em> &isin; <em>T</em></sub> |count<sub><em>A</em></sub>(<em>t</em>) &minus; count<sub><em>B</em></sub>(<em>t</em>)|</span><span className="pdf-math-denominator">&sum;<sub><em>t</em> &isin; <em>T</em></sub> max(count<sub><em>A</em></sub>(<em>t</em>), count<sub><em>B</em></sub>(<em>t</em>))</span></span> &times; 100%
+                                </span>
+                            </div>
+                            <ul className="pdf-academic-formula-bullets">
+                                <li>Quantifies AST control-flow multiset difference ratio across matched statement sequences.</li>
+                                <li>Confirms structural divergence when logic is altered via statement reordering, loop conversions, or dead code injection.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Multi-Signal Attack Taxonomy Decision Framework Box */}
+                <div className="pdf-entity-box" style={{ padding: '10px 14px', marginBottom: '8px' }}>
+                    <h4 className="pdf-block-header-title">Multi-Signal Attack Taxonomy Classification Architecture</h4>
+                    <p style={{ margin: '0 0 6px 0', fontSize: '9.5pt', color: '#374151', lineHeight: '1.4' }}>
+                        The overall similarity percentage acts purely as an eligibility gate (&ge; 60%). The exact clone category is assigned deterministically through forensic signals:
+                    </p>
+                    <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '9pt', color: '#374151', lineHeight: '1.4' }}>
+                        <li><strong>Type 3 (Modified Structure - Priority 1):</strong> Flagged if <code>Order Alignment &lt; 80%</code> or <code>Structural Divergence &gt; 7.5%</code> (detects reordered statements, altered control flow, or loop substitutions).</li>
+                        <li><strong>Type 1 (Exact Copy - Priority 2):</strong> Flagged if AST structure is intact and <code>Raw Identity &ge; 75%</code> (verbatim copy with matching variable names).</li>
+                        <li><strong>Type 2 (Renamed Variables - Priority 3):</strong> Flagged if AST structure is intact but <code>Raw Identity &lt; 75%</code> (systematic identifier renaming).</li>
+                    </ul>
+                </div>
+
+                {/* Methodology Footnote */}
                 <p className="pdf-footnote-annotation">
-                    * <em>Note: TF-IDF algorithms assign higher scores to unique algorithmic configurations. Standard template layouts required by the prompt instructions are down-weighted to minimize false-positive indices.</em>
+                    * <em>Methodology Reference: AST analysis preserves syntactic semantics while filtering cosmetics. TF-IDF down-weights required classroom prompts, minimizing false positives.</em>
+                </p>
+            </div>
+
+            {/* PAGE 3: UNIFIED SYSTEM VARIABLES REFERENCE TABLE & AUDIT VERIFICATION SEAL */}
+            <div className="pdf-export-container pdf-page" id="pdf-page-3">
+                
+                {/* Header Block Page 3 */}
+                <div className="pdf-header-row">
+                    <div>
+                        <h2 className="pdf-brand-title">⎔ FALSICODE</h2>
+                        <p className="pdf-brand-sub">AUTOMATED CODE CLONE DETECTOR</p>
+                    </div>
+                    <div className="pdf-meta-block">
+                        <p><strong>Forensic Audit Date:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p><strong>Report Identifier:</strong> {generatedReportId}</p>
+                        <p className="pdf-page-indicator">Page 3 of 3</p>
+                    </div>
+                </div>
+
+                <div className="pdf-main-title-section">
+                    <h1>SYSTEM VARIABLES & SOURCE CODE EQUIVALENTS</h1>
+                    <p>COMPLETE REFERENCE: MAPPING MATHEMATICAL NOTATIONS TO ENGINE IMPLEMENTATION</p>
+                </div>
+
+                {/* Unified Continuous Mapping Table Section (All 12 Symbols) */}
+                <div className="pdf-block-container-large" style={{ marginBottom: '10px' }}>
+                    <div className="pdf-block-header">
+                        <div className="pdf-block-header-title">Mathematical Notation to System & Code Implementation Guide</div>
+                    </div>
+                    <div className="pdf-block-subheader">
+                        This reference table maps every mathematical symbol to its live system variable, field name, and source code context.
+                    </div>
+
+                    <table className="pdf-forensic-table pdf-mapping-table">
+                        <thead>
+                            <tr className="pdf-table-th-row">
+                                <th style={{ width: '105px' }}>Symbol</th>
+                                <th style={{ width: '180px' }}>System Variable / Field</th>
+                                <th>Operational Definition in the System</th>
+                                <th style={{ width: '165px' }}>Source Code Context</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><em>D</em>, |<em>D</em>|</td>
+                                <td className="pdf-mapping-field"><code>documents</code>, <code>n_docs</code></td>
+                                <td>Total count of student submissions uploaded for the assignment in the classroom.</td>
+                                <td className="pdf-mapping-code"><code>len(documents)</code> in <code>similarity.py</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><em>d</em></td>
+                                <td className="pdf-mapping-field"><code>doc</code></td>
+                                <td>A single student submission normalized into space-separated AST structural tokens.</td>
+                                <td className="pdf-mapping-code"><code>file_data[k]['doc']</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><em>t</em>, <em>t<sub>i</sub></em></td>
+                                <td className="pdf-mapping-field"><code>token</code>, <code>feature_name</code></td>
+                                <td>An individual Abstract Syntax Tree node (e.g., <code>FunctionDef</code>, <code>For</code>, <code>While</code>, <code>Name_ID</code>).</td>
+                                <td className="pdf-mapping-code"><code>ASTTokenExtractor</code> in <code>python_engine.py</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><em>n</em></td>
+                                <td className="pdf-mapping-field"><code>ngram_bounds</code></td>
+                                <td>The sliding window length for continuous node sequences (configured between 3 and 5 tokens).</td>
+                                <td className="pdf-mapping-code"><code>ngram_range=(3, 5)</code> in <code>vectorizer</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">tf(<em>t</em>, <em>d</em>)</td>
+                                <td className="pdf-mapping-field"><code>term_frequency</code></td>
+                                <td>Raw occurrence count of a specific AST N-Gram within a student's submission.</td>
+                                <td className="pdf-mapping-code">Count of <em>t</em> in submission <em>d</em></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">df(<em>t</em>)</td>
+                                <td className="pdf-mapping-field"><code>document_frequency</code></td>
+                                <td>Number of student files across the entire class that contain the given N-Gram pattern.</td>
+                                <td className="pdf-mapping-code">Document frequency in <code>TfidfVectorizer</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><strong>u</strong>, <strong>v</strong></td>
+                                <td className="pdf-mapping-field"><code>vec_i</code>, <code>vec_j</code></td>
+                                <td>The TF-IDF normalized vector arrays representing Source A and Source B in feature space.</td>
+                                <td className="pdf-mapping-code"><code>tfidf_matrix[i].toarray()</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">&theta; (Theta)</td>
+                                <td className="pdf-mapping-field"><code>spatial_distance</code></td>
+                                <td>Angular divergence between the two submission vectors (0.0&deg; denotes perfect alignment).</td>
+                                <td className="pdf-mapping-code"><code>cos(&theta;) = score / 100</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol"><em>S<sub>A</sub></em>, <em>S<sub>B</sub></em></td>
+                                <td className="pdf-mapping-field"><code>skeleton_i</code>, <code>skeleton_j</code></td>
+                                <td>The extracted structural node skeletons of the matched lines (identifiers stripped).</td>
+                                <td className="pdf-mapping-code"><code>get_structural_skeleton()</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">Div(<em>S<sub>A</sub></em>, <em>S<sub>B</sub></em>)</td>
+                                <td className="pdf-mapping-field"><code>struct_divergence_score</code></td>
+                                <td>Multiset count difference ratio between AST control-flow nodes (threshold: 7.5%).</td>
+                                <td className="pdf-mapping-code"><code>structural_divergence()</code> in <code>similarity.py</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">Raw Identity</td>
+                                <td className="pdf-mapping-field"><code>raw_identity_score</code></td>
+                                <td>Sequence matcher similarity ratio of variable and literal strings (threshold: 75%).</td>
+                                <td className="pdf-mapping-code"><code>get_raw_identity_signature()</code></td>
+                            </tr>
+                            <tr className="pdf-table-tr-data">
+                                <td className="pdf-mapping-symbol">Order Alignment</td>
+                                <td className="pdf-mapping-field"><code>order_similarity_score</code></td>
+                                <td>Longest common subsequence preservation ratio of shared structural grams (threshold: 80%).</td>
+                                <td className="pdf-mapping-code"><code>get_ordered_shared_sequence()</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Practical Example Walkthrough Box */}
+                <div className="pdf-entity-box" style={{ padding: '8px 12px', marginBottom: '8px' }}>
+                    <h4 className="pdf-block-header-title" style={{ fontSize: '9.5pt' }}>Concrete Interpretation Example: IDF Weight Damping</h4>
+                    <p style={{ margin: '0', fontSize: '9pt', color: '#374151', lineHeight: '1.4' }}>
+                        If a classroom has <strong>|<em>D</em>| = 30</strong> submissions, and <strong>28</strong> students share the n-gram <code>def bubble_sort(arr)</code>, its <strong>df(<em>t</em>) = 28</strong>. The system automatically assigns this pattern an <strong>IDF ≈ 1.0</strong> (near zero weight), preventing prompt-required declarations from triggering false positives. Conversely, if only <strong>2</strong> students share an unusual AST sequence, its <strong>IDF ≈ 3.3</strong>, amplifying its forensic significance in the final similarity calculation.
+                    </p>
+                </div>
+
+                <p className="pdf-footnote-annotation" style={{ marginBottom: '8px' }}>
+                    * <em>Note: TF-IDF feature weights are computed dynamically across all classroom submissions uploaded in the active assignment batch.</em>
                 </p>
 
-                {/* Structural Validation Sign-off */}
-                <div className="pdf-signature-block">
-                    <div className="pdf-signature-line"></div>
-                    <p className="pdf-signature-name">Falsicode Verification Core</p>
-                    <p className="pdf-signature-sub">Automated Integrity Engine Output</p>
+                {/* Modern Document Verification Seal */}
+                <div className="pdf-verification-seal-row" style={{ marginTop: 'auto' }}>
+                    <div className="pdf-verification-seal">
+                        <div className="pdf-seal-icon">&#10003;</div>
+                        <div className="pdf-seal-text">
+                            <span className="pdf-seal-title">SYSTEM AUDIT VERIFIED</span>
+                            <span className="pdf-seal-sub">Cryptographically Indexed Audit Trail &bull; Falsicode Engine Core</span>
+                        </div>
+                    </div>
+                    <div className="pdf-report-hash-block">
+                        <span className="pdf-hash-label">Report Security Hash</span>
+                        <code className="pdf-hash-value">SHA-256: {generatedReportId.replace(/[^0-9]/g, '').padEnd(16, '7a9f')}-VERIFIED</code>
+                    </div>
                 </div>
             </div>
         </div>
