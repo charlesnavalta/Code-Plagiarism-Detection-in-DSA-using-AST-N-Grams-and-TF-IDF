@@ -47,6 +47,14 @@ users_to_seed = [
     {"email": "justine@gmail.com", "username": "Justine", "password": "justine123", "role": "student", "status": "active", "is_verified": True},
     {"email": "liezel@gmail.com", "username": "Liezel", "password": "liezel123", "role": "student", "status": "active", "is_verified": True},
     {"email": "miguel@gmail.com", "username": "Miguel", "password": "miguel123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "kurt@gmail.com", "username": "Kurt", "password": "kurt123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "gab@gmail.com", "username": "Gab", "password": "gab123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "yana@gmail.com", "username": "Yana", "password": "yana123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "ali@gmail.com", "username": "Ali", "password": "ali123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "charm@gmail.com", "username": "Charm", "password": "charm123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "val@gmail.com", "username": "Val", "password": "val123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "jayson@gmail.com", "username": "Jayson", "password": "jayson123", "role": "student", "status": "active", "is_verified": True},
+    {"email": "vincent@gmail.com", "username": "Vincent", "password": "vincent123", "role": "student", "status": "active", "is_verified": True},
 ]
 
 def seed_users(db):

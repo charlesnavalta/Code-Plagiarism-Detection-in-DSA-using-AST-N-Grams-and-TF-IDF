@@ -13,8 +13,20 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
     const themeData = selectedPair ? getPlagiarismDisplayData(selectedPair.plagiarism_type) : null;
 
     const getCodeByFilename = (label) => {
-        const sub = submissions.find(s => `${s.student_name} (${s.filename})` === label);
-        return sub && sub.content ? sub.content : "Code content not available. Please check backend.";
+        if (!submissions || !label) return "Code content not available.";
+        // 1. Direct match with composite student_name (filename)
+        let sub = submissions.find(s => `${s.student_name} (${s.filename})` === label);
+        if (sub && (sub.content || sub.raw_code)) return sub.content || sub.raw_code;
+
+        // 2. Direct match with filename or name (used in Batch Analysis)
+        sub = submissions.find(s => s.filename === label || s.name === label || s.student_name === label);
+        if (sub && (sub.content || sub.raw_code)) return sub.content || sub.raw_code;
+
+        // 3. Substring / parenthesized match
+        sub = submissions.find(s => label.includes(s.filename || '') || (s.name && label.includes(s.name)));
+        if (sub && (sub.content || sub.raw_code)) return sub.content || sub.raw_code;
+
+        return "Code content not available. Please check backend.";
     };
 
     const renderCodeWithHighlights = (code, highlightedLines = [], overallType = '') => {

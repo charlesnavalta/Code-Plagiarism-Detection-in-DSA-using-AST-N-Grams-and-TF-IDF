@@ -215,6 +215,33 @@ assignments_to_seed = [
         "language": "python",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
+    # ==========================================
+    # Multiple-G (Python) - Balanced Plagiarism Taxonomy (50 Submissions Each)
+    # ==========================================
+    {
+        "title": "Multiple-G 1: Heap Sort & Priority Queue (Large Balanced Benchmark - 50 Submissions)",
+        "description": "Balanced Plagiarism Taxonomy Benchmark: Implement Heap Sort and Priority Queue operations. Features 50 student submissions with an exact balanced distribution across plagiarism taxonomy types (120 Type 1 pairs, 120 Type 2 pairs, 120 Type 3 pairs, and 2 unique baseline controls across a 50-student cohort).",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-G 2: AVL Tree Balancing & Rotations (Large Balanced Benchmark - 50 Submissions)",
+        "description": "Self-Balancing Binary Search Tree Benchmark: Implement an AVL Tree supporting single and double rotations, node insertion, and height balance maintenance. Features 50 student submissions with an exact balanced distribution of 120 Type 1 pairs, 120 Type 2 pairs, 120 Type 3 pairs, and 2 unique baseline controls.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-G 3: Dijkstra Shortest Path Algorithm (Large Balanced Benchmark - 50 Submissions)",
+        "description": "Graph Shortest Path Benchmark: Implement Dijkstra's single-source shortest path algorithm using priority queues, adjacency structures, and path reconstruction. Features 50 student submissions with an exact balanced distribution of 120 Type 1 pairs, 120 Type 2 pairs, 120 Type 3 pairs, and 2 unique baseline controls.",
+        "max_score": 100,
+        "classroom_name": "3CSC - Multiple Files",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
     
     # ==========================================
     # TS-A (java)
@@ -423,6 +450,33 @@ assignments_to_seed = [
     {
         "title": "Multiple-F 2: Binary Search Tree (Large Cohort - 42 Submissions) Java",
         "description": "Binary Search Tree Large Cohort: Implement a Binary Search Tree (BST) supporting Node insertion, searching, and tree traversals across varied class structures and pointer manipulation. Features 42 student submissions evaluating high-volume plagiarism detection, AST structural variants, helper delegation, dead code injection, and diverse organic implementations in a 42-student cohort.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    # ==========================================
+    # Multiple-G (Java) - Balanced Plagiarism Taxonomy (50 Submissions Each)
+    # ==========================================
+    {
+        "title": "Multiple-G 1: Heap Sort & Priority Queue (Large Balanced Benchmark - 50 Submissions) Java",
+        "description": "Balanced Plagiarism Taxonomy Benchmark: Implement Heap Sort and Priority Queue operations in Java. Features 50 student submissions with an exact balanced distribution across plagiarism taxonomy types (133 Type 1 pairs, 133 Type 2 pairs, 134 Type 3 pairs, totaling 400 plagiarism pairs across a 50-student cohort).",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-G 2: AVL Tree Balancing & Rotations (Large Balanced Benchmark - 50 Submissions) Java",
+        "description": "Self-Balancing Binary Search Tree Benchmark: Implement an AVL Tree supporting single and double rotations, node insertion, and height balance maintenance in Java. Features 50 student submissions with an exact balanced distribution of 133 Type 1 pairs, 133 Type 2 pairs, 134 Type 3 pairs, totaling 400 plagiarism pairs.",
+        "max_score": 100,
+        "classroom_name": "4CSB - Multiple Files",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Multiple-G 3: Dijkstra Shortest Path Algorithm (Large Balanced Benchmark - 50 Submissions) Java",
+        "description": "Graph Shortest Path Benchmark: Implement Dijkstra's single-source shortest path algorithm using priority queues, adjacency structures, and path reconstruction in Java. Features 50 student submissions with an exact balanced distribution of 133 Type 1 pairs, 133 Type 2 pairs, 134 Type 3 pairs, totaling 400 plagiarism pairs.",
         "max_score": 100,
         "classroom_name": "4CSB - Multiple Files",
         "language": "java",

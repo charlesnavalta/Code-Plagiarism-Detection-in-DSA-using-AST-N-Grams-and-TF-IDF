@@ -21,6 +21,19 @@ const analysisService = {
     },
 
     /**
+     * Trigger AST, N-Gram & TF-IDF similarity analysis on a batch of files/folder/zip
+     * @param {FormData} formData
+     */
+    runBatchAnalysis: async (formData) => {
+        const response = await api.post('/analyze/batch', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    },
+
+    /**
      * Fetch a specific plagiarism report
      * @param {number|string} reportId
      */

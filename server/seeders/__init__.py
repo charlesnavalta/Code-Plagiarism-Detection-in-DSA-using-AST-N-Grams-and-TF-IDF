@@ -21,7 +21,7 @@ def run_smart_seed(db):
     Wipes the database and dynamically generates classrooms, enrollments, and assignments.
     """
     print("=" * 40)
-    print("🚀 FALSICODE: Starting Modular Smart Seed...")
+    print("FALSICODE: Starting Modular Smart Seed...")
     print("=" * 40)
     
     try:
@@ -39,12 +39,12 @@ def run_smart_seed(db):
         seed_java_submissions(db)
         
         print("=" * 40)
-        print("✅ FALSICODE: Smart seeding complete!")
+        print("SUCCESS: FALSICODE: Smart seeding complete!")
         print("=" * 40)
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ FALSICODE SEED ERROR: {e}")
+        print(f"ERROR: FALSICODE SEED ERROR: {e}")
         print("=" * 40)
 
 

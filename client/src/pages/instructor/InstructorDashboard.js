@@ -18,12 +18,15 @@ import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu'
 import EditClassroomModal from '../../modals/classroom/EditClassroomModal';
 import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
 import InstructorRosterModal from '../../modals/classroom/InstructorRosterModal';
+import BatchAnalysisModal from '../../modals/instructor/BatchAnalysisModal';
 
 const InstructorDashboard = () => {
     const [user, setUser] = useState(() => getUserData());
     const userId = user.id || user.user_id || user.username || 'instructor';
     const cacheKeyClasses = `falsicode_instructor_classes_${userId}`;
     const cacheKeyActivity = `falsicode_instructor_activity_${userId}`;
+
+    const [batchModalOpen, setBatchModalOpen] = useState(false);
 
     useEffect(() => {
         const handleUserUpdate = (e) => {
@@ -176,9 +179,36 @@ const InstructorDashboard = () => {
 
                     {/* Workspaces Grid */}
                     <div className="workspace-section">
-                        <div className="section-title-block">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            <h2>My Classroom(s)</h2>
+                        <div className="section-title-block" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', flexWrap: 'wrap', gap: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                <h2>My Classroom(s)</h2>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="btn-secondary-falsicode"
+                                onClick={() => setBatchModalOpen(true)}
+                                title="Upload multiple files, a folder, or a ZIP archive for immediate batch plagiarism analysis"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    padding: '7px 14px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    fontSize: '0.82rem',
+                                    background: 'rgba(59, 130, 246, 0.12)',
+                                    color: 'var(--accent-primary, #3b82f6)',
+                                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                                </svg>
+                                Batch Folder / Files Audit
+                            </button>
                         </div>
 
                         {loading ? (
@@ -278,6 +308,11 @@ const InstructorDashboard = () => {
                 isOpen={rosterModalOpen}
                 onClose={() => setRosterModalOpen(false)}
                 classroom={targetClassroom}
+            />
+
+            <BatchAnalysisModal
+                isOpen={batchModalOpen}
+                onClose={() => setBatchModalOpen(false)}
             />
         </DashboardLayout>
     );

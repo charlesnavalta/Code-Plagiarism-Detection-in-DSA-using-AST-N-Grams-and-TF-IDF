@@ -7,13 +7,15 @@ import urllib.error
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate, make_msgid
-from dotenv import load_dotenv
-
-# Ensure environment variables are loaded
-_base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-load_dotenv(os.path.join(_base_dir, '.env'))
-load_dotenv(os.path.join(os.path.dirname(_base_dir), '.env'))
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    # Ensure environment variables are loaded
+    _base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    load_dotenv(os.path.join(_base_dir, '.env'))
+    load_dotenv(os.path.join(os.path.dirname(_base_dir), '.env'))
+    load_dotenv()
+except ImportError:
+    pass
 
 def generate_6_digit_code():
     """Generates a random 6-digit string."""
