@@ -78,7 +78,9 @@ def submit_assignment(class_id, assignment_id):
 
     original_filename = secure_filename(file.filename)
     unique_filename = f"student_{user.id}_assign_{assignment.id}_{original_filename}"
-    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+    submissions_dir = current_app.config.get('SUBMISSIONS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'submissions'))
+    os.makedirs(submissions_dir, exist_ok=True)
+    filepath = os.path.join(submissions_dir, unique_filename)
     
     try:
         if is_resubmit:

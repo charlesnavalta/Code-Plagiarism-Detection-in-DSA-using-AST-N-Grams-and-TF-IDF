@@ -23,6 +23,8 @@ def resolve_submission_path(raw_path):
     candidates = [
         raw_path,
         os.path.join(server_dir, raw_path),
+        os.path.join(server_dir, 'uploads', 'submissions', filename),
+        os.path.join(server_dir, 'uploads', 'attachments', filename),
         os.path.join(server_dir, 'uploads', filename),
         os.path.join(root_dir, raw_path),
         os.path.join(server_dir, normalized),

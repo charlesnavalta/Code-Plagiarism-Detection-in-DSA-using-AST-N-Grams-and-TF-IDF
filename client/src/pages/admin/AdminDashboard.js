@@ -22,6 +22,8 @@ const AdminDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [isReseeding, setIsReseeding] = useState(false);
+    const [showReseedModal, setShowReseedModal] = useState(false);
+    const [adminPassword, setAdminPassword] = useState('');
     const dashboardRef = useRef(null);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
@@ -69,19 +71,31 @@ const AdminDashboard = () => {
         fetchStats();
     }, [fetchStats]);
 
-    const handleReseed = async () => {
-        const confirm = window.confirm(
-            "⚡ RESEED DATABASE?\n\nThis will wipe and reseed the database with:\n• 30 Students (Mary..Stark)\n• 6 Classrooms (Sir Renz & Sir Ba)\n• 42 Assignments\n• 334 Benchmark & Multiple-Files Submissions\n\nDo you want to proceed?"
-        );
-        if (!confirm) return;
+    const handleOpenReseedModal = () => {
+        setAdminPassword('');
+        setShowReseedModal(true);
+    };
+
+    const handleConfirmReseed = async (e) => {
+        e?.preventDefault();
+        if (!adminPassword) {
+            toast.warning("Please enter your admin password to confirm.", "Authorization Required");
+            return;
+        }
 
         setIsReseeding(true);
         try {
-            const res = await api.post('/admin/system/reseed', { secret: 'falsicode-reseed-2026' });
-            toast.success(res.data?.message || "Database successfully reseeded!", "System Refreshed");
+            const res = await api.post('/admin/system/reseed', {
+                password: adminPassword,
+                mode: 'safe_sync',
+                secret: 'falsicode-reseed-2026'
+            });
+            setShowReseedModal(false);
+            setAdminPassword('');
+            toast.success(res.data?.message || "Benchmark datasets refreshed successfully! Real user data preserved.", "System Refreshed");
             await fetchStats();
         } catch (err) {
-            toast.error(err.response?.data?.error || "Failed to reseed database.", "Reseed Error");
+            toast.error(err.response?.data?.error || "Failed to reseed database. Check password and try again.", "Reseed Error");
         } finally {
             setIsReseeding(false);
         }
@@ -134,9 +148,9 @@ const AdminDashboard = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                             <button
                                 className="btn-reseed-db"
-                                onClick={handleReseed}
+                                onClick={handleOpenReseedModal}
                                 disabled={isReseeding}
-                                title="Wipe and populate the database with the latest datasets, 30 students, classrooms, and assignments"
+                                title="Safely refresh benchmark test datasets and sample tasks without affecting real user accounts"
                             >
                                 {isReseeding ? '⚡ Reseeding Database...' : '⚡ Reseed Database'}
                             </button>
@@ -398,8 +412,80 @@ const AdminDashboard = () => {
                 </div>
 
             </div>
+
+            {/* --- Reseed Password Confirmation Modal --- */}
+            {showReseedModal && (
+                <div className="reseed-modal-overlay" onClick={() => !isReseeding && setShowReseedModal(false)}>
+                    <div className="reseed-modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="reseed-modal-header">
+                            <h3>
+                                <span>⚡</span> Reseed Benchmark Datasets
+                            </h3>
+                            <button 
+                                className="reseed-modal-close" 
+                                onClick={() => !isReseeding && setShowReseedModal(false)}
+                                disabled={isReseeding}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="reseed-info-box">
+                            <div className="reseed-info-title">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                                Safe Dataset Sync Mode Enabled
+                            </div>
+                            <p style={{ margin: 0 }}>
+                                This action updates and synchronizes the built-in benchmark datasets. <strong>Your real production data will NOT be deleted:</strong>
+                            </p>
+                            <ul className="reseed-scope-list">
+                                <li><strong>Preserved:</strong> All registered instructor & student accounts</li>
+                                <li><strong>Preserved:</strong> All teacher-created classrooms & assignments</li>
+                                <li><strong>Preserved:</strong> All live student submissions & evaluations</li>
+                                <li><strong>Refreshed:</strong> Only benchmark classrooms (3CSB, 3CSC, 3CSD, 4CSA, 4CSB, 4CSC)</li>
+                            </ul>
+                        </div>
+
+                        <form onSubmit={handleConfirmReseed}>
+                            <div className="reseed-form-group">
+                                <label>Confirm Admin Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter your admin account password..."
+                                    value={adminPassword}
+                                    onChange={(e) => setAdminPassword(e.target.value)}
+                                    autoFocus
+                                    disabled={isReseeding}
+                                    required
+                                />
+                            </div>
+
+                            <div className="reseed-modal-actions">
+                                <button
+                                    type="button"
+                                    className="btn-reseed-cancel"
+                                    onClick={() => setShowReseedModal(false)}
+                                    disabled={isReseeding}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-reseed-confirm"
+                                    disabled={isReseeding || !adminPassword.trim()}
+                                >
+                                    {isReseeding ? '⚡ Synchronizing...' : 'Authorize & Reseed'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default AdminDashboard;
+

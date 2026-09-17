@@ -231,7 +231,7 @@ The repository includes a standalone statistical benchmark script to verify bina
 
 ```bash
 cd server
-python evaluate_metrics.py
+python tools/evaluate_metrics.py
 ```
 
 This runs offline against ground-truth datasets for Python and Java, generating statistical accuracy, precision, recall, and F1-scores without requiring database connections or network access.

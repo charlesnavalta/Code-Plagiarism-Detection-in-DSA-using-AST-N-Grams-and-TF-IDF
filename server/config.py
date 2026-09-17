@@ -60,6 +60,8 @@ class Config:
 
     # 3. Application Specific Settings
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(BASE_DIR, 'uploads'))
+    SUBMISSIONS_FOLDER = os.path.join(UPLOAD_FOLDER, 'submissions')
+    ATTACHMENTS_FOLDER = os.path.join(UPLOAD_FOLDER, 'attachments')
     
     # Security: Prevent massive file uploads (Max 16 MB)
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024

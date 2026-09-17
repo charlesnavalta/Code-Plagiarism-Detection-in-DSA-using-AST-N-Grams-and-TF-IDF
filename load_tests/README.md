@@ -13,7 +13,7 @@ pip install locust
 2. Run the Locust command, specifying the **deployed API URL** as the host.
 
 \\\ash
-locust -f tests/locustfile.py --host=https://YOUR-DEPLOYED-BACKEND.onrender.com
+locust -f load_tests/locustfile.py --host=https://YOUR-DEPLOYED-BACKEND.onrender.com
 \\\
 *(Replace the URL with your actual deployed backend URL)*
 
@@ -25,7 +25,7 @@ If you want to customize the test (like changing the test classroom ID or studen
 $env:TEST_STUDENT_EMAIL="student1@example.com"
 $env:TEST_CLASS_ID="1"
 $env:TEST_ASSIGNMENT_ID="1"
-locust -f tests/locustfile.py --host=https://YOUR-DEPLOYED-BACKEND.onrender.com
+locust -f load_tests/locustfile.py --host=https://YOUR-DEPLOYED-BACKEND.onrender.com
 \\\
 
 ## Using the Web Dashboard

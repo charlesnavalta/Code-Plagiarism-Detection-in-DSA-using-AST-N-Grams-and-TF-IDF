@@ -6,7 +6,7 @@ Manages test fixtures, initial administrator setup, and sample DSA submissions.
 =============================================================================
 """
 
-from .teardown import wipe_database
+from .teardown import wipe_database, wipe_benchmark_data
 from .user_seeder import seed_users
 from .classroom_seeder import seed_classrooms
 from .enrollment_seeder import seed_enrollments
@@ -15,18 +15,26 @@ from .python_submission_seeder import seed_python_submissions
 from .java_submission_seeder import seed_java_submissions
 
 
-def run_smart_seed(db):
+def run_smart_seed(db, mode="safe_sync"):
     """
     Modular seeder orchestrator for Falsicode.
-    Wipes the database and dynamically generates classrooms, enrollments, and assignments.
+    
+    Modes:
+      - 'safe_sync' (DEFAULT): Selectively cleans and updates only the benchmark
+        classrooms, assignments, and submissions. Preserves all real instructors,
+        registered students, user-created classrooms, and production submissions.
+      - 'factory_reset': Fully deletes all tables and re-seeds from scratch.
     """
     print("=" * 40)
-    print("FALSICODE: Starting Modular Smart Seed...")
+    print(f"FALSICODE: Starting Modular Smart Seed [Mode: {mode}]...")
     print("=" * 40)
     
     try:
-        # 1. Reset the environment
-        wipe_database(db)
+        # 1. Reset target environment according to selected mode
+        if mode == "factory_reset":
+            wipe_database(db)
+        else:
+            wipe_benchmark_data(db)
         
         # 2. Rebuild the data in strict relationship order
         seed_users(db)
@@ -39,7 +47,7 @@ def run_smart_seed(db):
         seed_java_submissions(db)
         
         print("=" * 40)
-        print("SUCCESS: FALSICODE: Smart seeding complete!")
+        print(f"SUCCESS: FALSICODE: Smart seeding complete [{mode}]!")
         print("=" * 40)
         
     except Exception as e:
@@ -49,3 +57,4 @@ def run_smart_seed(db):
 
 
 __all__ = ['run_smart_seed']
+

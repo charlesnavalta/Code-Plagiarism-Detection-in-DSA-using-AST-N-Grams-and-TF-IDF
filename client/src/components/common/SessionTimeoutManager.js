@@ -41,7 +41,7 @@ const SessionTimeoutManager = () => {
             toast.warning("Your session has expired due to 30 minutes of inactivity. Please log in again.", "Session Timed Out");
         }
 
-        window.location.href = '/login';
+        window.location.replace('/login');
     }, [toast]);
 
     const resetActivityTimer = useCallback(() => {

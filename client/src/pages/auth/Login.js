@@ -42,10 +42,11 @@ const Login = () => {
             const userString = JSON.stringify(data.user);
             const token = data.access_token;
 
-            localStorage.clear();
-            sessionStorage.clear();
+            // Preserve persistent preferences (cookie-consent, app-theme) while refreshing auth credentials
             localStorage.setItem('user', userString); 
             localStorage.setItem('token', token);
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('token');
 
             // Notify top-level components (Navbar, Layouts) of newly authenticated user
             window.dispatchEvent(new CustomEvent('auth-state-changed', { detail: data.user }));
