@@ -10,49 +10,52 @@ def seed_python_submissions(db_instance):
         print("No student accounts found in database.")
         return
 
-    base_sub_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datasets", "python_source-code")
+    datasets_root = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datasets")
 
     classroom_configs = [
-        ("3CSB - Different Scenarios", [
-            ("TS-A 1", "TS-A_LEVEL1"),
-            ("TS-A 2", "TS-A_LEVEL2"),
-            ("TS-A 3", "TS-A_LEVEL3"),
-            ("TS-B 1", "TS-B_LEVEL1"),
-            ("TS-B 2", "TS-B_LEVEL2"),
-            ("TS-B 3", "TS-B_LEVEL3"),
-            ("TS-C 1", "TS-C_LEVEL1"),
-            ("TS-C 2", "TS-C_LEVEL2"),
-            ("TS-C 3", "TS-C_LEVEL3"),
+        ("3CSB - Different Scenarios", "controlled_benchmarks/python/test_scenarios", [
+            ("TS-A 1", "ts_a1"),
+            ("TS-A 2", "ts_a2"),
+            ("TS-A 3", "ts_a3"),
+            ("TS-B 1", "ts_b1"),
+            ("TS-B 2", "ts_b2"),
+            ("TS-B 3", "ts_b3"),
+            ("TS-C 1", "ts_c1"),
+            ("TS-C 2", "ts_c2"),
+            ("TS-C 3", "ts_c3"),
         ]),
-        ("3CSC - Multiple Files", [
-            ("Multiple-A 1", "Multiple-A1"),
-            ("Multiple-A 2", "Multiple-A2"),
-            ("Multiple-A 3", "Multiple-A3"),
-            ("Multiple-B 1", "Multiple-B1"),
-            ("Multiple-B 2", "Multiple-B2"),
-            ("Multiple-C 1", "Multiple-C1"),
-            ("Multiple-C 2", "Multiple-C2"),
-            ("Multiple-D 1", "Multiple-D1"),
-            ("Multiple-E 1", "Multiple-E1"),
-            ("Multiple-E 2", "Multiple-E2"),
-            ("Multiple-E 3", "Multiple-E3"),
-            ("Multiple-E 4", "Multiple-E4"),
-            ("Multiple-F 1", "Multiple-F1"),
-            ("Multiple-F 2", "Multiple-F2"),
-            ("Multiple-G 1", "Multiple-G1"),
-            ("Multiple-G 2", "Multiple-G2"),
-            ("Multiple-G 3", "Multiple-G3"),
+        ("3CSC - Multiple Files", "controlled_benchmarks/python/multi_student_cohorts", [
+            ("Multiple-A 1", "cohort_a1"),
+            ("Multiple-A 2", "cohort_a2"),
+            ("Multiple-A 3", "cohort_a3"),
+            ("Multiple-B 1", "cohort_b1"),
+            ("Multiple-B 2", "cohort_b2"),
+            ("Multiple-C 1", "cohort_c1"),
+            ("Multiple-C 2", "cohort_c2"),
+            ("Multiple-D 1", "cohort_d1"),
+            ("Multiple-E 1", "cohort_e1"),
+            ("Multiple-E 2", "cohort_e2"),
+            ("Multiple-E 3", "cohort_e3"),
+            ("Multiple-E 4", "cohort_e4"),
+            ("Multiple-F 1", "cohort_f1"),
+            ("Multiple-F 2", "cohort_f2"),
+            ("Multiple-G 1", "cohort_g1"),
+            ("Multiple-G 2", "cohort_g2"),
+            ("Multiple-G 3", "cohort_g3"),
         ]),
-        ("3CSD - DSA Clone Benchmarks", [
+        ("3CSD - DSA Clone Benchmarks", "controlled_benchmarks/python/dsa_clone_benchmarks", [
             ("BST: Clone Benchmark", "binary_search_tree"),
             ("Binary Tree: Clone Benchmark", "binary_tree"),
             ("Linked List: Clone Benchmark", "linked_list"),
             ("Merge Sort: Clone Benchmark", "merge_sort"),
             ("Quick Sort: Clone Benchmark", "quick_sort"),
         ]),
+        ("3CSE - Real-World DSA Benchmark (GitHub / CodeNet)", "github_codenet_datasets/python", [
+            ("Problem p02709", "codenet_p02709"),
+        ]),
     ]
 
-    for class_name, assignment_configs in classroom_configs:
+    for class_name, sub_folder, assignment_configs in classroom_configs:
         py_class = Classroom.query.filter_by(name=class_name).first()
         if not py_class:
             print(f"Could not find classroom '{class_name}'")
@@ -64,7 +67,7 @@ def seed_python_submissions(db_instance):
                 print(f"Warning: Assignment starting with {ass_prefix} not found for class {py_class.name}")
                 continue
 
-            folder_path = os.path.join(base_sub_dir, folder_name)
+            folder_path = os.path.join(datasets_root, sub_folder, folder_name)
             if not os.path.exists(folder_path):
                 print(f"Warning: Dataset folder {folder_path} not found")
                 continue
@@ -74,7 +77,7 @@ def seed_python_submissions(db_instance):
                 if idx >= len(files):
                     break
                 fname = files[idx]
-                rel_path = f"datasets/python_source-code/{folder_name}/{fname}"
+                rel_path = f"datasets/{sub_folder}/{folder_name}/{fname}"
                 sub = Submission.query.filter_by(assignment_id=ass.id, student_id=student.id).first()
                 if not sub:
                     sub = Submission(

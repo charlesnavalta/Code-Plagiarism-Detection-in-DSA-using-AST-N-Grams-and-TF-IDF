@@ -60,13 +60,23 @@ def get_fallback_ground_truth(filename):
 
 
 def discover_all_topics(language="python"):
-    lang_folder = "python_source-code" if language == "python" else "java_source-code"
-    base_path = os.path.join(BASE_DIR, "datasets", lang_folder)
+    lang_folder = "python" if language == "python" else "java"
+    base_path = os.path.join(BASE_DIR, "datasets", "controlled_benchmarks", lang_folder)
     if not os.path.exists(base_path):
         return []
-    return [(name, os.path.join(base_path, name))
-            for name in sorted(os.listdir(base_path))
-            if os.path.isdir(os.path.join(base_path, name))]
+    topics = []
+    for category in ["test_scenarios", "multi_student_cohorts", "dsa_clone_benchmarks"]:
+        cat_path = os.path.join(base_path, category)
+        if os.path.exists(cat_path):
+            for name in sorted(os.listdir(cat_path)):
+                full_path = os.path.join(cat_path, name)
+                if os.path.isdir(full_path):
+                    topics.append((name, full_path))
+    for name in sorted(os.listdir(base_path)):
+        full_path = os.path.join(base_path, name)
+        if os.path.isdir(full_path) and name not in ["test_scenarios", "multi_student_cohorts", "dsa_clone_benchmarks"]:
+            topics.append((name, full_path))
+    return sorted(topics, key=lambda x: x[0])
 
 
 def classify_result(sim_res):

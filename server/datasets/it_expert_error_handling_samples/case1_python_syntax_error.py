@@ -1,6 +1,7 @@
 # =============================================================================
-# TEST CASE 1: Python Syntax Error (Deliberate unclosed parenthesis & colon)
-# IT Expert Survey Section 2.A - Question 2 Demonstration
+# IT EXPERT EVALUATION - ERROR HANDLING DEMONSTRATION: CASE 1
+# Scenario: Python AST Parsing Syntax Error (Unclosed parenthesis before colon)
+# Target: Demonstrates system fault tolerance and graceful error handling on invalid code.
 # =============================================================================
 
 def find_bst_minimum(root):

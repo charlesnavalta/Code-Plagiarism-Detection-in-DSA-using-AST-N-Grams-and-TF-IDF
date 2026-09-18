@@ -17,8 +17,13 @@ def safely_delete_file(raw_path):
     """
     Safely deletes a physical file from disk.
     Tolerates missing files, None, path variations, and prevents crashes.
+    NEVER deletes files in the datasets/ directory!
     """
     if not raw_path:
+        return False
+
+    normalized = str(raw_path).replace('\\', '/')
+    if 'datasets/' in normalized or normalized.startswith('datasets'):
         return False
 
     # 1. Direct path check

@@ -1,6 +1,7 @@
 # =============================================================================
-# TEST CASE 4: Valid Python BST Solution
-# IT Expert Survey Section 2.A - Question 2 Demonstration (Positive Control)
+# IT EXPERT EVALUATION - ERROR HANDLING DEMONSTRATION: CASE 4 (Positive Control)
+# Scenario: Valid Python BST Implementation
+# Target: Demonstrates successful, error-free parsing and AST tree generation baseline.
 # =============================================================================
 
 class Node:

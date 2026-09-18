@@ -17,9 +17,11 @@ BENCHMARK_CLASSROOM_NAMES = [
     "3CSB - Different Scenarios",
     "3CSC - Multiple Files",
     "3CSD - DSA Clone Benchmarks",
+    "3CSE - Real-World DSA Benchmark (GitHub / CodeNet)",
     "4CSA - Different Scenarios",
     "4CSB - Multiple Files",
     "4CSC - DSA Clone Benchmarks (Java)",
+    "4CSD - Real-World DSA Benchmark (GitHub / CodeNet)",
 ]
 
 
@@ -42,12 +44,11 @@ def wipe_benchmark_data(db):
             if assign_ids:
                 AssignmentAttachment.query.filter(AssignmentAttachment.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
                 Submission.query.filter(Submission.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
-                Assignment.query.filter(Assignment.id.in_(assign_ids)).delete(synchronize_session=False)
 
             # 3. Clean up enrollments for this benchmark classroom
             Enrollment.query.filter_by(classroom_id=b_class.id).delete(synchronize_session=False)
 
-            # 4. Delete the benchmark classroom
+            # 4. Delete the benchmark classroom (cascades assignments automatically)
             db.session.delete(b_class)
 
         db.session.commit()

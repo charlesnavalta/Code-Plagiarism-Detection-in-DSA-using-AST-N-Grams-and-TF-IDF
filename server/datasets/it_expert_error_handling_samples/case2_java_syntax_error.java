@@ -1,6 +1,7 @@
 // =============================================================================
-// TEST CASE 2: Java Syntax Error (Deliberate unclosed method signature)
-// IT Expert Survey Section 2.A - Question 2 Demonstration
+// IT EXPERT EVALUATION - ERROR HANDLING DEMONSTRATION: CASE 2
+// Scenario: Java Syntax Error (Unclosed method parameter signature)
+// Target: Demonstrates system fault tolerance and graceful error handling on invalid Java code.
 // =============================================================================
 
 public class BinarySearchTree {

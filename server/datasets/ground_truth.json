@@ -1,5 +1,5 @@
 {
-  "TS-A_LEVEL1": {
+  "ts_a1": {
     "title": "TS-A 1: Merge Sort (Exact Copy)",
     "series": "3.1 TS-A Series",
     "positive_pairs": [
@@ -11,7 +11,7 @@
       }
     ]
   },
-  "TS-A_LEVEL2": {
+  "ts_a2": {
     "title": "TS-A 2: Quick Sort (Renaming Variables)",
     "series": "3.1 TS-A Series",
     "positive_pairs": [
@@ -23,7 +23,7 @@
       }
     ]
   },
-  "TS-A_LEVEL3": {
+  "ts_a3": {
     "title": "TS-A 3: Binary Search (Changing Spacing)",
     "series": "3.1 TS-A Series",
     "positive_pairs": [
@@ -35,7 +35,7 @@
       }
     ]
   },
-  "TS-B_LEVEL1": {
+  "ts_b1": {
     "title": "TS-B 1: Fibonacci (Swapping Lines)",
     "series": "3.2 TS-B Series",
     "positive_pairs": [
@@ -47,7 +47,7 @@
       }
     ]
   },
-  "TS-B_LEVEL2": {
+  "ts_b2": {
     "title": "TS-B 2: Sorting (Breaking into Functions)",
     "series": "3.2 TS-B Series",
     "positive_pairs": [
@@ -59,7 +59,7 @@
       }
     ]
   },
-  "TS-B_LEVEL3": {
+  "ts_b3": {
     "title": "TS-B 3: Loops (Swapping Loop Types)",
     "series": "3.2 TS-B Series",
     "positive_pairs": [
@@ -71,7 +71,7 @@
       }
     ]
   },
-  "TS-C_LEVEL1": {
+  "ts_c1": {
     "title": "TS-C 1: Quick Sort (Adding Fake Code)",
     "series": "3.3 TS-C Series",
     "positive_pairs": [
@@ -83,7 +83,7 @@
       }
     ]
   },
-  "TS-C_LEVEL2": {
+  "ts_c2": {
     "title": "TS-C 2: Linked List (Swapping Math Logic)",
     "series": "3.3 TS-C Series",
     "positive_pairs": [
@@ -95,7 +95,7 @@
       }
     ]
   },
-  "TS-C_LEVEL3": {
+  "ts_c3": {
     "title": "TS-C 3: Binary Search Tree (Mixed Tricks)",
     "series": "3.3 TS-C Series",
     "positive_pairs": [
@@ -107,7 +107,7 @@
       }
     ]
   },
-  "Multiple-A1": {
+  "cohort_a1": {
     "title": "Multiple-A 1: Binary Search (Control Group)",
     "series": "3.4 Multiple-A Series",
     "positive_pairs": [
@@ -119,7 +119,7 @@
       }
     ]
   },
-  "Multiple-A2": {
+  "cohort_a2": {
     "title": "Multiple-A 2: Bubble Sort (Renamed & Reformatted)",
     "series": "3.4 Multiple-A Series",
     "positive_pairs": [
@@ -143,7 +143,7 @@
       }
     ]
   },
-  "Multiple-A3": {
+  "cohort_a3": {
     "title": "Multiple-A 3: 0/1 Knapsack / BST (High-Diversity Control)",
     "series": "3.4 Multiple-A Series",
     "positive_pairs": [
@@ -167,7 +167,7 @@
       }
     ]
   },
-  "Multiple-B1": {
+  "cohort_b1": {
     "title": "Multiple-B 1: Linked List Reversal",
     "series": "3.5 Multiple-B Series",
     "positive_pairs": [
@@ -191,7 +191,7 @@
       }
     ]
   },
-  "Multiple-B2": {
+  "cohort_b2": {
     "title": "Multiple-B 2: Binary Tree Traversal",
     "series": "3.5 Multiple-B Series",
     "positive_pairs": [
@@ -215,7 +215,7 @@
       }
     ]
   },
-  "Multiple-C1": {
+  "cohort_c1": {
     "title": "Multiple-C 1: Two Sum",
     "series": "3.6 Multiple-C Series",
     "positive_pairs": [
@@ -251,7 +251,7 @@
       }
     ]
   },
-  "Multiple-C2": {
+  "cohort_c2": {
     "title": "Multiple-C 2: Graph BFS",
     "series": "3.6 Multiple-C Series",
     "positive_pairs": [
@@ -263,7 +263,7 @@
       }
     ]
   },
-  "Multiple-D1": {
+  "cohort_d1": {
     "title": "Multiple-D 1: Quick Sort (Large Cohort)",
     "series": "3.7 Multiple-D Series",
     "positive_pairs": [
@@ -305,7 +305,7 @@
       }
     ]
   },
-  "Multiple-E1": {
+  "cohort_e1": {
     "title": "Multiple-E 1: Grid DFS",
     "series": "3.8 Multiple-E Series",
     "positive_pairs": [
@@ -353,7 +353,7 @@
       }
     ]
   },
-  "Multiple-E2": {
+  "cohort_e2": {
     "title": "Multiple-E 2: Frequency Counter / Valid Parentheses",
     "series": "3.8 Multiple-E Series",
     "positive_pairs": [
@@ -401,7 +401,7 @@
       }
     ]
   },
-  "Multiple-E3": {
+  "cohort_e3": {
     "title": "Multiple-E 3: Range Accumulator / Max Subarray",
     "series": "3.8 Multiple-E Series",
     "positive_pairs": [
@@ -449,7 +449,7 @@
       }
     ]
   },
-  "Multiple-E4": {
+  "cohort_e4": {
     "title": "Multiple-E 4: Substring Search",
     "series": "3.8 Multiple-E Series",
     "positive_pairs": [
@@ -497,7 +497,7 @@
       }
     ]
   },
-  "Multiple-F1": {
+  "cohort_f1": {
     "title": "Multiple-F 1: Merge Sort (36 Submissions)",
     "series": "3.9 Multiple-F Series",
     "positive_pairs": [
@@ -575,7 +575,7 @@
       }
     ]
   },
-  "Multiple-F2": {
+  "cohort_f2": {
     "title": "Multiple-F 2: BST (42 Submissions)",
     "series": "3.9 Multiple-F Series",
     "positive_pairs": [
@@ -833,7 +833,7 @@
       }
     ]
   },
-  "Multiple-G1": {
+  "cohort_g1": {
     "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
     "baseline_file": "exact_copy_01_merge_sort.py",
     "positive_pairs": [
@@ -2839,7 +2839,7 @@
       }
     ]
   },
-  "Multiple-G2": {
+  "cohort_g2": {
     "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
     "baseline_file": "exact_copy_01_trie.py",
     "positive_pairs": [
@@ -4845,7 +4845,7 @@
       }
     ]
   },
-  "Multiple-G3": {
+  "cohort_g3": {
     "description": "50-student realistic DSA multiple cohort assignment with exactly 400 plagiarism pairs (133 Type 1, 146 Type 2, 121 Type 3).",
     "baseline_file": "exact_copy_01_floyd_warshall.py",
     "positive_pairs": [

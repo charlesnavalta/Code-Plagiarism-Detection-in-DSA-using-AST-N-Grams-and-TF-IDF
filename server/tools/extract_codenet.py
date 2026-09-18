@@ -38,7 +38,7 @@ def extract_problem(language="python", problem_id="p02709", count=20, output_dir
         return
 
     if not output_dir:
-        output_dir = os.path.join(BASE_DIR, "datasets", folder_name, f"codenet_{problem_id}")
+        output_dir = os.path.join(BASE_DIR, "datasets", "github_codenet_datasets", lang, f"codenet_{problem_id}")
 
     os.makedirs(output_dir, exist_ok=True)
     print(f"Connecting to IBM Project CodeNet stream for {lang.capitalize()}...")
