@@ -11,6 +11,7 @@ import { formatLanguageDisplay, getFileExtension } from '../../utils/fileUtils';
 import { formatDeadline } from '../../utils/dateUtils';
 import { validateAssignmentDescription, validateDeadline } from '../../utils/validation';
 import DateTimePicker from '../../components/common/DateTimePicker';
+import LanguageSelect from '../../components/common/LanguageSelect';
 import InstructorWrapper from './components/InstructorWrapper';
 
 const InstructorCreateAssignmentView = () => {
@@ -395,17 +396,13 @@ const InstructorCreateAssignmentView = () => {
                                 </div>
 
                                 <div className="workspace-form-group">
-                                    <label htmlFor="create-assign-lang">Programming Language</label>
-                                    <select
+                                    <LanguageSelect
                                         id="create-assign-lang"
-                                        className="workspace-select"
+                                        name="language"
                                         value={language}
                                         onChange={(e) => setLanguage(e.target.value)}
-                                        required
-                                    >
-                                        <option value="python">Python (.py)</option>
-                                        <option value="java">Java (.java)</option>
-                                    </select>
+                                        label="Programming Language"
+                                    />
                                 </div>
 
                                 <div className="workspace-actions-group">
