@@ -55,6 +55,30 @@ function AppContent() {
     warmUpServer();
   }, []);
 
+  // ==========================================
+  // BACK-FORWARD CACHE (BFCACHE) & LOGOUT GUARD
+  // ==========================================
+  useEffect(() => {
+    const handlePageShow = (event) => {
+      const publicPaths = ['/login', '/register', '/forgot-password', '/'];
+      const currentPath = window.location.pathname;
+      const isPublic = publicPaths.some(p => currentPath === p || (p !== '/' && currentPath.startsWith(p)));
+      const hasToken = localStorage.getItem('token');
+
+      // If page was restored from bfcache or back navigation into protected route with no auth
+      if (!isPublic && !hasToken) {
+        window.location.replace('/login');
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener('popstate', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener('popstate', handlePageShow);
+    };
+  }, []);
+
   return (
     <Router>
       <Navbar /> 

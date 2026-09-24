@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
+import { clearAuthSession } from '../../utils/authUtils';
 import './Navbar.css'; 
 
 const Navbar = () => {
@@ -91,9 +92,8 @@ const Navbar = () => {
 
     const handleLogout = () => {
         setDropdownOpen(false); 
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        window.location.href = '/login'; 
+        clearAuthSession();
+        window.location.replace('/login'); 
     };
 
     const hiddenRoutes = ['/login', '/register', '/'];

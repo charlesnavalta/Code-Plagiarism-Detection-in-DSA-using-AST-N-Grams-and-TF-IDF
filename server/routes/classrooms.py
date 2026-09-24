@@ -3,6 +3,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from database import db
 from models import User, Classroom, Enrollment, Assignment, Submission
+from utils.file_manager import cleanup_classroom_files
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # This Blueprint handles Classroom logic
@@ -255,6 +256,7 @@ def delete_classroom(class_id):
 
     class_name = classroom.name
     try:
+        cleanup_classroom_files(class_id)
         db.session.delete(classroom)
         db.session.commit()
         return jsonify({

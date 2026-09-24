@@ -1,0 +1,7 @@
+=============================================================================
+IT EXPERT EVALUATION - ERROR HANDLING DEMONSTRATION: CASE 3
+Scenario: Unsupported File Extension (.txt)
+Target: Demonstrates submission validation and rejection of non-source code files.
+=============================================================================
+This is an invalid plain text file (.txt).
+The system must reject this upload because assignments strictly require .py or .java files.

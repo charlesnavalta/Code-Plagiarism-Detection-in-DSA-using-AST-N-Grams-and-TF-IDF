@@ -95,9 +95,9 @@ def create_app():
             response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         return response
 
-    # 2. Ensure Upload Folder Exists
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
+    # 2. Ensure Upload Folders Exist
+    os.makedirs(app.config.get('SUBMISSIONS_FOLDER', os.path.join(app.config['UPLOAD_FOLDER'], 'submissions')), exist_ok=True)
+    os.makedirs(app.config.get('ATTACHMENTS_FOLDER', os.path.join(app.config['UPLOAD_FOLDER'], 'attachments')), exist_ok=True)
 
     # 3. Initialize Extensions
     jwt = JWTManager(app) 

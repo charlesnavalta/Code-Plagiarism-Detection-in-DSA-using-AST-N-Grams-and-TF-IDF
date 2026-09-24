@@ -568,6 +568,25 @@ assignments_to_seed = [
         "language": "java",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
+    # ==========================================
+    # Real-World CodeNet / GitHub Benchmarks
+    # ==========================================
+    {
+        "title": "Problem p02709: Real-World DSA Solutions (CodeNet/GitHub)",
+        "description": "Real-world independent student submissions from IBM Project CodeNet / GitHub for DSA Problem p02709. Demonstrates wild/unmanipulated code analysis and false-positive evaluation.",
+        "max_score": 100,
+        "classroom_name": "3CSE - Real-World DSA Benchmark (GitHub / CodeNet)",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
+    {
+        "title": "Problem p02981: Real-World DSA Solutions (CodeNet/GitHub)",
+        "description": "Real-world independent student submissions from IBM Project CodeNet / GitHub for Java DSA Problem p02981. Demonstrates wild/unmanipulated code analysis and false-positive evaluation.",
+        "max_score": 100,
+        "classroom_name": "4CSD - Real-World DSA Benchmark (GitHub / CodeNet)",
+        "language": "java",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
 ]
 
 def seed_assignments(db):

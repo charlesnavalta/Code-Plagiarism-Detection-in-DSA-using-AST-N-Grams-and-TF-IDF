@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy import func, case
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
+from utils.file_manager import cleanup_assignment_files, cleanup_classroom_files
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 
@@ -222,6 +223,7 @@ def delete_classroom(class_id):
         return jsonify({"error": "Classroom not found."}), 404
 
     try:
+        cleanup_classroom_files(class_id)
         assign_ids = [a[0] for a in db.session.query(Assignment.id).filter_by(classroom_id=class_id).all()]
         if assign_ids:
             Submission.query.filter(Submission.assignment_id.in_(assign_ids)).delete(synchronize_session=False)
@@ -353,6 +355,7 @@ def delete_assignment(assignment_id):
         return jsonify({"error": "Assignment not found."}), 404
 
     try:
+        cleanup_assignment_files(assignment_id)
         Submission.query.filter_by(assignment_id=assignment_id).delete(synchronize_session=False)
         AssignmentAttachment.query.filter_by(assignment_id=assignment_id).delete(synchronize_session=False)
         db.session.delete(assignment)
@@ -369,45 +372,66 @@ def delete_assignment(assignment_id):
 # ==========================================
 @admin_bp.route('/system/reseed', methods=['POST'], strict_slashes=False)
 def trigger_database_reseed():
-    """Wipes and reseeds the entire database with the latest codebase datasets and users.
+    """Reseeds the database with the latest codebase datasets and users.
+    Preserves real user data (real instructors, registered students, custom classrooms,
+    and student submissions) by default in 'safe_sync' mode.
+    
     Can be authorized via:
-      1. Active Admin JWT Token (Authorization: Bearer <token>)
+      1. Active Admin JWT Token with confirmed Admin Password
       2. Secret Header (X-Reseed-Key: <SECRET_KEY> or 'falsicode-reseed-2026')
       3. Request JSON payload with { "secret": "falsicode-reseed-2026" }
       4. Database has 0 users (initial bootstrap)
     """
     is_authorized = False
     actor = "System API"
+    admin_user = None
+
+    body_data = request.get_json(silent=True) or {}
+    mode = body_data.get('mode', 'safe_sync')
+    provided_password = body_data.get('password')
 
     # Check 0: Database is completely empty (bootstrap mode)
     try:
         if User.query.count() == 0:
             is_authorized = True
             actor = "Initial Bootstrap"
+            mode = "factory_reset"
     except Exception:
         pass
 
-    # Check 1: Secret Key Header or Body
-    body_data = request.get_json(silent=True) or {}
-    body_secret = body_data.get('secret')
-    reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key') or body_secret
-    secret_key = os.environ.get('SECRET_KEY')
+    # Check 1: Master Reseed Key (CLI / Automation / CI)
+    if not is_authorized:
+        body_secret = body_data.get('secret')
+        reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key') or body_secret
+        secret_key = os.environ.get('SECRET_KEY')
 
-    if reseed_key and (reseed_key == secret_key or reseed_key == 'falsicode-reseed-2026'):
-        is_authorized = True
-        actor = "Master Reseed Key"
+        if reseed_key and (reseed_key == secret_key or reseed_key == 'falsicode-reseed-2026'):
+            is_authorized = True
+            actor = "Master Reseed Key"
 
-    # Check 2: Admin JWT
+    # Check 2: Admin JWT session
     if not is_authorized:
         try:
             from flask_jwt_extended import verify_jwt_in_request
             verify_jwt_in_request(optional=True)
-            admin = verify_admin()
-            if admin:
-                is_authorized = True
-                actor = admin.username
+            admin_user = verify_admin()
         except Exception:
             pass
+
+        if admin_user:
+            # Require admin password verification for interactive reseed
+            if not provided_password:
+                return jsonify({
+                    "error": "Admin password confirmation is required to authorize database reseeding."
+                }), 400
+
+            if not admin_user.check_password(provided_password):
+                return jsonify({
+                    "error": "Incorrect admin password. Reseed authorization failed."
+                }), 401
+
+            is_authorized = True
+            actor = admin_user.username
 
     if not is_authorized:
         return jsonify({"error": "Unauthorized. Admin privileges or valid secret required."}), 403
@@ -418,8 +442,8 @@ def trigger_database_reseed():
         with app_instance.app_context():
             try:
                 from seeder import run_smart_seed
-                print(f"FALSICODE: Starting asynchronous database re-seed requested by [{actor}]...")
-                run_smart_seed(db)
+                print(f"FALSICODE: Starting asynchronous database re-seed [mode={mode}] requested by [{actor}]...")
+                run_smart_seed(db, mode=mode)
                 print("FALSICODE: Asynchronous database re-seed finished successfully!")
             except Exception as thread_err:
                 db.session.rollback()
@@ -428,12 +452,20 @@ def trigger_database_reseed():
     thread = threading.Thread(target=run_reseed_worker, daemon=True)
     thread.start()
 
+    mode_description = (
+        "Factory reset in progress (all tables cleared and reseeded)."
+        if mode == "factory_reset"
+        else "Benchmark datasets refreshed. Real instructor accounts, registered students, and user classrooms were safely preserved!"
+    )
+
     return jsonify({
-        "message": "⚡ Database re-seed started in background! The cloud database is being wiped and repopulated with 30 students, 6 classrooms, and 334 submissions. Please refresh in ~30 seconds.",
+        "message": f"⚡ Database re-seed started in background! {mode_description} Please refresh in ~30 seconds.",
         "reseeded_by": actor,
+        "mode": mode,
         "status": "processing",
         "timestamp": datetime.utcnow().isoformat()
     }), 200
+
 
 
 

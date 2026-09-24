@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, current_app, send_file
 from sqlalchemy import func
 from database import db
 from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
+from utils.file_manager import cleanup_assignment_files
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
 
@@ -62,8 +63,9 @@ def create_assignment(class_id):
             if file and file.filename != '':
                 original_filename = secure_filename(file.filename)
                 # Prefix with assignment ID to prevent naming collisions
-                unique_filename = f"guide_assign_{new_assignment.id}_{original_filename}"
-                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+                attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
+                os.makedirs(attachments_dir, exist_ok=True)
+                filepath = os.path.join(attachments_dir, unique_filename)
                 
                 file.save(filepath)
                 
@@ -308,7 +310,9 @@ def update_assignment(class_id, assignment_id):
             if file and file.filename != '':
                 original_filename = secure_filename(file.filename)
                 unique_filename = f"guide_assign_{assignment.id}_{original_filename}"
-                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+                attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
+                os.makedirs(attachments_dir, exist_ok=True)
+                filepath = os.path.join(attachments_dir, unique_filename)
                 file.save(filepath)
 
                 new_attachment = AssignmentAttachment(
@@ -385,6 +389,7 @@ def delete_assignment(class_id, assignment_id):
         return jsonify({"error": "Unauthorized to delete this assignment"}), 403
 
     try:
+        cleanup_assignment_files(assignment_id)
         db.session.delete(assignment)
         db.session.commit()
         return jsonify({
@@ -429,15 +434,19 @@ def get_attachment(class_id, attachment_id):
     if not os.path.exists(file_path):
         filename_only = os.path.basename(attachment.file_path)
         candidates = [
+            os.path.join(current_app.config.get('ATTACHMENTS_FOLDER', 'uploads/attachments'), filename_only),
             os.path.join(current_app.config.get('UPLOAD_FOLDER', 'uploads'), filename_only),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', 'attachments', filename_only),
             os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', filename_only),
+            os.path.join(os.getcwd(), 'server', 'uploads', 'attachments', filename_only),
             os.path.join(os.getcwd(), 'server', 'uploads', filename_only),
-            os.path.join(os.getcwd(), 'uploads', filename_only),
             # Also check by original attachment filename
+            os.path.join(current_app.config.get('ATTACHMENTS_FOLDER', 'uploads/attachments'), attachment.filename),
             os.path.join(current_app.config.get('UPLOAD_FOLDER', 'uploads'), attachment.filename),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', 'attachments', attachment.filename),
             os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', attachment.filename),
+            os.path.join(os.getcwd(), 'server', 'uploads', 'attachments', attachment.filename),
             os.path.join(os.getcwd(), 'server', 'uploads', attachment.filename),
-            os.path.join(os.getcwd(), 'uploads', attachment.filename),
         ]
         resolved = None
         for candidate in candidates:

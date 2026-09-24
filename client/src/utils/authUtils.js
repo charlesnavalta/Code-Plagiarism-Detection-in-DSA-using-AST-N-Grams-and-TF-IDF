@@ -1,3 +1,10 @@
+export const clearAuthSession = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+};
+
 export const getUserData = () => {
     try {
         const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -7,4 +14,4 @@ export const getUserData = () => {
     }
     
     return { username: 'Guest Student', role: 'student' }; 
-};
+};

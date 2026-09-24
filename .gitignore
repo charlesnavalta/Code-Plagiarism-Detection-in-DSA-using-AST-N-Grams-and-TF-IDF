@@ -21,8 +21,14 @@ ENV/
 Thumbs.db
 
 # --- System Specifics ---
-# Ignore student files uploaded during testing, but keep directory structure
+# Ignore student files and guide attachments uploaded during testing, but keep directory structure
 server/uploads/*
 !server/uploads/.gitkeep
+!server/uploads/submissions/
+!server/uploads/attachments/
+server/uploads/submissions/*
+!server/uploads/submissions/.gitkeep
+server/uploads/attachments/*
+!server/uploads/attachments/.gitkeep
 # Ignore the frontend build (we build it fresh in Docker)
 client/build/

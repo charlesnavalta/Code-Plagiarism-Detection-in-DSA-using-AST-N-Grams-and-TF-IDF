@@ -55,8 +55,8 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
-      // Hard reset to the login page
-      window.location.href = "/login";
+      // Hard reset to the login page (replace history entry)
+      window.location.replace("/login");
     }
     return Promise.reject(error);
   },
