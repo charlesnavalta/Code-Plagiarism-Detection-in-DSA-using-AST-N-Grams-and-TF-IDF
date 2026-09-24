@@ -65,7 +65,7 @@ def discover_all_topics(language="python"):
     if not os.path.exists(base_path):
         return []
     topics = []
-    for category in ["test_scenarios", "multi_student_cohorts", "dsa_clone_benchmarks"]:
+    for category in ["test_scenarios", "multiple_files", "dsa_clone_benchmarks"]:
         cat_path = os.path.join(base_path, category)
         if os.path.exists(cat_path):
             for name in sorted(os.listdir(cat_path)):
@@ -74,7 +74,7 @@ def discover_all_topics(language="python"):
                     topics.append((name, full_path))
     for name in sorted(os.listdir(base_path)):
         full_path = os.path.join(base_path, name)
-        if os.path.isdir(full_path) and name not in ["test_scenarios", "multi_student_cohorts", "dsa_clone_benchmarks"]:
+        if os.path.isdir(full_path) and name not in ["test_scenarios", "multiple_files", "dsa_clone_benchmarks"]:
             topics.append((name, full_path))
     return sorted(topics, key=lambda x: x[0])
 
