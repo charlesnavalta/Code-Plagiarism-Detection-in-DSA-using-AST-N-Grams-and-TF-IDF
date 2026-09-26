@@ -146,6 +146,10 @@ def get_assignment_submissions(class_id, assignment_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
     # Eager load student to prevent N+1 queries when accessing s.student.username
     submissions = Submission.query.options(
         joinedload(Submission.student)
@@ -194,6 +198,10 @@ def grade_submission(class_id, assignment_id, submission_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
     data = request.get_json() or {}
     score = data.get('score')
     feedback = data.get('feedback')
@@ -235,6 +243,10 @@ def comment_submission(class_id, assignment_id, submission_id):
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
 
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
     data = request.get_json() or {}
     feedback = data.get('feedback', '')
 
@@ -267,6 +279,10 @@ def allow_resubmission(class_id, assignment_id, submission_id):
     classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
     if not classroom:
         return jsonify({"error": "Classroom not found or access denied"}), 404
+
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
 
     submission = Submission.query.options(
         joinedload(Submission.student)

@@ -34,8 +34,8 @@ def create_app():
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://falsicode.vercel.app",
-        re.compile(r"^https:\/\/.*\.vercel\.app$"),
-        re.compile(r"^https:\/\/.*\.onrender\.com$")
+        re.compile(r"^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$"),
+        re.compile(r"^https:\/\/[a-zA-Z0-9-]+\.onrender\.com$")
     ]
     
     # Read CLIENT_URL or FRONTEND_URL from environment (support comma-separated values)
@@ -56,13 +56,33 @@ def create_app():
         expose_headers=["Content-Type", "Authorization"]
     )
 
+    def is_allowed_origin(origin):
+        if not origin:
+            return False
+        # Exact localhost and loopback with optional port
+        if re.match(r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$", origin):
+            return True
+        # Anchored Vercel deployment subdomains (e.g. https://falsicode.vercel.app)
+        if re.match(r"^https://[a-zA-Z0-9-]+\.vercel\.app$", origin):
+            return True
+        # Anchored Render deployment subdomains
+        if re.match(r"^https://[a-zA-Z0-9-]+\.onrender\.com$", origin):
+            return True
+        # Explicit whitelist matches (e.g. from CLIENT_URL or FRONTEND_URL)
+        for allowed in allowed_origins:
+            if isinstance(allowed, str) and origin == allowed:
+                return True
+            elif hasattr(allowed, 'pattern') and allowed.match(origin):
+                return True
+        return False
+
     # Global fallback to ensure CORS headers on every response (including preflights & error responses)
     @app.before_request
     def handle_preflight():
         if request.method == "OPTIONS":
             response = app.make_default_options_response()
             origin = request.headers.get('Origin')
-            if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+            if is_allowed_origin(origin):
                 response.headers['Access-Control-Allow-Origin'] = origin
                 response.headers['Access-Control-Allow-Credentials'] = 'true'
                 response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'
@@ -72,7 +92,7 @@ def create_app():
     @app.after_request
     def add_cors_headers(response):
         origin = request.headers.get('Origin')
-        if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+        if is_allowed_origin(origin):
             response.headers['Access-Control-Allow-Origin'] = origin
             response.headers['Access-Control-Allow-Credentials'] = 'true'
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'
@@ -81,6 +101,10 @@ def create_app():
 
     @app.errorhandler(Exception)
     def handle_exception(e):
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
         import traceback
         traceback.print_exc()
         code = getattr(e, 'code', 500)
@@ -88,7 +112,7 @@ def create_app():
         response = jsonify({"error": description, "details": str(e)})
         response.status_code = code if isinstance(code, int) and 100 <= code <= 599 else 500
         origin = request.headers.get('Origin')
-        if origin and ('.vercel.app' in origin or 'localhost' in origin or '127.0.0.1' in origin or '.onrender.com' in origin):
+        if is_allowed_origin(origin):
             response.headers['Access-Control-Allow-Origin'] = origin
             response.headers['Access-Control-Allow-Credentials'] = 'true'
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials, Origin, Accept, X-Requested-With'

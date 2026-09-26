@@ -51,6 +51,10 @@ def seed_python_submissions(db_instance):
             ("Quick Sort: Clone Benchmark", "quick_sort"),
         ]),
         ("3CSE - Real-World DSA Benchmark (GitHub / CodeNet)", "github_codenet_datasets/python", [
+            ("Problem p02594", "codenet_p02594"),
+            ("Problem p02607", "codenet_p02607"),
+            ("Problem p02633", "codenet_p02633"),
+            ("Problem p02708", "codenet_p02708"),
             ("Problem p02709", "codenet_p02709"),
         ]),
     ]

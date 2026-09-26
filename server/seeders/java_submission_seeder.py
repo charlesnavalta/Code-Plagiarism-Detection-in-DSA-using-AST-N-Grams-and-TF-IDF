@@ -51,6 +51,10 @@ def seed_java_submissions(db_instance):
             ("Quick Sort: Clone Benchmark", "quick_sort"),
         ]),
         ("4CSD - Real-World DSA Benchmark (GitHub / CodeNet)", "github_codenet_datasets/java", [
+            ("Problem p02391", "codenet_p02391"),
+            ("Problem p02641", "codenet_p02641"),
+            ("Problem p02724", "codenet_p02724"),
+            ("Problem p02766", "codenet_p02766"),
             ("Problem p02981", "codenet_p02981"),
         ]),
     ]

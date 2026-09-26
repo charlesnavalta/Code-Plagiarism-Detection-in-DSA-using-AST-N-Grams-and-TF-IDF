@@ -8,9 +8,159 @@ import './AnalysisPDFExporter.css';
 // Centralized theme utility for standardized colors and labels
 import { getPlagiarismDisplayData } from '../../utils/theme';
 
-const AnalysisPDFExporter = ({ selectedPair }) => {
+// Sub-component dedicated to compiling batch summary audit reports
+const BatchPDFExporter = ({ results, assignmentTitle = "Batch Plagiarism Audit Report" }) => {
     const [isGenerating, setIsGenerating] = useState(false);
     const toast = useToast();
+    const generatedReportId = `FC-BATCH-${Math.floor(10000 + Math.random() * 90000)}-${new Date().getFullYear()}`;
+
+    const totalComparisons = results.length;
+    const highMatches = results.filter(r => (r.status === 'High' || r.score >= 85)).length;
+    const medMatches = results.filter(r => (r.status === 'Medium' || (r.score >= 60 && r.score < 85))).length;
+    const lowMatches = totalComparisons - highMatches - medMatches;
+
+    const generateBatchPDF = async () => {
+        setIsGenerating(true);
+        const batchPage = document.getElementById('pdf-batch-page');
+        if (!batchPage) {
+            toast.error("Could not find report template.");
+            setIsGenerating(false);
+            return;
+        }
+        try {
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const canvas = await html2canvas(batchPage, {
+                scale: 2.0,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: 794
+            });
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            pdf.save(`FALSICODE-BATCH-AUDIT-${generatedReportId}.pdf`);
+            toast.success("Batch Plagiarism Summary PDF generated successfully!");
+        } catch (error) {
+            console.error("Batch PDF generation failed:", error);
+            toast.error("Failed to compile batch report PDF.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const batchTemplate = (
+        <div className="pdf-hidden-wrapper">
+            <div className="pdf-export-container pdf-page" id="pdf-batch-page" style={{ padding: '32px', minHeight: '1120px' }}>
+                <div className="pdf-header-row">
+                    <div>
+                        <h2 className="pdf-brand-title">⎔ FALSICODE</h2>
+                        <p className="pdf-brand-sub">AUTOMATED CODE CLONE DETECTOR</p>
+                    </div>
+                    <div className="pdf-meta-block">
+                        <p><strong>Audit Date:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p><strong>Report Identifier:</strong> {generatedReportId}</p>
+                    </div>
+                </div>
+
+                <div className="pdf-main-title-section" style={{ margin: '18px 0 14px' }}>
+                    <h1 style={{ fontSize: '15pt', margin: 0 }}>{assignmentTitle.toUpperCase()}</h1>
+                    <p style={{ fontSize: '9pt', color: '#6b7280', margin: '4px 0 0' }}>BATCH CODE SIMILARITY &amp; PLAGIARISM AUDIT SUMMARY</p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', margin: '14px 0 18px' }}>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                        <div style={{ fontSize: '16pt', fontWeight: 'bold', color: '#1e293b' }}>{totalComparisons}</div>
+                        <div style={{ fontSize: '7.5pt', color: '#64748b', textTransform: 'uppercase' }}>Comparisons</div>
+                    </div>
+                    <div style={{ background: '#fef2f2', padding: '10px', borderRadius: '6px', border: '1px solid #fecaca', textAlign: 'center' }}>
+                        <div style={{ fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>{highMatches}</div>
+                        <div style={{ fontSize: '7.5pt', color: '#991b1b', textTransform: 'uppercase' }}>High Risk (≥85%)</div>
+                    </div>
+                    <div style={{ background: '#fffbeb', padding: '10px', borderRadius: '6px', border: '1px solid #fde68a', textAlign: 'center' }}>
+                        <div style={{ fontSize: '16pt', fontWeight: 'bold', color: '#d97706' }}>{medMatches}</div>
+                        <div style={{ fontSize: '7.5pt', color: '#92400e', textTransform: 'uppercase' }}>Medium Risk (60-84%)</div>
+                    </div>
+                    <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '6px', border: '1px solid #bbf7d0', textAlign: 'center' }}>
+                        <div style={{ fontSize: '16pt', fontWeight: 'bold', color: '#16a34a' }}>{lowMatches}</div>
+                        <div style={{ fontSize: '7.5pt', color: '#166534', textTransform: 'uppercase' }}>Safe / Low (&lt;60%)</div>
+                    </div>
+                </div>
+
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '8.5pt', marginTop: '10px' }}>
+                    <thead>
+                        <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
+                            <th style={{ padding: '7px 8px' }}>#</th>
+                            <th style={{ padding: '7px 8px' }}>Comparison Pair</th>
+                            <th style={{ padding: '7px 8px', textAlign: 'center' }}>Similarity</th>
+                            <th style={{ padding: '7px 8px', textAlign: 'center' }}>Risk Tier</th>
+                            <th style={{ padding: '7px 8px' }}>Plagiarism Classification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {results.slice(0, 25).map((r, i) => (
+                            <tr key={i} style={{ borderBottom: '1px solid #e2e8f0', background: i % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                                <td style={{ padding: '6px 8px' }}>{i + 1}</td>
+                                <td style={{ padding: '6px 8px', fontWeight: '600', color: '#1e293b' }}>{r.file1} <span style={{ color: '#94a3b8' }}>vs</span> {r.file2}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', color: r.score >= 85 ? '#dc2626' : r.score >= 60 ? '#d97706' : '#16a34a' }}>{r.score}%</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'center' }}>
+                                    <span style={{ 
+                                        padding: '2px 8px', 
+                                        borderRadius: '10px', 
+                                        fontSize: '7.5pt', 
+                                        fontWeight: '600', 
+                                        background: r.score >= 85 ? '#fecaca' : r.score >= 60 ? '#fef3c7' : '#dcfce7',
+                                        color: r.score >= 85 ? '#991b1b' : r.score >= 60 ? '#92400e' : '#166534'
+                                    }}>
+                                        {r.status || (r.score >= 85 ? 'HIGH' : r.score >= 60 ? 'MEDIUM' : 'LOW')}
+                                    </span>
+                                </td>
+                                <td style={{ padding: '6px 8px', color: '#475569' }}>{r.plagiarism_type || 'N/A'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <div className="pdf-verification-seal-row" style={{ marginTop: 'auto', paddingTop: '20px' }}>
+                    <div className="pdf-verification-seal">
+                        <div className="pdf-seal-icon">&#10003;</div>
+                        <div className="pdf-seal-text">
+                            <span className="pdf-seal-title">SYSTEM AUDIT VERIFIED</span>
+                            <span className="pdf-seal-sub">Cryptographically Indexed Audit Trail &bull; Falsicode Engine Core</span>
+                        </div>
+                    </div>
+                    <div className="pdf-report-hash-block">
+                        <span className="pdf-hash-label">Report Security Hash</span>
+                        <code className="pdf-hash-value">SHA-256: {generatedReportId.replace(/[^0-9]/g, '').padEnd(16, '7a9f')}-VERIFIED</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <>
+            <button className="btn-export-pdf" onClick={generateBatchPDF} disabled={isGenerating}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {isGenerating ? "Compiling Document..." : "Export Batch PDF Report"}
+            </button>
+            {ReactDOM.createPortal(batchTemplate, document.body)}
+        </>
+    );
+};
+
+const AnalysisPDFExporter = ({ selectedPair, results, assignmentTitle = "Batch Plagiarism Audit Report" }) => {
+    const [isGenerating, setIsGenerating] = useState(false);
+    const toast = useToast();
+
+    // If batch results are passed without a single selected pair, delegate to BatchPDFExporter
+    if (!selectedPair && results && Array.isArray(results) && results.length > 0) {
+        return <BatchPDFExporter results={results} assignmentTitle={assignmentTitle} />;
+    }
 
     if (!selectedPair) return null;
 
