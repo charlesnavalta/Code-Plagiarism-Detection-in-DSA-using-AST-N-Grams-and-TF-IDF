@@ -57,6 +57,14 @@ assignments_to_seed = [
         "language": "python",
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
+    {
+        "title": "TS-B 4: Filter & Accumulate (Moving If-Else Loop to Helper)",
+        "description": "Write a number processing and filtering program. This benchmark specifically demonstrates plagiarism detection when Student 1 implements logic in a single monolithic method, and Student 2 copies the logic but extracts the inner if-else loop into a separate helper function.",
+        "max_score": 100,
+        "classroom_name": "3CSB - Different Scenarios",
+        "language": "python",
+        "deadline": datetime(2027, 12, 31, 23, 59, 59)
+    },
     # ==========================================
     # TS-C (Python)
     # ==========================================

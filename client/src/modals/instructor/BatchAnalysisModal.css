@@ -190,6 +190,67 @@ html[data-theme='light'] .btn-dropzone-action {
     color: #ffffff;
 }
 
+[data-theme='light'] .btn-dropzone-action:hover,
+html[data-theme='light'] .btn-dropzone-action:hover {
+    border-color: var(--accent-primary, #3b82f6);
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* Dropzone Helper Guide */
+.dropzone-helper-guide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 7px 16px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--text-dim, #94a3b8);
+    max-width: 92%;
+    line-height: 1.4;
+    text-align: left;
+}
+
+[data-theme='light'] .dropzone-helper-guide,
+html[data-theme='light'] .dropzone-helper-guide {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #475569;
+}
+
+.guide-badge {
+    background: #3b82f6;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+[data-theme='light'] .guide-badge,
+html[data-theme='light'] .guide-badge {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.dropzone-helper-guide strong {
+    color: var(--text-main, #f8fafc);
+}
+
+[data-theme='light'] .dropzone-helper-guide strong,
+html[data-theme='light'] .dropzone-helper-guide strong {
+    color: #1e3a8a;
+}
+
 /* Staged Files List */
 .staged-files-section {
     background: rgba(0, 0, 0, 0.25);

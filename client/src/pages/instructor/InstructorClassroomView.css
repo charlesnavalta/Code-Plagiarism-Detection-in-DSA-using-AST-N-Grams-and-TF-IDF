@@ -57,6 +57,72 @@ html[data-theme='light'] .classroom-hero-banner::before {
     background: linear-gradient(90deg, transparent 5%, rgba(59, 130, 246, 0.7) 30%, rgba(99, 102, 241, 0.7) 70%, transparent 95%);
 }
 
+[data-theme='light'] .classroom-hero-banner .hero-title,
+html[data-theme='light'] .classroom-hero-banner .hero-title {
+    color: #0f172a !important;
+}
+
+[data-theme='light'] .classroom-hero-banner .neo-back-btn,
+html[data-theme='light'] .classroom-hero-banner .neo-back-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .classroom-hero-banner .neo-back-btn:hover,
+html[data-theme='light'] .classroom-hero-banner .neo-back-btn:hover {
+    background: #f8fafc;
+    border-color: #3b82f6;
+    color: #2563eb;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+}
+
+[data-theme='light'] .classroom-hero-banner .glass-chip,
+html[data-theme='light'] .classroom-hero-banner .glass-chip {
+    background: rgba(238, 242, 255, 0.9);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    box-shadow: 0 1px 2px rgba(99, 102, 241, 0.05);
+}
+
+[data-theme='light'] .classroom-hero-banner .mono-label,
+html[data-theme='light'] .classroom-hero-banner .mono-label {
+    color: #1e40af;
+    font-weight: 700;
+}
+
+[data-theme='light'] .classroom-hero-banner .btn-copy-code-inline,
+html[data-theme='light'] .classroom-hero-banner .btn-copy-code-inline {
+    color: #3b82f6;
+}
+
+[data-theme='light'] .classroom-hero-banner .glass-chip-interactive:hover,
+html[data-theme='light'] .classroom-hero-banner .glass-chip-interactive:hover {
+    background: #e0e7ff;
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+[data-theme='light'] .classroom-hero-banner .glass-chip-interactive:hover .btn-copy-code-inline,
+html[data-theme='light'] .classroom-hero-banner .glass-chip-interactive:hover .btn-copy-code-inline {
+    color: #1d4ed8;
+}
+
+[data-theme='light'] .classroom-hero-banner .b-label,
+html[data-theme='light'] .classroom-hero-banner .b-label {
+    background: rgba(241, 245, 249, 0.95);
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-weight: 700;
+}
+
+[data-theme='light'] .classroom-hero-banner .b-label.status-active,
+html[data-theme='light'] .classroom-hero-banner .b-label.status-active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
 .header-inner { padding: 32px 36px; }
 
 .top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }

@@ -120,10 +120,58 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
         setIsDragging(false);
     };
 
-    const handleDrop = (e) => {
+    const handleDrop = async (e) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
+
+        const items = e.dataTransfer.items;
+        if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+            const traverseFileTree = (item) => {
+                return new Promise((resolve) => {
+                    if (!item) return resolve([]);
+                    if (item.isFile) {
+                        item.file((file) => resolve([file]), () => resolve([]));
+                    } else if (item.isDirectory) {
+                        const dirReader = item.createReader();
+                        const entries = [];
+                        const readEntries = () => {
+                            dirReader.readEntries(async (result) => {
+                                if (!result || !result.length) {
+                                    const filesNested = await Promise.all(entries.map(traverseFileTree));
+                                    resolve(filesNested.flat());
+                                } else {
+                                    entries.push(...result);
+                                    readEntries();
+                                }
+                            }, () => resolve([]));
+                        };
+                        readEntries();
+                    } else {
+                        resolve([]);
+                    }
+                });
+            };
+
+            try {
+                const promises = [];
+                for (let i = 0; i < items.length; i++) {
+                    const entry = items[i].webkitGetAsEntry();
+                    if (entry) {
+                        promises.push(traverseFileTree(entry));
+                    }
+                }
+                const nestedFiles = await Promise.all(promises);
+                const allFiles = nestedFiles.flat();
+                if (allFiles.length > 0) {
+                    handleAddFiles(allFiles);
+                    return;
+                }
+            } catch (err) {
+                console.error("Folder drop traversal error:", err);
+            }
+        }
+
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             handleAddFiles(e.dataTransfer.files);
         }
@@ -360,23 +408,31 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
                                             type="button"
                                             className="btn-dropzone-action"
                                             onClick={() => folderInputRef.current?.click()}
+                                            title="Click to open folder chooser, select your folder, and confirm 'Upload' at the bottom-right of the dialog window."
                                         >
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                                             </svg>
-                                            Upload Entire Folder
+                                            Select Folder
                                         </button>
 
                                         <button
                                             type="button"
                                             className="btn-dropzone-action"
                                             onClick={() => zipInputRef.current?.click()}
+                                            title="Upload a .zip file containing student code submissions."
                                         >
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                                             </svg>
                                             Upload ZIP Archive
                                         </button>
+                                    </div>
+
+                                    {/* Clear Folder Instructions Guide */}
+                                    <div className="dropzone-helper-guide" onClick={(e) => e.stopPropagation()}>
+                                        <span className="guide-badge">Folder Upload</span>
+                                        <span>In the file dialog, open/select your folder and click <strong>"Upload"</strong> in the bottom-right corner — or simply <strong>drag & drop your folder directly</strong> into this box!</span>
                                     </div>
 
                                     {/* Hidden HTML file inputs */}
