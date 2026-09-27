@@ -5,7 +5,7 @@ import traceback
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
-from models import Submission, Assignment, User
+from models import Submission, Assignment, User, Classroom
 from utils.similarity import compare_all_files
 
 analysis_bp = Blueprint('analysis', __name__)
@@ -49,10 +49,20 @@ def resolve_submission_path(raw_path):
 @jwt_required()
 def analyze_assignment(assignment_id):
     try:
-        # 1. Fetch assignment to determine language
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or user.role not in ('instructor', 'admin'):
+            return jsonify({"error": "Unauthorized. Only instructors and administrators can run plagiarism audits."}), 403
+
+        # 1. Fetch assignment to determine language and verify classroom ownership
         assignment = Assignment.query.get(assignment_id)
         if not assignment:
             return jsonify({"error": "Assignment not found."}), 404
+
+        if user.role == 'instructor':
+            classroom = Classroom.query.filter_by(id=assignment.classroom_id, instructor_id=user.id).first()
+            if not classroom:
+                return jsonify({"error": "Unauthorized. You do not have permission to audit assignments in this classroom."}), 403
             
         language = (assignment.language or 'python').lower()
         

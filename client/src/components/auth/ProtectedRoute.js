@@ -3,7 +3,16 @@ import { Navigate } from 'react-router-dom';
 import { clearAuthSession } from '../../utils/authUtils';
 
 const ProtectedRoute = ({ children, allowedRole }) => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    let user = null;
+    try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+            user = JSON.parse(storedUser);
+        }
+    } catch (e) {
+        console.error("ProtectedRoute: Corrupted session storage detected:", e);
+        user = null;
+    }
     const token = localStorage.getItem('token');
 
     // If no user OR no token is found, clean auth session and redirect

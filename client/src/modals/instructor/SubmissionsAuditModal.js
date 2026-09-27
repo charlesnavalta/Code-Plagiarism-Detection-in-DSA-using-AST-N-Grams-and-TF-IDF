@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import api from '../../services/api'; 
 import { useToast } from '../../context/NotificationContext';
 import CodeComparisonView from '../../components/instructor/CodeComparisonView'; 
+import AnalysisLoadingState from '../../components/instructor/AnalysisLoadingState';
 import './SubmissionsAuditModal.css'; 
 import { getPlagiarismDisplayData } from '../../utils/theme';
 import BaseModal from '../shared/BaseModal';
@@ -13,6 +14,39 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
     const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
+
+    // --- Smooth Transition Lifecycle Between Loading State & Results Table ---
+    // 'idle' | 'analyzing' | 'completing' | 'fading' | 'ready'
+    const [displayPhase, setDisplayPhase] = useState('idle');
+    const prevAnalyzingRef = useRef(isAnalyzing);
+
+    useEffect(() => {
+        if (isAnalyzing) {
+            setDisplayPhase('analyzing');
+        } else if (prevAnalyzingRef.current && !isAnalyzing && analysisResults) {
+            // Just finished analyzing! Show 100% completion celebration, then crossfade to table
+            setDisplayPhase('completing');
+            const timer1 = setTimeout(() => {
+                setDisplayPhase('fading');
+            }, 600);
+            const timer2 = setTimeout(() => {
+                setDisplayPhase('ready');
+            }, 900);
+            return () => {
+                clearTimeout(timer1);
+                clearTimeout(timer2);
+            };
+        } else if (!isAnalyzing && analysisResults) {
+            setDisplayPhase('ready');
+        } else {
+            setDisplayPhase('idle');
+        }
+        prevAnalyzingRef.current = isAnalyzing;
+    }, [isAnalyzing, analysisResults]);
+
+    const showLoading = displayPhase === 'analyzing' || displayPhase === 'completing' || displayPhase === 'fading';
+    const isCompleted = displayPhase === 'completing' || displayPhase === 'fading';
+    const isExiting = displayPhase === 'fading';
     
     // --- Teacher Comments / Feedback State ---
     const [feedbackModalSub, setFeedbackModalSub] = useState(null);
@@ -203,8 +237,8 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                         </div>
 
                         {/* Plagiarism Risk Filter Chips */}
-                        {activeTab === 'report' && analysisResults && (
-                            <div className="audit-filter-chips">
+                        {activeTab === 'report' && analysisResults && !showLoading && (
+                            <div className="audit-filter-chips chips-enter">
                                 {[
                                     { id: 'all', label: 'All Pairs' },
                                     { id: 'Type 1', label: 'Type 1: Exact' },
@@ -441,15 +475,24 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                         <h3>Plagiarism Similarity Matrix</h3>
                         <p className="report-header-sub">Algorithm: AST Structural Tokenization + N-Gram Analysis + TF-IDF</p>
                     </div>
-                    {analysisResults && (
-                        <div className="scan-badge">
+                    {analysisResults && !showLoading && (
+                        <div className="scan-badge badge-enter">
                             Analysis Active
                         </div>
                     )}
                 </div>
 
-                {filteredResults.length > 0 ? (
-                    <div className="table-responsive-wrapper">
+                {showLoading ? (
+                    <AnalysisLoadingState 
+                        submissionCount={submissions.length} 
+                        isBatch={false}
+                        language={submissions.some(s => s.filename?.toLowerCase().endsWith('.java')) ? 'java' : 'python'}
+                        isCompleted={isCompleted}
+                        isExiting={isExiting}
+                        matchesFound={analysisResults ? analysisResults.length : null}
+                    />
+                ) : filteredResults.length > 0 ? (
+                    <div className="table-responsive-wrapper results-table-enter">
                         <table className="falsicode-table-hud hoverable-table">
                             <thead>
                                 <tr>
@@ -499,6 +542,21 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
                             </tbody>
                         </table>
                     </div>
+                ) : analysisResults ? (
+                    <div className="empty-search-box report-empty clean-audit-box">
+                        <div className="report-empty-icon clean-icon-circle">
+                            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h4 className="clean-audit-title">No {filterType !== 'all' ? `${filterType} Clones` : 'Matching Pairs'} Detected</h4>
+                        <p className="clean-audit-subtext">
+                            {searchTerm 
+                                ? `No submission comparison pairs matched your search query "${searchTerm}".`
+                                : `None of the audited submissions were categorized under "${filterType}". All comparison pairs in this category passed structural evaluation.`}
+                        </p>
+                        <span className="clean-audit-pill">PASS · 0 FLAGGED PAIRS</span>
+                    </div>
                 ) : (
                     <div className="empty-search-box report-empty">
                         <div className="report-empty-icon">
@@ -525,11 +583,24 @@ const SubmissionsAuditModal = ({ isOpen, onClose, submissions = [], analysisResu
 {!selectedPair && (
 <div className="hud-modal-footer">
     <button 
-        className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`} 
+        className={`btn-hud-run ${showLoading ? 'is-analyzing' : ''} ${isCompleted ? 'is-completed' : ''}`} 
         onClick={handleTriggerScan} 
-        disabled={isAnalyzing}
+        disabled={showLoading}
     >
-        {isAnalyzing ? "Processing..." : (analysisResults ? "Re-run Plagiarism Analysis" : "Run Falsicode Analysis")}
+        {showLoading ? (
+            <span className="btn-analyzing-content">
+                {isCompleted ? (
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                ) : (
+                    <span className="btn-spinner-ring"></span>
+                )}
+                <span>{isCompleted ? "Audit Complete" : "Running Algorithmic Audit..."}</span>
+            </span>
+        ) : (
+            analysisResults ? "Re-run Plagiarism Analysis" : "Run Falsicode Analysis"
+        )}
     </button>
 </div>
 )}

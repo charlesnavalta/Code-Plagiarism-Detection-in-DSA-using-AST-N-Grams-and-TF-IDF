@@ -12,7 +12,6 @@ import ClassroomViewSkeleton from './components/ClassroomViewSkeleton';
 
 // Modals
 import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
-import BatchAnalysisModal from '../../modals/instructor/BatchAnalysisModal';
 import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu';
 import EditClassroomModal from '../../modals/classroom/EditClassroomModal';
 import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
@@ -30,7 +29,6 @@ const InstructorClassroomView = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [rosterModalOpen, setRosterModalOpen] = useState(false);
-    const [batchModalOpen, setBatchModalOpen] = useState(false);
 
     const handleClassroomUpdated = (updated) => {
         setClassroom(prev => ({ ...prev, ...updated }));
@@ -165,31 +163,6 @@ const InstructorClassroomView = () => {
                             <h2>Assignment(s)</h2>
                         </div>
                         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                            <button 
-                                className="btn-secondary-falsicode"
-                                type="button"
-                                onClick={() => setBatchModalOpen(true)}
-                                title="Upload multiple files, a folder, or a ZIP for instant batch plagiarism analysis"
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    fontWeight: '600',
-                                    fontSize: '0.875rem',
-                                    background: 'rgba(59, 130, 246, 0.12)',
-                                    color: 'var(--accent-primary, #3b82f6)',
-                                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                                </svg>
-                                Batch Folder / Files Audit
-                            </button>
-
                             <button className="btn-primary-falsicode" onClick={() => navigate(`/instructor/class/${id}/assignment/new`)}>
                                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"></path>
@@ -269,11 +242,6 @@ const InstructorClassroomView = () => {
                 isOpen={rosterModalOpen}
                 onClose={() => setRosterModalOpen(false)}
                 classroom={classroom}
-            />
-
-            <BatchAnalysisModal
-                isOpen={batchModalOpen}
-                onClose={() => setBatchModalOpen(false)}
             />
         </InstructorWrapper>
     );

@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import BaseModal from '../shared/BaseModal';
 import CodeComparisonView from '../../components/instructor/CodeComparisonView';
 import AnalysisPDFExporter from '../../components/instructor/AnalysisPDFExporter';
+import AnalysisLoadingState from '../../components/instructor/AnalysisLoadingState';
 import analysisService from '../../services/analysisService';
 import { useToast } from '../../context/NotificationContext';
 import { getPlagiarismDisplayData } from '../../utils/theme';
@@ -24,6 +25,39 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
     const [analyzedFilesPayload, setAnalyzedFilesPayload] = useState([]);
     const [selectedPair, setSelectedPair] = useState(null);
     const [activeTab, setActiveTab] = useState('files'); // 'files' | 'report'
+
+    // --- Smooth Transition Lifecycle Between Loading State & Results Table ---
+    // 'idle' | 'analyzing' | 'completing' | 'fading' | 'ready'
+    const [displayPhase, setDisplayPhase] = useState('idle');
+    const prevAnalyzingRef = useRef(isAnalyzing);
+
+    useEffect(() => {
+        if (isAnalyzing) {
+            setDisplayPhase('analyzing');
+        } else if (prevAnalyzingRef.current && !isAnalyzing && analysisResults) {
+            // Just finished analyzing! Show 100% completion celebration, then crossfade to table
+            setDisplayPhase('completing');
+            const timer1 = setTimeout(() => {
+                setDisplayPhase('fading');
+            }, 600);
+            const timer2 = setTimeout(() => {
+                setDisplayPhase('ready');
+            }, 900);
+            return () => {
+                clearTimeout(timer1);
+                clearTimeout(timer2);
+            };
+        } else if (!isAnalyzing && analysisResults) {
+            setDisplayPhase('ready');
+        } else {
+            setDisplayPhase('idle');
+        }
+        prevAnalyzingRef.current = isAnalyzing;
+    }, [isAnalyzing, analysisResults]);
+
+    const showLoading = displayPhase === 'analyzing' || displayPhase === 'completing' || displayPhase === 'fading';
+    const isCompleted = displayPhase === 'completing' || displayPhase === 'fading';
+    const isExiting = displayPhase === 'fading';
 
     // Filter & Search
     const [searchTerm, setSearchTerm] = useState('');
@@ -264,8 +298,8 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
                             )}
                         </div>
 
-                        {activeTab === 'report' && analysisResults && (
-                            <div className="audit-filter-chips">
+                        {activeTab === 'report' && analysisResults && !showLoading && (
+                            <div className="audit-filter-chips chips-enter">
                                 {[
                                     { id: 'all', label: 'All Pairs' },
                                     { id: 'Type 1', label: 'Type 1: Exact' },
@@ -423,15 +457,24 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
                                         <h3>Plagiarism Similarity Matrix</h3>
                                         <p className="report-header-sub">Algorithm: AST Structural Tokenization + N-Gram Analysis + TF-IDF</p>
                                     </div>
-                                    {analysisResults && (
-                                        <div className="scan-badge">
+                                    {analysisResults && !showLoading && (
+                                        <div className="scan-badge badge-enter">
                                             Analysis Active
                                         </div>
                                     )}
                                 </div>
 
-                                {filteredResults.length > 0 ? (
-                                    <div className="table-responsive-wrapper">
+                                {showLoading ? (
+                                    <AnalysisLoadingState 
+                                        submissionCount={stagedFiles.length} 
+                                        isBatch={true} 
+                                        language={language}
+                                        isCompleted={isCompleted}
+                                        isExiting={isExiting}
+                                        matchesFound={analysisResults ? analysisResults.length : null}
+                                    />
+                                ) : filteredResults.length > 0 ? (
+                                    <div className="table-responsive-wrapper results-table-enter">
                                         <table className="falsicode-table-hud hoverable-table">
                                             <thead>
                                                 <tr>
@@ -481,6 +524,21 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
                                             </tbody>
                                         </table>
                                     </div>
+                                ) : analysisResults ? (
+                                    <div className="empty-search-box report-empty clean-audit-box">
+                                        <div className="report-empty-icon clean-icon-circle">
+                                            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <h4 className="clean-audit-title">No {filterType !== 'all' ? `${filterType} Clones` : 'Matching Pairs'} Detected</h4>
+                                        <p className="clean-audit-subtext">
+                                            {searchTerm 
+                                                ? `No batch comparison pairs matched your search query "${searchTerm}".`
+                                                : `None of the audited files were categorized under "${filterType}". All comparison pairs in this category passed structural evaluation.`}
+                                        </p>
+                                        <span className="clean-audit-pill">PASS · 0 FLAGGED PAIRS</span>
+                                    </div>
                                 ) : (
                                     <div className="empty-search-box report-empty">
                                         <div className="report-empty-icon">
@@ -508,14 +566,24 @@ const BatchAnalysisModal = ({ isOpen, onClose, defaultLanguage = 'python' }) => 
             {!selectedPair && (
                 <div className="hud-modal-footer">
                     <button
-                        className={`btn-hud-run ${isAnalyzing ? 'pulsing' : ''}`}
+                        className={`btn-hud-run ${showLoading ? 'is-analyzing' : ''} ${isCompleted ? 'is-completed' : ''}`}
                         onClick={handleRunBatchAudit}
-                        disabled={isAnalyzing || stagedFiles.length < 2}
+                        disabled={showLoading || stagedFiles.length < 2}
                     >
-                        {isAnalyzing 
-                            ? "Processing..." 
-                            : (analysisResults ? "Re-run Plagiarism Analysis" : "Run Falsicode Analysis")
-                        }
+                        {showLoading ? (
+                            <span className="btn-analyzing-content">
+                                {isCompleted ? (
+                                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                ) : (
+                                    <span className="btn-spinner-ring"></span>
+                                )}
+                                <span>{isCompleted ? "Audit Complete" : "Running Algorithmic Audit..."}</span>
+                            </span>
+                        ) : (
+                            analysisResults ? "Re-run Plagiarism Analysis" : "Run Falsicode Analysis"
+                        )}
                     </button>
                 </div>
             )}

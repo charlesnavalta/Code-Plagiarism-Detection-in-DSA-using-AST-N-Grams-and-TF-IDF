@@ -62,6 +62,7 @@ def create_assignment(class_id):
         for file in files:
             if file and file.filename != '':
                 original_filename = secure_filename(file.filename)
+                unique_filename = f"guide_assign_{new_assignment.id}_{original_filename}"
                 # Prefix with assignment ID to prevent naming collisions
                 attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
                 os.makedirs(attachments_dir, exist_ok=True)
@@ -350,6 +351,10 @@ def delete_assignment_attachment(class_id, assignment_id, attachment_id):
     if not classroom:
         return jsonify({"error": "Unauthorized or classroom not found"}), 403
 
+    assignment = Assignment.query.filter_by(id=assignment_id, classroom_id=class_id).first()
+    if not assignment:
+        return jsonify({"error": "Assignment not found in this classroom"}), 404
+
     attachment = AssignmentAttachment.query.filter_by(id=attachment_id, assignment_id=assignment_id).first()
     if not attachment:
         return jsonify({"error": "Attachment not found"}), 404
@@ -425,7 +430,10 @@ def get_attachment(class_id, attachment_id):
         if not classroom:
             return jsonify({"error": "Unauthorized access to this classroom."}), 403
 
-    attachment = AssignmentAttachment.query.get(attachment_id)
+    attachment = AssignmentAttachment.query.join(Assignment).filter(
+        AssignmentAttachment.id == attachment_id,
+        Assignment.classroom_id == class_id
+    ).first()
     if not attachment:
         return jsonify({"error": "Attachment record not found."}), 404
 

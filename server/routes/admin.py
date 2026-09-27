@@ -399,17 +399,7 @@ def trigger_database_reseed():
     except Exception:
         pass
 
-    # Check 1: Master Reseed Key (CLI / Automation / CI)
-    if not is_authorized:
-        body_secret = body_data.get('secret')
-        reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key') or body_secret
-        secret_key = os.environ.get('SECRET_KEY')
-
-        if reseed_key and (reseed_key == secret_key or reseed_key == 'falsicode-reseed-2026'):
-            is_authorized = True
-            actor = "Master Reseed Key"
-
-    # Check 2: Admin JWT session
+    # Check 1: Admin JWT session
     if not is_authorized:
         try:
             from flask_jwt_extended import verify_jwt_in_request
@@ -433,8 +423,19 @@ def trigger_database_reseed():
             is_authorized = True
             actor = admin_user.username
 
+    # Check 2: Master Reseed Key (CLI / Automation / CI only via secure env secret)
     if not is_authorized:
-        return jsonify({"error": "Unauthorized. Admin privileges or valid secret required."}), 403
+        reseed_key = request.headers.get('X-Reseed-Key') or request.headers.get('x-reseed-key')
+        reseed_secret = os.environ.get('RESEED_SECRET_KEY') or os.environ.get('SECRET_KEY')
+        insecure_fallbacks = ('falsicode-reseed-2026', 'falsicode_fallback_secret_key_2026', '')
+
+        if reseed_key and reseed_secret and reseed_secret not in insecure_fallbacks:
+            if reseed_key == reseed_secret:
+                is_authorized = True
+                actor = "Master Reseed Key (CLI/CI)"
+
+    if not is_authorized:
+        return jsonify({"error": "Unauthorized. Admin privileges with verified password or valid server key required."}), 403
 
     app_instance = current_app._get_current_object()
 

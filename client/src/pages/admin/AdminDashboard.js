@@ -87,8 +87,7 @@ const AdminDashboard = () => {
         try {
             const res = await api.post('/admin/system/reseed', {
                 password: adminPassword,
-                mode: 'safe_sync',
-                secret: 'falsicode-reseed-2026'
+                mode: 'safe_sync'
             });
             setShowReseedModal(false);
             setAdminPassword('');
