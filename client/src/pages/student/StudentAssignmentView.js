@@ -223,54 +223,61 @@ const StudentAssignmentView = () => {
             <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
                 <div className="view-inner-wrapper">
                     
-                    {/* --- TOP BREADCRUMB & BACK NAV --- */}
-                    <div className="view-top-nav">
-                        <button className="btn-view-back" onClick={() => navigate(`/student/class/${classId}`)}>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to {assignment.classroom_name || 'Classroom'}
-                        </button>
-                        
-                        <div className="view-nav-status-badge">
-                            {isUnlocked ? (
-                                <span className="badge-view-unlocked">Resubmission Unlocked</span>
-                            ) : isSubmitted ? (
-                                <span className="badge-view-submitted">✓ Submitted</span>
-                            ) : isOverdue ? (
-                                <span className="badge-view-overdue">Deadline Passed</span>
-                            ) : (
-                                <span className="badge-view-pending">Active Task</span>
-                            )}
-                        </div>
-                    </div>
+                    {/* --- HERO HEADER BANNER (CINEMATIC VIEW HEADER) --- */}
+                    <header className="cinematic-banner-shared spatial-card fade-in-down assignment-hero-card">
+                        <div className="header-inner">
+                            <div className="top-meta">
+                                <button
+                                    type="button"
+                                    className="neo-back-btn"
+                                    onClick={() => navigate(`/student/class/${classId}`)}
+                                >
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '4px', verticalAlign: 'middle', marginTop: '-2px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                    Back to {assignment.classroom_name || 'Classroom'}
+                                </button>
+                                
+                                <div className="header-actions-cluster">
+                                    <div className="view-nav-status-badge">
+                                        {isUnlocked ? (
+                                            <span className="badge-view-unlocked">Resubmission Unlocked</span>
+                                        ) : isSubmitted ? (
+                                            <span className="badge-view-submitted">✓ Submitted</span>
+                                        ) : isOverdue ? (
+                                            <span className="badge-view-overdue">Deadline Passed</span>
+                                        ) : (
+                                            <span className="badge-view-pending">Active Task</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
 
-                    {/* --- HERO HEADER BANNER --- */}
-                    <div className="assignment-hero-card">
-                        <div className="hero-meta-row">
-                            <span className="task-pill">TASK {String(assignment.id).padStart(2, '0')} • {displayLanguage}</span>
-                            <span className="score-pill">MAX SCORE: {assignment.max_score} PTS</span>
-                        </div>
+                            <div className="hero-meta-row">
+                                <span className="task-pill">TASK {String(assignment.id).padStart(2, '0')} • {displayLanguage}</span>
+                                <span className="score-pill">MAX SCORE: {assignment.max_score} PTS</span>
+                            </div>
 
-                        <h1 className="assignment-view-title">{assignment.title}</h1>
-                        
-                        <div className="assignment-meta-footer">
-                            <div className="meta-item">
-                                <span className="meta-label">INSTRUCTOR</span>
-                                <strong className="meta-val">{assignment.instructor_name || 'Instructor'}</strong>
-                            </div>
-                            <div className="meta-item">
-                                <span className="meta-label">DUE DATE</span>
-                                <strong className={`meta-val ${isOverdue && !isSubmitted ? 'text-danger' : ''}`}>
-                                    {formatDeadline(assignment.deadline)}
-                                </strong>
-                            </div>
-                            <div className="meta-item">
-                                <span className="meta-label">REQUIRED FORMAT</span>
-                                <strong className="meta-val">Single {fileExtension} source file</strong>
+                            <h1 className="assignment-view-title">{assignment.title}</h1>
+                            
+                            <div className="assignment-meta-footer">
+                                <div className="meta-item">
+                                    <span className="meta-label">INSTRUCTOR</span>
+                                    <strong className="meta-val">{assignment.instructor_name || 'Instructor'}</strong>
+                                </div>
+                                <div className="meta-item">
+                                    <span className="meta-label">DUE DATE</span>
+                                    <strong className={`meta-val ${isOverdue && !isSubmitted ? 'text-danger' : ''}`}>
+                                        {formatDeadline(assignment.deadline)}
+                                    </strong>
+                                </div>
+                                <div className="meta-item">
+                                    <span className="meta-label">REQUIRED FORMAT</span>
+                                    <strong className="meta-val">Single {fileExtension} source file</strong>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </header>
 
                     {/* --- 2-COLUMN WORKSPACE GRID --- */}
                     <div className="assignment-view-grid">

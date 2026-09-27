@@ -163,48 +163,55 @@ const InstructorCreateAssignmentView = () => {
             <div className={`instructor-workspace-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
                 <div className="workspace-inner-wrapper">
 
-                    {/* --- TOP BREADCRUMB & NAV --- */}
-                    <div className="workspace-top-nav">
-                        <button className="btn-workspace-back" onClick={() => navigate(`/instructor/class/${classId}`)}>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to {classroom?.name || 'Classroom'}
-                        </button>
+                    {/* --- HERO HEADER BANNER (CINEMATIC VIEW HEADER) --- */}
+                    <header className="cinematic-banner-shared spatial-card fade-in-down workspace-hero-card">
+                        <div className="header-inner">
+                            <div className="top-meta">
+                                <button
+                                    type="button"
+                                    className="neo-back-btn"
+                                    onClick={() => navigate(`/instructor/class/${classId}`)}
+                                >
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '4px', verticalAlign: 'middle', marginTop: '-2px' }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                    Back to {classroom?.name || 'Classroom'}
+                                </button>
 
-                        <span className="workspace-nav-badge badge-mode-create">
-                            Create Assignment
-                        </span>
-                    </div>
+                                <div className="header-actions-cluster">
+                                    <div className="glass-chip">
+                                        <span className="mono-label">CREATE ASSIGNMENT</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                    {/* --- HERO HEADER BANNER (LIVE PREVIEW) --- */}
-                    <div className="workspace-hero-card">
-                        <div className="workspace-hero-meta-row">
-                            <span className="workspace-task-pill">NEW TASK • {displayLanguage}</span>
-                            <span className="workspace-score-pill">MAX SCORE: {maxScore || 100} PTS</span>
+                            <div className="workspace-hero-meta-row">
+                                <span className="workspace-task-pill">NEW TASK • {displayLanguage}</span>
+                                <span className="workspace-score-pill">MAX SCORE: {maxScore || 100} PTS</span>
+                            </div>
+
+                            <h1 className={`workspace-hero-title ${!title.trim() ? 'placeholder' : ''}`}>
+                                {title.trim() || 'Untitled Assignment'}
+                            </h1>
+
+                            <div className="workspace-meta-footer">
+                                <div className="workspace-meta-item">
+                                    <span className="workspace-meta-label">INSTRUCTOR</span>
+                                    <strong className="workspace-meta-val">{classroom?.instructor || 'Instructor'}</strong>
+                                </div>
+                                <div className="workspace-meta-item">
+                                    <span className="workspace-meta-label">DUE DATE</span>
+                                    <strong className="workspace-meta-val">
+                                        {deadline ? formatDeadline(deadline) : 'Select deadline below'}
+                                    </strong>
+                                </div>
+                                <div className="workspace-meta-item">
+                                    <span className="workspace-meta-label">REQUIRED FORMAT</span>
+                                    <strong className="workspace-meta-val">Single {fileExtension} source file</strong>
+                                </div>
+                            </div>
                         </div>
-
-                        <h1 className={`workspace-hero-title ${!title.trim() ? 'placeholder' : ''}`}>
-                            {title.trim() || 'Untitled Assignment'}
-                        </h1>
-
-                        <div className="workspace-meta-footer">
-                            <div className="workspace-meta-item">
-                                <span className="workspace-meta-label">INSTRUCTOR</span>
-                                <strong className="workspace-meta-val">{classroom?.instructor || 'Instructor'}</strong>
-                            </div>
-                            <div className="workspace-meta-item">
-                                <span className="workspace-meta-label">DUE DATE</span>
-                                <strong className="workspace-meta-val">
-                                    {deadline ? formatDeadline(deadline) : 'Select deadline below'}
-                                </strong>
-                            </div>
-                            <div className="workspace-meta-item">
-                                <span className="workspace-meta-label">REQUIRED FORMAT</span>
-                                <strong className="workspace-meta-val">Single {fileExtension} source file</strong>
-                            </div>
-                        </div>
-                    </div>
+                    </header>
 
                     {/* --- 2-COLUMN WORKSPACE FORM --- */}
                     <form onSubmit={handleCreateAssignment} className="workspace-editor-grid">

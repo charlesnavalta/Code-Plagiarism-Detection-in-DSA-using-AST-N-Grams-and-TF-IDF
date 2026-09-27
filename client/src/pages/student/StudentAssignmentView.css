@@ -109,28 +109,71 @@ html[data-theme='light'] .btn-view-back:hover,
     font-size: 0.8rem;
 }
 
-/* --- Hero Banner Card --- */
+/* --- Hero Banner Card (Cinematic Glass Banner) --- */
 .assignment-hero-card {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
-    border-radius: 24px;
-    padding: 36px 40px;
-    margin-bottom: 32px;
-    box-shadow: 0 16px 36px -8px rgba(79, 70, 229, 0.35);
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 27, 75, 0.72) 48%, rgba(15, 23, 42, 0.96) 100%) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 20px 40px -15px rgba(0, 0, 0, 0.6),
+        0 0 32px -10px rgba(99, 102, 241, 0.22) !important;
     color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.assignment-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 5%, rgba(99, 102, 241, 0.9) 30%, rgba(168, 85, 247, 0.9) 70%, transparent 95%);
+    pointer-events: none;
+    z-index: 2;
 }
 
 [data-theme='light'] .assignment-hero-card,
 html[data-theme='light'] .assignment-hero-card,
 .assignment-view-container.light .assignment-hero-card {
-    background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 50%, #7c3aed 100%);
-    box-shadow: 0 16px 36px -8px rgba(59, 130, 246, 0.25);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 52%, #eef2ff 100%) !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 12px 32px -6px rgba(59, 130, 246, 0.1) !important;
+    color: #1e293b;
+}
+
+[data-theme='light'] .assignment-hero-card::before,
+html[data-theme='light'] .assignment-hero-card::before,
+.assignment-view-container.light .assignment-hero-card::before {
+    background: linear-gradient(90deg, transparent 5%, rgba(59, 130, 246, 0.7) 30%, rgba(99, 102, 241, 0.7) 70%, transparent 95%);
+}
+
+.assignment-hero-card .header-inner {
+    padding: 32px 36px;
+}
+
+.assignment-hero-card .top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.assignment-hero-card .header-actions-cluster {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .hero-meta-row {
     display: flex;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .task-pill {
@@ -142,25 +185,49 @@ html[data-theme='light'] .assignment-hero-card,
     padding: 6px 12px;
     border-radius: 8px;
     letter-spacing: 1px;
+    color: #ffffff;
+}
+
+[data-theme='light'] .task-pill,
+html[data-theme='light'] .task-pill,
+.assignment-view-container.light .task-pill {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    color: #2563eb;
 }
 
 .score-pill {
     font-size: 0.75rem;
     font-weight: 800;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.35);
     padding: 6px 12px;
     border-radius: 8px;
     letter-spacing: 0.5px;
+    color: #c4b5fd;
+}
+
+[data-theme='light'] .score-pill,
+html[data-theme='light'] .score-pill,
+.assignment-view-container.light .score-pill {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: #6366f1;
 }
 
 .assignment-view-title {
-    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-size: clamp(2rem, 4vw, 3.2rem);
     font-weight: 900;
-    letter-spacing: -1.5px;
-    margin: 0 0 24px 0;
-    line-height: 1.25;
+    letter-spacing: -2px;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
     color: #ffffff !important;
+}
+
+[data-theme='light'] .assignment-view-title,
+html[data-theme='light'] .assignment-view-title,
+.assignment-view-container.light .assignment-view-title {
+    color: #0f172a !important;
 }
 
 .assignment-meta-footer {

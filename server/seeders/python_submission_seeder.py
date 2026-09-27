@@ -23,6 +23,7 @@ def seed_python_submissions(db_instance):
             ("TS-C 1", "ts_c1"),
             ("TS-C 2", "ts_c2"),
             ("TS-C 3", "ts_c3"),
+            ("TS-D 1", "ts_d1"),
         ]),
         ("3CSC - Multiple Files", "controlled_benchmarks/python/multiple_files", [
             ("Multiple-A 1", "multiple_a1"),
@@ -94,5 +95,16 @@ def seed_python_submissions(db_instance):
                 else:
                     sub.filename = fname
                     sub.file_path = rel_path
+
+                if ass_prefix == "TS-D 1":
+                    if idx == 0:
+                        sub.allow_resubmit = True
+                        sub.score = None
+                        sub.feedback = "Needs improvement on iterative edge case handling. Resubmission has been unlocked for you to submit an updated solution."
+                    elif idx == 1:
+                        sub.allow_resubmit = False
+                        sub.score = "92"
+                        sub.feedback = "Well-structured recursive implementation. Good base-case handling."
+
             db_instance.session.commit()
             print(f"[{class_name}] Seeded submissions for {ass_prefix} ({min(len(files), len(sample_students))} files)")

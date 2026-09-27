@@ -85,6 +85,17 @@ assignments_to_seed = [
         "deadline": datetime(2027, 12, 31, 23, 59, 59)
     },
     # ==========================================
+    # TS-D (Past Due Date & Resubmission Test)
+    # ==========================================
+    {
+        "title": "TS-D 1: Past Due & Resubmission Test",
+        "description": "Write an optimal Binary Search algorithm. NOTE: This scenario has an expired deadline to test past-due enforcement and instructor-granted resubmission overrides.",
+        "max_score": 100,
+        "classroom_name": "3CSB - Different Scenarios",
+        "language": "python",
+        "deadline": datetime(2026, 9, 20, 23, 59, 59)
+    },
+    # ==========================================
     # Multiple Files (Python)
     # ==========================================
 
