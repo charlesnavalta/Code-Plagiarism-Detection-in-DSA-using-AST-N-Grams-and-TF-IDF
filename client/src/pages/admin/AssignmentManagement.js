@@ -230,18 +230,6 @@ const AssignmentManagement = () => {
                             Python ({assignments.filter(a => a.language?.toLowerCase() === 'python').length})
                         </button>
                         <button 
-                            className={`filter-pill ${languageFilter === 'cpp' ? 'active' : ''}`}
-                            onClick={() => setLanguageFilter('cpp')}
-                        >
-                            C++ ({assignments.filter(a => a.language?.toLowerCase() === 'cpp').length})
-                        </button>
-                        <button 
-                            className={`filter-pill ${languageFilter === 'c' ? 'active' : ''}`}
-                            onClick={() => setLanguageFilter('c')}
-                        >
-                            C ({assignments.filter(a => a.language?.toLowerCase() === 'c').length})
-                        </button>
-                        <button 
                             className={`filter-pill ${languageFilter === 'java' ? 'active' : ''}`}
                             onClick={() => setLanguageFilter('java')}
                         >
@@ -413,8 +401,6 @@ const AssignmentManagement = () => {
                                             onChange={(e) => setEditFormData({ ...editFormData, language: e.target.value })}
                                         >
                                             <option value="python">Python (.py)</option>
-                                            <option value="cpp">C++ (.cpp)</option>
-                                            <option value="c">C (.c)</option>
                                             <option value="java">Java (.java)</option>
                                         </select>
                                     </div>

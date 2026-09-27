@@ -16,7 +16,7 @@ const AdminDashboard = () => {
         assignments: { total: 0 },
         submissions: { total: 0, evaluated: 0, pending: 0 },
         analytics: {
-            languages: { python: 0, cpp: 0, c: 0, java: 0 },
+            languages: { python: 0, java: 0 },
             risk: { low: 0, moderate: 0, high: 0, total: 0, avg_similarity: 0 }
         }
     });
@@ -389,14 +389,6 @@ const AdminDashboard = () => {
                                     <div className="lang-intel-pill py">
                                         <span className="lang-name">Python</span>
                                         <span className="lang-count">{languagesMap.python || 0} tasks ({Math.round(((languagesMap.python || 0) / totalLangTasks) * 100)}%)</span>
-                                    </div>
-                                    <div className="lang-intel-pill cpp">
-                                        <span className="lang-name">C++</span>
-                                        <span className="lang-count">{languagesMap.cpp || 0} tasks ({Math.round(((languagesMap.cpp || 0) / totalLangTasks) * 100)}%)</span>
-                                    </div>
-                                    <div className="lang-intel-pill c">
-                                        <span className="lang-name">C</span>
-                                        <span className="lang-count">{languagesMap.c || 0} tasks ({Math.round(((languagesMap.c || 0) / totalLangTasks) * 100)}%)</span>
                                     </div>
                                     <div className="lang-intel-pill java">
                                         <span className="lang-name">Java</span>
