@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
 import { clearAuthSession } from '../../utils/authUtils';
+import NotificationBell from './NotificationBell';
 import './Navbar.css'; 
 
 const Navbar = () => {
@@ -167,6 +168,9 @@ const Navbar = () => {
                 </div>
 
                 <div className="navbar-right desktop-only">
+                    {/* 🌟 In-App Notification Center Bell */}
+                    <NotificationBell />
+
                     <div className="profile-menu">
                         <button
                             className="profile-trigger-nexus"

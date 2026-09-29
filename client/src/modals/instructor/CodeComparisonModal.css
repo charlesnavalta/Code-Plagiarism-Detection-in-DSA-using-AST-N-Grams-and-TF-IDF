@@ -1,0 +1,34 @@
+/* src/modals/instructor/CodeComparisonModal.css */
+
+.comparison-hud-modal {
+    width: 96vw !important;
+    max-width: 1400px !important;
+    height: 90vh !important;
+    min-height: 600px !important;
+    max-height: 920px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+@media (min-width: 1600px) {
+    .comparison-hud-modal {
+        max-width: 1540px !important;
+        height: 92vh !important;
+        max-height: 960px !important;
+    }
+}
+
+.comparison-modal-body {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 24px 20px 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .comparison-modal-body {
+        padding: 0 14px 16px 14px;
+    }
+}

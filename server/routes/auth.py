@@ -154,6 +154,24 @@ def register():
     try:
         db.session.add(new_user)
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify all Admins if a new Instructor account is pending approval
+        if requested_role == 'instructor' and user_status == 'pending':
+            try:
+                from utils.notification_helper import create_bulk_notifications
+                admins = User.query.filter(User.role == 'admin').all()
+                admin_ids = [a.id for a in admins]
+                if admin_ids:
+                    create_bulk_notifications(
+                        user_ids=admin_ids,
+                        title="New Instructor Registration Pending",
+                        message=f"Instructor '{new_user.username}' ({new_user.email}) registered and is awaiting account approval.",
+                        type="audit",
+                        link="/admin/users?role=pending"
+                    )
+            except Exception as notif_err:
+                print(f"Notification Trigger Warning (Instructor Registration): {notif_err}")
+
         return jsonify({"message": "Registration Successful!", "status": user_status}), 201
     except Exception as e:
         db.session.rollback()
@@ -378,9 +396,14 @@ def get_all_users():
 @jwt_required()
 def approve_user(user_id):
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    try:
+        current_uid = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        current_uid = current_user_id
 
-    if not current_user or current_user.role != 'admin':
+    current_user = User.query.get(current_uid) if current_uid else None
+
+    if not current_user or (current_user.role or '').lower() != 'admin':
         return jsonify({"error": "Unauthorized: Admin access required"}), 403
 
     user_to_approve = User.query.get(user_id)
@@ -394,6 +417,20 @@ def approve_user(user_id):
     
     try:
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify the Instructor that their account was approved
+        try:
+            from utils.notification_helper import create_notification
+            create_notification(
+                user_id=user_to_approve.id,
+                title="Account Approved",
+                message="Your instructor account has been approved by the Administrator. You can now access your classroom hub and create assignments.",
+                type="system",
+                link="/instructor"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Instructor Approval): {notif_err}")
+
         return jsonify({"message": f"Instructor {user_to_approve.username} approved successfully!"}), 200
     except Exception as e:
         db.session.rollback()
@@ -407,9 +444,14 @@ def approve_user(user_id):
 @jwt_required()
 def admin_create_user():
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    try:
+        current_uid = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        current_uid = current_user_id
 
-    if not current_user or current_user.role != 'admin':
+    current_user = User.query.get(current_uid) if current_uid else None
+
+    if not current_user or (current_user.role or '').lower() != 'admin':
         return jsonify({"error": "Unauthorized: Admin access required"}), 403
 
     data = request.get_json()
@@ -436,6 +478,24 @@ def admin_create_user():
     try:
         db.session.add(new_user)
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify Admins if created as pending instructor
+        if new_user.role == 'instructor' and new_user.status == 'pending':
+            try:
+                from utils.notification_helper import create_bulk_notifications
+                admins = User.query.filter(User.role == 'admin').all()
+                admin_ids = [a.id for a in admins]
+                if admin_ids:
+                    create_bulk_notifications(
+                        user_ids=admin_ids,
+                        title="New Instructor Account Pending",
+                        message=f"Instructor account '{new_user.username}' ({new_user.email}) was provisioned and requires approval.",
+                        type="audit",
+                        link="/admin/users?role=pending"
+                    )
+            except Exception as notif_err:
+                print(f"Notification Trigger Warning (Admin Provisioning): {notif_err}")
+
         return jsonify({"message": "User provisioned successfully!"}), 201
     except Exception as e:
         db.session.rollback()

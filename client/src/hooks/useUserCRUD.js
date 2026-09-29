@@ -35,6 +35,7 @@ export const useUserCRUD = () => {
         try {
             await api.patch(`/auth/users/${userId}/approve`);
             toast.success("User account authorized successfully!", "User Approved");
+            window.dispatchEvent(new Event('refresh-notifications'));
             fetchUsers(); // Refresh list
         } catch (err) {
             toast.error("Failed to authorize user account.", "Approval Failed");

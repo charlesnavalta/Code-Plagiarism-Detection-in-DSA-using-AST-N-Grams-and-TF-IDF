@@ -4,6 +4,18 @@ from database import db
 from datetime import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
+def to_iso_utc(dt):
+    """Formats a datetime object or string to an ISO 8601 string with a 'Z' UTC indicator."""
+    if not dt:
+        return None
+    if isinstance(dt, str):
+        return dt if (dt.endswith('Z') or '+' in dt) else f"{dt}Z"
+    try:
+        iso = dt.isoformat()
+        return iso if (iso.endswith('Z') or '+' in iso) else f"{iso}Z"
+    except Exception:
+        return str(dt)
+
 # ==============================================================================
 # 1. USER MODEL (Accounts & Authentication)
 # ==============================================================================
@@ -82,7 +94,7 @@ class Classroom(db.Model):
             'name': self.name,
             'invite_code': self.invite_code,
             'instructor_id': self.instructor_id,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': to_iso_utc(self.created_at)
         }
 
     def __repr__(self):
@@ -129,8 +141,8 @@ class Assignment(db.Model):
             'max_score': self.max_score,
             'language': self.language,
             'classroom_id': self.classroom_id,
-            'deadline': self.deadline.isoformat() if self.deadline else None,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'deadline': to_iso_utc(self.deadline),
+            'created_at': to_iso_utc(self.created_at)
         }
 
     def __repr__(self):
@@ -184,6 +196,7 @@ class Submission(db.Model):
     
     # The Resubmission Gatekeeper
     allow_resubmit = db.Column(db.Boolean, default=False)
+    resubmission_count = db.Column(db.Integer, default=0, nullable=False)
     
     # File Storage Data
     filename = db.Column(db.String(255), nullable=False)  
@@ -201,6 +214,7 @@ class Submission(db.Model):
         self.filename = filename
         self.file_path = file_path
         self.feedback = feedback
+        self.resubmission_count = 0
 
     def to_dict(self):
         """Helper to serialize submission data."""
@@ -212,7 +226,8 @@ class Submission(db.Model):
             'feedback': self.feedback,
             'filename': self.filename,
             'allow_resubmit': self.allow_resubmit, # Send this state to React
-            'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None
+            'resubmission_count': getattr(self, 'resubmission_count', 0),
+            'submitted_at': to_iso_utc(self.submitted_at)
         }
 
     def __repr__(self):
@@ -238,9 +253,45 @@ class AssignmentAttachment(db.Model):
             'url': f"/api/files/attachments/{self.id}" # We will create this route later to serve the file
         }
 
-# --- Inside your existing Assignment class ---
-# Add this relationship line right below the classroom relationship:
-# attachments = db.relationship('AssignmentAttachment', backref='assignment', lazy=True, cascade="all, delete-orphan")
 
-# Also, update the to_dict() method in the Assignment class to include the files:
-# 'attachments': [att.to_dict() for att in self.attachments] if hasattr(self, 'attachments') else []
+# ==============================================================================
+# NOTIFICATION MODEL (In-App Alerts for Students & Instructors)
+# ==============================================================================
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    __table_args__ = (
+        db.Index('idx_notification_user_created', 'user_id', 'created_at'),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), nullable=False, default='system')  # 'assignment', 'submission', 'audit', 'resubmit', 'system'
+    link = db.Column(db.String(255), nullable=True)  # Deep link URL
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('notifications', lazy=True, cascade="all, delete-orphan"))
+
+    def __init__(self, user_id, title, message, type='system', link=None):
+        self.user_id = user_id
+        self.title = title
+        self.message = message
+        self.type = type
+        self.link = link
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'message': self.message,
+            'type': self.type,
+            'link': self.link,
+            'is_read': self.is_read,
+            'created_at': to_iso_utc(self.created_at)
+        }
+
+    def __repr__(self):
+        return f'<Notification {self.title} | User: {self.user_id} | Read: {self.is_read}>'

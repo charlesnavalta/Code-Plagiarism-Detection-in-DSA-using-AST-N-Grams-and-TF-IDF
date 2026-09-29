@@ -121,6 +121,20 @@ def analyze_assignment(assignment_id):
         # 4. Pass the files AND the dynamic ngram size to the shared math engine
         results = compare_all_files(processed_files, ngram_bounds)
 
+        # 🌟 Event Trigger: Notify Instructor of audit completion & flagged count
+        try:
+            from utils.notification_helper import create_notification
+            high_count = sum(1 for r in results if r.get('score', 0) >= 70)
+            create_notification(
+                user_id=user.id,
+                title=f"Plagiarism Audit Completed: {assignment.title}",
+                message=f"Analyzed {len(processed_files)} submissions for '{assignment.title}'. Found {len(results)} comparison pairs ({high_count} high-risk flags).",
+                type="audit",
+                link=f"/instructor/class/{assignment.classroom_id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Analysis): {notif_err}")
+
         return jsonify({
             "assignment_id": assignment_id,
             "language_used": language,

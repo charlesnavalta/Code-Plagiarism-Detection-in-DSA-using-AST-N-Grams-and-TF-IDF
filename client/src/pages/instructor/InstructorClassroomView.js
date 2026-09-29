@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
-import analysisService from '../../services/analysisService';
 import { useToast } from '../../context/NotificationContext';
 import './InstructorClassroomView.css';
 
@@ -11,7 +10,6 @@ import InstructorWrapper from './components/InstructorWrapper';
 import ClassroomViewSkeleton from './components/ClassroomViewSkeleton';
 
 // Modals
-import SubmissionsAuditModal from '../../modals/instructor/SubmissionsAuditModal';
 import ClassroomActionMenu from '../../components/classroom/ClassroomActionMenu';
 import EditClassroomModal from '../../modals/classroom/EditClassroomModal';
 import DeleteClassroomModal from '../../modals/classroom/DeleteClassroomModal';
@@ -38,12 +36,6 @@ const InstructorClassroomView = () => {
         navigate('/instructor');
     };
 
-    const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
-    const [currentSubmissions, setCurrentSubmissions] = useState([]);
-    const [selectedAssignment, setSelectedAssignment] = useState(null);
-    const [analysisResults, setAnalysisResults] = useState(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -69,36 +61,12 @@ const InstructorClassroomView = () => {
         fetchData();
     }, [id, navigate]);
 
-    const handleViewSubmissions = async (assignment) => {
-        try {
-            const data = await analysisService.getAssignmentSubmissions(id, assignment.id);
-            setCurrentSubmissions(data);
-            setSelectedAssignment(assignment);
-            setAnalysisResults(null); 
-            setShowSubmissionsModal(true);
-        } catch (error) {
-            toast.error("Access to submissions denied.", "Permission Error");
-        }
-    };
-
-    const handleRunAnalysis = async () => {
-        if (currentSubmissions.length < 2) return toast.warning("A minimum of 2 student submissions are required to run comparative AST analysis.", "Insufficient Data");
-        setIsAnalyzing(true);
-        toast.info("Running AST, N-Gram & TF-IDF algorithmic comparison...", "Analysis Started");
-        try {
-            const data = await analysisService.runAnalysis(selectedAssignment.id);
-            setAnalysisResults(data.results);
-            // Refresh submissions in state so code comparison and table reflect the latest resubmitted code
-            try {
-                const refreshedSubs = await analysisService.getAssignmentSubmissions(id, selectedAssignment.id);
-                setCurrentSubmissions(refreshedSubs);
-            } catch (_) {}
-            toast.success("Structural plagiarism audit completed successfully!", "Analysis Complete");
-        } catch (error) {
-            toast.error("Analysis failed: " + (error.response?.data?.error || error.message), "Engine Failure");
-        } finally {
-            setIsAnalyzing(false);
-        }
+    const handleViewSubmissions = (assignment) => {
+        navigate(`/instructor/class/${id}/assignment/${assignment.id}/audit`, {
+            state: {
+                assignment
+            }
+        });
     };
 
     if (loading) return <ClassroomViewSkeleton role="instructor" />;
@@ -211,17 +179,6 @@ const InstructorClassroomView = () => {
                     </div>
                 </main>
             </div>
-
-            <SubmissionsAuditModal 
-                isOpen={showSubmissionsModal}
-                onClose={() => setShowSubmissionsModal(false)}
-                submissions={currentSubmissions}
-                analysisResults={analysisResults}
-                isAnalyzing={isAnalyzing}
-                onRunAnalysis={handleRunAnalysis}
-                classroomId={id} 
-                assignmentId={selectedAssignment?.id} 
-            />
 
             {/* Classroom Modals */}
             <EditClassroomModal

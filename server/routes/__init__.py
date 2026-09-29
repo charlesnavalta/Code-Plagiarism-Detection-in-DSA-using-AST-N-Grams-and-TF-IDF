@@ -13,6 +13,7 @@ from .classrooms import classrooms_bp
 from .assignments import assignments_bp
 from .submissions import submissions_bp
 from .admin import admin_bp
+from .notifications import notifications_bp
 
 __all__ = [
     'analysis_bp',
@@ -20,5 +21,6 @@ __all__ = [
     'classrooms_bp',
     'assignments_bp',
     'submissions_bp',
-    'admin_bp'
+    'admin_bp',
+    'notifications_bp'
 ]

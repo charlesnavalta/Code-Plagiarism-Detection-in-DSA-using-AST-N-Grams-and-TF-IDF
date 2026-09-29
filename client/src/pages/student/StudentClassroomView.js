@@ -24,6 +24,7 @@ const StudentClassroomView = () => {
     const [classroom, setClassroom] = useState(null);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [classError, setClassError] = useState(null);
     const [theme] = useTheme();
     const handleMouseMove = useSpatialSpotlight(dashboardRef);
 
@@ -34,32 +35,78 @@ const StudentClassroomView = () => {
         navigate('/student');
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            const startTime = Date.now();
-            try {
-                const [classRes, assignRes] = await Promise.all([
-                    api.get(`/classrooms/${id}`),
-                    api.get(`/classrooms/${id}/assignments`)
-                ]);
-                setClassroom(classRes.data);
-                setAssignments(assignRes.data);
-            } catch (error) {
-                navigate('/student'); 
-            } finally {
-                const elapsed = Date.now() - startTime;
-                const minDelay = 450;
-                if (elapsed < minDelay) {
-                    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
-                }
-                setLoading(false);
+    const fetchData = async () => {
+        setLoading(true);
+        setClassError(null);
+        const startTime = Date.now();
+        try {
+            const [classRes, assignRes] = await Promise.all([
+                api.get(`/classrooms/${id}`),
+                api.get(`/classrooms/${id}/assignments`)
+            ]);
+            setClassroom(classRes.data);
+            setAssignments(assignRes.data);
+        } catch (error) {
+            console.error("Error fetching classroom:", error);
+            const errMsg = error.response?.data?.error || error.response?.data?.message || "Classroom not found or access denied.";
+            setClassError(errMsg);
+        } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 450;
+            if (elapsed < minDelay) {
+                await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
             }
-        };
-        fetchData();
-    }, [id, navigate]);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (id) {
+            fetchData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     if (loading) return <ClassroomViewSkeleton role="student" />;
+
+    if (classError || !classroom) {
+        return (
+            <InstructorWrapper>
+                <div className={`nexus-content student-layout ${theme}`} ref={dashboardRef} onMouseMove={handleMouseMove} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <div className="spatial-card" style={{ padding: '36px', maxWidth: '540px', width: '100%', textAlign: 'center', background: 'var(--card-bg, rgba(255,255,255,0.03))', borderRadius: '16px', border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
+                        <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', color: '#ef4444' }}>
+                            <svg width="30" height="30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-main, #f3f4f6)' }}>
+                            Classroom Inaccessible
+                        </h2>
+                        <p style={{ color: 'var(--text-dim, #9ca3af)', fontSize: '14px', lineHeight: '1.5', marginBottom: '24px' }}>
+                            {classError || "Unable to retrieve classroom data. You may not be enrolled or this section does not exist."}
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button
+                                type="button"
+                                className="neo-back-btn"
+                                onClick={() => navigate('/student')}
+                            >
+                                ← Back to Student Hub
+                            </button>
+                            <button
+                                type="button"
+                                className="btn-submit-code-primary"
+                                style={{ width: 'auto', padding: '9px 20px', fontSize: '13px' }}
+                                onClick={fetchData}
+                            >
+                                ↻ Retry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </InstructorWrapper>
+        );
+    }
 
     const completedTasks = assignments.filter(a => a.has_submitted).length;
     const totalTasks = assignments.length;
