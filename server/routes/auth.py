@@ -31,26 +31,46 @@ def is_valid_email_format(email_str):
         return False
     return True
 
-def is_valid_gmail_format(email_str):
-    """Validates that the email strictly conforms to the @gmail.com domain for registration."""
-    if not email_str or not isinstance(email_str, str):
+# Allowed email domains for student accounts
+STUDENT_ALLOWED_DOMAINS = {
+    'gmail.com',
+    'icloud.com',
+    'outlook.com',
+    'hotmail.com',
+    'yahoo.com'
+}
+
+def is_valid_student_email(email_str):
+    """
+    Validates that a student email uses one of the allowed providers:
+    @gmail.com, @icloud.com, @outlook.com, @hotmail.com, or @yahoo.com (including regional yahoo domains).
+    """
+    if not is_valid_email_format(email_str):
         return False
-    email_str = email_str.strip().lower()
-    if not email_str.endswith('@gmail.com'):
-        return False
-    parts = email_str.split('@')
+    parts = email_str.strip().lower().split('@')
     if len(parts) != 2:
         return False
-    username_part = parts[0]
-    if len(username_part) < 1 or len(username_part) > 64:
-        return False
-    if not re.match(r'^[a-zA-Z0-9._%+-]+$', username_part):
-        return False
-    if username_part.startswith('.') or username_part.endswith('.') or '..' in username_part:
-        return False
-    return True
+    domain = parts[1]
+    if domain in STUDENT_ALLOWED_DOMAINS or domain.startswith('yahoo.'):
+        return True
+    return False
 
-# In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
+def validate_registration_email(email_str, role='student'):
+    """
+    Validates email according to the user's role:
+    - Student: Gmail, iCloud, Outlook, Hotmail, Yahoo
+    - Instructor / Admin: Any valid email address (e.g. university/institutional or personal)
+    """
+    if not is_valid_email_format(email_str):
+        return False, "Invalid email address format. Please provide a valid email (e.g. name@domain.com)."
+    
+    if role == 'student':
+        if not is_valid_student_email(email_str):
+            return False, "Student registration accepts Gmail (@gmail.com), iCloud (@icloud.com), Outlook/Hotmail (@outlook.com, @hotmail.com), or Yahoo (@yahoo.com)."
+            
+    return True, ""
+
+# In-memory store for pending registration OTPs: { email: { "code": "123456", "role": "student", "expires": datetime } }
 PENDING_REGISTRATIONS = {}
 PENDING_EMAIL_UPDATES = {}
 
@@ -65,12 +85,16 @@ def request_code():
             return jsonify({"error": "JSON body is required"}), 400
 
         email = (data.get('email') or '').strip().lower()
+        role = (data.get('role') or 'student').strip().lower()
+        if role not in ['student', 'instructor']:
+            role = 'student'
 
         if not email:
             return jsonify({"error": "Email is required"}), 400
 
-        if not is_valid_gmail_format(email):
-            return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
+        is_valid, err_msg = validate_registration_email(email, role)
+        if not is_valid:
+            return jsonify({"error": err_msg}), 400
 
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
@@ -83,6 +107,7 @@ def request_code():
         if email_sent:
             PENDING_REGISTRATIONS[email] = {
                 "code": code,
+                "role": role,
                 "expires": datetime.utcnow() + timedelta(minutes=15)
             }
             return jsonify({"message": "Verification code sent to your email inbox. Please check your email.", "email_sent": True}), 200
@@ -109,12 +134,16 @@ def register():
     email = (data.get('email') or '').strip().lower()
     password = data.get('password')
     code = str(data.get('code') or '').strip()
+    requested_role = (data.get('role') or 'student').strip().lower()
+    if requested_role not in ['student', 'instructor']:
+        requested_role = 'student'
     
     if not username or not email or not password:
         return jsonify({"error": "Username, email, and password are required fields."}), 400
 
-    if not is_valid_gmail_format(email):
-        return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
+    is_valid, err_msg = validate_registration_email(email, requested_role)
+    if not is_valid:
+        return jsonify({"error": err_msg}), 400
 
     if not code:
         return jsonify({"error": "Please enter the 6-digit verification code sent to your email."}), 400
@@ -135,10 +164,6 @@ def register():
     
     # Verification passed! Consume pending registration entry
     PENDING_REGISTRATIONS.pop(email, None)
-
-    requested_role = data.get('role', 'student')
-    if requested_role not in ['student', 'instructor']:
-        requested_role = 'student'
 
     user_status = 'pending' if requested_role == 'instructor' else 'active'
     

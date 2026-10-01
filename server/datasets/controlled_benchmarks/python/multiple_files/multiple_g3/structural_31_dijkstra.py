@@ -1,20 +1,20 @@
-import heaq_6
+import heapq
 
-def push_d_6(q_6, dist_6, nxt_6, nd_6):
-    dist_6[nxt_6] = nd_6
-    heaq_6.heappush(q_6, (nd_6, nxt_6))
+def dijkstra_shortest_path(graph, start_vertex):
+    distances = {}
+    for vertex in graph.keys():
+        distances[vertex] = float('inf')
+    distances[start_vertex] = 0
+    priority_q = [(0, start_vertex)]
 
-def dijkstra_p_6(g_6, src_6):
-    dist_6 = {v: float('inf') for v in g_6}
-    dist_6[src_6] = 0
-    q_6 = [(0, src_6)]
-
-    while len(q_6) > 0:
-        d_6, u = heaq_6.heappop(q_6)
-        if d_6 <= dist_6[u]:
-            for nxt_6, w_6 in g_6[u]:
-                nd_6 = d_6 + w_6
-                if nd_6 < dist_6[nxt_6]:
-                    push_d_6(q_6, dist_6, nxt_6, nd_6)
-
-    return dist_6
+    while priority_q:
+        item = heapq.heappop(priority_q)
+        curr_dist, current_node = item[0], item[1]
+        if curr_dist > distances[current_node]:
+            continue
+        for adj_node, edge_cost in graph[current_node]:
+            total_dist = curr_dist + edge_cost
+            if total_dist < distances[adj_node]:
+                distances[adj_node] = total_dist
+                heapq.heappush(priority_q, (total_dist, adj_node))
+    return distances

@@ -1,20 +1,22 @@
-import heaq_3
+import heapq
 
-def push_d_3(q_3, dist_3, nxt_3, nd_3):
-    dist_3[nxt_3] = nd_3
-    heaq_3.heappush(q_3, (nd_3, nxt_3))
+def init_distance_table(graph, origin):
+    table = dict.fromkeys(graph, float('inf'))
+    table[origin] = 0
+    return table
 
-def dijkstra_p_3(g_3, src_3):
-    dist_3 = {v: float('inf') for v in g_3}
-    dist_3[src_3] = 0
-    q_3 = [(0, src_3)]
+def dijkstra_shortest_path(graph, start_vertex):
+    distances = init_distance_table(graph, start_vertex)
+    pq = []
+    heapq.heappush(pq, (0, start_vertex))
 
-    while len(q_3) > 0:
-        d_3, u = heaq_3.heappop(q_3)
-        if d_3 <= dist_3[u]:
-            for nxt_3, w_3 in g_3[u]:
-                nd_3 = d_3 + w_3
-                if nd_3 < dist_3[nxt_3]:
-                    push_d_3(q_3, dist_3, nxt_3, nd_3)
-
-    return dist_3
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        if curr_dist > distances[u]:
+            continue
+        for neighbor, weight in reversed(graph[u]):
+            alt = curr_dist + weight
+            if alt < distances[neighbor]:
+                distances[neighbor] = alt
+                heapq.heappush(pq, (alt, neighbor))
+    return distances

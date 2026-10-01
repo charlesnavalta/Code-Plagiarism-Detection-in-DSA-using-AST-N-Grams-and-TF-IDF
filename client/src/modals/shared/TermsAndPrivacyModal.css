@@ -501,7 +501,7 @@ html[data-theme='light'] .terms-tab-bar {
     }
 }
 
-/* --- New Notice Variants for Cookie & Refund Tabs --- */
+/* --- New Notice Variants for Cookie Tab --- */
 .legal-formal-notice.notice-cookies {
     background: rgba(234, 179, 8, 0.07);
     border-color: rgba(234, 179, 8, 0.28);
@@ -515,21 +515,6 @@ html[data-theme='light'] .terms-tab-bar {
 
 .notice-cookies .notice-icon-box {
     color: #eab308;
-}
-
-.legal-formal-notice.notice-refund {
-    background: rgba(59, 130, 246, 0.07);
-    border-color: rgba(59, 130, 246, 0.25);
-}
-
-[data-theme='light'] .legal-formal-notice.notice-refund {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-    color: #1e3a5f;
-}
-
-.notice-refund .notice-icon-box {
-    color: #3b82f6;
 }
 
 /* --- Inline Button for In-Content Tab Navigation --- */

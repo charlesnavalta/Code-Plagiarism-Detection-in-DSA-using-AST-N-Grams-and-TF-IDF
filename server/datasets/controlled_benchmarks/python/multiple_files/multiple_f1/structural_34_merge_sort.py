@@ -1,37 +1,41 @@
-"""
-MergeSort Suite: Structural Method Restructuring & Helper Extraction
-Author: Structural Variant (Type 3 of Mary)
-"""
 from typing import List
 
-def merge_helper(arr1: List[int], arr2: List[int]) -> List[int]:
-    out = []
-    p1 = p2 = 0
-    while p1 < len(arr1) and p2 < len(arr2):
-        if arr1[p1] <= arr2[p2]:
-            out.append(arr1[p1]); p1 += 1
-        else:
-            out.append(arr2[p2]); p2 += 1
-    out.extend(arr1[p1:])
-    out.extend(arr2[p2:])
-    return out
-
 class MergeSortSuite:
-    def __init__(self, items: List[int]):
-        self.items = list(items)
+    def __init__(self, data: List[int]):
+        self.items = list(data)
         self.inversions = 0
         self.merge_passes = 0
 
-    def verify_order(self) -> bool:
-        return all(self.items[i] <= self.items[i + 1] for i in range(len(self.items) - 1))
+    def _merge_blocks(self, l_arr: List[int], r_arr: List[int]) -> List[int]:
+        self.merge_passes += 1
+        combined = []
+        idx1 = idx2 = 0
+        len1, len2 = len(l_arr), len(r_arr)
+        while idx1 < len1 and idx2 < len2:
+            if l_arr[idx1] <= r_arr[idx2]:
+                combined.append(l_arr[idx1])
+                idx1 += 1
+            else:
+                combined.append(r_arr[idx2])
+                self.inversions += (len1 - idx1)
+                idx2 += 1
+        combined += l_arr[idx1:]
+        combined += r_arr[idx2:]
+        return combined
+
+    def _split_and_sort(self, seq: List[int]) -> List[int]:
+        if len(seq) <= 1:
+            return seq
+        center = len(seq) // 2
+        l_res = self._split_and_sort(seq[:center])
+        r_res = self._split_and_sort(seq[center:])
+        return self._merge_blocks(l_res, r_res)
 
     def execute_sort(self) -> List[int]:
-        if len(self.items) > 1:
-            self.items = self._sort_recursive(self.items)
+        if not self.items:
+            return []
+        self.items = self._split_and_sort(self.items)
         return self.items
 
-    def _sort_recursive(self, array: List[int]) -> List[int]:
-        if len(array) <= 1:
-            return array
-        mid = len(array) // 2
-        return merge_helper(self._sort_recursive(array[:mid]), self._sort_recursive(array[mid:]))
+    def verify_order(self) -> bool:
+        return all(self.items[i] <= self.items[i + 1] for i in range(len(self.items) - 1))

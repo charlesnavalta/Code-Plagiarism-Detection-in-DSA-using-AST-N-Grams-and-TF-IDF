@@ -1,20 +1,19 @@
-import heaq_2
+import heapq
 
-def push_d_2(q_2, dist_2, nxt_2, nd_2):
-    dist_2[nxt_2] = nd_2
-    heaq_2.heappush(q_2, (nd_2, nxt_2))
+def dijkstra_shortest_path(g, start_node):
+    nodes = list(g.keys())
+    dists = {k: float('inf') for k in nodes}
+    dists[start_node] = 0
+    queue = [(0, start_node)]
+    visited = set()
 
-def dijkstra_p_2(g_2, src_2):
-    dist_2 = {v: float('inf') for v in g_2}
-    dist_2[src_2] = 0
-    q_2 = [(0, src_2)]
-
-    while len(q_2) > 0:
-        d_2, u = heaq_2.heappop(q_2)
-        if d_2 <= dist_2[u]:
-            for nxt_2, w_2 in g_2[u]:
-                nd_2 = d_2 + w_2
-                if nd_2 < dist_2[nxt_2]:
-                    push_d_2(q_2, dist_2, nxt_2, nd_2)
-
-    return dist_2
+    while queue:
+        cur_d, u = heapq.heappop(queue)
+        if u in visited:
+            continue
+        visited.add(u)
+        for v, w in g[u]:
+            if v not in visited and cur_d + w < dists[v]:
+                dists[v] = cur_d + w
+                heapq.heappush(queue, (dists[v], v))
+    return dists

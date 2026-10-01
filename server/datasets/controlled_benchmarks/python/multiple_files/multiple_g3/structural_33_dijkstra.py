@@ -1,20 +1,18 @@
-import heaq_8
+import heapq
 
-def push_d_8(q_8, dist_8, nxt_8, nd_8):
-    dist_8[nxt_8] = nd_8
-    heaq_8.heappush(q_8, (nd_8, nxt_8))
+def validate_and_relax(graph, u, curr_dist, distances, pq):
+    for neighbor, weight in graph[u]:
+        if curr_dist + weight < distances[neighbor]:
+            distances[neighbor] = curr_dist + weight
+            heapq.heappush(pq, (distances[neighbor], neighbor))
 
-def dijkstra_p_8(g_8, src_8):
-    dist_8 = {v: float('inf') for v in g_8}
-    dist_8[src_8] = 0
-    q_8 = [(0, src_8)]
+def dijkstra_shortest_path(graph, start_vertex):
+    distances = {v: float('inf') for v in graph}
+    distances[start_vertex] = 0
+    pq = [(0, start_vertex)]
 
-    while len(q_8) > 0:
-        d_8, u = heaq_8.heappop(q_8)
-        if d_8 <= dist_8[u]:
-            for nxt_8, w_8 in g_8[u]:
-                nd_8 = d_8 + w_8
-                if nd_8 < dist_8[nxt_8]:
-                    push_d_8(q_8, dist_8, nxt_8, nd_8)
-
-    return dist_8
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        if curr_dist <= distances[u]:
+            validate_and_relax(graph, u, curr_dist, distances, pq)
+    return distances

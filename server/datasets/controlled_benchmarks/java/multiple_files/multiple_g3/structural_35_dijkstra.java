@@ -1,42 +1,48 @@
 import java.util.*;
-public class Dijk_10 {
+
+public class DijkstraAlgorithm {
     public static void main(String[] args) {
-        Dijk_10 da = new Dijk_10();
+        DijkstraAlgorithm da = new DijkstraAlgorithm();
         int[][] g = {{0, 4}, {4, 0}};
-        da.dist_10(g, 0);
+        da.findShortestDistances(g, 0);
     }
-    public int ext_10(int[] d_10, boolean[] vis_10, int nv_10) {
-        int sv_10 = -1;
-        int cmin_10 = Integer.MAX_VALUE;
-        for (int v = 0; v < nv_10; v++) {
-            if (!vis_10[v] && d_10[v] <= cmin_10) {
-                cmin_10 = d_10[v];
-                sv_10 = v;
+
+    public int extractMinNode(int[] distArray, boolean[] visitedNodes, int n) {
+        int minDistanceVal = Integer.MAX_VALUE;
+        int selectedIndex = -1;
+        for (int i = 0; i < n; i++) {
+            if (!visitedNodes[i] && distArray[i] <= minDistanceVal) {
+                minDistanceVal = distArray[i];
+                selectedIndex = i;
             }
         }
-        return sv_10;
+        return selectedIndex;
     }
-    public int[] dist_10(int[][] gm_10, int src_10) {
-        int nv_10 = gm_10.length;
-        int[] d_10 = new int[nv_10];
-        boolean[] vis_10 = new boolean[nv_10];
-        for (int i = 0; i < nv_10; i++) {
-            d_10[i] = Integer.MAX_VALUE;
-            vis_10[i] = false;
+
+    public int[] findShortestDistances(int[][] graphMatrix, int sourceVertex) {
+        int totalVertices = graphMatrix.length;
+        int[] shortestDistances = new int[totalVertices];
+        boolean[] visitedFlags = new boolean[totalVertices];
+        for (int i = 0; i < totalVertices; i++) {
+            shortestDistances[i] = Integer.MAX_VALUE;
+            visitedFlags[i] = false;
         }
-        d_10[src_10] = 0;
-        int cnt_10 = 0;
-        while (cnt_10 < nv_10 - 1) {
-            int u = ext_10(d_10, vis_10, nv_10);
-            if (u == -1) break;
-            vis_10[u] = true;
-            for (int v = 0; v < nv_10; v++) {
-                if (!vis_10[v] && gm_10[u][v] != 0 && d_10[u] != Integer.MAX_VALUE && d_10[u] + gm_10[u][v] < d_10[v]) {
-                    d_10[v] = d_10[u] + gm_10[u][v];
+        shortestDistances[sourceVertex] = 0;
+        int iterCount = 0;
+        while (iterCount < totalVertices - 1) {
+            int currentMinNode = extractMinNode(shortestDistances, visitedFlags, totalVertices);
+            if (currentMinNode == -1) break;
+            visitedFlags[currentMinNode] = true;
+            for (int neighbor = 0; neighbor < totalVertices; neighbor++) {
+                if (!visitedFlags[neighbor] && graphMatrix[currentMinNode][neighbor] != 0 && shortestDistances[currentMinNode] != Integer.MAX_VALUE) {
+                    int calculatedDist = shortestDistances[currentMinNode] + graphMatrix[currentMinNode][neighbor];
+                    if (calculatedDist < shortestDistances[neighbor]) {
+                        shortestDistances[neighbor] = calculatedDist;
+                    }
                 }
             }
-            cnt_10++;
+            iterCount++;
         }
-        return d_10;
+        return shortestDistances;
     }
 }

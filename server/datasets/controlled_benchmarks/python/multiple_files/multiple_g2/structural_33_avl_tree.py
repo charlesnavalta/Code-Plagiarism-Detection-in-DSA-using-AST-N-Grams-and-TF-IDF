@@ -1,60 +1,57 @@
-class Node_8:
-    def __init__(self, v_8):
-        self.v_8 = v_8
-        self.r_8 = None
-        self.l_8 = None
+class NodeAVL:
+    def __init__(self, item_val):
+        self.item_val = item_val
+        self.l = None
+        self.r = None
         self.height = 1
 
-def h_8(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def insert(self, root, val):
+        if not root:
+            return NodeAVL(val)
+        if val < root.item_val:
+            root.l = self.insert(root.l, val)
+        elif val > root.item_val:
+            root.r = self.insert(root.r, val)
+        else:
+            return root
+        root.height = 1 + max(self.get_height(root.l), self.get_height(root.r))
+        return self.rebalance(root, val)
 
-def b_8(node):
-    if not node:
-        return 0
-    return h_8(node.l_8) - h_8(node.r_8)
+    def rebalance(self, root, val):
+        b = self.get_balance(root)
+        if b > 1:
+            if val < root.l.item_val:
+                return self.turn_right(root)
+            root.l = self.turn_left(root.l)
+            return self.turn_right(root)
+        if b < -1:
+            if val > root.r.item_val:
+                return self.turn_left(root)
+            root.r = self.turn_right(root.r)
+            return self.turn_left(root)
+        return root
 
-def rr_8(y):
-    x = y.l_8
-    sub = x.r_8
-    x.r_8 = y
-    y.l_8 = sub
-    y.height = 1 + max(h_8(y.l_8), h_8(y.r_8))
-    x.height = 1 + max(h_8(x.l_8), h_8(x.r_8))
-    return x
+    def turn_right(self, y):
+        x = y.l
+        sub = x.r
+        x.r = y
+        y.l = sub
+        y.height = 1 + max(self.get_height(y.l), self.get_height(y.r))
+        x.height = 1 + max(self.get_height(x.l), self.get_height(x.r))
+        return x
 
-def rl_8(x):
-    y = x.r_8
-    sub = y.l_8
-    y.l_8 = x
-    x.r_8 = sub
-    x.height = 1 + max(h_8(x.l_8), h_8(x.r_8))
-    y.height = 1 + max(h_8(y.l_8), h_8(y.r_8))
-    return y
+    def turn_left(self, x):
+        y = x.r
+        sub = y.l
+        y.l = x
+        x.r = sub
+        x.height = 1 + max(self.get_height(x.l), self.get_height(x.r))
+        y.height = 1 + max(self.get_height(y.l), self.get_height(y.r))
+        return y
 
-def ins_8(rt_8, v_8):
-    if not rt_8:
-        return Node_8(v_8)
-    if v_8 < rt_8.v_8:
-        rt_8.l_8 = ins_8(rt_8.l_8, v_8)
-    elif v_8 > rt_8.v_8:
-        rt_8.r_8 = ins_8(rt_8.r_8, v_8)
-    else:
-        return rt_8
+    def get_height(self, p):
+        return p.height if p else 0
 
-    rt_8.height = 1 + max(h_8(rt_8.l_8), h_8(rt_8.r_8))
-    bf_8 = b_8(rt_8)
-
-    if bf_8 > 1 and v_8 < rt_8.l_8.v_8:
-        return rr_8(rt_8)
-    if bf_8 < -1 and v_8 > rt_8.r_8.v_8:
-        return rl_8(rt_8)
-    if bf_8 > 1 and v_8 > rt_8.l_8.v_8:
-        rt_8.l_8 = rl_8(rt_8.l_8)
-        return rr_8(rt_8)
-    if bf_8 < -1 and v_8 < rt_8.r_8.v_8:
-        rt_8.r_8 = rr_8(rt_8.r_8)
-        return rl_8(rt_8)
-
-    return rt_8
+    def get_balance(self, p):
+        return (self.get_height(p.l) - self.get_height(p.r)) if p else 0

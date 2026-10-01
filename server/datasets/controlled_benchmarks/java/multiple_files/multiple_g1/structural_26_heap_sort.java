@@ -1,37 +1,33 @@
 public class Sorter_1 {
     public static void main(String[] args) {
-        Sorter_1 hsc = new Sorter_1();
-        int[] vals = {12, 11, 13, 5, 6, 7};
-        hsc.sort_1(vals);
+        int[] d = {12, 11, 13, 5, 6, 7};
+        new Sorter_1().heapSort(d);
     }
-    public void swp_1(int[] b_1, int p1_1, int p2_1) {
-        int tmp_1 = b_1[p1_1];
-        b_1[p1_1] = b_1[p2_1];
-        b_1[p2_1] = tmp_1;
-    }
-    public void sift_1(int[] b_1, int len_1, int idx_1) {
-        int rc_1 = 2 * idx_1 + 2;
-        int lc_1 = 2 * idx_1 + 1;
-        int max_p_1 = idx_1;
-        if (rc_1 < len_1 && b_1[rc_1] > b_1[max_p_1]) {
-            max_p_1 = rc_1;
-        }
-        if (lc_1 < len_1 && b_1[lc_1] > b_1[max_p_1]) {
-            max_p_1 = lc_1;
-        }
-        if (max_p_1 != idx_1) {
-            swp_1(b_1, idx_1, max_p_1);
-            sift_1(b_1, len_1, max_p_1);
+    public void siftDown(int[] arr, int size, int root) {
+        int best = root;
+        int l = 2 * root + 1;
+        int r = l + 1;
+        if (l < size && arr[l] > arr[best]) best = l;
+        if (r < size && arr[r] > arr[best]) best = r;
+        if (best != root) {
+            int t = arr[root];
+            arr[root] = arr[best];
+            arr[best] = t;
+            siftDown(arr, size, best);
         }
     }
-    public void sort_1(int[] b_1) {
-        int len_1 = b_1.length;
-        for (int k_1 = len_1 / 2 - 1; k_1 >= 0; k_1--) {
-            sift_1(b_1, len_1, k_1);
+    public void heapSort(int[] arr) {
+        int count = arr.length;
+        int start = (count / 2) - 1;
+        while (start >= 0) {
+            siftDown(arr, count, start);
+            start--;
         }
-        for (int k_1 = len_1 - 1; k_1 > 0; k_1--) {
-            swp_1(b_1, k_1, 0);
-            sift_1(b_1, k_1, 0);
+        for (int end = count - 1; end > 0; end--) {
+            int t = arr[0];
+            arr[0] = arr[end];
+            arr[end] = t;
+            siftDown(arr, end, 0);
         }
     }
 }

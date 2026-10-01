@@ -1,29 +1,25 @@
-def swp_10(lst_10, i, j):
-    temp_val_10 = lst_10[i]
-    lst_10[i] = lst_10[j]
-    lst_10[j] = temp_val_10
+def swap_node(coll, i, j):
+    tmp = coll[i]
+    coll[i] = coll[j]
+    coll[j] = tmp
 
-def hpf_10(lst_10, n, i):
-    r_idx_10 = 2 * i + 2
-    l_idx_10 = 2 * i + 1
-    max_idx_10 = i
-    if r_idx_10 < n and lst_10[r_idx_10] > lst_10[max_idx_10]:
-        max_idx_10 = r_idx_10
-    if l_idx_10 < n and lst_10[l_idx_10] > lst_10[max_idx_10]:
-        max_idx_10 = l_idx_10
-    if max_idx_10 != i:
-        swp_10(lst_10, i, max_idx_10)
-        hpf_10(lst_10, n, max_idx_10)
+def heap_sort(coll):
+    total = len(coll)
+    for i in range(total // 2 - 1, -1, -1):
+        sift_down_node(coll, total, i)
+    for i in range(total - 1, 0, -1):
+        swap_node(coll, 0, i)
+        sift_down_node(coll, i, 0)
+    return coll
 
-def bmh_10(lst_10):
-    n = len(lst_10)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_10(lst_10, n, i)
-
-def hsort_10(lst_10):
-    n = len(lst_10)
-    bmh_10(lst_10)
-    for i in range(n - 1, 0, -1):
-        swp_10(lst_10, i, 0)
-        hpf_10(lst_10, i, 0)
-    return lst_10
+def sift_down_node(coll, total, i):
+    m = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+    if l < total and coll[l] > coll[m]:
+        m = l
+    if r < total and coll[r] > coll[m]:
+        m = r
+    if m != i:
+        swap_node(coll, i, m)
+        sift_down_node(coll, total, m)

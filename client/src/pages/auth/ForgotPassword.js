@@ -190,7 +190,7 @@ const ForgotPassword = () => {
                         </form>
                     ) : (
                         <form onSubmit={handleResetPassword}>
-                            <p className="auth-subtitle">Code dispatched to <strong>{email}</strong>. Check your Gmail inbox for the 6-digit code.</p>
+                            <p className="auth-subtitle">Code dispatched to <strong>{email}</strong>. Check your email inbox for the 6-digit code.</p>
                             
                             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '14px' }}>
                                 <div style={{ flex: 1 }}>

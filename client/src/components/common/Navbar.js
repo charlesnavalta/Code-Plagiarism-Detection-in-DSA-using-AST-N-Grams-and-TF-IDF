@@ -164,6 +164,11 @@ const Navbar = () => {
                                 {user.role === 'instructor' ? 'Classroom Hub' : 'My Classes'}
                             </Link>
                         )}
+                        {user.role === 'instructor' && (
+                            <Link to="/instructor/batch-audit" className={`nav-item-nexus ${isActive('/instructor/batch-audit')}`}>
+                                Batch Audit
+                            </Link>
+                        )}
                     </div>
                 </div>
 

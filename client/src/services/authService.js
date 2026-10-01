@@ -23,9 +23,10 @@ const authService = {
     /**
      * Request a 6-digit email OTP verification code
      * @param {string} email - Destination email address
+     * @param {string} role - User role ('student' or 'instructor')
      */
-    requestCode: async (email) => {
-        const response = await api.post('/auth/request-code', { email });
+    requestCode: async (email, role = 'student') => {
+        const response = await api.post('/auth/request-code', { email, role });
         return response.data;
     },
 

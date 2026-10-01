@@ -1,29 +1,23 @@
-def swp_3(lst_3, i, j):
-    temp_val_3 = lst_3[i]
-    lst_3[i] = lst_3[j]
-    lst_3[j] = temp_val_3
+def heapify_node(elements, total, pos):
+    curr = pos
+    while True:
+        target = curr
+        c1 = 2 * curr + 1
+        c2 = 2 * curr + 2
+        if c1 < total and elements[c1] > elements[target]:
+            target = c1
+        if c2 < total and elements[c2] > elements[target]:
+            target = c2
+        if target == curr:
+            break
+        elements[curr], elements[target] = elements[target], elements[curr]
+        curr = target
 
-def hpf_3(lst_3, n, i):
-    r_idx_3 = 2 * i + 2
-    l_idx_3 = 2 * i + 1
-    max_idx_3 = i
-    if r_idx_3 < n and lst_3[r_idx_3] > lst_3[max_idx_3]:
-        max_idx_3 = r_idx_3
-    if l_idx_3 < n and lst_3[l_idx_3] > lst_3[max_idx_3]:
-        max_idx_3 = l_idx_3
-    if max_idx_3 != i:
-        swp_3(lst_3, i, max_idx_3)
-        hpf_3(lst_3, n, max_idx_3)
-
-def bmh_3(lst_3):
-    n = len(lst_3)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_3(lst_3, n, i)
-
-def hsort_3(lst_3):
-    n = len(lst_3)
-    bmh_3(lst_3)
-    for i in range(n - 1, 0, -1):
-        swp_3(lst_3, i, 0)
-        hpf_3(lst_3, i, 0)
-    return lst_3
+def heap_sort(elements):
+    count = len(elements)
+    for idx in range(count // 2 - 1, -1, -1):
+        heapify_node(elements, count, idx)
+    for idx in range(count - 1, 0, -1):
+        elements[idx], elements[0] = elements[0], elements[idx]
+        heapify_node(elements, idx, 0)
+    return elements

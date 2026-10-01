@@ -1,0 +1,185 @@
+/* src/pages/instructor/components/InstructorSubmissionsAuditSkeleton.css */
+
+.audit-skeleton-page {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Base Skeleton Box Shimmer Animation */
+.audit-skeleton-page .skeleton-box {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.09) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+    );
+    background-size: 200% 100%;
+    animation: audit-skeleton-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border-radius: 8px;
+}
+
+[data-theme='light'] .audit-skeleton-page .skeleton-box,
+html[data-theme='light'] .audit-skeleton-page .skeleton-box,
+.light .audit-skeleton-page .skeleton-box {
+    background: linear-gradient(
+        90deg,
+        #e2e8f0 0%,
+        #f1f5f9 50%,
+        #e2e8f0 100%
+    );
+    background-size: 200% 100%;
+}
+
+@keyframes audit-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Top Banner Skeleton Items */
+.audit-skel-back-btn {
+    width: 140px;
+    height: 32px;
+    border-radius: 10px !important;
+}
+
+.audit-skel-run-btn {
+    width: 190px;
+    height: 38px;
+    border-radius: 12px !important;
+}
+
+.audit-skel-title {
+    width: 320px;
+    max-width: 65%;
+    height: 32px;
+    border-radius: 8px !important;
+    margin: 4px 0;
+}
+
+.audit-skel-badge {
+    height: 26px;
+    border-radius: 20px !important;
+}
+
+.audit-skel-badge-lang {
+    width: 120px;
+}
+
+.audit-skel-badge-subs {
+    width: 145px;
+}
+
+.audit-skel-badge-pairs {
+    width: 220px;
+}
+
+/* Controls Bar Skeleton Items */
+.audit-skel-tab {
+    width: 140px;
+    height: 36px;
+    border-radius: 10px !important;
+}
+
+.audit-skel-tab.active-skel {
+    width: 130px;
+    background: linear-gradient(
+        90deg,
+        rgba(99, 102, 241, 0.15) 0%,
+        rgba(99, 102, 241, 0.3) 50%,
+        rgba(99, 102, 241, 0.15) 100%
+    ) !important;
+    background-size: 200% 100% !important;
+}
+
+[data-theme='light'] .audit-skel-tab.active-skel,
+html[data-theme='light'] .audit-skel-tab.active-skel {
+    background: linear-gradient(
+        90deg,
+        rgba(59, 130, 246, 0.15) 0%,
+        rgba(59, 130, 246, 0.28) 50%,
+        rgba(59, 130, 246, 0.15) 100%
+    ) !important;
+    background-size: 200% 100% !important;
+}
+
+.audit-skel-search-bar {
+    width: 100%;
+    height: 42px;
+    border-radius: 12px !important;
+}
+
+/* Table Row Skeleton Elements */
+.submission-card-row-skel td {
+    padding: 14px 18px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='light'] .submission-card-row-skel td,
+html[data-theme='light'] .submission-card-row-skel td {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.audit-skel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50% !important;
+    margin: 0 auto;
+}
+
+.audit-skel-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+}
+
+.audit-skel-code-pill {
+    border-radius: 8px !important;
+}
+
+.audit-skel-state-pill {
+    border-radius: 20px !important;
+}
+
+.audit-skel-grade-field {
+    width: 75px;
+    height: 34px;
+    border-radius: 8px !important;
+}
+
+.audit-skel-save-btn {
+    width: 55px;
+    height: 34px;
+    border-radius: 8px !important;
+}
+
+.audit-skel-feedback-btn {
+    width: 90px;
+    height: 34px;
+    border-radius: 8px !important;
+}
+
+.audit-skel-resubmit-btn {
+    width: 120px;
+    height: 34px;
+    border-radius: 8px !important;
+}
+
+/* Mobile / Tablet Card Skeleton */
+.audit-skel-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+[data-theme='light'] .audit-skel-card,
+html[data-theme='light'] .audit-skel-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}

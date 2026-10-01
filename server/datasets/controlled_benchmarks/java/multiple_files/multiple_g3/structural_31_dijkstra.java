@@ -1,42 +1,42 @@
 import java.util.*;
-public class Dijk_6 {
+
+public class DijkstraAlgorithm {
     public static void main(String[] args) {
-        Dijk_6 da = new Dijk_6();
+        DijkstraAlgorithm da = new DijkstraAlgorithm();
         int[][] g = {{0, 4}, {4, 0}};
-        da.dist_6(g, 0);
+        da.findShortestDistances(g, 0);
     }
-    public int ext_6(int[] d_6, boolean[] vis_6, int nv_6) {
-        int sv_6 = -1;
-        int cmin_6 = Integer.MAX_VALUE;
-        for (int v = 0; v < nv_6; v++) {
-            if (!vis_6[v] && d_6[v] <= cmin_6) {
-                cmin_6 = d_6[v];
-                sv_6 = v;
-            }
+
+    public int[] findShortestDistances(int[][] graphMatrix, int sourceVertex) {
+        int totalVertices = graphMatrix.length;
+        int[] minDistance = new int[totalVertices];
+        boolean[] processedSet = new boolean[totalVertices];
+        for (int i = 0; i < totalVertices; i++) {
+            minDistance[i] = Integer.MAX_VALUE;
+            processedSet[i] = false;
         }
-        return sv_6;
-    }
-    public int[] dist_6(int[][] gm_6, int src_6) {
-        int nv_6 = gm_6.length;
-        int[] d_6 = new int[nv_6];
-        boolean[] vis_6 = new boolean[nv_6];
-        for (int i = 0; i < nv_6; i++) {
-            d_6[i] = Integer.MAX_VALUE;
-            vis_6[i] = false;
-        }
-        d_6[src_6] = 0;
-        int cnt_6 = 0;
-        while (cnt_6 < nv_6 - 1) {
-            int u = ext_6(d_6, vis_6, nv_6);
-            if (u == -1) break;
-            vis_6[u] = true;
-            for (int v = 0; v < nv_6; v++) {
-                if (!vis_6[v] && gm_6[u][v] != 0 && d_6[u] != Integer.MAX_VALUE && d_6[u] + gm_6[u][v] < d_6[v]) {
-                    d_6[v] = d_6[u] + gm_6[u][v];
+        minDistance[sourceVertex] = 0;
+
+        for (int count = 0; count < totalVertices - 1; count++) {
+            int u = -1;
+            int currentMin = Integer.MAX_VALUE;
+            for (int v = 0; v < totalVertices; v++) {
+                if (!processedSet[v] && minDistance[v] <= currentMin) {
+                    currentMin = minDistance[v];
+                    u = v;
                 }
             }
-            cnt_6++;
+            if (u == -1) break;
+            processedSet[u] = true;
+            for (int v = totalVertices - 1; v >= 0; v--) {
+                if (!processedSet[v] && graphMatrix[u][v] != 0 && minDistance[u] != Integer.MAX_VALUE) {
+                    int cand = minDistance[u] + graphMatrix[u][v];
+                    if (cand < minDistance[v]) {
+                        minDistance[v] = cand;
+                    }
+                }
+            }
         }
-        return d_6;
+        return minDistance;
     }
 }

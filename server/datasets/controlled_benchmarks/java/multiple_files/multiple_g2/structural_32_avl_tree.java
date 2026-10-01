@@ -1,67 +1,69 @@
 class Node_7 {
-    int k_7, h_7;
+    int key, height;
     Node_7 left, right;
-    Node_7(int d) {
-        k_7 = d;
-        h_7 = 1;
+    Node_7(int k) {
+        key = k;
+        height = 1;
     }
 }
 public class Tree_7 {
     public static void main(String[] args) {
         Tree_7 t = new Tree_7();
-        Node_7 r = null;
-        r = t.ins_7(r, 10);
+        Node_7 r = t.insert(null, 10);
     }
-    int max(int a, int b) {
-        return (a > b) ? a : b;
+    public Node_7 insert(Node_7 root, int key) {
+        if (root == null) return new Node_7(key);
+        if (key < root.key) root.left = insert(root.left, key);
+        else if (key > root.key) root.right = insert(root.right, key);
+        else return root;
+
+        int lh = getH(root.left);
+        int rh = getH(root.right);
+        root.height = 1 + (lh > rh ? lh : rh);
+        int b = getBal(root);
+
+        if (b > 1 && key < root.left.key) return rightRotate(root);
+        if (b < -1 && key > root.right.key) return leftRotate(root);
+        if (b > 1 && key > root.left.key) {
+            root.left = leftRotate(root.left);
+            return rightRotate(root);
+        }
+        if (b < -1 && key < root.right.key) {
+            root.right = rightRotate(root.right);
+            return leftRotate(root);
+        }
+        return root;
     }
-    int h_7(Node_7 N) {
-        if (N == null) return 0;
-        return N.h_7;
-    }
-    int gb_7(Node_7 N) {
-        if (N == null) return 0;
-        return h_7(N.left) - h_7(N.right);
-    }
-    Node_7 upd_7(Node_7 n_7) {
-        n_7.h_7 = 1 + max(h_7(n_7.left), h_7(n_7.right));
-        return n_7;
-    }
-    Node_7 rr_7(Node_7 y) {
+    public Node_7 rightRotate(Node_7 y) {
         Node_7 x = y.left;
-        Node_7 T2 = x.right;
+        Node_7 t2 = x.right;
         x.right = y;
-        y.left = T2;
-        upd_7(y);
-        upd_7(x);
+        y.left = t2;
+        int lh_y = getH(y.left);
+        int rh_y = getH(y.right);
+        y.height = 1 + (lh_y > rh_y ? lh_y : rh_y);
+        int lh_x = getH(x.left);
+        int rh_x = getH(x.right);
+        x.height = 1 + (lh_x > rh_x ? lh_x : rh_x);
         return x;
     }
-    Node_7 rl_7(Node_7 x) {
+    public Node_7 leftRotate(Node_7 x) {
         Node_7 y = x.right;
-        Node_7 T2 = y.left;
+        Node_7 t2 = y.left;
         y.left = x;
-        x.right = T2;
-        upd_7(x);
-        upd_7(y);
+        x.right = t2;
+        int lh_x = getH(x.left);
+        int rh_x = getH(x.right);
+        x.height = 1 + (lh_x > rh_x ? lh_x : rh_x);
+        int lh_y = getH(y.left);
+        int rh_y = getH(y.right);
+        y.height = 1 + (lh_y > rh_y ? lh_y : rh_y);
         return y;
     }
-    Node_7 ins_7(Node_7 n_7, int k_7) {
-        if (n_7 == null) return (new Node_7(k_7));
-        if (k_7 < n_7.k_7) n_7.left = ins_7(n_7.left, k_7);
-        else if (k_7 > n_7.k_7) n_7.right = ins_7(n_7.right, k_7);
-        else return n_7;
-        upd_7(n_7);
-        int b_7 = gb_7(n_7);
-        if (b_7 > 1 && k_7 < n_7.left.k_7) return rr_7(n_7);
-        if (b_7 < -1 && k_7 > n_7.right.k_7) return rl_7(n_7);
-        if (b_7 > 1 && k_7 > n_7.left.k_7) {
-            n_7.left = rl_7(n_7.left);
-            return rr_7(n_7);
-        }
-        if (b_7 < -1 && k_7 < n_7.right.k_7) {
-            n_7.right = rr_7(n_7.right);
-            return rl_7(n_7);
-        }
-        return n_7;
+    public int getH(Node_7 n) {
+        return (n == null) ? 0 : n.height;
+    }
+    public int getBal(Node_7 n) {
+        return (n == null) ? 0 : (getH(n.left) - getH(n.right));
     }
 }

@@ -36,6 +36,7 @@ import InstructorClassroomView from './pages/instructor/InstructorClassroomView'
 import InstructorCreateAssignmentView from './pages/instructor/InstructorCreateAssignmentView';
 import InstructorEditAssignmentView from './pages/instructor/InstructorEditAssignmentView';
 import InstructorSubmissionsAuditView from './pages/instructor/InstructorSubmissionsAuditView';
+import InstructorBatchAuditView from './pages/instructor/InstructorBatchAuditView';
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ClassroomManagement from './pages/admin/ClassroomManagement';
@@ -122,6 +123,7 @@ function AppContent() {
               <Route path="class/:id/assignment/:assignmentId/edit" element={<InstructorEditAssignmentView />} />
               <Route path="class/:id/assignment/:assignmentId/compare" element={<InstructorCompareRedirect />} />
               <Route path="class/:id/assignment/:assignmentId/audit" element={<InstructorSubmissionsAuditView />} />
+              <Route path="batch-audit" element={<InstructorBatchAuditView />} />
               <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>

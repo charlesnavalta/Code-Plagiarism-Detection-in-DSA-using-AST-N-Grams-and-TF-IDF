@@ -25,9 +25,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from utils.python_engine import process_python_file
-from utils.java_engine import process_java_file
-from utils.similarity import compare_all_files
+from engines.languages import process_python_file, process_java_file
+from engines.detection import compare_all_files
 
 CLASSES = ["Type 1", "Type 2", "Type 3", "Non-Plagiarized"]
 

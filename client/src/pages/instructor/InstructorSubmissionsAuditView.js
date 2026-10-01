@@ -6,6 +6,7 @@ import { useToast } from '../../context/NotificationContext';
 import api from '../../services/api';
 import analysisService from '../../services/analysisService';
 import InstructorWrapper from './components/InstructorWrapper';
+import InstructorSubmissionsAuditSkeleton from './components/InstructorSubmissionsAuditSkeleton';
 import AnalysisLoadingState from '../../components/instructor/AnalysisLoadingState';
 import CodeComparisonModal from '../../modals/instructor/CodeComparisonModal';
 import { getPlagiarismDisplayData } from '../../utils/theme';
@@ -27,7 +28,7 @@ const InstructorSubmissionsAuditView = () => {
     const [assignment, setAssignment] = useState(navState.assignment || null);
     const [submissions, setSubmissions] = useState(navState.submissions || []);
     const [analysisResults, setAnalysisResults] = useState(navState.analysisResults || null);
-    const [loading, setLoading] = useState(!navState.assignment);
+    const [loading, setLoading] = useState(true);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [selectedComparisonPair, setSelectedComparisonPair] = useState(null);
 
@@ -79,9 +80,8 @@ const InstructorSubmissionsAuditView = () => {
     useEffect(() => {
         let isMounted = true;
         const fetchAuditData = async () => {
-            if (!navState.assignment && (!navState.submissions || navState.submissions.length === 0)) {
-                setLoading(true);
-            }
+            setLoading(true);
+            const startTime = Date.now();
             try {
                 const [assignRes, subsData] = await Promise.all([
                     !navState.assignment 
@@ -105,6 +105,11 @@ const InstructorSubmissionsAuditView = () => {
                     toast.error("Could not retrieve submissions for this assignment.", "Data Error");
                 }
             } finally {
+                const elapsed = Date.now() - startTime;
+                const minDelay = 400;
+                if (elapsed < minDelay) {
+                    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+                }
                 if (isMounted) setLoading(false);
             }
         };
@@ -415,17 +420,7 @@ const InstructorSubmissionsAuditView = () => {
     }, [classDistribution.studentRoster, summaryFilter, searchTerm]);
 
     if (loading) {
-        return (
-            <InstructorWrapper>
-                <div className={`instructor-audit-page ${theme}`} ref={pageRef}>
-                    <div className="audit-loading-wrapper">
-                        <div className="audit-spinner"></div>
-                        <h2>Loading Submissions & Plagiarism Audit...</h2>
-                        <p>Retrieving student code files and comparative AST structures.</p>
-                    </div>
-                </div>
-            </InstructorWrapper>
-        );
+        return <InstructorSubmissionsAuditSkeleton />;
     }
 
     return (

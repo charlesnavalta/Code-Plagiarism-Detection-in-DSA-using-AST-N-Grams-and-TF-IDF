@@ -1,60 +1,58 @@
-class Node_2:
-    def __init__(self, v_2):
-        self.v_2 = v_2
-        self.r_2 = None
-        self.l_2 = None
-        self.height = 1
+class AVLNode:
+    def __init__(self, val):
+        self.val = val
+        self.l = None
+        self.r = None
+        self.h = 1
 
-def h_2(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def insert(self, root, val):
+        if not root:
+            return AVLNode(val)
+        if val < root.val:
+            root.l = self.insert(root.l, val)
+        elif val > root.val:
+            root.r = self.insert(root.r, val)
+        else:
+            return root
 
-def b_2(node):
-    if not node:
-        return 0
-    return h_2(node.l_2) - h_2(node.r_2)
+        root.h = 1 + max(self.node_h(root.l), self.node_h(root.r))
+        diff = self.calc_diff(root)
 
-def rr_2(y):
-    x = y.l_2
-    sub = x.r_2
-    x.r_2 = y
-    y.l_2 = sub
-    y.height = 1 + max(h_2(y.l_2), h_2(y.r_2))
-    x.height = 1 + max(h_2(x.l_2), h_2(x.r_2))
-    return x
+        if diff < -1 and val < root.l.val:
+            return self.rot_r(root)
+        if diff > 1 and val > root.r.val:
+            return self.rot_l(root)
+        if diff < -1 and val > root.l.val:
+            root.l = self.rot_l(root.l)
+            return self.rot_r(root)
+        if diff > 1 and val < root.r.val:
+            root.r = self.rot_r(root.r)
+            return self.rot_l(root)
+        return root
 
-def rl_2(x):
-    y = x.r_2
-    sub = y.l_2
-    y.l_2 = x
-    x.r_2 = sub
-    x.height = 1 + max(h_2(x.l_2), h_2(x.r_2))
-    y.height = 1 + max(h_2(y.l_2), h_2(y.r_2))
-    return y
+    def calc_diff(self, n):
+        if not n:
+            return 0
+        return self.node_h(n.r) - self.node_h(n.l)
 
-def ins_2(rt_2, v_2):
-    if not rt_2:
-        return Node_2(v_2)
-    if v_2 < rt_2.v_2:
-        rt_2.l_2 = ins_2(rt_2.l_2, v_2)
-    elif v_2 > rt_2.v_2:
-        rt_2.r_2 = ins_2(rt_2.r_2, v_2)
-    else:
-        return rt_2
+    def node_h(self, n):
+        return n.h if n else 0
 
-    rt_2.height = 1 + max(h_2(rt_2.l_2), h_2(rt_2.r_2))
-    bf_2 = b_2(rt_2)
+    def rot_r(self, y):
+        x = y.l
+        s = x.r
+        x.r = y
+        y.l = s
+        y.h = 1 + max(self.node_h(y.l), self.node_h(y.r))
+        x.h = 1 + max(self.node_h(x.l), self.node_h(x.r))
+        return x
 
-    if bf_2 > 1 and v_2 < rt_2.l_2.v_2:
-        return rr_2(rt_2)
-    if bf_2 < -1 and v_2 > rt_2.r_2.v_2:
-        return rl_2(rt_2)
-    if bf_2 > 1 and v_2 > rt_2.l_2.v_2:
-        rt_2.l_2 = rl_2(rt_2.l_2)
-        return rr_2(rt_2)
-    if bf_2 < -1 and v_2 < rt_2.r_2.v_2:
-        rt_2.r_2 = rr_2(rt_2.r_2)
-        return rl_2(rt_2)
-
-    return rt_2
+    def rot_l(self, x):
+        y = x.r
+        s = y.l
+        y.l = x
+        x.r = s
+        x.h = 1 + max(self.node_h(x.l), self.node_h(x.r))
+        y.h = 1 + max(self.node_h(y.l), self.node_h(y.r))
+        return y

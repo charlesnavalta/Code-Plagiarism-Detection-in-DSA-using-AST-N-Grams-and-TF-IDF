@@ -203,11 +203,6 @@ const Footer = () => {
                                     </button>
                                 </li>
                                 <li>
-                                    <button type="button" className="footer-text-btn" onClick={() => openLegalModal('refund')}>
-                                        Refund Policy
-                                    </button>
-                                </li>
-                                <li>
                                     <a 
                                         href="https://mail.google.com/mail/?view=cm&fs=1&to=falsicode.web@gmail.com&su=Falsicode%20Support%20Inquiry" 
                                         target="_blank" 

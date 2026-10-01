@@ -1,29 +1,24 @@
-def swp_2(lst_2, i, j):
-    temp_val_2 = lst_2[i]
-    lst_2[i] = lst_2[j]
-    lst_2[j] = temp_val_2
+def heap_sort(arr):
+    length = len(arr)
+    init_heap(arr)
+    for step in range(length - 1, 0, -1):
+        arr[step], arr[0] = arr[0], arr[step]
+        push_down(arr, step, 0)
+    return arr
 
-def hpf_2(lst_2, n, i):
-    r_idx_2 = 2 * i + 2
-    l_idx_2 = 2 * i + 1
-    max_idx_2 = i
-    if r_idx_2 < n and lst_2[r_idx_2] > lst_2[max_idx_2]:
-        max_idx_2 = r_idx_2
-    if l_idx_2 < n and lst_2[l_idx_2] > lst_2[max_idx_2]:
-        max_idx_2 = l_idx_2
-    if max_idx_2 != i:
-        swp_2(lst_2, i, max_idx_2)
-        hpf_2(lst_2, n, max_idx_2)
+def init_heap(arr):
+    sz = len(arr)
+    for idx in range((sz - 2) // 2, -1, -1):
+        push_down(arr, sz, idx)
 
-def bmh_2(lst_2):
-    n = len(lst_2)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_2(lst_2, n, i)
-
-def hsort_2(lst_2):
-    n = len(lst_2)
-    bmh_2(lst_2)
-    for i in range(n - 1, 0, -1):
-        swp_2(lst_2, i, 0)
-        hpf_2(lst_2, i, 0)
-    return lst_2
+def push_down(arr, bound, cur):
+    cand = cur
+    l_sub = 2 * cur + 1
+    r_sub = 2 * cur + 2
+    if l_sub < bound and arr[cand] < arr[l_sub]:
+        cand = l_sub
+    if r_sub < bound and arr[cand] < arr[r_sub]:
+        cand = r_sub
+    if cand != cur:
+        arr[cand], arr[cur] = arr[cur], arr[cand]
+        push_down(arr, bound, cand)

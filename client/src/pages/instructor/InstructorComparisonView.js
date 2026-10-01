@@ -145,10 +145,11 @@ const InstructorComparisonView = () => {
 
         const lines = code.split('\n');
         const isMixedAttack = (overallType || '').includes('Type 3');
+        const isSafe = !overallType || overallType === 'N/A' || overallType.toLowerCase().includes('safe') || overallType.toLowerCase().includes('clean');
 
         return lines.map((line, index) => {
             const lineNumber = index + 1;
-            const match = highlightedLines.find(m => {
+            const match = isSafe ? null : highlightedLines.find(m => {
                 if (typeof m === 'number') return m === lineNumber;
                 return m.line === lineNumber;
             });
@@ -432,7 +433,7 @@ const InstructorComparisonView = () => {
                             </div>
                             <div className="forensic-kpi-chip">
                                 <span className="kpi-chip-label">Compromised Lines</span>
-                                <strong className="kpi-chip-val text-danger">
+                                <strong className={`kpi-chip-val ${(selectedPair.lines1?.length || 0) + (selectedPair.lines2?.length || 0) > 0 ? 'text-danger' : 'text-success'}`}>
                                     {(selectedPair.lines1?.length || 0) + (selectedPair.lines2?.length || 0)} lines
                                 </strong>
                             </div>

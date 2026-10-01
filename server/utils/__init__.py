@@ -1,36 +1,22 @@
 """
 =============================================================================
-FALSICODE: Utilities & Core Algorithmic Engines Package
+FALSICODE: Application Utility Services Package
 =============================================================================
-Centralizes exports for AST parsing, token extraction, similarity vectorization,
-and notification services.
+General system helpers: email verification (OTP), upload file management,
+and user notifications.
 =============================================================================
 """
 
-from .python_engine import process_python_file, find_dead_nodes_python, ASTTokenExtractor
-from .java_engine import process_java_file, find_dead_nodes_java
-from .similarity import (
-    compare_all_files,
-    classify_plagiarism_type,
-    structural_divergence,
-    get_structural_skeleton,
-    get_raw_identity_signature,
-    get_ordered_shared_sequence
-)
 from .email_service import generate_6_digit_code, send_otp_email
+from .file_manager import cleanup_assignment_files, cleanup_classroom_files, scan_and_clean_orphaned_uploads
+from .notification_helper import create_notification, create_bulk_notifications
 
 __all__ = [
-    'process_python_file',
-    'find_dead_nodes_python',
-    'ASTTokenExtractor',
-    'process_java_file',
-    'find_dead_nodes_java',
-    'compare_all_files',
-    'classify_plagiarism_type',
-    'structural_divergence',
-    'get_structural_skeleton',
-    'get_raw_identity_signature',
-    'get_ordered_shared_sequence',
     'generate_6_digit_code',
-    'send_otp_email'
+    'send_otp_email',
+    'cleanup_assignment_files',
+    'cleanup_classroom_files',
+    'scan_and_clean_orphaned_uploads',
+    'create_notification',
+    'create_bulk_notifications'
 ]

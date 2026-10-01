@@ -42,22 +42,29 @@ The system implements a **strictly decoupled, modular client-server architecture
 ┌────────────────────────────────────────────────────────────────────────┐
 │                     CORE AST & PLAGIARISM ENGINES                      │
 │  ┌────────────────────────┐  ┌────────────────┐  ┌──────────────────┐  │
-│  │    python_engine.py    │  │ java_engine.py │  │  similarity.py   │  │
-│  │ - ast.NodeVisitor      │  │ - javalang     │  │ - N-Gram Window  │  │
-│  │ - Dead-code reachability│ │ - Token mapping│  │ - TF-IDF Matrix  │  │
-│  │ - AST token extraction │  │ - Dead-code    │  │ - Dual Scoring   │  │
-│  └────────────────────────┘  └────────────────┘  │ - Type 1/2/3 Diff│  │
-│                                                  └──────────────────┘  │
+│  │    languages/ (AST)    │  │  languages/    │  │    detection/    │  │
+│  │    python_engine.py    │  │ java_engine.py │  │  comparator.py   │  │
+│  │ - ast.NodeVisitor      │  │ - javalang     │  │  classifier.py   │  │
+│  │ - Dead-code reachability│ │ - Token mapping│  │  metrics.py      │  │
+│  │ - AST token extraction │  │ - Dead-code    │  │  xai.py          │  │
+│  └────────────────────────┘  └────────────────┘  └──────────────────┘  │
+│                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Codebase Organization
 * **`client/`**: Standalone Single Page Application (SPA) built with React 18, utilizing Axios for API communication and standard HTML5/CSS for cross-browser rendering.
 * **`server/routes/`**: API controller layer managing HTTP request parsing, JWT security, and response formatting without embedding domain AST algorithms.
-* **`server/utils/`**: Dedicated algorithmic and parsing engines:
-  * [`server/utils/python_engine.py`](server/utils/python_engine.py): Pure Python AST token visitor (`ASTTokenExtractor`) and dead-code reachability pruner (`find_dead_nodes_python`).
-  * [`server/utils/java_engine.py`](server/utils/java_engine.py): Java AST parser using `javalang` with cross-language AST token normalization and dead-code removal.
-  * [`server/utils/similarity.py`](server/utils/similarity.py): Mathematical vectorization and comparison engine implementing TF-IDF, N-Gram sliding windows, Cosine Similarity, Containment metrics, and Type 1/2/3 taxonomy classification.
+* **`server/engines/`**: Dedicated algorithmic analysis and detection engines:
+  * **`languages/`**: Pluggable language parsing architecture with central registry:
+    * [`server/engines/languages/python_engine.py`](server/engines/languages/python_engine.py): Pure Python AST token visitor (`ASTTokenExtractor`) and dead-code reachability pruner (`find_dead_nodes_python`).
+    * [`server/engines/languages/java_engine.py`](server/engines/languages/java_engine.py): Java AST parser using `javalang` with cross-language AST token normalization and dead-code removal.
+  * **`detection/`**: Modularized vectorization, metric calculations, and explainable AI:
+    * [`server/engines/detection/comparator.py`](server/engines/detection/comparator.py): TF-IDF matrix generation and pairwise comparison coordinator.
+    * [`server/engines/detection/classifier.py`](server/engines/detection/classifier.py): Multi-class taxonomy classifier (Type 1 verbatim, Type 2 renamed, Type 3 structural).
+    * [`server/engines/detection/metrics.py`](server/engines/detection/metrics.py): Containment Skeleton Metric, adaptive thresholding, and math formulas.
+    * [`server/engines/detection/xai.py`](server/engines/detection/xai.py): Explainable AI pattern samplers and line reverse-mapping.
+* **`server/utils/`**: General backend utility services (email OTP service, file uploads & cleanup manager, in-app notification helpers).
 * **`server/models.py` & `server/database.py`**: Relational ORM models (SQLAlchemy) mapping users, classrooms, assignments, enrollments, and submissions.
 
 ---

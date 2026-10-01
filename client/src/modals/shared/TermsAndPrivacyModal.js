@@ -6,7 +6,6 @@ const TAB_LABELS = {
     terms:   'Terms of Service',
     privacy: 'Privacy Policy',
     cookies: 'Cookie Policy',
-    refund:  'Refund Policy',
 };
 
 const TermsAndPrivacyModal = ({ isOpen, onClose, initialTab = 'terms', onAccept }) => {
@@ -117,20 +116,6 @@ const TermsAndPrivacyModal = ({ isOpen, onClose, initialTab = 'terms', onAccept 
                             </svg>
                             <span>Cookies</span>
                         </button>
-
-                        {/* Refund Policy */}
-                        <button
-                            type="button"
-                            role="tab"
-                            aria-selected={activeTab === 'refund'}
-                            className={`terms-tab-btn ${activeTab === 'refund' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('refund')}
-                        >
-                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l4-4M3 10l4 4"></path>
-                            </svg>
-                            <span>Refund</span>
-                        </button>
                     </div>
 
                     <button
@@ -229,7 +214,7 @@ const TermsAndPrivacyModal = ({ isOpen, onClose, initialTab = 'terms', onAccept 
                             <article className="legal-section">
                                 <h3 className="section-title">7. No Fees &amp; No Financial Transactions</h3>
                                 <p>
-                                    Falsicode is a <strong>completely free academic platform</strong>. There are no subscription fees, usage charges, or premium tiers. No financial transactions of any kind are processed through this platform. Because no payments are collected, no refund policy applies to monetary charges. See the <button type="button" className="legal-tab-inline-link" onClick={() => setActiveTab('refund')}>Refund Policy</button> for full details.
+                                    Falsicode is a <strong>completely free academic platform</strong>. There are no subscription fees, usage charges, or premium tiers. No financial transactions of any kind are processed through this platform.
                                 </p>
                             </article>
 
@@ -425,64 +410,6 @@ const TermsAndPrivacyModal = ({ isOpen, onClose, initialTab = 'terms', onAccept 
                                 <h3 className="section-title">6. Contact</h3>
                                 <p>
                                     For questions about our cookie or storage practices, contact us at <a href="mailto:falsicode.web@gmail.com" className="legal-inline-link">falsicode.web@gmail.com</a>.
-                                </p>
-                            </article>
-                        </div>
-                    )}
-
-                    {/* ─── REFUND POLICY ─── */}
-                    {activeTab === 'refund' && (
-                        <div className="terms-content-section" role="tabpanel" aria-labelledby="tab-refund">
-                            <div className="legal-formal-notice notice-refund">
-                                <div className="notice-icon-box">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" aria-hidden="true">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l4-4M3 10l4 4"></path>
-                                    </svg>
-                                </div>
-                                <div className="notice-content">
-                                    <strong>Plain-language summary:</strong> Falsicode is entirely free. There are no fees, subscriptions, or in-app purchases of any kind. As no payments are collected, no refund requests are applicable.
-                                </div>
-                            </div>
-
-                            <article className="legal-section">
-                                <h3 className="section-title">1. Free Academic Platform</h3>
-                                <p>
-                                    Falsicode is a <strong>free, non-commercial academic tool</strong> developed for educational institutions. Access to all features — including account registration, classroom creation, assignment management, and code similarity analysis — is provided at no cost to students or instructors.
-                                </p>
-                            </article>
-
-                            <article className="legal-section">
-                                <h3 className="section-title">2. No Financial Transactions</h3>
-                                <p>
-                                    Falsicode does not process, collect, or store any payment information. There are no:
-                                </p>
-                                <ul>
-                                    <li>Subscription fees</li>
-                                    <li>One-time purchase charges</li>
-                                    <li>Usage-based billing</li>
-                                    <li>Premium tier upgrades</li>
-                                    <li>In-app purchases or credits</li>
-                                </ul>
-                            </article>
-
-                            <article className="legal-section">
-                                <h3 className="section-title">3. Refund Policy Statement</h3>
-                                <p>
-                                    Because no monetary transactions occur through this platform, <strong>no refund policy is applicable</strong>. If you believe you have been charged in error (e.g., by a third-party reseller or institution misrepresenting this service), please contact your institution's administration directly, and also notify us at <a href="mailto:falsicode.web@gmail.com" className="legal-inline-link">falsicode.web@gmail.com</a> so we can investigate.
-                                </p>
-                            </article>
-
-                            <article className="legal-section">
-                                <h3 className="section-title">4. Future Commercial Plans</h3>
-                                <p>
-                                    If Falsicode introduces any paid features in the future, this Refund Policy will be updated prior to any monetization, and users will be clearly notified before any charges are incurred. A full refund policy covering cancellations, pro-rated credits, and dispute resolution will be published at that time.
-                                </p>
-                            </article>
-
-                            <article className="legal-section">
-                                <h3 className="section-title">5. Contact</h3>
-                                <p>
-                                    For billing-related questions or concerns, contact us at <a href="mailto:falsicode.web@gmail.com" className="legal-inline-link">falsicode.web@gmail.com</a>.
                                 </p>
                             </article>
                         </div>

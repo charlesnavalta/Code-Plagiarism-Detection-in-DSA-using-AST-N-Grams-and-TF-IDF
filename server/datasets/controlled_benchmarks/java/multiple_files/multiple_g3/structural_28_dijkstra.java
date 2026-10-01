@@ -1,42 +1,45 @@
 import java.util.*;
-public class Dijk_3 {
+
+public class DijkstraAlgorithm {
     public static void main(String[] args) {
-        Dijk_3 da = new Dijk_3();
+        DijkstraAlgorithm da = new DijkstraAlgorithm();
         int[][] g = {{0, 4}, {4, 0}};
-        da.dist_3(g, 0);
+        da.findShortestDistances(g, 0);
     }
-    public int ext_3(int[] d_3, boolean[] vis_3, int nv_3) {
-        int sv_3 = -1;
-        int cmin_3 = Integer.MAX_VALUE;
-        for (int v = 0; v < nv_3; v++) {
-            if (!vis_3[v] && d_3[v] <= cmin_3) {
-                cmin_3 = d_3[v];
-                sv_3 = v;
-            }
+
+    public int[] findShortestDistances(int[][] graphMatrix, int sourceVertex) {
+        int totalVertices = graphMatrix.length;
+        int[] minDistance = new int[totalVertices];
+        boolean[] processedSet = new boolean[totalVertices];
+        int initIdx = 0;
+        while (initIdx < totalVertices) {
+            minDistance[initIdx] = Integer.MAX_VALUE;
+            processedSet[initIdx] = false;
+            initIdx++;
         }
-        return sv_3;
-    }
-    public int[] dist_3(int[][] gm_3, int src_3) {
-        int nv_3 = gm_3.length;
-        int[] d_3 = new int[nv_3];
-        boolean[] vis_3 = new boolean[nv_3];
-        for (int i = 0; i < nv_3; i++) {
-            d_3[i] = Integer.MAX_VALUE;
-            vis_3[i] = false;
-        }
-        d_3[src_3] = 0;
-        int cnt_3 = 0;
-        while (cnt_3 < nv_3 - 1) {
-            int u = ext_3(d_3, vis_3, nv_3);
-            if (u == -1) break;
-            vis_3[u] = true;
-            for (int v = 0; v < nv_3; v++) {
-                if (!vis_3[v] && gm_3[u][v] != 0 && d_3[u] != Integer.MAX_VALUE && d_3[u] + gm_3[u][v] < d_3[v]) {
-                    d_3[v] = d_3[u] + gm_3[u][v];
+        minDistance[sourceVertex] = 0;
+        int count = 0;
+        while (count < totalVertices - 1) {
+            int u = -1;
+            int currentMin = Integer.MAX_VALUE;
+            for (int v = totalVertices - 1; v >= 0; v--) {
+                if (!processedSet[v] && minDistance[v] <= currentMin) {
+                    currentMin = minDistance[v];
+                    u = v;
                 }
             }
-            cnt_3++;
+            if (u == -1) break;
+            processedSet[u] = true;
+            for (int v = 0; v < totalVertices; v++) {
+                if (!processedSet[v] && graphMatrix[u][v] != 0 && minDistance[u] != Integer.MAX_VALUE) {
+                    int newCost = minDistance[u] + graphMatrix[u][v];
+                    if (newCost < minDistance[v]) {
+                        minDistance[v] = newCost;
+                    }
+                }
+            }
+            count++;
         }
-        return d_3;
+        return minDistance;
     }
 }

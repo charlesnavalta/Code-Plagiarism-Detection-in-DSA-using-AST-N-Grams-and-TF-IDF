@@ -75,6 +75,68 @@ html[data-theme='light'] .batch-lang-select {
     border-color: var(--accent-primary, #3b82f6);
 }
 
+/* Stat Badges inside Batch Control Bar */
+.batch-stat-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.batch-stat-badges .b-label {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-dim, #94a3b8);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label,
+html[data-theme='light'] .batch-stat-badges .b-label {
+    background: rgba(241, 245, 249, 0.95);
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.batch-stat-badges .lang-badge {
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #60a5fa !important;
+}
+
+[data-theme='light'] .batch-stat-badges .lang-badge,
+html[data-theme='light'] .batch-stat-badges .lang-badge {
+    border-color: rgba(37, 99, 235, 0.3) !important;
+    color: #2563eb !important;
+}
+
+.batch-stat-badges .b-label.status-alert {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+}
+
+.batch-stat-badges .b-label.status-clean {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.35);
+    color: #6ee7b7;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label.status-alert {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label.status-clean {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #15803d;
+}
+
 .batch-btn-reset {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-main, #f8fafc);
