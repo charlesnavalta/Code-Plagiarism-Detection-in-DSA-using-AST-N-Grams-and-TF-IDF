@@ -1,29 +1,18 @@
-def swp_9(lst_9, i, j):
-    temp_val_9 = lst_9[i]
-    lst_9[i] = lst_9[j]
-    lst_9[j] = temp_val_9
+def sift_down_branch(items, n, i):
+    l = 2 * i + 1
+    r = 2 * i + 2
+    if l >= n:
+        return
+    highest = r if (r < n and items[r] > items[l]) else l
+    if items[highest] > items[i]:
+        items[i], items[highest] = items[highest], items[i]
+        sift_down_branch(items, n, highest)
 
-def hpf_9(lst_9, n, i):
-    r_idx_9 = 2 * i + 2
-    l_idx_9 = 2 * i + 1
-    max_idx_9 = i
-    if r_idx_9 < n and lst_9[r_idx_9] > lst_9[max_idx_9]:
-        max_idx_9 = r_idx_9
-    if l_idx_9 < n and lst_9[l_idx_9] > lst_9[max_idx_9]:
-        max_idx_9 = l_idx_9
-    if max_idx_9 != i:
-        swp_9(lst_9, i, max_idx_9)
-        hpf_9(lst_9, n, max_idx_9)
-
-def bmh_9(lst_9):
-    n = len(lst_9)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_9(lst_9, n, i)
-
-def hsort_9(lst_9):
-    n = len(lst_9)
-    bmh_9(lst_9)
-    for i in range(n - 1, 0, -1):
-        swp_9(lst_9, i, 0)
-        hpf_9(lst_9, i, 0)
-    return lst_9
+def heap_sort(items):
+    n = len(items)
+    for k in range(n // 2 - 1, -1, -1):
+        sift_down_branch(items, n, k)
+    for k in range(n - 1, 0, -1):
+        items[0], items[k] = items[k], items[0]
+        sift_down_branch(items, k, 0)
+    return items

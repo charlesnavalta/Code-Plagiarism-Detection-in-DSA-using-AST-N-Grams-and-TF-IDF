@@ -1,60 +1,58 @@
-class Node_0:
-    def __init__(self, v_0):
-        self.v_0 = v_0
-        self.r_0 = None
-        self.l_0 = None
-        self.height = 1
+class AVLNode:
+    def __init__(self, item):
+        self.item = item
+        self.left = None
+        self.right = None
+        self.ht = 1
 
-def h_0(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def insert(self, current, item):
+        if not current:
+            return AVLNode(item)
+        if item < current.item:
+            current.left = self.insert(current.left, item)
+        elif item > current.item:
+            current.right = self.insert(current.right, item)
+        else:
+            return current
 
-def b_0(node):
-    if not node:
-        return 0
-    return h_0(node.l_0) - h_0(node.r_0)
+        current.ht = 1 + max(self.get_height(current.left), self.get_height(current.right))
+        bal = self.get_balance(current)
 
-def rr_0(y):
-    x = y.l_0
-    sub = x.r_0
-    x.r_0 = y
-    y.l_0 = sub
-    y.height = 1 + max(h_0(y.l_0), h_0(y.r_0))
-    x.height = 1 + max(h_0(x.l_0), h_0(x.r_0))
-    return x
+        if bal < -1 and item > current.right.item:
+            return self.rot_left(current)
+        if bal > 1 and item < current.left.item:
+            return self.rot_right(current)
+        if bal < -1 and item < current.right.item:
+            current.right = self.rot_right(current.right)
+            return self.rot_left(current)
+        if bal > 1 and item > current.left.item:
+            current.left = self.rot_left(current.left)
+            return self.rot_right(current)
+        return current
 
-def rl_0(x):
-    y = x.r_0
-    sub = y.l_0
-    y.l_0 = x
-    x.r_0 = sub
-    x.height = 1 + max(h_0(x.l_0), h_0(x.r_0))
-    y.height = 1 + max(h_0(y.l_0), h_0(y.r_0))
-    return y
+    def rot_left(self, x):
+        y = x.right
+        sub = y.left
+        y.left = x
+        x.right = sub
+        x.ht = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        y.ht = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        return y
 
-def ins_0(rt_0, v_0):
-    if not rt_0:
-        return Node_0(v_0)
-    if v_0 < rt_0.v_0:
-        rt_0.l_0 = ins_0(rt_0.l_0, v_0)
-    elif v_0 > rt_0.v_0:
-        rt_0.r_0 = ins_0(rt_0.r_0, v_0)
-    else:
-        return rt_0
+    def rot_right(self, y):
+        x = y.left
+        sub = x.right
+        x.right = y
+        y.left = sub
+        y.ht = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        x.ht = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        return x
 
-    rt_0.height = 1 + max(h_0(rt_0.l_0), h_0(rt_0.r_0))
-    bf_0 = b_0(rt_0)
+    def get_height(self, ptr):
+        return ptr.ht if ptr else 0
 
-    if bf_0 > 1 and v_0 < rt_0.l_0.v_0:
-        return rr_0(rt_0)
-    if bf_0 < -1 and v_0 > rt_0.r_0.v_0:
-        return rl_0(rt_0)
-    if bf_0 > 1 and v_0 > rt_0.l_0.v_0:
-        rt_0.l_0 = rl_0(rt_0.l_0)
-        return rr_0(rt_0)
-    if bf_0 < -1 and v_0 < rt_0.r_0.v_0:
-        rt_0.r_0 = rr_0(rt_0.r_0)
-        return rl_0(rt_0)
-
-    return rt_0
+    def get_balance(self, ptr):
+        if not ptr:
+            return 0
+        return self.get_height(ptr.left) - self.get_height(ptr.right)

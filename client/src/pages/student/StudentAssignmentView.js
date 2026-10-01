@@ -8,7 +8,7 @@ import './StudentAssignmentView.css';
 
 // Shared Utilities
 import { formatLanguageDisplay, getFileExtension, validateUploadedFile } from '../../utils/fileUtils';
-import { formatDeadline } from '../../utils/dateUtils';
+import { formatDeadline, formatTimestamp } from '../../utils/dateUtils';
 import InstructorWrapper from '../instructor/components/InstructorWrapper';
 
 const StudentAssignmentView = () => {
@@ -22,53 +22,58 @@ const StudentAssignmentView = () => {
 
     const [assignment, setAssignment] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [dragActive, setDragActive] = useState(false);
 
-    useEffect(() => {
-        const fetchAssignmentData = async () => {
-            setLoading(true);
-            const startTime = Date.now();
+    const fetchAssignmentData = async () => {
+        setLoading(true);
+        setErrorMessage(null);
+        const startTime = Date.now();
+        try {
+            let data = null;
+            // Attempt 1: Try dedicated single assignment endpoint
             try {
-                let data = null;
-                // Attempt 1: Try dedicated single assignment endpoint
-                try {
-                    const res = await api.get(`/classrooms/${classId}/assignments/${assignmentId}`);
-                    data = res.data;
-                } catch (singleErr) {
-                    // Attempt 2: Fallback to classroom assignments feed
-                    const [classRes, listRes] = await Promise.all([
-                        api.get(`/classrooms/${classId}`),
-                        api.get(`/classrooms/${classId}/assignments`)
-                    ]);
-                    const found = listRes.data.find(a => String(a.id) === String(assignmentId));
-                    if (found) {
-                        data = {
-                            ...found,
-                            classroom_name: classRes.data?.name,
-                            instructor_name: classRes.data?.instructor
-                        };
-                    } else {
-                        throw new Error("Assignment not found in classroom");
-                    }
+                const res = await api.get(`/classrooms/${classId}/assignments/${assignmentId}`);
+                data = res.data;
+            } catch (singleErr) {
+                // Attempt 2: Fallback to classroom assignments feed
+                const [classRes, listRes] = await Promise.all([
+                    api.get(`/classrooms/${classId}`),
+                    api.get(`/classrooms/${classId}/assignments`)
+                ]);
+                const found = listRes.data.find(a => String(a.id) === String(assignmentId));
+                if (found) {
+                    data = {
+                        ...found,
+                        classroom_name: classRes.data?.name,
+                        instructor_name: classRes.data?.instructor
+                    };
+                } else {
+                    throw new Error("Assignment not found in classroom");
                 }
-                setAssignment(data);
-            } catch (err) {
-                console.error("Assignment loading error:", err);
-                toast.error("Could not load assignment details.", "Access Error");
-                navigate(`/student/class/${classId}`);
-            } finally {
-                const elapsed = Date.now() - startTime;
-                const minDelay = 350;
-                if (elapsed < minDelay) {
-                    await new Promise(r => setTimeout(r, minDelay - elapsed));
-                }
-                setLoading(false);
             }
-        };
+            setAssignment(data);
+        } catch (err) {
+            console.error("Assignment loading error:", err);
+            const errDetail = err.response?.data?.error || err.response?.data?.message || err.message || "Could not load assignment details.";
+            setErrorMessage(errDetail);
+            toast.error(errDetail, "Access Error");
+        } finally {
+            const elapsed = Date.now() - startTime;
+            const minDelay = 350;
+            if (elapsed < minDelay) {
+                await new Promise(r => setTimeout(r, minDelay - elapsed));
+            }
+            setLoading(false);
+        }
+    };
 
-        fetchAssignmentData();
+    useEffect(() => {
+        if (classId && assignmentId) {
+            fetchAssignmentData();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [classId, assignmentId]);
 
@@ -216,7 +221,46 @@ const StudentAssignmentView = () => {
         );
     }
 
-    if (!assignment) return null;
+    if (errorMessage || !assignment) {
+        return (
+            <InstructorWrapper>
+                <div className={`assignment-view-container ${theme}`} ref={pageRef} onMouseMove={handleMouseMove}>
+                    <div className="view-inner-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                        <div className="spatial-card error-card-container" style={{ padding: '36px', maxWidth: '540px', width: '100%', textAlign: 'center', background: 'var(--card-bg, rgba(255,255,255,0.03))', borderRadius: '16px', border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
+                            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', color: '#ef4444' }}>
+                                <svg width="30" height="30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-main, #f3f4f6)' }}>
+                                Unable to Load Assignment
+                            </h2>
+                            <p style={{ color: 'var(--text-dim, #9ca3af)', fontSize: '14px', lineHeight: '1.5', marginBottom: '24px' }}>
+                                {errorMessage || "This assignment could not be retrieved from the classroom database."}
+                            </p>
+                            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <button
+                                    type="button"
+                                    className="neo-back-btn"
+                                    onClick={() => navigate(`/student/class/${classId}`)}
+                                >
+                                    ← Back to Classroom
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-submit-code-primary"
+                                    style={{ width: 'auto', padding: '9px 20px', fontSize: '13px' }}
+                                    onClick={fetchAssignmentData}
+                                >
+                                    ↻ Retry Loading
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </InstructorWrapper>
+        );
+    }
 
     return (
         <InstructorWrapper>
@@ -361,7 +405,7 @@ const StudentAssignmentView = () => {
                                             </div>
                                             <div className="receipt-row">
                                                 <span>SUBMITTED AT</span>
-                                                <strong>{assignment.submitted_at ? new Date(assignment.submitted_at).toLocaleString() : 'Recorded'}</strong>
+                                                <strong>{assignment.submitted_at ? formatTimestamp(assignment.submitted_at) : 'Recorded'}</strong>
                                             </div>
                                             <div className="receipt-row">
                                                 <span>EVALUATION STATUS</span>

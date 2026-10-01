@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy.orm import joinedload
 from database import db
-from models import User, Classroom, Assignment, Enrollment, Submission
+from models import User, Classroom, Assignment, Enrollment, Submission, to_iso_utc
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from routes.analysis import resolve_submission_path
@@ -18,9 +18,13 @@ submissions_bp = Blueprint('submissions', __name__)
 def submit_assignment(class_id, assignment_id):
     """Handles multi-language file uploads with dynamic AST validation, Deadline enforcement, and Resubmission logic"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if user.role != 'student':
+    user = User.query.get(user_id) if user_id else None
+    if not user or (user.role or '').lower() != 'student':
         return jsonify({"error": "Only students can submit assignments."}), 403
 
     enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
@@ -103,15 +107,15 @@ def submit_assignment(class_id, assignment_id):
             existing_submission.submitted_at = datetime.utcnow()
             existing_submission.score = None  # Reset the grade
             existing_submission.allow_resubmit = False  # Relock the submission
+            existing_submission.resubmission_count = getattr(existing_submission, 'resubmission_count', 0) + 1
             
             db.session.commit()
-            return jsonify({
-                "message": f"{target_language.capitalize()} file resubmitted successfully!",
-                "submitted_at": existing_submission.submitted_at.isoformat()
-            }), 200
+            sub_record = existing_submission
         else:
-            # First time submission
+            # Save newly uploaded file to disk
             file.save(filepath)
+
+            # Create brand-new submission record
             new_submission = Submission(
                 assignment_id=assignment.id,
                 student_id=user.id,
@@ -120,11 +124,30 @@ def submit_assignment(class_id, assignment_id):
             )
             db.session.add(new_submission)
             db.session.commit()
-            
-            return jsonify({
-                "message": f"{target_language.capitalize()} file submitted successfully!",
-                "submitted_at": new_submission.submitted_at.isoformat()
-            }), 200
+            sub_record = new_submission
+
+        # 🌟 Event Trigger: Notify Instructor of new submission / resubmission
+        try:
+            from utils.notification_helper import create_notification
+            classroom = Classroom.query.get(class_id)
+            if classroom and classroom.instructor_id:
+                action_label = "resubmitted" if is_resubmit else "submitted"
+                create_notification(
+                    user_id=classroom.instructor_id,
+                    title=f"Submission Received: {assignment.title}",
+                    message=f"{user.username} {action_label} their solution for '{assignment.title}' in {classroom.name}",
+                    type="submission",
+                    link=f"/instructor/class/{classroom.id}"
+                )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Submission): {notif_err}")
+
+        submitted_timestamp = to_iso_utc(sub_record.submitted_at)
+        return jsonify({
+            "message": f"{target_language.capitalize()} file {'resubmitted' if is_resubmit else 'submitted'} successfully!",
+            "submitted_at": submitted_timestamp,
+            "resubmission_count": getattr(sub_record, 'resubmission_count', 0)
+        }), 200
             
     except Exception as e:
         db.session.rollback()
@@ -137,9 +160,13 @@ def submit_assignment(class_id, assignment_id):
 def get_assignment_submissions(class_id, assignment_id):
     """Allows an instructor to see all student submissions, including file content and resubmission status"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if not user or user.role != 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user or (user.role or '').lower() != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
     classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
@@ -178,7 +205,8 @@ def get_assignment_submissions(class_id, assignment_id):
             "score": s.score or "Pending",
             "feedback": getattr(s, 'feedback', None) or "",
             "allow_resubmit": getattr(s, 'allow_resubmit', False),
-            "submitted_at": s.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
+            "resubmission_count": getattr(s, 'resubmission_count', 0),
+            "submitted_at": to_iso_utc(s.submitted_at)
         })
     
     return jsonify(submissions_data), 200
@@ -189,9 +217,13 @@ def get_assignment_submissions(class_id, assignment_id):
 def grade_submission(class_id, assignment_id, submission_id):
     """Allows an instructor to save a manual grade (and optional feedback) for a student's submission"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if not user or user.role != 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user or (user.role or '').lower() != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
     classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
@@ -209,7 +241,9 @@ def grade_submission(class_id, assignment_id, submission_id):
     if not score and feedback is None:
         return jsonify({"error": "Score or feedback is required."}), 400
 
-    submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
+    submission = Submission.query.options(
+        joinedload(Submission.student)
+    ).filter_by(id=submission_id, assignment_id=assignment_id).first()
     if not submission:
         return jsonify({"error": "Submission not found."}), 404
 
@@ -219,6 +253,20 @@ def grade_submission(class_id, assignment_id, submission_id):
         if feedback is not None:
             submission.feedback = feedback.strip() if isinstance(feedback, str) else ''
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify Student that grade was posted/updated
+        try:
+            from utils.notification_helper import create_notification
+            create_notification(
+                user_id=submission.student_id,
+                title=f"Grade Posted: {assignment.title}",
+                message=f"Your instructor posted a score of {submission.score} for '{assignment.title}' in {classroom.name}.",
+                type="grade",
+                link=f"/student/class/{classroom.id}/assignment/{assignment.id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Grade): {notif_err}")
+
         return jsonify({
             "message": "Grade saved successfully!",
             "score": submission.score,
@@ -234,9 +282,13 @@ def grade_submission(class_id, assignment_id, submission_id):
 def comment_submission(class_id, assignment_id, submission_id):
     """Allows an instructor to leave or update comments/feedback for a student's submission"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if not user or user.role != 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user or (user.role or '').lower() != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
     classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
@@ -250,13 +302,31 @@ def comment_submission(class_id, assignment_id, submission_id):
     data = request.get_json() or {}
     feedback = data.get('feedback', '')
 
-    submission = Submission.query.filter_by(id=submission_id, assignment_id=assignment_id).first()
+    submission = Submission.query.options(
+        joinedload(Submission.student)
+    ).filter_by(id=submission_id, assignment_id=assignment_id).first()
     if not submission:
         return jsonify({"error": "Submission not found."}), 404
 
     try:
-        submission.feedback = feedback.strip() if isinstance(feedback, str) else ''
+        clean_feedback = feedback.strip() if isinstance(feedback, str) else ''
+        submission.feedback = clean_feedback
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify Student that instructor remarks were posted/updated
+        try:
+            from utils.notification_helper import create_notification
+            feedback_preview = f": \"{clean_feedback[:60]}...\"" if len(clean_feedback) > 60 else (f": \"{clean_feedback}\"" if clean_feedback else "")
+            create_notification(
+                user_id=submission.student_id,
+                title=f"Instructor Remarks: {assignment.title}",
+                message=f"Your instructor left remarks on your submission for '{assignment.title}' in {classroom.name}{feedback_preview}.",
+                type="remarks",
+                link=f"/student/class/{classroom.id}/assignment/{assignment.id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Remarks): {notif_err}")
+
         return jsonify({
             "message": "Feedback updated successfully!",
             "feedback": submission.feedback
@@ -271,9 +341,13 @@ def comment_submission(class_id, assignment_id, submission_id):
 def allow_resubmission(class_id, assignment_id, submission_id):
     """Allows an instructor to unlock a specific student's submission for re-uploading"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if not user or user.role != 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user or (user.role or '').lower() != 'instructor':
         return jsonify({"error": "Unauthorized"}), 403
 
     classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
@@ -294,6 +368,20 @@ def allow_resubmission(class_id, assignment_id, submission_id):
         submission.allow_resubmit = True
         db.session.commit()
         student_name = submission.student.username if submission.student else f"Student #{submission.student_id}"
+
+        # 🌟 Event Trigger: Notify Student that resubmission was unlocked
+        try:
+            from utils.notification_helper import create_notification
+            create_notification(
+                user_id=submission.student_id,
+                title="Resubmission Unlocked",
+                message=f"Your instructor unlocked resubmission for '{assignment.title}' in {classroom.name}. You may now upload your revised source code.",
+                type="resubmit",
+                link=f"/student/class/{classroom.id}/assignment/{assignment.id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Resubmit): {notif_err}")
+
         return jsonify({"message": f"Resubmission unlocked for {student_name}!"}), 200
     except Exception as e:
         db.session.rollback()
@@ -306,20 +394,30 @@ def get_student_history():
     """Fetches the recent submission history for the logged-in student"""
     try:
         current_user_id = get_jwt_identity()
+        try:
+            user_id = int(current_user_id) if current_user_id is not None else None
+        except (ValueError, TypeError):
+            user_id = current_user_id
+
+        user = User.query.get(user_id) if user_id else None
+        if not user or (user.role or '').lower() != 'student':
+            return jsonify({"error": "Unauthorized"}), 403
 
         history_query = db.session.query(Submission, Assignment).join(
             Assignment, Submission.assignment_id == Assignment.id
         ).filter(
-            Submission.student_id == current_user_id
+            Submission.student_id == user.id
         ).order_by(Submission.submitted_at.desc()).limit(10).all()
 
         history_data = []
         for submission, assignment in history_query:
             history_data.append({
                 "id": submission.id,
+                "assignment_id": assignment.id,
+                "classroom_id": assignment.classroom_id,
                 "assignment_name": assignment.title,
-                "submitted_at": submission.submitted_at.isoformat() if submission.submitted_at else None,
-                "score": submission.score
+                "submitted_at": to_iso_utc(submission.submitted_at),
+                "score": submission.score or "Pending"
             })
 
         return jsonify(history_data), 200
@@ -335,8 +433,13 @@ def get_instructor_activity():
     """Fetches recent submissions across all classrooms owned by the instructor in a single JOIN."""
     try:
         current_user_id = get_jwt_identity()
-        user = User.query.get(current_user_id)
-        if not user or user.role != 'instructor':
+        try:
+            user_id = int(current_user_id) if current_user_id is not None else None
+        except (ValueError, TypeError):
+            user_id = current_user_id
+
+        user = User.query.get(user_id) if user_id else None
+        if not user or (user.role or '').lower() != 'instructor':
             return jsonify({"error": "Unauthorized"}), 403
 
         recent = db.session.query(Submission, Assignment, Classroom, User).join(
@@ -346,18 +449,20 @@ def get_instructor_activity():
         ).join(
             User, Submission.student_id == User.id
         ).filter(
-            Classroom.instructor_id == current_user_id
+            Classroom.instructor_id == user.id
         ).order_by(Submission.submitted_at.desc()).limit(5).all()
 
         activity = []
         for submission, assignment, classroom, student in recent:
             activity.append({
                 "id": submission.id,
+                "assignment_id": assignment.id,
+                "classroom_id": classroom.id,
                 "student_name": student.username,
                 "assignment_name": assignment.title,
                 "classroom_name": classroom.name,
-                "submitted_at": submission.submitted_at.isoformat() if submission.submitted_at else None,
-                "score": submission.score
+                "submitted_at": to_iso_utc(submission.submitted_at),
+                "score": submission.score or "Pending"
             })
 
         return jsonify(activity), 200

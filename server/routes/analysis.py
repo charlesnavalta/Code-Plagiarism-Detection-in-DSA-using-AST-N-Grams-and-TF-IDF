@@ -6,7 +6,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import joinedload
 from models import Submission, Assignment, User, Classroom
-from utils.similarity import compare_all_files
+from engines.detection import compare_all_files
+from engines.languages import get_language_engine, is_language_supported, get_supported_languages
 
 analysis_bp = Blueprint('analysis', __name__)
 
@@ -66,15 +67,10 @@ def analyze_assignment(assignment_id):
             
         language = (assignment.language or 'python').lower()
         
-        # 2. SELECT THE STRATEGY (Dynamic N-Grams and Engine)
-        if language == 'java':
-            from utils.java_engine import process_java_file
-            process_func = process_java_file
-            ngram_bounds = (3, 5)  # Dense AST: trigrams to 5-grams
-        else:
-            from utils.python_engine import process_python_file
-            process_func = process_python_file
-            ngram_bounds = (3, 5)  # Trigrams to 5-grams: captures intent without bigram noise
+        # 2. SELECT THE STRATEGY (Language Engine Registry)
+        lang_engine = get_language_engine(language)
+        process_func = lang_engine['process']
+        ngram_bounds = lang_engine['ngram_bounds']
 
         # 3. Fetch all submissions with student relationship eager-loaded
         submissions = Submission.query.options(
@@ -120,6 +116,20 @@ def analyze_assignment(assignment_id):
 
         # 4. Pass the files AND the dynamic ngram size to the shared math engine
         results = compare_all_files(processed_files, ngram_bounds)
+
+        # 🌟 Event Trigger: Notify Instructor of audit completion & flagged count
+        try:
+            from utils.notification_helper import create_notification
+            high_count = sum(1 for r in results if r.get('score', 0) >= 70)
+            create_notification(
+                user_id=user.id,
+                title=f"Plagiarism Audit Completed: {assignment.title}",
+                message=f"Analyzed {len(processed_files)} submissions for '{assignment.title}'. Found {len(results)} comparison pairs ({high_count} high-risk flags).",
+                type="audit",
+                link=f"/instructor/class/{assignment.classroom_id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Analysis): {notif_err}")
 
         return jsonify({
             "assignment_id": assignment_id,
@@ -207,8 +217,8 @@ def analyze_batch():
             }), 400
 
         # Determine target language strategy
-        if target_language in ('python', 'java'):
-            active_lang = target_language
+        if is_language_supported(target_language):
+            active_lang = target_language.lower()
         else:
             py_count = sum(1 for f in collected_code_files if f['lang'] == 'python')
             java_count = sum(1 for f in collected_code_files if f['lang'] == 'java')
@@ -221,14 +231,9 @@ def analyze_batch():
                 "error": f"Need at least 2 {active_lang.capitalize()} files for batch comparison (found {len(files_for_analysis)})."
             }), 400
 
-        if active_lang == 'java':
-            from utils.java_engine import process_java_file
-            process_func = process_java_file
-            ngram_bounds = (3, 5)
-        else:
-            from utils.python_engine import process_python_file
-            process_func = process_python_file
-            ngram_bounds = (3, 5)
+        lang_engine = get_language_engine(active_lang)
+        process_func = lang_engine['process']
+        ngram_bounds = lang_engine['ngram_bounds']
 
         processed_files = []
         for item in files_for_analysis:

@@ -1,29 +1,24 @@
-def swp_4(lst_4, i, j):
-    temp_val_4 = lst_4[i]
-    lst_4[i] = lst_4[j]
-    lst_4[j] = temp_val_4
+def sift_down_bitwise(nums, n, i):
+    best = i
+    l = (i << 1) + 1
+    r = (i << 1) + 2
+    if r < n and nums[r] > nums[best]:
+        best = r
+    if l < n and nums[l] > nums[best]:
+        best = l
+    if best != i:
+        temp = nums[i]
+        nums[i] = nums[best]
+        nums[best] = temp
+        sift_down_bitwise(nums, n, best)
 
-def hpf_4(lst_4, n, i):
-    r_idx_4 = 2 * i + 2
-    l_idx_4 = 2 * i + 1
-    max_idx_4 = i
-    if r_idx_4 < n and lst_4[r_idx_4] > lst_4[max_idx_4]:
-        max_idx_4 = r_idx_4
-    if l_idx_4 < n and lst_4[l_idx_4] > lst_4[max_idx_4]:
-        max_idx_4 = l_idx_4
-    if max_idx_4 != i:
-        swp_4(lst_4, i, max_idx_4)
-        hpf_4(lst_4, n, max_idx_4)
-
-def bmh_4(lst_4):
-    n = len(lst_4)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_4(lst_4, n, i)
-
-def hsort_4(lst_4):
-    n = len(lst_4)
-    bmh_4(lst_4)
-    for i in range(n - 1, 0, -1):
-        swp_4(lst_4, i, 0)
-        hpf_4(lst_4, i, 0)
-    return lst_4
+def heap_sort(nums):
+    n = len(nums)
+    for k in range(n // 2 - 1, -1, -1):
+        sift_down_bitwise(nums, n, k)
+    idx = n - 1
+    while idx > 0:
+        nums[idx], nums[0] = nums[0], nums[idx]
+        sift_down_bitwise(nums, idx, 0)
+        idx -= 1
+    return nums

@@ -1,67 +1,60 @@
 class Node_2 {
-    int k_2, h_2;
+    int val, ht;
     Node_2 left, right;
-    Node_2(int d) {
-        k_2 = d;
-        h_2 = 1;
+    Node_2(int v) {
+        val = v;
+        ht = 1;
     }
 }
 public class Tree_2 {
     public static void main(String[] args) {
         Tree_2 t = new Tree_2();
-        Node_2 r = null;
-        r = t.ins_2(r, 10);
+        Node_2 r = t.insertVal(null, 10);
     }
-    int max(int a, int b) {
-        return (a > b) ? a : b;
+    public Node_2 insertVal(Node_2 node, int v) {
+        if (node == null) return new Node_2(v);
+        if (v < node.val) node.left = insertVal(node.left, v);
+        else if (v > node.val) node.right = insertVal(node.right, v);
+        else return node;
+
+        node.ht = 1 + Math.max(hVal(node.left), hVal(node.right));
+        int diff = calcDiff(node);
+
+        if (diff < -1 && v < node.left.val) return rRot(node);
+        if (diff > 1 && v > node.right.val) return lRot(node);
+        if (diff < -1 && v > node.left.val) {
+            node.left = lRot(node.left);
+            return rRot(node);
+        }
+        if (diff > 1 && v < node.right.val) {
+            node.right = rRot(node.right);
+            return lRot(node);
+        }
+        return node;
     }
-    int h_2(Node_2 N) {
-        if (N == null) return 0;
-        return N.h_2;
+    public int calcDiff(Node_2 n) {
+        if (n == null) return 0;
+        return hVal(n.right) - hVal(n.left);
     }
-    int gb_2(Node_2 N) {
-        if (N == null) return 0;
-        return h_2(N.left) - h_2(N.right);
+    public int hVal(Node_2 n) {
+        return (n == null) ? 0 : n.ht;
     }
-    Node_2 upd_2(Node_2 n_2) {
-        n_2.h_2 = 1 + max(h_2(n_2.left), h_2(n_2.right));
-        return n_2;
-    }
-    Node_2 rr_2(Node_2 y) {
+    public Node_2 rRot(Node_2 y) {
         Node_2 x = y.left;
-        Node_2 T2 = x.right;
+        Node_2 sub = x.right;
         x.right = y;
-        y.left = T2;
-        upd_2(y);
-        upd_2(x);
+        y.left = sub;
+        y.ht = 1 + Math.max(hVal(y.left), hVal(y.right));
+        x.ht = 1 + Math.max(hVal(x.left), hVal(x.right));
         return x;
     }
-    Node_2 rl_2(Node_2 x) {
+    public Node_2 lRot(Node_2 x) {
         Node_2 y = x.right;
-        Node_2 T2 = y.left;
+        Node_2 sub = y.left;
         y.left = x;
-        x.right = T2;
-        upd_2(x);
-        upd_2(y);
+        x.right = sub;
+        x.ht = 1 + Math.max(hVal(x.left), hVal(x.right));
+        y.ht = 1 + Math.max(hVal(y.left), hVal(y.right));
         return y;
-    }
-    Node_2 ins_2(Node_2 n_2, int k_2) {
-        if (n_2 == null) return (new Node_2(k_2));
-        if (k_2 < n_2.k_2) n_2.left = ins_2(n_2.left, k_2);
-        else if (k_2 > n_2.k_2) n_2.right = ins_2(n_2.right, k_2);
-        else return n_2;
-        upd_2(n_2);
-        int b_2 = gb_2(n_2);
-        if (b_2 > 1 && k_2 < n_2.left.k_2) return rr_2(n_2);
-        if (b_2 < -1 && k_2 > n_2.right.k_2) return rl_2(n_2);
-        if (b_2 > 1 && k_2 > n_2.left.k_2) {
-            n_2.left = rl_2(n_2.left);
-            return rr_2(n_2);
-        }
-        if (b_2 < -1 && k_2 < n_2.right.k_2) {
-            n_2.right = rr_2(n_2.right);
-            return rl_2(n_2);
-        }
-        return n_2;
     }
 }

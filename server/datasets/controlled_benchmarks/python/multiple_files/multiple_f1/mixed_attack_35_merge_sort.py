@@ -1,43 +1,45 @@
-"""
-MergeSort Suite: Mixed Attack (Renaming + Dead Code + Reordering)
-Author: Mixed Variant (Type 3 of Mary)
-"""
 from typing import List
 
 class MergeSortSuite:
-    def __init__(self, items: List[int]):
+    def __init__(self, elements: List[int]):
         self._audit = []
-        self.items = list(items)
+        self.items = list(elements)
         self.inversions = 0
         self.merge_passes = 0
 
-    def verify_order(self) -> bool:
-        # Dummy dead code calculation
-        unused = [x * 0 for x in self.items]
-        if sum(unused) != 0: self._audit.append("dead")
-        return all(self.items[k] <= self.items[k + 1] for k in range(len(self.items) - 1))
-
-    def _merge(self, seg_l: List[int], seg_r: List[int]) -> List[int]:
-        buf = []
-        c_l = c_r = 0
+    def _combine(self, a_list: List[int], b_list: List[int]) -> List[int]:
         self.merge_passes += 1
-        while c_l < len(seg_l) and c_r < len(seg_r):
-            if seg_l[c_l] <= seg_r[c_r]:
-                buf.append(seg_l[c_l]); c_l += 1
+        result_list = []
+        pos_a = pos_b = 0
+        while pos_a < len(a_list) and pos_b < len(b_list):
+            if a_list[pos_a] <= b_list[pos_b]:
+                result_list.append(a_list[pos_a])
+                pos_a += 1
             else:
-                buf.append(seg_r[c_r]); c_r += 1
-        buf.extend(seg_l[c_l:])
-        buf.extend(seg_r[c_r:])
-        return buf
+                result_list.append(b_list[pos_b])
+                self.inversions += (len(a_list) - pos_a)
+                pos_b += 1
+        result_list.extend(a_list[pos_a:])
+        result_list.extend(b_list[pos_b:])
+        self._audit.append(len(result_list))
+        return result_list
+
+    def _divide_and_conquer(self, coll: List[int]) -> List[int]:
+        if len(coll) <= 1:
+            return coll
+        middle = len(coll) // 2
+        sub_left = self._divide_and_conquer(coll[:middle])
+        sub_right = self._divide_and_conquer(coll[middle:])
+        return self._combine(sub_left, sub_right)
 
     def execute_sort(self) -> List[int]:
-        if len(self.items) <= 1:
-            return self.items
-        self.items = self._sort_recursive(self.items)
+        if not self.items:
+            return []
+        self.items = self._divide_and_conquer(self.items)
         return self.items
 
-    def _sort_recursive(self, array: List[int]) -> List[int]:
-        if len(array) <= 1:
-            return array
-        center = len(array) // 2
-        return self._merge(self._sort_recursive(array[:center]), self._sort_recursive(array[center:]))
+    def verify_order(self) -> bool:
+        for k in range(len(self.items) - 1):
+            if self.items[k] > self.items[k + 1]:
+                return False
+        return True

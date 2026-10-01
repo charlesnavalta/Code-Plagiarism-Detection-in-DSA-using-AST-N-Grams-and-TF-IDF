@@ -1,8 +1,12 @@
 export const formatDeadline = (isoString) => {
     if (!isoString) return 'No Deadline Specified';
     
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
+    const normalizedIso = (typeof isoString === 'string' && !isoString.endsWith('Z') && !isoString.includes('+')) 
+        ? `${isoString}Z` 
+        : isoString;
+    const date = new Date(normalizedIso);
+    return date.toLocaleDateString('en-PH', {
+        timeZone: 'Asia/Manila',
         month: 'short', 
         day: 'numeric', 
         year: 'numeric',
@@ -13,8 +17,13 @@ export const formatDeadline = (isoString) => {
 
 export const formatTimestamp = (isoString) => {
     if (!isoString) return 'Pending...';
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', { 
+    
+    const normalizedIso = (typeof isoString === 'string' && !isoString.endsWith('Z') && !isoString.includes('+')) 
+        ? `${isoString}Z` 
+        : isoString;
+    const date = new Date(normalizedIso);
+    return date.toLocaleDateString('en-PH', { 
+        timeZone: 'Asia/Manila',
         month: 'short', 
         day: 'numeric', 
         hour: '2-digit', 

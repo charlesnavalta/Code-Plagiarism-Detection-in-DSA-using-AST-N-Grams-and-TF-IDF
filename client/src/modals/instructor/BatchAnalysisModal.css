@@ -75,6 +75,68 @@ html[data-theme='light'] .batch-lang-select {
     border-color: var(--accent-primary, #3b82f6);
 }
 
+/* Stat Badges inside Batch Control Bar */
+.batch-stat-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.batch-stat-badges .b-label {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-dim, #94a3b8);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label,
+html[data-theme='light'] .batch-stat-badges .b-label {
+    background: rgba(241, 245, 249, 0.95);
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.batch-stat-badges .lang-badge {
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #60a5fa !important;
+}
+
+[data-theme='light'] .batch-stat-badges .lang-badge,
+html[data-theme='light'] .batch-stat-badges .lang-badge {
+    border-color: rgba(37, 99, 235, 0.3) !important;
+    color: #2563eb !important;
+}
+
+.batch-stat-badges .b-label.status-alert {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+}
+
+.batch-stat-badges .b-label.status-clean {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.35);
+    color: #6ee7b7;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label.status-alert {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+[data-theme='light'] .batch-stat-badges .b-label.status-clean {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #15803d;
+}
+
 .batch-btn-reset {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-main, #f8fafc);
@@ -188,6 +250,67 @@ html[data-theme='light'] .btn-dropzone-action {
     border-color: var(--accent-primary, #3b82f6);
     background: rgba(59, 130, 246, 0.15);
     color: #ffffff;
+}
+
+[data-theme='light'] .btn-dropzone-action:hover,
+html[data-theme='light'] .btn-dropzone-action:hover {
+    border-color: var(--accent-primary, #3b82f6);
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* Dropzone Helper Guide */
+.dropzone-helper-guide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 7px 16px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--text-dim, #94a3b8);
+    max-width: 92%;
+    line-height: 1.4;
+    text-align: left;
+}
+
+[data-theme='light'] .dropzone-helper-guide,
+html[data-theme='light'] .dropzone-helper-guide {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #475569;
+}
+
+.guide-badge {
+    background: #3b82f6;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+[data-theme='light'] .guide-badge,
+html[data-theme='light'] .guide-badge {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.dropzone-helper-guide strong {
+    color: var(--text-main, #f8fafc);
+}
+
+[data-theme='light'] .dropzone-helper-guide strong,
+html[data-theme='light'] .dropzone-helper-guide strong {
+    color: #1e3a8a;
 }
 
 /* Staged Files List */

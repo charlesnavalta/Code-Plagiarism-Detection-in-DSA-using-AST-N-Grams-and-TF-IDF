@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from '../../hooks/useTheme';
 import { clearAuthSession } from '../../utils/authUtils';
+import NotificationBell from './NotificationBell';
 import './Navbar.css'; 
 
 const Navbar = () => {
@@ -163,10 +164,18 @@ const Navbar = () => {
                                 {user.role === 'instructor' ? 'Classroom Hub' : 'My Classes'}
                             </Link>
                         )}
+                        {user.role === 'instructor' && (
+                            <Link to="/instructor/batch-audit" className={`nav-item-nexus ${isActive('/instructor/batch-audit')}`}>
+                                Batch Audit
+                            </Link>
+                        )}
                     </div>
                 </div>
 
                 <div className="navbar-right desktop-only">
+                    {/* 🌟 In-App Notification Center Bell */}
+                    <NotificationBell />
+
                     <div className="profile-menu">
                         <button
                             className="profile-trigger-nexus"

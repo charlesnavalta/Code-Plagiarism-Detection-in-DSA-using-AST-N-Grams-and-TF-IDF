@@ -1,29 +1,20 @@
-def swp_7(lst_7, i, j):
-    temp_val_7 = lst_7[i]
-    lst_7[i] = lst_7[j]
-    lst_7[j] = temp_val_7
+def heap_sort(arr_list):
+    total_len = len(arr_list)
+    for idx in range(total_len // 2 - 1, -1, -1):
+        max_sift(arr_list, total_len, idx)
+    for idx in range(total_len - 1, 0, -1):
+        arr_list[0], arr_list[idx] = arr_list[idx], arr_list[0]
+        max_sift(arr_list, idx, 0)
+    return arr_list
 
-def hpf_7(lst_7, n, i):
-    r_idx_7 = 2 * i + 2
-    l_idx_7 = 2 * i + 1
-    max_idx_7 = i
-    if r_idx_7 < n and lst_7[r_idx_7] > lst_7[max_idx_7]:
-        max_idx_7 = r_idx_7
-    if l_idx_7 < n and lst_7[l_idx_7] > lst_7[max_idx_7]:
-        max_idx_7 = l_idx_7
-    if max_idx_7 != i:
-        swp_7(lst_7, i, max_idx_7)
-        hpf_7(lst_7, n, max_idx_7)
-
-def bmh_7(lst_7):
-    n = len(lst_7)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_7(lst_7, n, i)
-
-def hsort_7(lst_7):
-    n = len(lst_7)
-    bmh_7(lst_7)
-    for i in range(n - 1, 0, -1):
-        swp_7(lst_7, i, 0)
-        hpf_7(lst_7, i, 0)
-    return lst_7
+def max_sift(arr_list, total_len, parent_pos):
+    max_pos = parent_pos
+    r_pos = 2 * parent_pos + 2
+    l_pos = 2 * parent_pos + 1
+    if r_pos < total_len and arr_list[r_pos] > arr_list[max_pos]:
+        max_pos = r_pos
+    if l_pos < total_len and arr_list[l_pos] > arr_list[max_pos]:
+        max_pos = l_pos
+    if max_pos != parent_pos:
+        arr_list[parent_pos], arr_list[max_pos] = arr_list[max_pos], arr_list[parent_pos]
+        max_sift(arr_list, total_len, max_pos)

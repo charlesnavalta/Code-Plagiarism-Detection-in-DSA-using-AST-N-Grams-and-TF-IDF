@@ -1,60 +1,59 @@
-class Node_6:
-    def __init__(self, v_6):
-        self.v_6 = v_6
-        self.r_6 = None
-        self.l_6 = None
+class BalancedNode:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
         self.height = 1
 
-def h_6(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def __init__(self):
+        self.tree_root = None
 
-def b_6(node):
-    if not node:
-        return 0
-    return h_6(node.l_6) - h_6(node.r_6)
+    def insert(self, root, key):
+        if not root:
+            return BalancedNode(key)
+        if key < root.key:
+            root.left = self.insert(root.left, key)
+        elif key > root.key:
+            root.right = self.insert(root.right, key)
+        else:
+            return root
 
-def rr_6(y):
-    x = y.l_6
-    sub = x.r_6
-    x.r_6 = y
-    y.l_6 = sub
-    y.height = 1 + max(h_6(y.l_6), h_6(y.r_6))
-    x.height = 1 + max(h_6(x.l_6), h_6(x.r_6))
-    return x
+        root.height = 1 + max(self.get_height(root.left), self.get_height(root.right))
+        balance = self.get_balance(root)
 
-def rl_6(x):
-    y = x.r_6
-    sub = y.l_6
-    y.l_6 = x
-    x.r_6 = sub
-    x.height = 1 + max(h_6(x.l_6), h_6(x.r_6))
-    y.height = 1 + max(h_6(y.l_6), h_6(y.r_6))
-    return y
+        if balance > 1 and key < root.left.key:
+            return self.right_rotate(root)
+        if balance < -1 and key > root.right.key:
+            return self.left_rotate(root)
+        if balance > 1 and key > root.left.key:
+            root.left = self.left_rotate(root.left)
+            return self.right_rotate(root)
+        if balance < -1 and key < root.right.key:
+            root.right = self.right_rotate(root.right)
+            return self.left_rotate(root)
+        return root
 
-def ins_6(rt_6, v_6):
-    if not rt_6:
-        return Node_6(v_6)
-    if v_6 < rt_6.v_6:
-        rt_6.l_6 = ins_6(rt_6.l_6, v_6)
-    elif v_6 > rt_6.v_6:
-        rt_6.r_6 = ins_6(rt_6.r_6, v_6)
-    else:
-        return rt_6
+    def right_rotate(self, y):
+        x = y.left
+        t2 = x.right
+        x.right = y
+        y.left = t2
+        y.height = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        x.height = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        return x
 
-    rt_6.height = 1 + max(h_6(rt_6.l_6), h_6(rt_6.r_6))
-    bf_6 = b_6(rt_6)
+    def left_rotate(self, x):
+        y = x.right
+        t2 = y.left
+        y.left = x
+        x.right = t2
+        y.height = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        x.height = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        return y
 
-    if bf_6 > 1 and v_6 < rt_6.l_6.v_6:
-        return rr_6(rt_6)
-    if bf_6 < -1 and v_6 > rt_6.r_6.v_6:
-        return rl_6(rt_6)
-    if bf_6 > 1 and v_6 > rt_6.l_6.v_6:
-        rt_6.l_6 = rl_6(rt_6.l_6)
-        return rr_6(rt_6)
-    if bf_6 < -1 and v_6 < rt_6.r_6.v_6:
-        rt_6.r_6 = rr_6(rt_6.r_6)
-        return rl_6(rt_6)
+    def get_height(self, node):
+        return node.height if node else 0
 
-    return rt_6
+    def get_balance(self, node):
+        return (self.get_height(node.left) - self.get_height(node.right)) if node else 0

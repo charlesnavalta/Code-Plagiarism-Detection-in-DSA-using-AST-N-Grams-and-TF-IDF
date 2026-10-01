@@ -20,7 +20,8 @@ from routes import (
     classrooms_bp,
     assignments_bp,
     submissions_bp,
-    admin_bp
+    admin_bp,
+    notifications_bp
 )
 
 def create_app():
@@ -151,6 +152,14 @@ def create_app():
                 except Exception:
                     pass  # Column already exists
 
+                # Ensure submissions table has resubmission_count column
+                try:
+                    with db.engine.connect() as conn:
+                        conn.execute(db.text("ALTER TABLE submissions ADD COLUMN resubmission_count INT NOT NULL DEFAULT 0"))
+                        conn.commit()
+                except Exception:
+                    pass  # Column already exists
+
                 # Ensure users table has avatar_url column
                 try:
                     with db.engine.connect() as conn:
@@ -207,6 +216,7 @@ def create_app():
     app.register_blueprint(assignments_bp, url_prefix='/api/classrooms')
     app.register_blueprint(submissions_bp, url_prefix='/api/classrooms')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
 
     return app
 

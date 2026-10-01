@@ -9,17 +9,35 @@ import AuthInput from '../../components/auth/shared/AuthInput';
 import AuthButton from '../../components/auth/shared/AuthButton';
 import TermsAndPrivacyModal from '../../modals/shared/TermsAndPrivacyModal';
 
-// Email format validation: registration strictly requires @gmail.com format at the end
-const isValidGmail = (email) => {
-    if (!email || typeof email !== 'string') return false;
-    const trimmed = email.trim().toLowerCase();
-    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!gmailRegex.test(trimmed)) return false;
-    const localPart = trimmed.slice(0, -10); // Strip '@gmail.com'
-    if (!localPart || localPart.startsWith('.') || localPart.endsWith('.') || localPart.includes('..')) {
-        return false;
+// Allowed email providers for student accounts
+const STUDENT_ALLOWED_DOMAINS = ['gmail.com', 'icloud.com', 'outlook.com', 'hotmail.com', 'yahoo.com'];
+
+const isValidEmailFormat = (input) => {
+    if (!input || typeof input !== 'string') return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(input.trim());
+};
+
+const validateRegistrationEmail = (email, role = 'student') => {
+    if (!isValidEmailFormat(email)) {
+        return { valid: false, error: "Please enter a valid email address (e.g. name@domain.com)." };
     }
-    return true;
+    const trimmed = email.trim().toLowerCase();
+    const parts = trimmed.split('@');
+    if (parts.length !== 2) {
+        return { valid: false, error: "Invalid email format." };
+    }
+    const domain = parts[1];
+    if (role === 'student') {
+        const isAllowed = STUDENT_ALLOWED_DOMAINS.includes(domain) || domain.startsWith('yahoo.');
+        if (!isAllowed) {
+            return {
+                valid: false,
+                error: "Student registration accepts Gmail (@gmail.com), iCloud (@icloud.com), Outlook/Hotmail (@outlook.com, @hotmail.com), or Yahoo (@yahoo.com)."
+            };
+        }
+    }
+    return { valid: true, error: "" };
 };
 
 const Register = () => {
@@ -76,17 +94,18 @@ const Register = () => {
     const handleSendCode = async () => {
         const trimmedEmail = (formData.email || '').trim().toLowerCase();
         if (!trimmedEmail) {
-            toast.warning("Please enter your Gmail address first.", "Email Required");
+            toast.warning("Please enter your email address first.", "Email Required");
             return;
         }
-        if (!isValidGmail(trimmedEmail)) {
-            toast.error("Registration requires an email ending with @gmail.com (e.g. name@gmail.com).", "Invalid Email Format");
+        const check = validateRegistrationEmail(trimmedEmail, formData.role);
+        if (!check.valid) {
+            toast.error(check.error, "Invalid Email Format");
             return;
         }
         setSendingCode(true);
         try {
-            const data = await authService.requestCode(trimmedEmail);
-            toast.success(data.message || "Verification code sent! Please check your Gmail inbox.", "Code Dispatched");
+            const data = await authService.requestCode(trimmedEmail, formData.role);
+            toast.success(data.message || "Verification code sent! Please check your email inbox.", "Code Dispatched");
             setCodeRequested(true);
             setCooldown(60);
         } catch (err) {
@@ -106,8 +125,9 @@ const Register = () => {
             toast.warning("Please enter a username.", "Validation Error");
             return;
         }
-        if (!trimmedEmail || !isValidGmail(trimmedEmail)) {
-            toast.error("Registration requires an email ending with @gmail.com (e.g. name@gmail.com).", "Invalid Email Format");
+        const emailCheck = validateRegistrationEmail(trimmedEmail, formData.role);
+        if (!emailCheck.valid) {
+            toast.error(emailCheck.error, "Invalid Email Format");
             return;
         }
         if (formData.password !== formData.confirmPassword) {
@@ -332,39 +352,60 @@ const Register = () => {
                         </div>
 
                         {/* --- 3. Email & OTP Verification --- */}
-                        <div className="inline-input-row email-otp-row">
-                            <div style={{ flex: 1 }}>
-                                <AuthInput 
-                                    type="email" 
-                                    name="email" 
-                                    placeholder="yourname@gmail.com"
-                                    value={formData.email} 
-                                    required
-                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    icon={
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                            <polyline points="22,6 12,13 2,6"></polyline>
-                                        </svg>
-                                    }
-                                />
+                        <div className="email-verification-section">
+                            <div className="inline-input-row email-otp-row">
+                                <div className="email-input-col">
+                                    <AuthInput 
+                                        type="email" 
+                                        name="email" 
+                                        placeholder={formData.role === 'instructor' ? "instructor@university.edu" : "alex@example.com"}
+                                        value={formData.email} 
+                                        required
+                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                        icon={
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                <polyline points="22,6 12,13 2,6"></polyline>
+                                            </svg>
+                                        }
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    className="auth-send-code-btn"
+                                    onClick={handleSendCode}
+                                    disabled={sendingCode || !formData.email || cooldown > 0}
+                                    aria-label={sendingCode ? 'Sending verification code' : cooldown > 0 ? `Resend available in ${cooldown} seconds` : 'Send email verification code'}
+                                >
+                                    {sendingCode ? (
+                                        <span className="btn-spinner"></span>
+                                    ) : cooldown > 0 ? (
+                                        `${cooldown}s`
+                                    ) : (
+                                        "Send Code"
+                                    )}
+                                </button>
                             </div>
-                            <button
-                                type="button"
-                                className="auth-send-code-btn"
-                                onClick={handleSendCode}
-                                disabled={sendingCode || !formData.email || cooldown > 0}
-                                aria-label={sendingCode ? 'Sending verification code' : cooldown > 0 ? `Resend available in ${cooldown} seconds` : 'Send email verification code'}
-                            >
-                                {sendingCode ? (
-                                    <span className="btn-spinner"></span>
-                                ) : cooldown > 0 ? (
-                                    `${cooldown}s`
-                                ) : (
-                                    "Send Code"
-                                )}
-                            </button>
 
+                            {/* Role-Specific Email Guidance */}
+                            {formData.role === 'student' ? (
+                                <div className="domain-hints-row">
+                                    <span className="domain-hints-title">Allowed:</span>
+                                    <div className="domain-badges-list">
+                                        <span className="domain-badge-chip">Gmail</span>
+                                        <span className="domain-badge-chip">iCloud</span>
+                                        <span className="domain-badge-chip">Outlook</span>
+                                        <span className="domain-badge-chip">Yahoo</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="domain-hints-row instructor-domain-hint">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    <span>Accepts university (.edu), institutional, and personal emails</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* 6-Digit Code */}
@@ -464,14 +505,14 @@ const Register = () => {
                             </div>
                         )}
 
-                        {/* Form Consent — 4 policies */}
+                        {/* Form Consent — 3 policies */}
                         <div className="auth-terms-row">
                             <label className="auth-checkbox-container">
                                 <input
                                     type="checkbox"
                                     checked={agreedToTerms}
                                     onChange={(e) => setAgreedToTerms(e.target.checked)}
-                                    aria-label="I agree to the Terms of Service, Privacy Policy, Cookie Policy, and Refund Policy, and consent to the processing of my data for academic purposes"
+                                    aria-label="I agree to the Terms of Service, Privacy Policy, and Cookie Policy, and consent to the processing of my data for academic purposes"
                                 />
                                 <span>
                                     I agree to the{' '}
@@ -492,7 +533,7 @@ const Register = () => {
                                     >
                                         Privacy Policy
                                     </button>
-                                    {', '}
+                                    {', and '}
                                     <button
                                         type="button"
                                         className="auth-inline-link"
@@ -500,15 +541,6 @@ const Register = () => {
                                         aria-label="Read Cookie Policy"
                                     >
                                         Cookie Policy
-                                    </button>
-                                    {', and '}
-                                    <button
-                                        type="button"
-                                        className="auth-inline-link"
-                                        onClick={() => handleOpenTerms('refund')}
-                                        aria-label="Read Refund Policy"
-                                    >
-                                        Refund Policy
                                     </button>
                                     {'. I consent to the collection and processing of my data for the academic purposes described therein.'}
                                 </span>

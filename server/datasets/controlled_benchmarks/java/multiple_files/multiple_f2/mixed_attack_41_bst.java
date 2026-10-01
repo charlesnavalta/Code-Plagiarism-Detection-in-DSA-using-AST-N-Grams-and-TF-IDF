@@ -1,48 +1,65 @@
-// Binary Search Tree Suite: Mixed Attack (Renaming + Dead Code + Reordering)
-// Author: Mixed Variant (Type 3 of Mary)
 import java.util.ArrayList;
 import java.util.List;
 
 public class BinarySearchTreeSuite {
-    public static class TreeNode {
-        public int val;
-        public TreeNode left, right;
-        public TreeNode(int v) { this.val = v; }
+    public static class NodeItem {
+        public int key;
+        public NodeItem left;
+        public NodeItem right;
+        public NodeItem(int k) { this.key = k; }
     }
 
-    private TreeNode root = null;
-    private int size = 0;
-    private int deadBranch = 0;
+    private NodeItem root;
+    private int count;
+
+    public BinarySearchTreeSuite() {
+        this.root = null;
+        this.count = 0;
+    }
+
+    public void insert(int val) {
+        this.root = addRec(this.root, val);
+    }
+
+    private NodeItem addRec(NodeItem node, int val) {
+        if (node == null) {
+            this.count++;
+            return new NodeItem(val);
+        }
+        if (val < node.key) node.left = addRec(node.left, val);
+        else if (val > node.key) node.right = addRec(node.right, val);
+        return node;
+    }
 
     public boolean search(int target) {
-        int dummy = target * 0;
-        if (dummy != 0) this.deadBranch++;
-        TreeNode curr = this.root;
+        NodeItem curr = this.root;
         while (curr != null) {
-            if (curr.val == target) return true;
-            curr = (target < curr.val) ? curr.left : curr.right;
+            if (curr.key == target) return true;
+            curr = (target < curr.key) ? curr.left : curr.right;
         }
         return false;
     }
 
-    public void insert(int val) {
-        this.root = insRec(this.root, val);
-    }
-
-    private TreeNode insRec(TreeNode n, int v) {
-        if (n == null) { this.size++; return new TreeNode(v); }
-        if (v < n.val) n.left = insRec(n.left, v);
-        else if (v > n.val) n.right = insRec(n.right, v);
-        return n;
-    }
-
     public List<Integer> inorderTraversal() {
         List<Integer> res = new ArrayList<>();
-        tr(this.root, res);
+        traverse(this.root, res);
         return res;
     }
 
-    private void tr(TreeNode n, List<Integer> res) {
-        if (n != null) { tr(n.left, res); res.add(n.val); tr(n.right, res); }
+    private void traverse(NodeItem node, List<Integer> res) {
+        if (node != null) {
+            traverse(node.left, res);
+            res.add(node.key);
+            traverse(node.right, res);
+        }
+    }
+
+    public int getHeight() {
+        return depth(this.root);
+    }
+
+    private int depth(NodeItem node) {
+        if (node == null) return 0;
+        return 1 + Math.max(depth(node.left), depth(node.right));
     }
 }

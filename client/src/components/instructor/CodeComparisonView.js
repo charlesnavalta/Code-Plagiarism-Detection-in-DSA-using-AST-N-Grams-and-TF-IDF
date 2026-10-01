@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './CodeComparisonView.css'; 
 import AnalysisPDFExporter from './AnalysisPDFExporter'; 
 
 // 🌟 IMPORT DRY UTILITIES
 import { getPlagiarismDisplayData, getASTBadgeStyle } from '../../utils/theme';
 
-const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
+const CodeComparisonView = ({ 
+    selectedPair, 
+    submissions = [], 
+    onBack, 
+    allPairs = [], 
+    onSelectPair 
+}) => {
     const [viewMode, setViewMode] = useState('code'); 
     const [activeMobilePane, setActiveMobilePane] = useState('a'); // 'a' | 'b' | 'stacked'
+    const [syncScroll, setSyncScroll] = useState(true);
+    const [copiedSource, setCopiedSource] = useState(null);
+
+    // Synchronized scroll refs
+    const paneARef = useRef(null);
+    const paneBRef = useRef(null);
+    const isSyncingScroll = useRef(false);
 
     // Get smart theme data for the banner
     const themeData = selectedPair ? getPlagiarismDisplayData(selectedPair.plagiarism_type) : null;
@@ -29,18 +42,47 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         return "Code content not available. Please check backend.";
     };
 
+    // Synchronized scroll handlers
+    const handleScrollA = () => {
+        if (!syncScroll || isSyncingScroll.current) return;
+        isSyncingScroll.current = true;
+        if (paneARef.current && paneBRef.current) {
+            paneBRef.current.scrollTop = paneARef.current.scrollTop;
+            paneBRef.current.scrollLeft = paneARef.current.scrollLeft;
+        }
+        requestAnimationFrame(() => { isSyncingScroll.current = false; });
+    };
+
+    const handleScrollB = () => {
+        if (!syncScroll || isSyncingScroll.current) return;
+        isSyncingScroll.current = true;
+        if (paneARef.current && paneBRef.current) {
+            paneARef.current.scrollTop = paneBRef.current.scrollTop;
+            paneARef.current.scrollLeft = paneBRef.current.scrollLeft;
+        }
+        requestAnimationFrame(() => { isSyncingScroll.current = false; });
+    };
+
+    const handleCopyCode = (code, sourceKey) => {
+        if (!code) return;
+        navigator.clipboard.writeText(code);
+        setCopiedSource(sourceKey);
+        setTimeout(() => setCopiedSource(null), 2000);
+    };
+
     const renderCodeWithHighlights = (code, highlightedLines = [], overallType = '') => {
         if (!code || code.startsWith("Code content not available")) {
             return <code>{code}</code>;
         }
 
         const lines = code.split('\n');
-        const isMixedAttack = overallType.includes('Type 3');
+        const isMixedAttack = overallType && overallType.includes('Type 3');
+        const isSafe = !overallType || overallType === 'N/A' || overallType.toLowerCase().includes('safe') || overallType.toLowerCase().includes('clean');
 
         return lines.map((line, index) => {
             const lineNumber = index + 1;
             
-            const match = highlightedLines.find(m => {
+            const match = isSafe ? null : highlightedLines.find(m => {
                 if (typeof m === 'number') return m === lineNumber; 
                 return m.line === lineNumber; 
             });
@@ -180,31 +222,51 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
         <div className="code-comparison-view fade-in">
             {/* 🌟 1. Responsive Header Controls */}
             <div className="comparison-header-flex">
-                <button className="btn-back-link" onClick={onBack}>
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px', verticalAlign: 'middle', marginTop: '-2px' }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                    Analysis Report
-                </button>
-                
-                <div className="view-toggle-group">
-                    <button 
-                        className={`toggle-btn raw-btn ${viewMode === 'code' ? 'active' : ''}`} 
-                        onClick={() => setViewMode('code')}
-                    >
-                        Raw Source Code
-                    </button>
-                    
-                    <button 
-                        className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
-                        onClick={() => setViewMode('ast')}
-                    >
-                        AST N-Grams (XAI)
-                    </button>
+                <div className="comparison-header-left">
+                    {onBack && (
+                        <button className="btn-back-link" onClick={onBack} type="button">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '6px' }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                            Back
+                        </button>
+                    )}
                 </div>
+                
+                <div className="comparison-header-right">
+                    <div className="view-toggle-group">
+                        <button 
+                            type="button"
+                            className={`toggle-btn raw-btn ${viewMode === 'code' ? 'active' : ''}`} 
+                            onClick={() => setViewMode('code')}
+                        >
+                            Raw Source Code
+                        </button>
+                        
+                        <button 
+                            type="button"
+                            className={`toggle-btn xai-btn ${viewMode === 'ast' ? 'active' : ''}`} 
+                            onClick={() => setViewMode('ast')}
+                        >
+                            AST N-Grams (XAI)
+                        </button>
+                    </div>
 
-                <div className="pdf-export-wrapper">
-                    <AnalysisPDFExporter selectedPair={selectedPair} />
+                    <button
+                        type="button"
+                        className={`btn-sync-toggle ${syncScroll ? 'active' : ''}`}
+                        onClick={() => setSyncScroll(!syncScroll)}
+                        title={syncScroll ? "Synchronized scrolling active" : "Independent scrolling active"}
+                    >
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                        <span>Sync Scroll</span>
+                    </button>
+
+                    <div className="pdf-export-wrapper">
+                        <AnalysisPDFExporter selectedPair={selectedPair} />
+                    </div>
                 </div>
             </div>
 
@@ -252,11 +314,11 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                         <div className="summary-forensic-chips">
                             <div className="forensic-chip">
                                 <span className="forensic-chip-label">Raw Identity</span>
-                                <span className="forensic-chip-value">{selectedPair.raw_identity_score}%</span>
+                                <span className="forensic-chip-value">{selectedPair.raw_identity_score || 0}%</span>
                             </div>
                             <div className="forensic-chip">
                                 <span className="forensic-chip-label">Order Alignment</span>
-                                <span className="forensic-chip-value">{selectedPair.order_similarity_score}%</span>
+                                <span className="forensic-chip-value">{selectedPair.order_similarity_score || 0}%</span>
                             </div>
                             {selectedPair.plagiarism_type && selectedPair.plagiarism_type.includes('Type 3') && selectedPair.renamed_line_count > 0 && (
                                 <div className="forensic-chip forensic-chip-renamed">
@@ -270,7 +332,7 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
                 </div>
             )}
 
-            {/* 🌟 3. Mobile View Switcher (For iPhone 13 and Mobile Screens) */}
+            {/* 🌟 3. Mobile View Switcher (For iPhone / Mobile Screens) */}
             {selectedPair && (
                 <div className="mobile-pane-switcher">
                     <button 
@@ -307,21 +369,81 @@ const CodeComparisonView = ({ selectedPair, submissions, onBack }) => {
 
             {/* 🌟 4. Responsive Split Screen Container */}
             <div className={`split-screen-container mobile-mode-${activeMobilePane}`}>
+                {/* PANE SOURCE A */}
                 <div className={`code-pane pane-source-a ${activeMobilePane === 'b' ? 'mobile-hidden' : ''}`}>
                     <div className="code-pane-header">
-                        <span className="file-badge student-a">{selectedPair.file1}</span>
+                        <span className="file-badge student-a">{selectedPair?.file1}</span>
+                        <button
+                            type="button"
+                            className="btn-pane-copy"
+                            onClick={() => handleCopyCode(getCodeByFilename(selectedPair?.file1), 'a')}
+                            title="Copy code to clipboard"
+                        >
+                            {copiedSource === 'a' ? (
+                                <>
+                                    <svg width="13" height="13" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span style={{ color: '#10b981' }}>Copied</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </>
+                            )}
+                        </button>
                     </div>
-                    <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file1), selectedPair.lines1, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_1, selectedPair.ast_unique_1 || [])}
+                    <div 
+                        className="pane-content-scroll" 
+                        ref={paneARef}
+                        onScroll={handleScrollA}
+                    >
+                        {viewMode === 'code' 
+                            ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair?.file1), selectedPair?.lines1, selectedPair?.plagiarism_type)}</pre> 
+                            : renderASTStream(selectedPair?.ast_xai_1, selectedPair?.ast_unique_1 || [])
+                        }
                     </div>
                 </div>
                 
+                {/* PANE SOURCE B */}
                 <div className={`code-pane pane-source-b ${activeMobilePane === 'a' ? 'mobile-hidden' : ''}`}>
                     <div className="code-pane-header">
-                        <span className="file-badge student-b">{selectedPair.file2}</span>
+                        <span className="file-badge student-b">{selectedPair?.file2}</span>
+                        <button
+                            type="button"
+                            className="btn-pane-copy"
+                            onClick={() => handleCopyCode(getCodeByFilename(selectedPair?.file2), 'b')}
+                            title="Copy code to clipboard"
+                        >
+                            {copiedSource === 'b' ? (
+                                <>
+                                    <svg width="13" height="13" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span style={{ color: '#10b981' }}>Copied</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </>
+                            )}
+                        </button>
                     </div>
-                    <div className="pane-content-scroll">
-                        {viewMode === 'code' ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair.file2), selectedPair.lines2, selectedPair.plagiarism_type)}</pre> : renderASTStream(selectedPair.ast_xai_2, selectedPair.ast_unique_2 || [])}
+                    <div 
+                        className="pane-content-scroll" 
+                        ref={paneBRef}
+                        onScroll={handleScrollB}
+                    >
+                        {viewMode === 'code' 
+                            ? <pre className="code-block">{renderCodeWithHighlights(getCodeByFilename(selectedPair?.file2), selectedPair?.lines2, selectedPair?.plagiarism_type)}</pre> 
+                            : renderASTStream(selectedPair?.ast_xai_2, selectedPair?.ast_unique_2 || [])
+                        }
                     </div>
                 </div>
             </div>

@@ -1,7 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatTimestamp } from '../../utils/dateUtils';
 
 const RecentSubmissions = ({ submissions = [], loading = false, role = 'student' }) => {
+    const navigate = useNavigate();
+
+    const handleItemClick = (sub) => {
+        if (role === 'student' && sub.classroom_id && sub.assignment_id) {
+            navigate(`/student/class/${sub.classroom_id}/assignment/${sub.assignment_id}`);
+        } else if (role === 'instructor' && sub.classroom_id) {
+            navigate(`/instructor/class/${sub.classroom_id}`);
+        }
+    };
+
     return (
         <div className="spatial-card history-card delay-2">
             <div className="card-glass-layer"></div>
@@ -29,7 +40,13 @@ const RecentSubmissions = ({ submissions = [], loading = false, role = 'student'
                 ) : (
                     <ul className="submission-history-list">
                         {submissions.slice(0, 5).map((sub) => (
-                            <li key={sub.id} className="history-item">
+                            <li 
+                                key={sub.id} 
+                                className="history-item clickable-history-item"
+                                onClick={() => handleItemClick(sub)}
+                                style={{ cursor: 'pointer' }}
+                                title="Click to view assignment"
+                            >
                                 <div className="history-info">
                                     <strong className="history-title" title={role === 'instructor' ? `${sub.student_name} → ${sub.assignment_name}` : sub.assignment_name}>
                                         {role === 'instructor'

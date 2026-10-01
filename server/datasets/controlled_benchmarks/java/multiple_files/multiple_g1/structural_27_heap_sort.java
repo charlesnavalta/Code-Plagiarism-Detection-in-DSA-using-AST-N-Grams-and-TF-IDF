@@ -1,37 +1,37 @@
 public class Sorter_2 {
     public static void main(String[] args) {
-        Sorter_2 hsc = new Sorter_2();
-        int[] vals = {12, 11, 13, 5, 6, 7};
-        hsc.sort_2(vals);
+        Sorter_2 s = new Sorter_2();
+        int[] data = {12, 11, 13, 5, 6, 7};
+        s.runSort(data);
     }
-    public void swp_2(int[] b_2, int p1_2, int p2_2) {
-        int tmp_2 = b_2[p1_2];
-        b_2[p1_2] = b_2[p2_2];
-        b_2[p2_2] = tmp_2;
-    }
-    public void sift_2(int[] b_2, int len_2, int idx_2) {
-        int rc_2 = 2 * idx_2 + 2;
-        int lc_2 = 2 * idx_2 + 1;
-        int max_p_2 = idx_2;
-        if (rc_2 < len_2 && b_2[rc_2] > b_2[max_p_2]) {
-            max_p_2 = rc_2;
-        }
-        if (lc_2 < len_2 && b_2[lc_2] > b_2[max_p_2]) {
-            max_p_2 = lc_2;
-        }
-        if (max_p_2 != idx_2) {
-            swp_2(b_2, idx_2, max_p_2);
-            sift_2(b_2, len_2, max_p_2);
+    public void runSort(int[] a) {
+        int n = a.length;
+        prepareHeap(a, n);
+        int i = n - 1;
+        while (i > 0) {
+            int swapVal = a[i];
+            a[i] = a[0];
+            a[0] = swapVal;
+            reheap(a, i, 0);
+            i--;
         }
     }
-    public void sort_2(int[] b_2) {
-        int len_2 = b_2.length;
-        for (int k_2 = len_2 / 2 - 1; k_2 >= 0; k_2--) {
-            sift_2(b_2, len_2, k_2);
+    public void prepareHeap(int[] a, int n) {
+        for (int k = (n - 2) / 2; k >= 0; k--) {
+            reheap(a, n, k);
         }
-        for (int k_2 = len_2 - 1; k_2 > 0; k_2--) {
-            swp_2(b_2, k_2, 0);
-            sift_2(b_2, k_2, 0);
+    }
+    public void reheap(int[] a, int bound, int cur) {
+        int target = cur;
+        int c1 = (cur << 1) + 1;
+        int c2 = c1 + 1;
+        if (c1 < bound && a[target] < a[c1]) target = c1;
+        if (c2 < bound && a[target] < a[c2]) target = c2;
+        if (target != cur) {
+            int t = a[cur];
+            a[cur] = a[target];
+            a[target] = t;
+            reheap(a, bound, target);
         }
     }
 }

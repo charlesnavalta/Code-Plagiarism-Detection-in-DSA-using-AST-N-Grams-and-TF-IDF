@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'; 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { useTheme } from './hooks/useTheme';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -35,6 +35,8 @@ import InstructorDash from './pages/instructor/InstructorDashboard';
 import InstructorClassroomView from './pages/instructor/InstructorClassroomView';
 import InstructorCreateAssignmentView from './pages/instructor/InstructorCreateAssignmentView';
 import InstructorEditAssignmentView from './pages/instructor/InstructorEditAssignmentView';
+import InstructorSubmissionsAuditView from './pages/instructor/InstructorSubmissionsAuditView';
+import InstructorBatchAuditView from './pages/instructor/InstructorBatchAuditView';
 import AdminDash from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ClassroomManagement from './pages/admin/ClassroomManagement';
@@ -44,6 +46,11 @@ import CookieConsentBanner from './components/common/CookieConsentBanner';
 import Footer from './components/common/Footer';
 
 import { warmUpServer } from './services/api';
+
+function InstructorCompareRedirect() {
+  const { id, assignmentId } = useParams();
+  return <Navigate to={`/instructor/class/${id}/assignment/${assignmentId}/audit`} replace />;
+}
 
 function AppContent() {
   useTheme();
@@ -114,6 +121,9 @@ function AppContent() {
               <Route path="class/:id/assignment/new" element={<InstructorCreateAssignmentView />} />
               <Route path="class/:id/create-assignment" element={<InstructorCreateAssignmentView />} />
               <Route path="class/:id/assignment/:assignmentId/edit" element={<InstructorEditAssignmentView />} />
+              <Route path="class/:id/assignment/:assignmentId/compare" element={<InstructorCompareRedirect />} />
+              <Route path="class/:id/assignment/:assignmentId/audit" element={<InstructorSubmissionsAuditView />} />
+              <Route path="batch-audit" element={<InstructorBatchAuditView />} />
               <Route path="profile" element={<Profile />} />
             </Routes>
           </ProtectedRoute>

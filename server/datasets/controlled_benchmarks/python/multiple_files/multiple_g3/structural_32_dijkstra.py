@@ -1,20 +1,21 @@
-import heaq_7
+import heapq
 
-def push_d_7(q_7, dist_7, nxt_7, nd_7):
-    dist_7[nxt_7] = nd_7
-    heaq_7.heappush(q_7, (nd_7, nxt_7))
+def dijkstra_shortest_path(graph, start_vertex):
+    distances = {v: float('inf') for v in graph}
+    distances[start_vertex] = 0
+    pq = [(0, start_vertex)]
 
-def dijkstra_p_7(g_7, src_7):
-    dist_7 = {v: float('inf') for v in g_7}
-    dist_7[src_7] = 0
-    q_7 = [(0, src_7)]
-
-    while len(q_7) > 0:
-        d_7, u = heaq_7.heappop(q_7)
-        if d_7 <= dist_7[u]:
-            for nxt_7, w_7 in g_7[u]:
-                nd_7 = d_7 + w_7
-                if nd_7 < dist_7[nxt_7]:
-                    push_d_7(q_7, dist_7, nxt_7, nd_7)
-
-    return dist_7
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        if curr_dist > distances[u]:
+            continue
+        neighbors = graph[u]
+        idx = 0
+        while idx < len(neighbors):
+            neighbor, weight = neighbors[idx]
+            new_dist = curr_dist + weight
+            if new_dist < distances[neighbor]:
+                distances[neighbor] = new_dist
+                heapq.heappush(pq, (new_dist, neighbor))
+            idx += 1
+    return distances

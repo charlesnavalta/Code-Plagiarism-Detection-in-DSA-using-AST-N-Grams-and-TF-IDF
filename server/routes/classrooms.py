@@ -75,17 +75,30 @@ def get_instructor_classrooms():
 @jwt_required()
 def get_classroom(class_id):
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if user.role == 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    role = (user.role or '').lower()
+
+    if role == 'instructor':
         classroom = Classroom.query.options(
             joinedload(Classroom.instructor)
         ).filter_by(id=class_id, instructor_id=user.id).first()
-    elif user.role == 'student':
+    elif role == 'student':
         enrollment = Enrollment.query.options(
             joinedload(Enrollment.classroom).joinedload(Classroom.instructor)
         ).filter_by(student_id=user.id, classroom_id=class_id).first()
         classroom = enrollment.classroom if enrollment else None
+    elif role == 'admin':
+        classroom = Classroom.query.options(
+            joinedload(Classroom.instructor)
+        ).get(class_id)
     else:
         return jsonify({"error": "Unauthorized"}), 403
 
@@ -138,6 +151,28 @@ def join_classroom():
     try:
         db.session.add(new_enrollment)
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify Instructor of new student enrollment + Welcome Student
+        try:
+            from utils.notification_helper import create_notification
+            if classroom.instructor_id:
+                create_notification(
+                    user_id=classroom.instructor_id,
+                    title=f"New Student Enrolled: {classroom.name}",
+                    message=f"{user.username} enrolled into your classroom '{classroom.name}'.",
+                    type="system",
+                    link=f"/instructor/class/{classroom.id}"
+                )
+            create_notification(
+                user_id=user.id,
+                title=f"Enrolled in {classroom.name}",
+                message=f"You successfully joined '{classroom.name}'. You can now view assignments and submit your code.",
+                type="system",
+                link=f"/student/class/{classroom.id}"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Enrollment): {notif_err}")
+
         return jsonify({
             "message": f"Successfully joined {classroom.name}!",
             "classroom": {"id": classroom.id, "name": classroom.name}

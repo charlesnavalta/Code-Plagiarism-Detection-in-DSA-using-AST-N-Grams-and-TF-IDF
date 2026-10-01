@@ -1,60 +1,63 @@
-class Node_4:
-    def __init__(self, v_4):
-        self.v_4 = v_4
-        self.r_4 = None
-        self.l_4 = None
-        self.height = 1
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+        self.ht = 1
 
-def h_4(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def update_height(self, node):
+        node.ht = 1 + max(self.get_height(node.left), self.get_height(node.right))
 
-def b_4(node):
-    if not node:
-        return 0
-    return h_4(node.l_4) - h_4(node.r_4)
+    def insert(self, root, data):
+        if not root:
+            return TreeNode(data)
+        if data < root.data:
+            root.left = self.insert(root.left, data)
+        elif data > root.data:
+            root.right = self.insert(root.right, data)
+        else:
+            return root
 
-def rr_4(y):
-    x = y.l_4
-    sub = x.r_4
-    x.r_4 = y
-    y.l_4 = sub
-    y.height = 1 + max(h_4(y.l_4), h_4(y.r_4))
-    x.height = 1 + max(h_4(x.l_4), h_4(x.r_4))
-    return x
+        self.update_height(root)
+        balance = self.get_balance(root)
 
-def rl_4(x):
-    y = x.r_4
-    sub = y.l_4
-    y.l_4 = x
-    x.r_4 = sub
-    x.height = 1 + max(h_4(x.l_4), h_4(x.r_4))
-    y.height = 1 + max(h_4(y.l_4), h_4(y.r_4))
-    return y
+        if balance > 1:
+            if data < root.left.data:
+                return self.right_rotate(root)
+            root.left = self.left_rotate(root.left)
+            return self.right_rotate(root)
+        if balance < -1:
+            if data > root.right.data:
+                return self.left_rotate(root)
+            root.right = self.right_rotate(root.right)
+            return self.left_rotate(root)
+        return root
 
-def ins_4(rt_4, v_4):
-    if not rt_4:
-        return Node_4(v_4)
-    if v_4 < rt_4.v_4:
-        rt_4.l_4 = ins_4(rt_4.l_4, v_4)
-    elif v_4 > rt_4.v_4:
-        rt_4.r_4 = ins_4(rt_4.r_4, v_4)
-    else:
-        return rt_4
+    def right_rotate(self, y):
+        x = y.left
+        t2 = x.right
+        x.right = y
+        y.left = t2
+        self.update_height(y)
+        self.update_height(x)
+        return x
 
-    rt_4.height = 1 + max(h_4(rt_4.l_4), h_4(rt_4.r_4))
-    bf_4 = b_4(rt_4)
+    def left_rotate(self, x):
+        y = x.right
+        t2 = y.left
+        y.left = x
+        x.right = t2
+        self.update_height(x)
+        self.update_height(y)
+        return y
 
-    if bf_4 > 1 and v_4 < rt_4.l_4.v_4:
-        return rr_4(rt_4)
-    if bf_4 < -1 and v_4 > rt_4.r_4.v_4:
-        return rl_4(rt_4)
-    if bf_4 > 1 and v_4 > rt_4.l_4.v_4:
-        rt_4.l_4 = rl_4(rt_4.l_4)
-        return rr_4(rt_4)
-    if bf_4 < -1 and v_4 < rt_4.r_4.v_4:
-        rt_4.r_4 = rr_4(rt_4.r_4)
-        return rl_4(rt_4)
+    def get_height(self, node):
+        if not node:
+            return 0
+        return node.ht
 
-    return rt_4
+    def get_balance(self, node):
+        if not node:
+            return 0
+        return self.get_height(node.left) - self.get_height(node.right)

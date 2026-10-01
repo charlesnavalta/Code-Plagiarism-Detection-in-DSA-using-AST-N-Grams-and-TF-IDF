@@ -1,29 +1,27 @@
-def swp_0(lst_0, i, j):
-    temp_val_0 = lst_0[i]
-    lst_0[i] = lst_0[j]
-    lst_0[j] = temp_val_0
+def swap_elements(data, p, q):
+    data[p], data[q] = data[q], data[p]
 
-def hpf_0(lst_0, n, i):
-    r_idx_0 = 2 * i + 2
-    l_idx_0 = 2 * i + 1
-    max_idx_0 = i
-    if r_idx_0 < n and lst_0[r_idx_0] > lst_0[max_idx_0]:
-        max_idx_0 = r_idx_0
-    if l_idx_0 < n and lst_0[l_idx_0] > lst_0[max_idx_0]:
-        max_idx_0 = l_idx_0
-    if max_idx_0 != i:
-        swp_0(lst_0, i, max_idx_0)
-        hpf_0(lst_0, n, max_idx_0)
+def sift_down_rec(data, total, idx):
+    max_idx = idx
+    r = 2 * idx + 2
+    l = 2 * idx + 1
+    if r < total and data[r] > data[max_idx]:
+        max_idx = r
+    if l < total and data[l] > data[max_idx]:
+        max_idx = l
+    if max_idx != idx:
+        swap_elements(data, idx, max_idx)
+        sift_down_rec(data, total, max_idx)
 
-def bmh_0(lst_0):
-    n = len(lst_0)
-    for i in range(n // 2 - 1, -1, -1):
-        hpf_0(lst_0, n, i)
+def build_max_heap(data):
+    n = len(data)
+    for k in range(n // 2 - 1, -1, -1):
+        sift_down_rec(data, n, k)
 
-def hsort_0(lst_0):
-    n = len(lst_0)
-    bmh_0(lst_0)
-    for i in range(n - 1, 0, -1):
-        swp_0(lst_0, i, 0)
-        hpf_0(lst_0, i, 0)
-    return lst_0
+def heap_sort(data):
+    n = len(data)
+    build_max_heap(data)
+    for k in range(n - 1, 0, -1):
+        swap_elements(data, 0, k)
+        sift_down_rec(data, k, 0)
+    return data

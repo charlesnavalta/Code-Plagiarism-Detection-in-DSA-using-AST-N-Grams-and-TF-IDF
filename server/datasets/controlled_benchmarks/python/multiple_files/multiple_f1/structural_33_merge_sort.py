@@ -1,20 +1,4 @@
-"""
-MergeSort Suite: Structural Method Restructuring & Helper Extraction
-Author: Structural Variant (Type 3 of Mary)
-"""
 from typing import List
-
-def merge_helper(arr1: List[int], arr2: List[int]) -> List[int]:
-    out = []
-    p1 = p2 = 0
-    while p1 < len(arr1) and p2 < len(arr2):
-        if arr1[p1] <= arr2[p2]:
-            out.append(arr1[p1]); p1 += 1
-        else:
-            out.append(arr2[p2]); p2 += 1
-    out.extend(arr1[p1:])
-    out.extend(arr2[p2:])
-    return out
 
 class MergeSortSuite:
     def __init__(self, items: List[int]):
@@ -22,16 +6,42 @@ class MergeSortSuite:
         self.inversions = 0
         self.merge_passes = 0
 
-    def verify_order(self) -> bool:
-        return all(self.items[i] <= self.items[i + 1] for i in range(len(self.items) - 1))
-
-    def execute_sort(self) -> List[int]:
-        if len(self.items) > 1:
-            self.items = self._sort_recursive(self.items)
-        return self.items
+    def _merge(self, left: List[int], right: List[int]) -> List[int]:
+        self.merge_passes += 1
+        out = []
+        i = j = 0
+        while i < len(left) and j < len(right):
+            if right[j] < left[i]:
+                out.append(right[j])
+                self.inversions += (len(left) - i)
+                j += 1
+            else:
+                out.append(left[i])
+                i += 1
+        if i < len(left):
+            out.extend(left[i:])
+        if j < len(right):
+            out.extend(right[j:])
+        return out
 
     def _sort_recursive(self, array: List[int]) -> List[int]:
         if len(array) <= 1:
             return array
-        mid = len(array) // 2
-        return merge_helper(self._sort_recursive(array[:mid]), self._sort_recursive(array[mid:]))
+        split_pt = len(array) // 2
+        left_sub = self._sort_recursive(array[:split_pt])
+        right_sub = self._sort_recursive(array[split_pt:])
+        return self._merge(left_sub, right_sub)
+
+    def execute_sort(self) -> List[int]:
+        if len(self.items) == 0:
+            return []
+        self.items = self._sort_recursive(self.items)
+        return self.items
+
+    def verify_order(self) -> bool:
+        idx = 0
+        while idx < len(self.items) - 1:
+            if self.items[idx] > self.items[idx + 1]:
+                return False
+            idx += 1
+        return True

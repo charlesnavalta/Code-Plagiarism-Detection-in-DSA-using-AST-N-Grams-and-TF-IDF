@@ -31,26 +31,46 @@ def is_valid_email_format(email_str):
         return False
     return True
 
-def is_valid_gmail_format(email_str):
-    """Validates that the email strictly conforms to the @gmail.com domain for registration."""
-    if not email_str or not isinstance(email_str, str):
+# Allowed email domains for student accounts
+STUDENT_ALLOWED_DOMAINS = {
+    'gmail.com',
+    'icloud.com',
+    'outlook.com',
+    'hotmail.com',
+    'yahoo.com'
+}
+
+def is_valid_student_email(email_str):
+    """
+    Validates that a student email uses one of the allowed providers:
+    @gmail.com, @icloud.com, @outlook.com, @hotmail.com, or @yahoo.com (including regional yahoo domains).
+    """
+    if not is_valid_email_format(email_str):
         return False
-    email_str = email_str.strip().lower()
-    if not email_str.endswith('@gmail.com'):
-        return False
-    parts = email_str.split('@')
+    parts = email_str.strip().lower().split('@')
     if len(parts) != 2:
         return False
-    username_part = parts[0]
-    if len(username_part) < 1 or len(username_part) > 64:
-        return False
-    if not re.match(r'^[a-zA-Z0-9._%+-]+$', username_part):
-        return False
-    if username_part.startswith('.') or username_part.endswith('.') or '..' in username_part:
-        return False
-    return True
+    domain = parts[1]
+    if domain in STUDENT_ALLOWED_DOMAINS or domain.startswith('yahoo.'):
+        return True
+    return False
 
-# In-memory store for pending registration OTPs: { email: { "code": "123456", "expires": datetime } }
+def validate_registration_email(email_str, role='student'):
+    """
+    Validates email according to the user's role:
+    - Student: Gmail, iCloud, Outlook, Hotmail, Yahoo
+    - Instructor / Admin: Any valid email address (e.g. university/institutional or personal)
+    """
+    if not is_valid_email_format(email_str):
+        return False, "Invalid email address format. Please provide a valid email (e.g. name@domain.com)."
+    
+    if role == 'student':
+        if not is_valid_student_email(email_str):
+            return False, "Student registration accepts Gmail (@gmail.com), iCloud (@icloud.com), Outlook/Hotmail (@outlook.com, @hotmail.com), or Yahoo (@yahoo.com)."
+            
+    return True, ""
+
+# In-memory store for pending registration OTPs: { email: { "code": "123456", "role": "student", "expires": datetime } }
 PENDING_REGISTRATIONS = {}
 PENDING_EMAIL_UPDATES = {}
 
@@ -65,12 +85,16 @@ def request_code():
             return jsonify({"error": "JSON body is required"}), 400
 
         email = (data.get('email') or '').strip().lower()
+        role = (data.get('role') or 'student').strip().lower()
+        if role not in ['student', 'instructor']:
+            role = 'student'
 
         if not email:
             return jsonify({"error": "Email is required"}), 400
 
-        if not is_valid_gmail_format(email):
-            return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
+        is_valid, err_msg = validate_registration_email(email, role)
+        if not is_valid:
+            return jsonify({"error": err_msg}), 400
 
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "This email address is already registered. Please log in or use Forgot Password."}), 400
@@ -83,6 +107,7 @@ def request_code():
         if email_sent:
             PENDING_REGISTRATIONS[email] = {
                 "code": code,
+                "role": role,
                 "expires": datetime.utcnow() + timedelta(minutes=15)
             }
             return jsonify({"message": "Verification code sent to your email inbox. Please check your email.", "email_sent": True}), 200
@@ -109,12 +134,16 @@ def register():
     email = (data.get('email') or '').strip().lower()
     password = data.get('password')
     code = str(data.get('code') or '').strip()
+    requested_role = (data.get('role') or 'student').strip().lower()
+    if requested_role not in ['student', 'instructor']:
+        requested_role = 'student'
     
     if not username or not email or not password:
         return jsonify({"error": "Username, email, and password are required fields."}), 400
 
-    if not is_valid_gmail_format(email):
-        return jsonify({"error": "Registration only accepts Gmail addresses ending with @gmail.com (e.g. name@gmail.com)."}), 400
+    is_valid, err_msg = validate_registration_email(email, requested_role)
+    if not is_valid:
+        return jsonify({"error": err_msg}), 400
 
     if not code:
         return jsonify({"error": "Please enter the 6-digit verification code sent to your email."}), 400
@@ -136,10 +165,6 @@ def register():
     # Verification passed! Consume pending registration entry
     PENDING_REGISTRATIONS.pop(email, None)
 
-    requested_role = data.get('role', 'student')
-    if requested_role not in ['student', 'instructor']:
-        requested_role = 'student'
-
     user_status = 'pending' if requested_role == 'instructor' else 'active'
     
     new_user = User(
@@ -154,6 +179,24 @@ def register():
     try:
         db.session.add(new_user)
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify all Admins if a new Instructor account is pending approval
+        if requested_role == 'instructor' and user_status == 'pending':
+            try:
+                from utils.notification_helper import create_bulk_notifications
+                admins = User.query.filter(User.role == 'admin').all()
+                admin_ids = [a.id for a in admins]
+                if admin_ids:
+                    create_bulk_notifications(
+                        user_ids=admin_ids,
+                        title="New Instructor Registration Pending",
+                        message=f"Instructor '{new_user.username}' ({new_user.email}) registered and is awaiting account approval.",
+                        type="audit",
+                        link="/admin/users?role=pending"
+                    )
+            except Exception as notif_err:
+                print(f"Notification Trigger Warning (Instructor Registration): {notif_err}")
+
         return jsonify({"message": "Registration Successful!", "status": user_status}), 201
     except Exception as e:
         db.session.rollback()
@@ -378,9 +421,14 @@ def get_all_users():
 @jwt_required()
 def approve_user(user_id):
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    try:
+        current_uid = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        current_uid = current_user_id
 
-    if not current_user or current_user.role != 'admin':
+    current_user = User.query.get(current_uid) if current_uid else None
+
+    if not current_user or (current_user.role or '').lower() != 'admin':
         return jsonify({"error": "Unauthorized: Admin access required"}), 403
 
     user_to_approve = User.query.get(user_id)
@@ -394,6 +442,20 @@ def approve_user(user_id):
     
     try:
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify the Instructor that their account was approved
+        try:
+            from utils.notification_helper import create_notification
+            create_notification(
+                user_id=user_to_approve.id,
+                title="Account Approved",
+                message="Your instructor account has been approved by the Administrator. You can now access your classroom hub and create assignments.",
+                type="system",
+                link="/instructor"
+            )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Instructor Approval): {notif_err}")
+
         return jsonify({"message": f"Instructor {user_to_approve.username} approved successfully!"}), 200
     except Exception as e:
         db.session.rollback()
@@ -407,9 +469,14 @@ def approve_user(user_id):
 @jwt_required()
 def admin_create_user():
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    try:
+        current_uid = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        current_uid = current_user_id
 
-    if not current_user or current_user.role != 'admin':
+    current_user = User.query.get(current_uid) if current_uid else None
+
+    if not current_user or (current_user.role or '').lower() != 'admin':
         return jsonify({"error": "Unauthorized: Admin access required"}), 403
 
     data = request.get_json()
@@ -436,6 +503,24 @@ def admin_create_user():
     try:
         db.session.add(new_user)
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify Admins if created as pending instructor
+        if new_user.role == 'instructor' and new_user.status == 'pending':
+            try:
+                from utils.notification_helper import create_bulk_notifications
+                admins = User.query.filter(User.role == 'admin').all()
+                admin_ids = [a.id for a in admins]
+                if admin_ids:
+                    create_bulk_notifications(
+                        user_ids=admin_ids,
+                        title="New Instructor Account Pending",
+                        message=f"Instructor account '{new_user.username}' ({new_user.email}) was provisioned and requires approval.",
+                        type="audit",
+                        link="/admin/users?role=pending"
+                    )
+            except Exception as notif_err:
+                print(f"Notification Trigger Warning (Admin Provisioning): {notif_err}")
+
         return jsonify({"message": "User provisioned successfully!"}), 201
     except Exception as e:
         db.session.rollback()

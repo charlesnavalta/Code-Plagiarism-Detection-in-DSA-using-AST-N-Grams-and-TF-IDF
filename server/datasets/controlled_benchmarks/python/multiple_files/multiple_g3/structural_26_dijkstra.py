@@ -1,20 +1,22 @@
-import heaq_1
+import heapq
 
-def push_d_1(q_1, dist_1, nxt_1, nd_1):
-    dist_1[nxt_1] = nd_1
-    heaq_1.heappush(q_1, (nd_1, nxt_1))
+def dijkstra_shortest_path(adj_list, source):
+    dist_map = {}
+    for node in adj_list:
+        dist_map[node] = float('inf')
+    dist_map[source] = 0
+    min_heap = []
+    heapq.heappush(min_heap, (0, source))
 
-def dijkstra_p_1(g_1, src_1):
-    dist_1 = {v: float('inf') for v in g_1}
-    dist_1[src_1] = 0
-    q_1 = [(0, src_1)]
-
-    while len(q_1) > 0:
-        d_1, u = heaq_1.heappop(q_1)
-        if d_1 <= dist_1[u]:
-            for nxt_1, w_1 in g_1[u]:
-                nd_1 = d_1 + w_1
-                if nd_1 < dist_1[nxt_1]:
-                    push_d_1(q_1, dist_1, nxt_1, nd_1)
-
-    return dist_1
+    while min_heap:
+        d, curr = heapq.heappop(min_heap)
+        if d > dist_map[curr]:
+            continue
+        edges = adj_list[curr]
+        for edge_idx in range(len(edges)):
+            nxt, cost = edges[edge_idx]
+            alt = d + cost
+            if alt < dist_map[nxt]:
+                dist_map[nxt] = alt
+                heapq.heappush(min_heap, (alt, nxt))
+    return dist_map

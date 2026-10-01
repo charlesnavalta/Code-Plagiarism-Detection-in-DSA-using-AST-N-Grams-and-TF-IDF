@@ -20,6 +20,7 @@ def seed_python_submissions(db_instance):
             ("TS-B 1", "ts_b1"),
             ("TS-B 2", "ts_b2"),
             ("TS-B 3", "ts_b3"),
+            ("TS-B 4", "ts_b4"),
             ("TS-C 1", "ts_c1"),
             ("TS-C 2", "ts_c2"),
             ("TS-C 3", "ts_c3"),

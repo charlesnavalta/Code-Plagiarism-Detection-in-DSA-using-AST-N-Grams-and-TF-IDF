@@ -1,45 +1,66 @@
-"""
-Binary Search Tree Suite: Mixed Attack (Renaming + Dead Code + Reordering)
-Author: Mixed Variant (Type 3 of Mary)
-"""
 from typing import Optional, List
 
 class TreeNode:
-    def __init__(self, val: int = 0, left=None, right=None):
-        self.val = val; self.left = left; self.right = right
+    def __init__(self, val: int = 0, left: Optional['TreeNode'] = None, right: Optional['TreeNode'] = None):
+        self.val = val
+        self.left = left
+        self.right = right
 
 class BinarySearchTreeSuite:
     def __init__(self):
-        self._audit = []
-        self.root = None
+        self.root: Optional[TreeNode] = None
         self.size = 0
-
-    def get_height(self) -> int:
-        if not self.root: return 0
-        # Dummy dead code calculation
-        dummy = [x * 0 for x in range(5)]
-        if sum(dummy) != 0: self._audit.append("dead")
-        def _h(n): return 0 if not n else 1 + max(_h(n.left), _h(n.right))
-        return _h(self.root)
+        self.is_valid = True
 
     def insert(self, val: int) -> None:
-        def _ins(n, v):
-            if not n: self.size += 1; return TreeNode(v)
-            if v < n.val: n.left = _ins(n.left, v)
-            elif v > n.val: n.right = _ins(n.right, v)
-            return n
-        self.root = _ins(self.root, val)
+        def _put(node: Optional[TreeNode], v: int) -> TreeNode:
+            if node is None:
+                self.size += 1
+                return TreeNode(v)
+            if v < node.val:
+                node.left = _put(node.left, v)
+            elif v > node.val:
+                node.right = _put(node.right, v)
+            return node
+        self.root = _put(self.root, val)
 
     def search(self, target: int) -> bool:
         curr = self.root
-        while curr:
-            if curr.val == target: return True
-            curr = curr.left if target < curr.val else curr.right
+        while curr is not None:
+            if curr.val == target:
+                return True
+            if target < curr.val:
+                curr = curr.left
+            else:
+                curr = curr.right
         return False
 
+    def find_min(self) -> Optional[int]:
+        if self.root is None: return None
+        curr = self.root
+        while curr.left is not None:
+            curr = curr.left
+        return curr.val
+
+    def find_max(self) -> Optional[int]:
+        if self.root is None: return None
+        curr = self.root
+        while curr.right is not None:
+            curr = curr.right
+        return curr.val
+
     def inorder_traversal(self) -> List[int]:
-        res = []
-        def _tr(n):
-            if n: _tr(n.left); res.append(n.val); _tr(n.right)
-        _tr(self.root)
-        return res
+        output_list = []
+        def _inorder_helper(ptr: Optional[TreeNode]):
+            if ptr is not None:
+                _inorder_helper(ptr.left)
+                output_list.append(ptr.val)
+                _inorder_helper(ptr.right)
+        _inorder_helper(self.root)
+        return output_list
+
+    def get_height(self) -> int:
+        def _tree_depth(ptr: Optional[TreeNode]) -> int:
+            if ptr is None: return 0
+            return 1 + max(_tree_depth(ptr.left), _tree_depth(ptr.right))
+        return _tree_depth(self.root)

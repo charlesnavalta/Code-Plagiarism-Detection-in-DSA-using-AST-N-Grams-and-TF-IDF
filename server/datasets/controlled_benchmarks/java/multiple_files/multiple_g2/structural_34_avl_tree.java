@@ -1,67 +1,59 @@
 class Node_9 {
-    int k_9, h_9;
+    int key, height;
     Node_9 left, right;
-    Node_9(int d) {
-        k_9 = d;
-        h_9 = 1;
+    Node_9(int k) {
+        key = k;
+        height = 1;
     }
 }
 public class Tree_9 {
     public static void main(String[] args) {
         Tree_9 t = new Tree_9();
-        Node_9 r = null;
-        r = t.ins_9(r, 10);
+        Node_9 r = t.insert(null, 10);
     }
-    int max(int a, int b) {
-        return (a > b) ? a : b;
+    public Node_9 insert(Node_9 root, int key) {
+        if (root == null) return new Node_9(key);
+        if (key < root.key) root.left = insert(root.left, key);
+        else if (key > root.key) root.right = insert(root.right, key);
+        else return root;
+
+        root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right));
+        int bal = getBalance(root);
+
+        if (bal > 1 && key < root.left.key) return rightRotate(root);
+        if (bal < -1 && key > root.right.key) return leftRotate(root);
+        if (bal > 1 && key > root.left.key) {
+            root.left = leftRotate(root.left);
+            return rightRotate(root);
+        }
+        if (bal < -1 && key < root.right.key) {
+            root.right = rightRotate(root.right);
+            return leftRotate(root);
+        }
+        return root;
     }
-    int h_9(Node_9 N) {
-        if (N == null) return 0;
-        return N.h_9;
-    }
-    int gb_9(Node_9 N) {
-        if (N == null) return 0;
-        return h_9(N.left) - h_9(N.right);
-    }
-    Node_9 upd_9(Node_9 n_9) {
-        n_9.h_9 = 1 + max(h_9(n_9.left), h_9(n_9.right));
-        return n_9;
-    }
-    Node_9 rr_9(Node_9 y) {
-        Node_9 x = y.left;
-        Node_9 T2 = x.right;
-        x.right = y;
-        y.left = T2;
-        upd_9(y);
-        upd_9(x);
-        return x;
-    }
-    Node_9 rl_9(Node_9 x) {
+    public Node_9 leftRotate(Node_9 x) {
         Node_9 y = x.right;
-        Node_9 T2 = y.left;
+        Node_9 t2 = y.left;
         y.left = x;
-        x.right = T2;
-        upd_9(x);
-        upd_9(y);
+        x.right = t2;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
         return y;
     }
-    Node_9 ins_9(Node_9 n_9, int k_9) {
-        if (n_9 == null) return (new Node_9(k_9));
-        if (k_9 < n_9.k_9) n_9.left = ins_9(n_9.left, k_9);
-        else if (k_9 > n_9.k_9) n_9.right = ins_9(n_9.right, k_9);
-        else return n_9;
-        upd_9(n_9);
-        int b_9 = gb_9(n_9);
-        if (b_9 > 1 && k_9 < n_9.left.k_9) return rr_9(n_9);
-        if (b_9 < -1 && k_9 > n_9.right.k_9) return rl_9(n_9);
-        if (b_9 > 1 && k_9 > n_9.left.k_9) {
-            n_9.left = rl_9(n_9.left);
-            return rr_9(n_9);
-        }
-        if (b_9 < -1 && k_9 < n_9.right.k_9) {
-            n_9.right = rr_9(n_9.right);
-            return rl_9(n_9);
-        }
-        return n_9;
+    public Node_9 rightRotate(Node_9 y) {
+        Node_9 x = y.left;
+        Node_9 t2 = x.right;
+        x.right = y;
+        y.left = t2;
+        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        return x;
+    }
+    public int getHeight(Node_9 node) {
+        return (node == null) ? 0 : node.height;
+    }
+    public int getBalance(Node_9 node) {
+        return (node == null) ? 0 : (getHeight(node.left) - getHeight(node.right));
     }
 }

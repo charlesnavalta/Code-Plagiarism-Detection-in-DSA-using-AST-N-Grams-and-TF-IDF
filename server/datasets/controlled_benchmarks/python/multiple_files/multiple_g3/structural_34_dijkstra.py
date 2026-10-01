@@ -1,20 +1,21 @@
-import heaq_9
+import heapq
 
-def push_d_9(q_9, dist_9, nxt_9, nd_9):
-    dist_9[nxt_9] = nd_9
-    heaq_9.heappush(q_9, (nd_9, nxt_9))
+def dijkstra_shortest_path(graph, start_vertex):
+    distances = {v: float('inf') for v in graph}
+    distances[start_vertex] = 0
+    pq = []
+    heapq.heappush(pq, (0, start_vertex))
+    processed = set()
 
-def dijkstra_p_9(g_9, src_9):
-    dist_9 = {v: float('inf') for v in g_9}
-    dist_9[src_9] = 0
-    q_9 = [(0, src_9)]
-
-    while len(q_9) > 0:
-        d_9, u = heaq_9.heappop(q_9)
-        if d_9 <= dist_9[u]:
-            for nxt_9, w_9 in g_9[u]:
-                nd_9 = d_9 + w_9
-                if nd_9 < dist_9[nxt_9]:
-                    push_d_9(q_9, dist_9, nxt_9, nd_9)
-
-    return dist_9
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        if u in processed:
+            continue
+        processed.add(u)
+        for neighbor, weight in graph[u]:
+            if neighbor not in processed:
+                candidate = curr_dist + weight
+                if candidate < distances[neighbor]:
+                    distances[neighbor] = candidate
+                    heapq.heappush(pq, (candidate, neighbor))
+    return distances

@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app, send_file
 from sqlalchemy import func
 from database import db
-from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment
+from models import User, Classroom, Assignment, Enrollment, Submission, AssignmentAttachment, to_iso_utc
 from utils.file_manager import cleanup_assignment_files
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
@@ -78,6 +78,23 @@ def create_assignment(class_id):
                 db.session.add(new_attachment)
 
         db.session.commit()
+
+        # 🌟 Event Trigger: Notify all enrolled students about the new assignment
+        try:
+            from utils.notification_helper import create_bulk_notifications
+            enrollments = Enrollment.query.filter_by(classroom_id=classroom.id).all()
+            student_ids = [e.student_id for e in enrollments]
+            if student_ids:
+                create_bulk_notifications(
+                    user_ids=student_ids,
+                    title="New Assignment Posted",
+                    message=f"{user.username} posted a new assignment: '{new_assignment.title}' in {classroom.name}",
+                    type="assignment",
+                    link=f"/student/class/{classroom.id}/assignment/{new_assignment.id}"
+                )
+        except Exception as notif_err:
+            print(f"Notification Trigger Warning (Assignment): {notif_err}")
+
         return jsonify({
             "message": "Assignment created successfully!",
             "assignment": new_assignment.to_dict() 
@@ -94,13 +111,24 @@ def create_assignment(class_id):
 def get_assignments(class_id):
     """Fetches all assignments and attaches the student's submission status and guide files in bulk"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id = current_user_id
 
-    if user.role == 'instructor':
+    user = User.query.get(user_id) if user_id else None
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    role = (user.role or '').lower()
+
+    if role == 'instructor':
         classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
-    elif user.role == 'student':
+    elif role == 'student':
         enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
         classroom = enrollment.classroom if enrollment else None
+    elif role == 'admin':
+        classroom = Classroom.query.get(class_id)
     else:
         return jsonify({"error": "Unauthorized"}), 403
 
@@ -136,7 +164,7 @@ def get_assignments(class_id):
 
     # 3. Batch fetch student submissions in 1 query (if student)
     student_subs = {}
-    if user.role == 'student':
+    if role == 'student':
         subs = Submission.query.filter(
             Submission.assignment_id.in_(assignment_ids),
             Submission.student_id == user.id
@@ -152,21 +180,26 @@ def get_assignments(class_id):
             "description": a.description,
             "max_score": a.max_score,
             "language": a.language,
-            "deadline": a.deadline.isoformat() if a.deadline else None,
+            "deadline": to_iso_utc(a.deadline),
             "submission_count": sub_counts.get(a.id, 0),
             "has_submitted": False,
             "score": None,
+            "feedback": None,
             "submitted_at": None,
             "allow_resubmit": False,
+            "resubmission_count": 0,
             "attachments": attach_map.get(a.id, [])
         }
 
-        if user.role == 'student' and a.id in student_subs:
+        if role == 'student' and a.id in student_subs:
             sub = student_subs[a.id]
             assignment_info["has_submitted"] = True
             assignment_info["score"] = getattr(sub, 'score', 'Pending')
-            assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
+            assignment_info["feedback"] = getattr(sub, 'feedback', None)
+            assignment_info["submitted_at"] = to_iso_utc(sub.submitted_at)
+            assignment_info["submitted_filename"] = getattr(sub, 'filename', None)
             assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
+            assignment_info["resubmission_count"] = getattr(sub, 'resubmission_count', 0)
 
         assignments_data.append(assignment_info)
         
@@ -178,16 +211,24 @@ def get_assignments(class_id):
 def get_assignment(class_id, assignment_id):
     """Fetches full details for a single assignment including attachments and student submission status"""
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    try:
+        user_id_int = int(current_user_id) if current_user_id is not None else None
+    except (ValueError, TypeError):
+        user_id_int = current_user_id
 
+    user = User.query.get(user_id_int) if user_id_int else None
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    if user.role == 'instructor':
+    role = (user.role or '').lower()
+
+    if role == 'instructor':
         classroom = Classroom.query.filter_by(id=class_id, instructor_id=user.id).first()
-    elif user.role == 'student':
+    elif role == 'student':
         enrollment = Enrollment.query.filter_by(student_id=user.id, classroom_id=class_id).first()
         classroom = enrollment.classroom if enrollment else None
+    elif role == 'admin':
+        classroom = Classroom.query.get(class_id)
     else:
         return jsonify({"error": "Unauthorized"}), 403
 
@@ -212,7 +253,7 @@ def get_assignment(class_id, assignment_id):
         "description": assignment.description,
         "max_score": assignment.max_score,
         "language": assignment.language,
-        "deadline": assignment.deadline.isoformat() if assignment.deadline else None,
+        "deadline": to_iso_utc(assignment.deadline),
         "classroom_name": classroom.name,
         "instructor_name": classroom.instructor.username if classroom.instructor else "Instructor",
         "has_submitted": False,
@@ -221,18 +262,20 @@ def get_assignment(class_id, assignment_id):
         "submitted_at": None,
         "submitted_filename": None,
         "allow_resubmit": False,
+        "resubmission_count": 0,
         "attachments": attach_list
     }
 
-    if user.role == 'student':
+    if role == 'student':
         sub = Submission.query.filter_by(assignment_id=assignment.id, student_id=user.id).first()
         if sub:
             assignment_info["has_submitted"] = True
             assignment_info["score"] = getattr(sub, 'score', 'Pending')
             assignment_info["feedback"] = getattr(sub, 'feedback', None)
-            assignment_info["submitted_at"] = sub.submitted_at.isoformat() if sub.submitted_at else None
+            assignment_info["submitted_at"] = to_iso_utc(sub.submitted_at)
             assignment_info["submitted_filename"] = getattr(sub, 'filename', None)
             assignment_info["allow_resubmit"] = getattr(sub, 'allow_resubmit', False)
+            assignment_info["resubmission_count"] = getattr(sub, 'resubmission_count', 0)
 
     return jsonify(assignment_info), 200
 

@@ -1,2 +1,0 @@
-This is an invalid plain text file (.txt).
-The system should reject this upload because assignments require .py or .java.

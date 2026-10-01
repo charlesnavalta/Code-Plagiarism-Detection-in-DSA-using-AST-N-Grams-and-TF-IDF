@@ -1,60 +1,56 @@
-class Node_1:
-    def __init__(self, v_1):
-        self.v_1 = v_1
-        self.r_1 = None
-        self.l_1 = None
+class AVLNode:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
         self.height = 1
 
-def h_1(node):
-    if not node:
-        return 0
-    return node.height
+class AVLTree:
+    def insert(self, root, key):
+        if root is None:
+            return AVLNode(key)
+        if key < root.key:
+            root.left = self.insert(root.left, key)
+        elif key > root.key:
+            root.right = self.insert(root.right, key)
+        else:
+            return root
 
-def b_1(node):
-    if not node:
-        return 0
-    return h_1(node.l_1) - h_1(node.r_1)
+        root.height = 1 + max(self.get_height(root.left), self.get_height(root.right))
+        bal = self.get_balance(root)
 
-def rr_1(y):
-    x = y.l_1
-    sub = x.r_1
-    x.r_1 = y
-    y.l_1 = sub
-    y.height = 1 + max(h_1(y.l_1), h_1(y.r_1))
-    x.height = 1 + max(h_1(x.l_1), h_1(x.r_1))
-    return x
+        if bal > 1:
+            if key < root.left.key:
+                return self.right_rotate(root)
+            root.left = self.left_rotate(root.left)
+            return self.right_rotate(root)
+        if bal < -1:
+            if key > root.right.key:
+                return self.left_rotate(root)
+            root.right = self.right_rotate(root.right)
+            return self.left_rotate(root)
+        return root
 
-def rl_1(x):
-    y = x.r_1
-    sub = y.l_1
-    y.l_1 = x
-    x.r_1 = sub
-    x.height = 1 + max(h_1(x.l_1), h_1(x.r_1))
-    y.height = 1 + max(h_1(y.l_1), h_1(y.r_1))
-    return y
+    def get_height(self, node):
+        return node.height if node is not None else 0
 
-def ins_1(rt_1, v_1):
-    if not rt_1:
-        return Node_1(v_1)
-    if v_1 < rt_1.v_1:
-        rt_1.l_1 = ins_1(rt_1.l_1, v_1)
-    elif v_1 > rt_1.v_1:
-        rt_1.r_1 = ins_1(rt_1.r_1, v_1)
-    else:
-        return rt_1
+    def get_balance(self, node):
+        return (self.get_height(node.left) - self.get_height(node.right)) if node is not None else 0
 
-    rt_1.height = 1 + max(h_1(rt_1.l_1), h_1(rt_1.r_1))
-    bf_1 = b_1(rt_1)
+    def right_rotate(self, y):
+        x = y.left
+        t2 = x.right
+        x.right = y
+        y.left = t2
+        y.height = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        x.height = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        return x
 
-    if bf_1 > 1 and v_1 < rt_1.l_1.v_1:
-        return rr_1(rt_1)
-    if bf_1 < -1 and v_1 > rt_1.r_1.v_1:
-        return rl_1(rt_1)
-    if bf_1 > 1 and v_1 > rt_1.l_1.v_1:
-        rt_1.l_1 = rl_1(rt_1.l_1)
-        return rr_1(rt_1)
-    if bf_1 < -1 and v_1 < rt_1.r_1.v_1:
-        rt_1.r_1 = rr_1(rt_1.r_1)
-        return rl_1(rt_1)
-
-    return rt_1
+    def left_rotate(self, x):
+        y = x.right
+        t2 = y.left
+        y.left = x
+        x.right = t2
+        x.height = 1 + max(self.get_height(x.left), self.get_height(x.right))
+        y.height = 1 + max(self.get_height(y.left), self.get_height(y.right))
+        return y
