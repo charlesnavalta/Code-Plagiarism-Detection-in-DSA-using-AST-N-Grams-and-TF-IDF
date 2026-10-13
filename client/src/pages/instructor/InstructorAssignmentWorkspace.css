@@ -839,7 +839,7 @@ html[data-theme='light'] .workspace-file-name {
 @media (max-width: 768px) {
     .instructor-workspace-container {
         padding-top: 12px;
-        padding-bottom: 100px;
+        padding-bottom: calc(75px + env(safe-area-inset-bottom, 20px) + 28px);
         padding-left: 14px;
         padding-right: 14px;
     }
@@ -1118,7 +1118,7 @@ html[data-theme='light'] .btn-preset-chip {
 @media (max-width: 768px) {
     .instructor-workspace-container {
         padding-top: 12px;
-        padding-bottom: 20px;
+        padding-bottom: calc(75px + env(safe-area-inset-bottom, 20px) + 28px);
         padding-left: 12px;
         padding-right: 12px;
     }

@@ -198,6 +198,11 @@ def create_app():
             run_smart_seed(db)
             print("Falsicode CLI: Smart Seed complete.")
 
+    # 4. Error Handlers
+    @app.errorhandler(413)
+    def request_entity_too_large(error):
+        return jsonify({"error": "Payload exceeds the maximum allowed upload limit (32 MB total)."}), 413
+
     # 5. Base Route (Health Check & Cold-Start Warmup)
     @app.route('/')
     @app.route('/health')

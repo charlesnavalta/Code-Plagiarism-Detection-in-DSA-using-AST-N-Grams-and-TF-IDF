@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 import { useToast } from '../../context/NotificationContext';
 import AnalysisLoadingState from '../../components/instructor/AnalysisLoadingState';
@@ -18,7 +17,6 @@ const SubmissionsAuditModal = ({
     classroomId, 
     assignmentId 
 }) => {
-    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('submissions'); // 'submissions' | 'report' | 'summary'
     const [gradeInputs, setGradeInputs] = useState({}); 
     const [unlockedIds, setUnlockedIds] = useState([]); // Tracks instantly unlocked submissions
@@ -396,7 +394,8 @@ const SubmissionsAuditModal = ({
                     <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
-                    <span>Plagiarism Report</span>
+                    <span className="tab-label-desktop">Plagiarism Report</span>
+                    <span className="tab-label-mobile">Report</span>
                     {analysisResults && (
                         <span className={`tab-badge-count ${flaggedPairsCount > 0 ? 'alert' : 'clean'}`}>
                             {flaggedPairsCount > 0 ? flaggedPairsCount : '0'}
@@ -413,7 +412,8 @@ const SubmissionsAuditModal = ({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                     </svg>
-                    <span>Class Summary</span>
+                    <span className="tab-label-desktop">Class Summary</span>
+                    <span className="tab-label-mobile">Summary</span>
                     {analysisResults && (
                         <span className="tab-badge-count info">
                             100%
@@ -682,28 +682,30 @@ const SubmissionsAuditModal = ({
                                                     </button>
                                                 </div>
                                                 
-                                                <button 
-                                                    className={`btn-comment-feedback ${hasFeedback ? 'has-feedback' : ''}`}
-                                                    onClick={() => openFeedbackModal(sub)}
-                                                    title={hasFeedback ? `Feedback: ${subFeedback.slice(0, 50)}...` : "Add instructor feedback / remarks"}
-                                                >
-                                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                                    </svg>
-                                                    <span>{hasFeedback ? 'FEEDBACK' : 'REMARKS'}</span>
-                                                </button>
+                                                <div className="card-secondary-actions">
+                                                    <button 
+                                                        className={`btn-comment-feedback ${hasFeedback ? 'has-feedback' : ''}`}
+                                                        onClick={() => openFeedbackModal(sub)}
+                                                        title={hasFeedback ? `Feedback: ${subFeedback.slice(0, 50)}...` : "Add instructor feedback / remarks"}
+                                                    >
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                                        </svg>
+                                                        <span>{hasFeedback ? 'FEEDBACK' : 'REMARKS'}</span>
+                                                    </button>
 
-                                                <button 
-                                                    className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
-                                                    onClick={() => handleAllowResubmit(sub.id)}
-                                                    disabled={isUnlocked}
-                                                    title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
-                                                >
-                                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                                    </svg>
-                                                    <span>{isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}</span>
-                                                </button>
+                                                    <button 
+                                                        className={`btn-allow-resubmit ${isUnlocked ? 'unlocked' : ''}`} 
+                                                        onClick={() => handleAllowResubmit(sub.id)}
+                                                        disabled={isUnlocked}
+                                                        title={isUnlocked ? "Student is currently allowed to resubmit" : "Unlock to allow student to upload again"}
+                                                    >
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{marginRight: '4px'}}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                        </svg>
+                                                        <span>{isUnlocked ? 'WAITING' : 'ALLOW RESUBMIT'}</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     );

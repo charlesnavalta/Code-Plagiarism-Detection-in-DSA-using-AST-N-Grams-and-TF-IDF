@@ -7,7 +7,14 @@ import api from '../../services/api';
 import './InstructorAssignmentWorkspace.css';
 
 // Shared Utilities & Components
-import { formatLanguageDisplay, getFileExtension } from '../../utils/fileUtils';
+import { 
+    formatLanguageDisplay, 
+    getFileExtension, 
+    formatFileSize, 
+    validateGuideFile, 
+    GUIDE_FILE_ACCEPT_STRING, 
+    MAX_GUIDE_FILE_SIZE_MB 
+} from '../../utils/fileUtils';
 import { formatDeadline } from '../../utils/dateUtils';
 import { validateAssignmentDescription, validateDeadline } from '../../utils/validation';
 import DateTimePicker from '../../components/common/DateTimePicker';
@@ -52,22 +59,48 @@ const InstructorCreateAssignmentView = () => {
         fetchClassroom();
     }, [classId, navigate, toast]);
 
-    const formatFileSize = (bytes) => {
-        if (!bytes || bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    };
-
     const processFiles = (newFiles) => {
-        const combined = [...guideFiles, ...newFiles];
-        if (combined.length > 3) {
-            toast.warning("You can only upload a maximum of 3 guide files.", "File Limit Exceeded");
-            setGuideFiles(combined.slice(0, 3));
+        if (!newFiles || newFiles.length === 0) return;
+
+        const currentCount = guideFiles.length;
+        const availableSlots = 3 - currentCount;
+        if (availableSlots <= 0) {
+            toast.warning("You have already reached the maximum limit of 3 guide files.", "File Limit Reached");
             return;
         }
-        setGuideFiles(combined);
+
+        const validToAdd = [];
+        for (const file of newFiles) {
+            const validation = validateGuideFile(file);
+            if (!validation.valid) {
+                toast.error(validation.error, "File Rejected");
+                continue;
+            }
+
+            const isDuplicate = guideFiles.some(
+                (existing) => existing.name === file.name && existing.size === file.size
+            ) || validToAdd.some(
+                (added) => added.name === file.name && added.size === file.size
+            );
+
+            if (isDuplicate) {
+                toast.warning(`File "${file.name}" is already attached.`, "Duplicate Skipped");
+                continue;
+            }
+
+            validToAdd.push(file);
+        }
+
+        if (validToAdd.length === 0) {
+            return;
+        }
+
+        if (validToAdd.length > availableSlots) {
+            toast.warning(`Only ${availableSlots} more file(s) could be attached. Remaining files were skipped.`, "Attachment Limit");
+            setGuideFiles((prev) => [...prev, ...validToAdd.slice(0, availableSlots)]);
+        } else {
+            setGuideFiles((prev) => [...prev, ...validToAdd]);
+        }
     };
 
     const handleFileChange = (e) => {
@@ -117,6 +150,15 @@ const InstructorCreateAssignmentView = () => {
         if (deadlineError) {
             toast.warning(deadlineError, "Invalid Deadline");
             return;
+        }
+
+        // Validate attached guide files
+        for (const file of guideFiles) {
+            const fileCheck = validateGuideFile(file);
+            if (!fileCheck.valid) {
+                toast.error(fileCheck.error, "Invalid Attachment");
+                return;
+            }
         }
 
         setIsSubmitting(true);
@@ -256,7 +298,7 @@ const InstructorCreateAssignmentView = () => {
                             <div className="workspace-panel-card">
                                 <div className="workspace-panel-header">
                                     <h3>Guide & Reference Materials</h3>
-                                    <span className="workspace-panel-subtitle">{guideFiles.length} / 3 Files Attached</span>
+                                    <span className="workspace-panel-subtitle">{guideFiles.length} / 3 Files Attached (Max {MAX_GUIDE_FILE_SIZE_MB} MB each)</span>
                                 </div>
 
                                 <input
@@ -264,7 +306,7 @@ const InstructorCreateAssignmentView = () => {
                                     id="guide-file-picker-full"
                                     multiple
                                     onChange={handleFileChange}
-                                    accept=".pdf,.txt,.docx,.zip,.png,.jpg,.py,.java"
+                                    accept={GUIDE_FILE_ACCEPT_STRING}
                                     style={{ display: 'none' }}
                                     disabled={guideFiles.length >= 3}
                                 />
@@ -287,7 +329,7 @@ const InstructorCreateAssignmentView = () => {
                                         </svg>
                                         Choose Guide Files
                                     </label>
-                                    <span className="workspace-dropzone-sub">or drag and drop PDF, TXT, DOCX, ZIP, PY, JAVA files here</span>
+                                    <span className="workspace-dropzone-sub">or drag and drop PDF, DOCX, TXT, Code, ZIP here • Max {MAX_GUIDE_FILE_SIZE_MB} MB per file (No audio/video)</span>
                                 </div>
 
                                 {/* Attached Files Chips */}

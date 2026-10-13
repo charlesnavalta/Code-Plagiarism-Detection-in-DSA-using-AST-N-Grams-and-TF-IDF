@@ -62,6 +62,7 @@ const InstructorClassroomView = () => {
     }, [id, navigate]);
 
     const handleViewSubmissions = (assignment) => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         navigate(`/instructor/class/${id}/assignment/${assignment.id}/audit`, {
             state: {
                 assignment
@@ -171,7 +172,7 @@ const InstructorClassroomView = () => {
                                              handleViewSubmissions(assignment);
                                          }}
                                     >
-                                        {hasSubmissions ? 'Launch Plagiarism Audit →' : 'View Workspace →'}
+                                        {hasSubmissions ? 'Audit Submissions →' : 'View Workspace →'}
                                     </button>
                                 </div>
                             );

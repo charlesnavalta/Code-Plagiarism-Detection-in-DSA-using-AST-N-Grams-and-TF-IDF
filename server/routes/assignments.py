@@ -1,4 +1,5 @@
 import os
+import mimetypes
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app, send_file
 from sqlalchemy import func
@@ -10,6 +11,72 @@ from datetime import datetime, timedelta
 
 # Create a dedicated Blueprint for assignments
 assignments_bp = Blueprint('assignments', __name__)
+
+# Allowed / Disallowed File Types & Size Limits for Guide & Reference Materials
+MAX_GUIDE_FILE_SIZE = 10 * 1024 * 1024  # 10 MB per file
+
+ALLOWED_GUIDE_EXTENSIONS = {
+    # Documents
+    '.pdf', '.doc', '.docx', '.txt', '.rtf', '.md', '.odt',
+    # Spreadsheets & Presentations
+    '.csv', '.tsv', '.xls', '.xlsx', '.ppt', '.pptx',
+    # Code & Algorithms / DSA Tools
+    '.py', '.java', '.c', '.cpp', '.h', '.hpp', '.cs', '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.json', '.xml', '.sql',
+    # Archives
+    '.zip', '.tar', '.gz', '.7z', '.rar',
+    # Images / Diagrams
+    '.png', '.jpg', '.jpeg', '.webp', '.svg'
+}
+
+DISALLOWED_MEDIA_EXTENSIONS = {
+    # Audio
+    '.mp3', '.wav', '.m4a', '.aac', '.ogg', '.flac', '.wma', '.mid', '.midi',
+    # Video
+    '.mp4', '.avi', '.mov', '.mkv', '.webm', '.wmv', '.flv', '.m4v', '.3gp', '.m4p', '.mpg', '.mpeg', '.vob'
+}
+
+def validate_guide_file(file):
+    """
+    Validates a single guide file uploaded for an assignment.
+    Ensures it adheres to allowed extensions, is not an audio/video or dangerous binary,
+    is not 0 bytes, and does not exceed the 10 MB limit.
+    """
+    if not file or not file.filename:
+        return None
+
+    filename = file.filename
+    ext = os.path.splitext(filename)[1].lower()
+    content_type = (file.content_type or '').lower()
+
+    # 1. Reject audio and video files explicitly
+    if ext in DISALLOWED_MEDIA_EXTENSIONS or content_type.startswith('audio/') or content_type.startswith('video/'):
+        return f"Audio and video files ({ext or content_type}) are not permitted as guide materials."
+
+    # 2. Reject executable / dangerous system scripts
+    dangerous_exts = {'.exe', '.msi', '.bat', '.cmd', '.sh', '.bin', '.dll', '.com', '.vbs', '.ps1'}
+    if ext in dangerous_exts:
+        return f"Executable and system script files ({ext}) cannot be uploaded as guide materials."
+
+    # 3. Whitelist check
+    if ext not in ALLOWED_GUIDE_EXTENSIONS:
+        return f"File '{filename}' has an unsupported file type ({ext or 'no extension'}). Allowed formats: PDF, DOCX, TXT, Code, ZIP, images."
+
+    # 4. Check file size
+    try:
+        file.seek(0, os.SEEK_END)
+        size = file.tell()
+        file.seek(0)
+    except Exception:
+        size = 0
+
+    if size == 0:
+        return f"File '{filename}' is empty (0 bytes). Please upload a valid document or reference material."
+
+    if size > MAX_GUIDE_FILE_SIZE:
+        size_mb = round(size / (1024 * 1024), 2)
+        return f"File '{filename}' exceeds the maximum allowed size of 10 MB ({size_mb} MB)."
+
+    return None
 
 @assignments_bp.route('/<int:class_id>/assignments', methods=['POST'])
 @jwt_required()
@@ -55,27 +122,34 @@ def create_assignment(class_id):
         db.session.flush() # Flushes to get the new_assignment.id before committing
 
         # 🌟 Handle the Attachments (Max 3)
-        files = request.files.getlist('files')
+        files = [f for f in request.files.getlist('files') if f and f.filename != ''] if request.files else []
         if len(files) > 3:
             return jsonify({"error": "Maximum of 3 guide files allowed."}), 400
 
+        # Validate all files before writing to disk
         for file in files:
-            if file and file.filename != '':
-                original_filename = secure_filename(file.filename)
-                unique_filename = f"guide_assign_{new_assignment.id}_{original_filename}"
-                # Prefix with assignment ID to prevent naming collisions
-                attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
-                os.makedirs(attachments_dir, exist_ok=True)
-                filepath = os.path.join(attachments_dir, unique_filename)
-                
-                file.save(filepath)
-                
-                new_attachment = AssignmentAttachment(
-                    assignment_id=new_assignment.id,
-                    filename=original_filename,
-                    file_path=filepath
-                )
-                db.session.add(new_attachment)
+            val_error = validate_guide_file(file)
+            if val_error:
+                return jsonify({"error": val_error}), 400
+
+        for file in files:
+            original_filename = secure_filename(file.filename)
+            if not original_filename:
+                original_filename = f"guide_{int(datetime.utcnow().timestamp())}{os.path.splitext(file.filename)[1]}"
+            unique_filename = f"guide_assign_{new_assignment.id}_{original_filename}"
+            # Prefix with assignment ID to prevent naming collisions
+            attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
+            os.makedirs(attachments_dir, exist_ok=True)
+            filepath = os.path.join(attachments_dir, unique_filename)
+            
+            file.save(filepath)
+            
+            new_attachment = AssignmentAttachment(
+                assignment_id=new_assignment.id,
+                filename=original_filename,
+                file_path=filepath
+            )
+            db.session.add(new_attachment)
 
         db.session.commit()
 
@@ -344,27 +418,34 @@ def update_assignment(class_id, assignment_id):
             db.session.flush()
 
         # 2. Process Newly Added Guide Files (Max total 3)
-        new_files = request.files.getlist('files') if request.files else []
+        new_files = [f for f in request.files.getlist('files') if f and f.filename != ''] if request.files else []
         current_attachments_count = AssignmentAttachment.query.filter_by(assignment_id=assignment.id).count()
 
         if current_attachments_count + len(new_files) > 3:
             return jsonify({"error": f"Total attachments cannot exceed 3. Currently have {current_attachments_count} and tried to add {len(new_files)}."}), 400
 
+        # Validate newly uploaded guide files before saving
         for file in new_files:
-            if file and file.filename != '':
-                original_filename = secure_filename(file.filename)
-                unique_filename = f"guide_assign_{assignment.id}_{original_filename}"
-                attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
-                os.makedirs(attachments_dir, exist_ok=True)
-                filepath = os.path.join(attachments_dir, unique_filename)
-                file.save(filepath)
+            val_error = validate_guide_file(file)
+            if val_error:
+                return jsonify({"error": val_error}), 400
 
-                new_attachment = AssignmentAttachment(
-                    assignment_id=assignment.id,
-                    filename=original_filename,
-                    file_path=filepath
-                )
-                db.session.add(new_attachment)
+        for file in new_files:
+            original_filename = secure_filename(file.filename)
+            if not original_filename:
+                original_filename = f"guide_{int(datetime.utcnow().timestamp())}{os.path.splitext(file.filename)[1]}"
+            unique_filename = f"guide_assign_{assignment.id}_{original_filename}"
+            attachments_dir = current_app.config.get('ATTACHMENTS_FOLDER', os.path.join(current_app.config['UPLOAD_FOLDER'], 'attachments'))
+            os.makedirs(attachments_dir, exist_ok=True)
+            filepath = os.path.join(attachments_dir, unique_filename)
+            file.save(filepath)
+
+            new_attachment = AssignmentAttachment(
+                assignment_id=assignment.id,
+                filename=original_filename,
+                file_path=filepath
+            )
+            db.session.add(new_attachment)
 
         db.session.commit()
         response_data = assignment.to_dict()
@@ -513,17 +594,39 @@ def get_attachment(class_id, attachment_id):
     ext = os.path.splitext(attachment.filename)[1].lower()
     mime_map = {
         '.pdf': 'application/pdf',
+        '.doc': 'application/msword',
+        '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        '.xls': 'application/vnd.ms-excel',
+        '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        '.ppt': 'application/vnd.ms-powerpoint',
+        '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         '.py': 'text/x-python',
         '.java': 'text/x-java-source',
         '.cpp': 'text/x-c',
         '.c': 'text/x-c',
+        '.cs': 'text/plain',
+        '.js': 'text/javascript',
+        '.ts': 'text/plain',
+        '.html': 'text/html',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.xml': 'application/xml',
+        '.sql': 'text/plain',
         '.txt': 'text/plain',
+        '.md': 'text/markdown',
+        '.csv': 'text/csv',
         '.png': 'image/png',
         '.jpg': 'image/jpeg',
         '.jpeg': 'image/jpeg',
-        '.zip': 'application/zip'
+        '.webp': 'image/webp',
+        '.svg': 'image/svg+xml',
+        '.zip': 'application/zip',
+        '.tar': 'application/x-tar',
+        '.gz': 'application/gzip',
+        '.7z': 'application/x-7z-compressed',
+        '.rar': 'application/vnd.rar'
     }
-    mimetype = mime_map.get(ext, 'application/octet-stream')
+    mimetype = mime_map.get(ext) or mimetypes.guess_type(attachment.filename)[0] or 'application/octet-stream'
 
     is_download = request.args.get('download', 'false').lower() == 'true'
 

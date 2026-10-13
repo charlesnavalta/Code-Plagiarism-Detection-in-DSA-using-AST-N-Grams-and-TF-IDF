@@ -1,0 +1,26 @@
+# Vercel Deployment Ignore Configuration
+# Prevents Vercel from uploading/scanning backend files & datasets during React build
+
+# Backend server & Python engines
+server/
+*.py
+*.pyc
+__pycache__/
+
+# Datasets & source benchmark files
+datasets/
+*.java
+*.pdf
+
+# Testing, benchmarking, & temporary files
+load_tests/
+test_samples/
+scratch/
+locustfile.py
+
+# Local configuration & environment files
+.env
+.env.local
+.env.development
+.git/
+.github/

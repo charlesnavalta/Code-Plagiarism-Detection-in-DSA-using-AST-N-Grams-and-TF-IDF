@@ -10,6 +10,7 @@ import ToastContainer from './components/common/ToastContainer';
 // ==========================================
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Navbar from './components/common/Navbar';
+import ScrollToTop from './components/common/ScrollToTop';
 import Profile from './pages/common/Profile';
 import LandingPage from './pages/common/LandingPage';
 
@@ -88,6 +89,7 @@ function AppContent() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Navbar /> 
       <ToastContainer />
       <SessionTimeoutManager />

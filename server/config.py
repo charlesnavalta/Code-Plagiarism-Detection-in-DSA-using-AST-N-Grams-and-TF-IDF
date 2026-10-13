@@ -63,5 +63,5 @@ class Config:
     SUBMISSIONS_FOLDER = os.path.join(UPLOAD_FOLDER, 'submissions')
     ATTACHMENTS_FOLDER = os.path.join(UPLOAD_FOLDER, 'attachments')
     
-    # Security: Prevent massive file uploads (Max 16 MB)
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    # Security: Prevent massive file uploads (Max 32 MB total request size)
+    MAX_CONTENT_LENGTH = 32 * 1024 * 1024

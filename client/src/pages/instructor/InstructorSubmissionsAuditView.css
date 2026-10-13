@@ -26,6 +26,10 @@ html[data-theme='light'] .instructor-audit-page {
 }
 
 @media (max-width: 768px) {
+    .instructor-audit-page {
+        padding-bottom: calc(75px + env(safe-area-inset-bottom, 20px) + 32px) !important;
+    }
+
     .audit-page-container {
         padding: 16px 14px;
         gap: 16px;
@@ -377,6 +381,29 @@ html[data-theme='light'] .audit-page-tabs-bar .audit-tab-btn.active {
     color: #0f172a;
     border-color: #cbd5e1;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 580px) {
+    .audit-page-tabs-bar .audit-segmented-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+        gap: 4px;
+        padding: 4px;
+    }
+
+    .audit-page-tabs-bar .audit-segmented-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .audit-page-tabs-bar .audit-tab-btn {
+        flex: 1 0 auto;
+        min-width: max-content;
+        padding: 8px 10px;
+        font-size: 0.78rem;
+        gap: 6px;
+    }
 }
 
 .audit-sticky-controls-bar .audit-search-toolbar {
