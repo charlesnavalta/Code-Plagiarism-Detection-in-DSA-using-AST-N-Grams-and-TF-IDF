@@ -77,12 +77,11 @@ const CodeComparisonView = ({
 
         const lines = code.split('\n');
         const isMixedAttack = overallType && overallType.includes('Type 3');
-        const isSafe = !overallType || overallType === 'N/A' || overallType.toLowerCase().includes('safe') || overallType.toLowerCase().includes('clean');
 
         return lines.map((line, index) => {
             const lineNumber = index + 1;
             
-            const match = isSafe ? null : highlightedLines.find(m => {
+            const match = highlightedLines.find(m => {
                 if (typeof m === 'number') return m === lineNumber; 
                 return m.line === lineNumber; 
             });

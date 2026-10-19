@@ -73,80 +73,168 @@ def structural_divergence(skeleton_i: list, skeleton_j: list) -> float:
     return round((diff / total) * 100, 2)
 
 
-def detect_renamed_line_pairs(tokens_i: list, tokens_j: list, flagged_lines_i: set, flagged_lines_j: set):
+def classify_pair_lines(
+    tokens_i: list, tokens_j: list, lines_i: list, lines_j: list
+) -> tuple[list[dict], list[dict]]:
     """
-    Identifies lines within a Type 3 pair that also exhibit Type 2 (renamed identifier)
-    characteristics — i.e. identical structural skeleton with altered variable/literal names.
+    Unified per-line forensic classifier used for ALL pair types (Safe, Type 1, 2, 3).
+
+    Replaces the previous 'stamp every flagged line with the pair's overall type' approach.
+    Each flagged line in i is individually matched to the best unclaimed line in j
+    by skeleton similarity, then assigned its own type based on content and position evidence.
+
+    Decision tree per line in i
+    ──────────────────────────────────────────────────────────────────────────
+    Step 1 — structural match
+      best skeleton_ratio across unclaimed j-lines:
+      < SKEL_MIN (0.70) ────────────────────────────► Type 3  (no structural peer
+                                                              → structurally modified line)
+
+    Step 2 — content identity (raw variable names / literals)
+      raw_ratio >= TYPE1_RAW  (0.85) ──────────────► Type 1  (verbatim / near-identical line)
+      raw_ratio <  TYPE2_RAW_MAX (0.65) ───────────► Type 2  (same AST shape, renamed vars)
+
+    Step 3 — position delta (for ambiguous content in 0.65–0.85 band)
+      |ln_i - ln_j| > POS_TOLERANCE (2) ──────────► Type 3  (reordered to different position)
+      otherwise ───────────────────────────────────► Type 1  (same position, near-identical)
+
+    J-lines not claimed by any i-line are stamped Type 3 (reordered / structurally unique).
+    Lines with empty skeletons (pure keywords / braces only) are skipped.
 
     Returns:
-        tuple[list[int], list[int]]: (renamed_lines_i, renamed_lines_j)
+        tuple[list[dict], list[dict]]: (formatted_lines_i, formatted_lines_j)
+        each entry is {"line": int, "type": int (1, 2, or 3)}.
     """
-    SKELETON_MATCH_THRESHOLD = 0.70
-    RAW_DIFF_THRESHOLD = 0.75
+    SKEL_MIN      = 0.70   # min skeleton similarity to consider a structural match
+    TYPE1_RAW     = 0.85   # raw identity >= this  →  verbatim line (Type 1)
+    TYPE2_RAW_MAX = 0.65   # raw identity <  this  →  renamed line  (Type 2)
+    POS_TOLERANCE = 2      # line-number delta within which position is "the same"
 
-    def tokens_by_line(tokens, flagged_set):
+    # ── helpers ──────────────────────────────────────────────────────────────
+    def tokens_by_line(tokens, line_set):
         by_line = {}
         for t in tokens:
             ln = t[1]
-            if ln in flagged_set:
+            if ln in line_set:
                 by_line.setdefault(ln, []).append(t)
         return by_line
 
-    lines_map_i = tokens_by_line(tokens_i, flagged_lines_i)
-    lines_map_j = tokens_by_line(tokens_j, flagged_lines_j)
+    def line_skeleton(line_toks):
+        return [t[0] for t in line_toks if t[0] not in STRUCTURAL_IGNORE_TYPES]
 
-    if not lines_map_i or not lines_map_j:
-        return [], []
-
-    def line_skeleton(line_tokens):
-        return [t[0] for t in line_tokens if t[0] not in STRUCTURAL_IGNORE_TYPES]
-
-    def line_raw_ids(line_tokens):
+    def line_raw_ids(line_toks):
         result = []
-        for t in line_tokens:
+        for t in line_toks:
             if t[0] in ("Name_ID", "Constant_CONST"):
                 raw = _get_raw_value(t)
                 result.append(raw if raw is not None else t[0])
         return result
 
-    renamed_i = set()
-    renamed_j = set()
+    # ── build per-line token maps ─────────────────────────────────────────────
+    set_i = set(ln for ln in lines_i if ln > 0)
+    set_j = set(ln for ln in lines_j if ln > 0)
+
+    map_i = tokens_by_line(tokens_i, set_i)
+    map_j = tokens_by_line(tokens_j, set_j)
+
+    if not map_i or not map_j:
+        # No token data — fall back to stamping everything Type 3
+        return (
+            [{"line": ln, "type": 3} for ln in sorted(set_i)],
+            [{"line": ln, "type": 3} for ln in sorted(set_j)]
+        )
 
     j_data = {
         ln: (line_skeleton(toks), line_raw_ids(toks))
-        for ln, toks in lines_map_j.items()
+        for ln, toks in map_j.items()
     }
 
-    for ln_i, toks_i in lines_map_i.items():
+    annotated_i = {}  # ln_i → line type
+    matched_j   = {}  # ln_j → line type
+    claimed_j   = set()  # prevents a j-line from being matched by multiple i-lines
+
+    # ── per-line matching (i-lines processed in ascending order) ─────────────
+    for ln_i, toks_i in sorted(map_i.items()):
         skel_i = line_skeleton(toks_i)
-        raw_i = line_raw_ids(toks_i)
+        raw_i  = line_raw_ids(toks_i)
 
         if not skel_i:
+            # Pure boilerplate (only keywords / punctuation) — skip
             continue
 
+        # Step 1: find best unclaimed structural match in j
         best_skel_ratio = 0.0
-        best_ln_j = None
-        best_raw_ratio = 0.0
+        best_ln_j       = None
 
-        for ln_j, (skel_j, raw_j) in j_data.items():
-            if not skel_j:
+        for ln_j, (skel_j, _) in j_data.items():
+            if not skel_j or ln_j in claimed_j:
                 continue
-            skel_ratio = difflib.SequenceMatcher(None, skel_i, skel_j).ratio()
-            if skel_ratio > best_skel_ratio:
-                best_skel_ratio = skel_ratio
-                best_ln_j = ln_j
-                best_raw_ratio = (
-                    difflib.SequenceMatcher(None, raw_i, raw_j).ratio()
-                    if (raw_i or raw_j) else 1.0
-                )
+            ratio = difflib.SequenceMatcher(None, skel_i, skel_j).ratio()
+            if ratio > best_skel_ratio:
+                best_skel_ratio = ratio
+                best_ln_j       = ln_j
 
-        if (best_ln_j is not None
-                and best_skel_ratio >= SKELETON_MATCH_THRESHOLD
-                and best_raw_ratio < RAW_DIFF_THRESHOLD):
-            renamed_i.add(ln_i)
-            renamed_j.add(best_ln_j)
+        if best_ln_j is None or best_skel_ratio < SKEL_MIN:
+            # No structural peer found → structurally modified / inserted line
+            annotated_i[ln_i] = 3
+            continue
 
-    return list(renamed_i), list(renamed_j)
+        # Step 2: raw content identity on the matched pair
+        _, raw_j = j_data[best_ln_j]
+        raw_ratio = (
+            difflib.SequenceMatcher(None, raw_i, raw_j).ratio()
+            if (raw_i or raw_j) else 1.0
+        )
+
+        # Step 3: decide line type
+        if raw_ratio >= TYPE1_RAW:
+            line_type = 1                               # verbatim / near-identical
+        elif raw_ratio < TYPE2_RAW_MAX:
+            line_type = 2                               # renamed identifiers
+        elif abs(ln_i - best_ln_j) > POS_TOLERANCE:
+            line_type = 3                               # reordered to different position
+        else:
+            line_type = 1                               # same position, similar content
+
+        claimed_j.add(best_ln_j)
+        annotated_i[ln_i]    = line_type
+        matched_j[best_ln_j] = line_type
+
+    # j-lines not claimed by any i-line → Type 3 (reordered / structurally unique)
+    for ln_j in sorted(set_j):
+        if ln_j not in matched_j:
+            matched_j[ln_j] = 3
+
+    fmt_i = [{"line": ln, "type": t} for ln, t in sorted(annotated_i.items())]
+    fmt_j = [{"line": ln, "type": t} for ln, t in sorted(matched_j.items())]
+    return fmt_i, fmt_j
+
+
+def detect_renamed_line_pairs(tokens_i: list, tokens_j: list, flagged_lines_i: set, flagged_lines_j: set):
+    """
+    Legacy wrapper — kept for API compatibility.
+    Delegates to classify_pair_lines() and returns only the renamed (Type 2) line numbers.
+    """
+    lines_i = sorted(flagged_lines_i)
+    lines_j = sorted(flagged_lines_j)
+    fmt_i, fmt_j = classify_pair_lines(tokens_i, tokens_j, lines_i, lines_j)
+    renamed_i = [e["line"] for e in fmt_i if e["type"] == 2]
+    renamed_j = [e["line"] for e in fmt_j if e["type"] == 2]
+    return renamed_i, renamed_j
+
+
+def classify_safe_pair_lines(
+    tokens_i: list, tokens_j: list, lines_i: list, lines_j: list
+) -> tuple[list[dict], list[dict]]:
+    """
+    Legacy wrapper — kept for API compatibility.
+    Delegates to classify_pair_lines() and filters to Type 1/2 only (no Type 3 for Safe pairs).
+    """
+    fmt_i, fmt_j = classify_pair_lines(tokens_i, tokens_j, lines_i, lines_j)
+    fmt_i = [e for e in fmt_i if e["type"] in (1, 2)]
+    fmt_j = [e for e in fmt_j if e["type"] in (1, 2)]
+    return fmt_i, fmt_j
+
 
 
 def classify_plagiarism_type(status: str, raw_identity_score: float, order_similarity_score: float, struct_divergence_score: float) -> str:
