@@ -252,20 +252,32 @@ const CodeComparisonView = ({
                         </button>
                     </div>
 
-                    <button
-                        type="button"
-                        className={`btn-sync-toggle ${syncScroll ? 'active' : ''}`}
-                        onClick={() => setSyncScroll(!syncScroll)}
-                        title={syncScroll ? "Synchronized scrolling active" : "Independent scrolling active"}
-                    >
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                        </svg>
-                        <span>Sync Scroll</span>
-                    </button>
+                    <div className="comparison-action-buttons">
+                        <button
+                            type="button"
+                            className={`btn-sync-toggle ${syncScroll ? 'active' : ''}`}
+                            onClick={() => setSyncScroll(!syncScroll)}
+                            title={syncScroll ? "Synchronized scrolling active (both panes scroll together)" : "Independent scrolling active (panes scroll separately)"}
+                            aria-label={`Synchronized scrolling is ${syncScroll ? 'enabled' : 'disabled'}`}
+                        >
+                            <span className="sync-icon-wrap" aria-hidden="true">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </span>
+                            <span className="sync-text-wrap">
+                                <span className="sync-text-desktop">Sync Scroll</span>
+                                <span className="sync-text-mobile">Sync</span>
+                            </span>
+                            <span className={`sync-pill-indicator ${syncScroll ? 'on' : 'off'}`}>
+                                <span className="sync-dot"></span>
+                                <span className="sync-state-label">{syncScroll ? 'ON' : 'OFF'}</span>
+                            </span>
+                        </button>
 
-                    <div className="pdf-export-wrapper">
-                        <AnalysisPDFExporter selectedPair={selectedPair} />
+                        <div className="pdf-export-wrapper">
+                            <AnalysisPDFExporter selectedPair={selectedPair} />
+                        </div>
                     </div>
                 </div>
             </div>

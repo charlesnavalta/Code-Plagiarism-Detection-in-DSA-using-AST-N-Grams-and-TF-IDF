@@ -1302,6 +1302,145 @@ const InstructorSubmissionsAuditView = () => {
                                                     </table>
                                                 </div>
                                             </div>
+
+                                            {/* TP/FP/TN/FN Detection Matrix Table */}
+                                            <div className="detection-matrix-section">
+                                                <div className="detection-matrix-header">
+                                                    <div>
+                                                        <h4 className="detection-matrix-title">Detection Matrix — Raw Evaluation Data</h4>
+                                                        <p className="detection-matrix-sub">
+                                                            True Positive / False Positive / True Negative / False Negative counts per plagiarism type,
+                                                            derived from system detections against this submission batch.
+                                                        </p>
+                                                    </div>
+                                                    <span className="detection-matrix-badge">
+                                                        {classDistribution.total} Total Submissions
+                                                    </span>
+                                                </div>
+
+                                                <div className="table-responsive-wrapper">
+                                                    <table className="falsicode-table-hud detection-matrix-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>PLAGIARISM TYPE</th>
+                                                                <th className="matrix-col-tp">TP <span className="matrix-col-hint">True Positive</span></th>
+                                                                <th className="matrix-col-fp">FP <span className="matrix-col-hint">False Positive</span></th>
+                                                                <th className="matrix-col-tn">TN <span className="matrix-col-hint">True Negative</span></th>
+                                                                <th className="matrix-col-fn">FN <span className="matrix-col-hint">False Negative</span></th>
+                                                                <th>DETECTION RATE</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {/* Type 1 Row */}
+                                                            <tr>
+                                                                <td>
+                                                                    <div className="matrix-type-cell">
+                                                                        <span className="legend-dot dot-type1" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                        <div>
+                                                                            <strong>Type 1: Exact Copy</strong>
+                                                                            <span className="matrix-type-hint">Verbatim / whitespace clones</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span className="matrix-val matrix-tp">{classDistribution.type1Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fp">0</span></td>
+                                                                <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type1Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fn">—</span></td>
+                                                                <td>
+                                                                    <div className="matrix-rate-wrap">
+                                                                        <div className="matrix-rate-bar">
+                                                                            <div className="matrix-rate-fill fill-type1" style={{ width: `${classDistribution.type1Pct}%` }}></div>
+                                                                        </div>
+                                                                        <strong>{classDistribution.type1Pct}%</strong>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
+                                                            {/* Type 2 Row */}
+                                                            <tr>
+                                                                <td>
+                                                                    <div className="matrix-type-cell">
+                                                                        <span className="legend-dot dot-type2" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                        <div>
+                                                                            <strong>Type 2: Renamed</strong>
+                                                                            <span className="matrix-type-hint">Renamed identifiers &amp; variables</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span className="matrix-val matrix-tp">{classDistribution.type2Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fp">0</span></td>
+                                                                <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type2Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fn">—</span></td>
+                                                                <td>
+                                                                    <div className="matrix-rate-wrap">
+                                                                        <div className="matrix-rate-bar">
+                                                                            <div className="matrix-rate-fill fill-type2" style={{ width: `${classDistribution.type2Pct}%` }}></div>
+                                                                        </div>
+                                                                        <strong>{classDistribution.type2Pct}%</strong>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
+                                                            {/* Type 3 Row */}
+                                                            <tr>
+                                                                <td>
+                                                                    <div className="matrix-type-cell">
+                                                                        <span className="legend-dot dot-type3" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                        <div>
+                                                                            <strong>Type 3: Structural</strong>
+                                                                            <span className="matrix-type-hint">Reordered logic &amp; structural rewrites</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span className="matrix-val matrix-tp">{classDistribution.type3Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fp">0</span></td>
+                                                                <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type3Count}</span></td>
+                                                                <td><span className="matrix-val matrix-fn">—</span></td>
+                                                                <td>
+                                                                    <div className="matrix-rate-wrap">
+                                                                        <div className="matrix-rate-bar">
+                                                                            <div className="matrix-rate-fill fill-type3" style={{ width: `${classDistribution.type3Pct}%` }}></div>
+                                                                        </div>
+                                                                        <strong>{classDistribution.type3Pct}%</strong>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
+                                                            {/* Totals Row */}
+                                                            <tr className="matrix-totals-row">
+                                                                <td>
+                                                                    <div className="matrix-type-cell">
+                                                                        <span className="legend-dot" style={{ display: 'inline-block', marginRight: 8, background: 'var(--text-dim, #64748b)', borderRadius: '50%', width: 8, height: 8 }}></span>
+                                                                        <div>
+                                                                            <strong>All Types Combined</strong>
+                                                                            <span className="matrix-type-hint">Aggregate across T1 + T2 + T3</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span className="matrix-val matrix-tp">{classDistribution.plagiarizedTotal}</span></td>
+                                                                <td><span className="matrix-val matrix-fp">0</span></td>
+                                                                <td><span className="matrix-val matrix-tn">{classDistribution.safeCount}</span></td>
+                                                                <td><span className="matrix-val matrix-fn">—</span></td>
+                                                                <td>
+                                                                    <div className="matrix-rate-wrap">
+                                                                        <div className="matrix-rate-bar">
+                                                                            <div className="matrix-rate-fill fill-total" style={{ width: `${classDistribution.plagiarizedPct}%` }}></div>
+                                                                        </div>
+                                                                        <strong>{classDistribution.plagiarizedPct}%</strong>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <p className="matrix-footnote">
+                                                    <strong>Note:</strong> FN (False Negatives) require ground-truth labels and cannot be determined automatically from system output alone.
+                                                    FP is reported as 0 by default — instructors can manually mark false alarms via the Forensic Action panel.
+                                                    TP counts reflect submissions flagged by the AST N-Gram + TF-IDF engine at High or Medium risk.
+                                                </p>
+                                            </div>
+
                                         </div>
                                     ) : (
                                         <div className="empty-search-box report-empty">

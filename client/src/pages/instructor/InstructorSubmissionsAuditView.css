@@ -476,3 +476,175 @@ html[data-theme='light'] .audit-workspace-card {
     font-size: 0.92rem;
     color: var(--text-dim, #94a3b8);
 }
+
+/* ==========================================================================
+   🔬 DETECTION MATRIX — TP / FP / TN / FN TABLE
+   ========================================================================== */
+.detection-matrix-section {
+    margin-top: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+[data-theme='light'] .detection-matrix-section,
+html[data-theme='light'] .detection-matrix-section {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.detection-matrix-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.detection-matrix-title {
+    margin: 0 0 4px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-hero, #f1f5f9);
+}
+
+[data-theme='light'] .detection-matrix-title,
+html[data-theme='light'] .detection-matrix-title {
+    color: #1e293b;
+}
+
+.detection-matrix-sub {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-dim, #94a3b8);
+    max-width: 520px;
+}
+
+.detection-matrix-badge {
+    white-space: nowrap;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #60a5fa;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    align-self: flex-start;
+}
+
+/* Column header accent colours */
+.detection-matrix-table thead th { font-size: 0.72rem; white-space: nowrap; }
+
+.matrix-col-tp { color: #34d399 !important; }
+.matrix-col-fp { color: #f87171 !important; }
+.matrix-col-tn { color: #60a5fa !important; }
+.matrix-col-fn { color: #fb923c !important; }
+
+.matrix-col-hint {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.7;
+}
+
+/* Type cell layout (dot + text stacked) */
+.matrix-type-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.matrix-type-cell > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.matrix-type-hint {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-dim, #94a3b8);
+}
+
+/* Value badges */
+.matrix-val {
+    display: inline-block;
+    min-width: 28px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+.matrix-tp { color: #34d399; background: rgba(52, 211, 153, 0.1); }
+.matrix-fp { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+.matrix-tn { color: #60a5fa; background: rgba(96, 165, 250, 0.1); }
+.matrix-fn { color: #fb923c; background: rgba(251, 146, 60, 0.1); }
+
+/* Detection rate mini bar */
+.matrix-rate-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.matrix-rate-bar {
+    flex: 1;
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    min-width: 60px;
+}
+
+[data-theme='light'] .matrix-rate-bar,
+html[data-theme='light'] .matrix-rate-bar {
+    background: #e2e8f0;
+}
+
+.matrix-rate-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+}
+
+.fill-type1 { background: #ef4444; }
+.fill-type2 { background: #f59e0b; }
+.fill-type3 { background: #8b5cf6; }
+.fill-total { background: linear-gradient(90deg, #ef4444, #f59e0b, #8b5cf6); }
+
+/* Totals row */
+.matrix-totals-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='light'] .matrix-totals-row,
+html[data-theme='light'] .matrix-totals-row {
+    border-top-color: #e2e8f0 !important;
+    background: #f1f5f9;
+}
+
+/* Footnote */
+.matrix-footnote {
+    margin: 14px 0 0;
+    font-size: 0.74rem;
+    color: var(--text-dim, #94a3b8);
+    line-height: 1.6;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 12px;
+}
+
+[data-theme='light'] .matrix-footnote,
+html[data-theme='light'] .matrix-footnote {
+    border-top-color: #e2e8f0;
+    color: #64748b;
+}
+
