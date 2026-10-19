@@ -15,7 +15,9 @@ from .metrics import (
     get_dynamic_df_bounds,
     compute_containment_score,
     calculate_adaptive_thresholds,
-    _get_raw_value
+    _get_raw_value,
+    RAW_IDENTITY_TYPE1_THRESHOLD,
+    ORDER_SIMILARITY_THRESHOLD
 )
 from .classifier import (
     get_raw_identity_signature,
@@ -164,6 +166,27 @@ def compare_all_files(file_data: list[dict], ngram_bounds: tuple[int, int]) -> l
                 skeleton_i = get_structural_skeleton(tokens_i)
                 skeleton_j = get_structural_skeleton(tokens_j)
                 struct_divergence_score = structural_divergence(skeleton_i, skeleton_j)
+
+                # =========================================================================
+                # PHASE 5.5: SAFE-ZONE ESCALATION
+                # TF-IDF cosine can under-score short/tiny files even when the forensic
+                # signals (raw_identity_score, order_similarity_score, N-gram coverage)
+                # clearly indicate genuine Type 1 or Type 2 plagiarism.
+                # All metrics used here are already computed above — no new heavy work.
+                # =========================================================================
+                if status == "Low" and (lines_i or lines_j):
+                    total_unique_lines_i = len(set(t[1] for t in tokens_i if t[1] > 0))
+                    if total_unique_lines_i > 0:
+                        meaningful_i = len([ln for ln in lines_i if ln > 0])
+                        coverage = meaningful_i / total_unique_lines_i
+                        if coverage >= 0.50:
+                            # Type 1 pattern: near-identical variable names / literals
+                            if raw_identity_score >= RAW_IDENTITY_TYPE1_THRESHOLD:
+                                status = "Medium"
+                            # Type 2 pattern: same structure + same order, just renamed
+                            elif (raw_identity_score >= 40.0
+                                  and order_similarity_score >= ORDER_SIMILARITY_THRESHOLD):
+                                status = "Medium"
 
                 plagiarism_type = "Safe: Original Code"
                 formatted_lines_i = []
