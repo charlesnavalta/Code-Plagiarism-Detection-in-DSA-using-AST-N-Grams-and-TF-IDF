@@ -506,8 +506,8 @@ html[data-theme='light'] .mixed-attack-legend { color: #64748b; }
     flex-shrink: 0;
 }
 
+.swatch-type2 { background-color: #f97316; }
 .swatch-type3 { background-color: #eab308; }
-.swatch-type2 { background-color: #ea580c; }
 
 .legend-divider {
     color: var(--text-dim);

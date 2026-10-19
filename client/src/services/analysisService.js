@@ -40,6 +40,15 @@ const analysisService = {
     getReport: async (reportId) => {
         const response = await api.get(`/analyze/report/${reportId}`);
         return response.data;
+    },
+
+    /**
+     * Fetch pairwise benchmark and evaluation metrics for an assignment
+     * @param {number|string} assignmentId
+     */
+    getAssignmentMetrics: async (assignmentId) => {
+        const response = await api.get(`/analyze/${assignmentId}/metrics`);
+        return response.data;
     }
 };
 
