@@ -131,17 +131,101 @@ def analyze_assignment(assignment_id):
         except Exception as notif_err:
             print(f"Notification Trigger Warning (Analysis): {notif_err}")
 
+        # 5. Compute pairwise evaluation (benchmark ground-truth or standard pairwise screening)
+        from utils.benchmark_evaluator import evaluate_pairwise_matrix
+        sub_filenames = [s.filename for s in submissions if s.filename]
+        sub_paths = [s.file_path for s in submissions if s.file_path]
+        pairwise_eval = evaluate_pairwise_matrix(
+            filenames=sub_filenames,
+            results=results,
+            language=language,
+            assignment_title=assignment.title,
+            file_paths=sub_paths
+        )
+
         return jsonify({
             "assignment_id": assignment_id,
             "language_used": language,
             "ngrams_used": ngram_bounds,
             "matches_found": len(results),
-            "results": results
+            "results": results,
+            "pairwise_evaluation": pairwise_eval
         }), 200
 
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": f"Plagiarism engine encountered an internal error: {str(e)}"}), 500
+
+
+@analysis_bp.route('/analyze/<int:assignment_id>/metrics', methods=['GET'])
+@jwt_required()
+def get_assignment_metrics(assignment_id):
+    """Fetches or calculates the pairwise benchmark & evaluation matrix for an assignment."""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or user.role not in ('instructor', 'admin'):
+            return jsonify({"error": "Unauthorized"}), 403
+
+        assignment = Assignment.query.get(assignment_id)
+        if not assignment:
+            return jsonify({"error": "Assignment not found"}), 404
+
+        submissions = Submission.query.options(joinedload(Submission.student)).filter_by(assignment_id=assignment_id).all()
+        if len(submissions) < 2:
+            return jsonify({
+                "is_benchmark": False,
+                "total_pairs": 0,
+                "total_files": len(submissions)
+            }), 200
+
+        language = (assignment.language or 'python').lower()
+        lang_engine = get_language_engine(language)
+        process_func = lang_engine['process']
+        ngram_bounds = lang_engine['ngram_bounds']
+
+        processed_files = []
+        for sub in submissions:
+            actual_path = resolve_submission_path(sub.file_path)
+            if not actual_path:
+                continue
+            try:
+                with open(actual_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                if not content.strip():
+                    continue
+                doc_str, tokens = process_func(content)
+                if doc_str and tokens:
+                    student_name = sub.student.username if sub.student else f"Student #{sub.student_id}"
+                    processed_files.append({
+                        'name': f"{student_name} ({sub.filename})",
+                        'doc': doc_str,
+                        'tokens': tokens,
+                        'raw_code': content
+                    })
+            except Exception:
+                continue
+
+        results = compare_all_files(processed_files, ngram_bounds) if len(processed_files) >= 2 else []
+
+        from utils.benchmark_evaluator import evaluate_pairwise_matrix
+        sub_filenames = [s.filename for s in submissions if s.filename]
+        sub_paths = [s.file_path for s in submissions if s.file_path]
+        pairwise_eval = evaluate_pairwise_matrix(
+            filenames=sub_filenames,
+            results=results,
+            language=language,
+            assignment_title=assignment.title,
+            file_paths=sub_paths
+        )
+
+        return jsonify({
+            "assignment_id": assignment_id,
+            "pairwise_evaluation": pairwise_eval
+        }), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 @analysis_bp.route('/analyze/batch', methods=['POST'])

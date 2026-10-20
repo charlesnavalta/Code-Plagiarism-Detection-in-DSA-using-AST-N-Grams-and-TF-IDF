@@ -28,6 +28,8 @@ const InstructorSubmissionsAuditView = () => {
     const [assignment, setAssignment] = useState(navState.assignment || null);
     const [submissions, setSubmissions] = useState(navState.submissions || []);
     const [analysisResults, setAnalysisResults] = useState(navState.analysisResults || null);
+    const [pairwiseMetrics, setPairwiseMetrics] = useState(navState.pairwiseEvaluation || null);
+    const [matrixViewMode, setMatrixViewMode] = useState('pairwise'); // 'pairwise' (benchmark pairs) | 'students' (cohort breakdown)
     const [loading, setLoading] = useState(true);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [selectedComparisonPair, setSelectedComparisonPair] = useState(null);
@@ -99,6 +101,17 @@ const InstructorSubmissionsAuditView = () => {
                     if (s.feedback) initialMap[s.id] = s.feedback;
                 });
                 setFeedbackMap(prev => ({ ...initialMap, ...prev }));
+
+                // Also load pairwise benchmark & evaluation metrics if available
+                if (assignmentId) {
+                    analysisService.getAssignmentMetrics(assignmentId)
+                        .then(m => {
+                            if (isMounted && m?.pairwise_evaluation) {
+                                setPairwiseMetrics(m.pairwise_evaluation);
+                            }
+                        })
+                        .catch(() => {});
+                }
             } catch (err) {
                 console.error("Failed to load assignment audit data:", err);
                 if (isMounted) {
@@ -193,6 +206,9 @@ const InstructorSubmissionsAuditView = () => {
         try {
             const data = await analysisService.runAnalysis(assignmentId);
             setAnalysisResults(data.results);
+            if (data.pairwise_evaluation) {
+                setPairwiseMetrics(data.pairwise_evaluation);
+            }
             try {
                 const refreshedSubs = await analysisService.getAssignmentSubmissions(classId, assignmentId);
                 setSubmissions(refreshedSubs);
@@ -263,7 +279,7 @@ const InstructorSubmissionsAuditView = () => {
     }, [analysisResults, searchTerm, filterType]);
 
     // =========================================================================
-    // 📊 100% CLASS DISTRIBUTION & STUDENT RISK ROSTER (Option 2B)
+    // ðŸ“Š 100% CLASS DISTRIBUTION & STUDENT RISK ROSTER (Option 2B)
     // =========================================================================
     const classDistribution = useMemo(() => {
         if (!submissions || submissions.length === 0) {
@@ -410,6 +426,83 @@ const InstructorSubmissionsAuditView = () => {
         };
     }, [submissions, analysisResults]);
 
+    // =========================================================================
+    // ðŸ”¬ PAIRWISE BENCHMARK & EVALUATION MATRIX (evaluate_metrics.py alignment)
+    // =========================================================================
+    const pairwiseEvaluation = useMemo(() => {
+        if (pairwiseMetrics) return pairwiseMetrics;
+
+        const n = submissions ? submissions.length : 0;
+        const totalPairs = (n * (n - 1)) / 2;
+
+        if (!analysisResults || totalPairs === 0) {
+            return {
+                is_benchmark: false,
+                topic: null,
+                total_pairs: totalPairs,
+                total_files: n,
+                flagged_pairs: 0,
+                safe_pairs: totalPairs,
+                flag_rate: '0.0',
+                taxonomy: [
+                    { type: 'Type 1: Exact Copy', shortType: 'Type 1', flagged: 0, safe: totalPairs, rate: '0.0' },
+                    { type: 'Type 2: Renamed', shortType: 'Type 2', flagged: 0, safe: totalPairs, rate: '0.0' },
+                    { type: 'Type 3: Structural', shortType: 'Type 3', flagged: 0, safe: totalPairs, rate: '0.0' }
+                ]
+            };
+        }
+
+        const flagged = analysisResults.filter(r => Number(r.score || 0) >= 25.0 && r.status !== 'Low');
+        const t1 = flagged.filter(r => {
+            const pt = r.plagiarism_type || '';
+            return pt.includes('Type 1') || pt.includes('Exact');
+        }).length;
+        const t2 = flagged.filter(r => {
+            const pt = r.plagiarism_type || '';
+            return pt.includes('Type 2') || pt.includes('Renamed');
+        }).length;
+        const t3 = flagged.filter(r => {
+            const pt = r.plagiarism_type || '';
+            return pt.includes('Type 3') || pt.includes('Structure');
+        }).length;
+
+        const safePairs = Math.max(0, totalPairs - flagged.length);
+        const flagRate = totalPairs > 0 ? ((flagged.length / totalPairs) * 100).toFixed(1) : '0.0';
+
+        return {
+            is_benchmark: false,
+            topic: null,
+            total_pairs: totalPairs,
+            total_files: n,
+            flagged_pairs: flagged.length,
+            safe_pairs: safePairs,
+            flag_rate: flagRate,
+            taxonomy: [
+                {
+                    type: 'Type 1: Exact Copy',
+                    shortType: 'Type 1',
+                    flagged: t1,
+                    safe: Math.max(0, totalPairs - t1),
+                    rate: totalPairs > 0 ? ((t1 / totalPairs) * 100).toFixed(1) : '0.0'
+                },
+                {
+                    type: 'Type 2: Renamed',
+                    shortType: 'Type 2',
+                    flagged: t2,
+                    safe: Math.max(0, totalPairs - t2),
+                    rate: totalPairs > 0 ? ((t2 / totalPairs) * 100).toFixed(1) : '0.0'
+                },
+                {
+                    type: 'Type 3: Structural',
+                    shortType: 'Type 3',
+                    flagged: t3,
+                    safe: Math.max(0, totalPairs - t3),
+                    rate: totalPairs > 0 ? ((t3 / totalPairs) * 100).toFixed(1) : '0.0'
+                }
+            ]
+        };
+    }, [pairwiseMetrics, submissions, analysisResults]);
+
     const filteredRoster = useMemo(() => {
         let list = classDistribution.studentRoster;
 
@@ -507,9 +600,9 @@ const InstructorSubmissionsAuditView = () => {
                         </div>
                     </header>
 
-                    {/* 🌟 STICKY CONTROLS BAR (Segmented Tabs + Search & Filter Toolbar) */}
+                    {/* ðŸŒŸ STICKY CONTROLS BAR (Segmented Tabs + Search & Filter Toolbar) */}
                     <div className="audit-sticky-controls-bar">
-                        {/* 🌟 Segmented 3-Way Tabs */}
+                        {/* ðŸŒŸ Segmented 3-Way Tabs */}
                         <div className="audit-page-tabs-bar">
                             <div className="audit-segmented-tabs">
                                 <button
@@ -565,7 +658,7 @@ const InstructorSubmissionsAuditView = () => {
                             </div>
                         </div>
 
-                        {/* 🔍 Search & Filter Toolbar */}
+                        {/* ðŸ” Search & Filter Toolbar */}
                         <div className="audit-search-toolbar">
                             <div className="audit-search-input-wrap">
                                 <svg className="audit-search-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -591,7 +684,7 @@ const InstructorSubmissionsAuditView = () => {
                                         onClick={() => setSearchTerm('')}
                                         title="Clear search"
                                     >
-                                        ✕
+                                        âœ•
                                     </button>
                                 )}
                             </div>
@@ -704,15 +797,15 @@ const InstructorSubmissionsAuditView = () => {
                                                                         <code className="code-box">{sub.filename}</code>
                                                                         {isUnlocked ? (
                                                                             <span className="submission-state-pill pending-resubmit" title="Instructor unlocked resubmission. Waiting for student to upload new file.">
-                                                                                ⏳ Awaiting Upload
+                                                                                â³ Awaiting Upload
                                                                             </span>
                                                                         ) : isResubmitted ? (
                                                                             <span className="submission-state-pill resubmitted" title="Revised code file has been uploaded by the student.">
-                                                                                🔄 Revised File
+                                                                                ðŸ”„ Revised File
                                                                             </span>
                                                                         ) : (
                                                                             <span className="submission-state-pill initial" title="Initial student code submission.">
-                                                                                📄 Initial Upload
+                                                                                ðŸ“„ Initial Upload
                                                                             </span>
                                                                         )}
                                                                     </div>
@@ -979,7 +1072,7 @@ const InstructorSubmissionsAuditView = () => {
                                                     ? `No submission comparison pairs matched your search query "${searchTerm}".`
                                                     : `None of the audited submissions were categorized under "${filterType}". All comparison pairs in this category passed structural evaluation.`}
                                             </p>
-                                            <span className="clean-audit-pill">PASS · 0 FLAGGED PAIRS</span>
+                                            <span className="clean-audit-pill">PASS Â· 0 FLAGGED PAIRS</span>
                                         </div>
                                     ) : (
                                         <div className="empty-search-box report-empty">
@@ -1084,7 +1177,7 @@ const InstructorSubmissionsAuditView = () => {
                                                 </div>
                                             </div>
 
-                                            {/* 🌟 100% Proportional Multi-Segment Progress Bar */}
+                                            {/* ðŸŒŸ 100% Proportional Multi-Segment Progress Bar */}
                                             <div className="distribution-bar-card">
                                                 <div className="distribution-bar-header">
                                                     <div>
@@ -1099,7 +1192,7 @@ const InstructorSubmissionsAuditView = () => {
                                                         <div
                                                             className="distribution-segment seg-type1"
                                                             style={{ width: `${classDistribution.type1Pct}%` }}
-                                                            title={`Type 1: Exact Clones — ${classDistribution.type1Count} student(s) (${classDistribution.type1Pct}%)`}
+                                                            title={`Type 1: Exact Clones â€” ${classDistribution.type1Count} student(s) (${classDistribution.type1Pct}%)`}
                                                         >
                                                             {classDistribution.type1Pct >= 10 && (
                                                                 <span className="segment-label">T1: {classDistribution.type1Pct}%</span>
@@ -1110,7 +1203,7 @@ const InstructorSubmissionsAuditView = () => {
                                                         <div
                                                             className="distribution-segment seg-type2"
                                                             style={{ width: `${classDistribution.type2Pct}%` }}
-                                                            title={`Type 2: Renamed / Parameterized — ${classDistribution.type2Count} student(s) (${classDistribution.type2Pct}%)`}
+                                                            title={`Type 2: Renamed / Parameterized â€” ${classDistribution.type2Count} student(s) (${classDistribution.type2Pct}%)`}
                                                         >
                                                             {classDistribution.type2Pct >= 10 && (
                                                                 <span className="segment-label">T2: {classDistribution.type2Pct}%</span>
@@ -1121,7 +1214,7 @@ const InstructorSubmissionsAuditView = () => {
                                                         <div
                                                             className="distribution-segment seg-type3"
                                                             style={{ width: `${classDistribution.type3Pct}%` }}
-                                                            title={`Type 3: Structural Reordering — ${classDistribution.type3Count} student(s) (${classDistribution.type3Pct}%)`}
+                                                            title={`Type 3: Structural Reordering â€” ${classDistribution.type3Count} student(s) (${classDistribution.type3Pct}%)`}
                                                         >
                                                             {classDistribution.type3Pct >= 10 && (
                                                                 <span className="segment-label">T3: {classDistribution.type3Pct}%</span>
@@ -1132,7 +1225,7 @@ const InstructorSubmissionsAuditView = () => {
                                                         <div
                                                             className="distribution-segment seg-safe"
                                                             style={{ width: `${classDistribution.safePct}%` }}
-                                                            title={`Safe / Clean — ${classDistribution.safeCount} student(s) (${classDistribution.safePct}%)`}
+                                                            title={`Safe / Clean â€” ${classDistribution.safeCount} student(s) (${classDistribution.safePct}%)`}
                                                         >
                                                             {classDistribution.safePct >= 10 && (
                                                                 <span className="segment-label">Safe: {classDistribution.safePct}%</span>
@@ -1302,6 +1395,389 @@ const InstructorSubmissionsAuditView = () => {
                                                     </table>
                                                 </div>
                                             </div>
+
+                                            {/* Dual-Perspective Detection Matrix Section */}
+                                            <div className="detection-matrix-section">
+                                                <div className="detection-matrix-header">
+                                                    <div className="detection-matrix-header-text">
+                                                        <div className="detection-matrix-title-row">
+                                                            <h4 className="detection-matrix-title">Detection Matrix â€” Raw Evaluation Data</h4>
+                                                            {pairwiseEvaluation.is_benchmark && (
+                                                                <span className="matrix-benchmark-badge" title="Validated against ground_truth.json benchmark database">
+                                                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20" style={{ marginRight: 5 }}>
+                                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                    Ground-Truth Benchmark: {pairwiseEvaluation.topic || 'Verified'}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <p className="detection-matrix-sub">
+                                                            Reconciles Algorithmic Pairwise Matching (all N(N-1)/2 comparative decisions) with Unique Student Cohort Impact.
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="detection-matrix-controls">
+                                                        {/* Perspective View Switcher */}
+                                                        <div className="matrix-view-toggle" role="group" aria-label="Perspective View Switcher">
+                                                            <button
+                                                                type="button"
+                                                                className={`matrix-toggle-btn ${matrixViewMode === 'pairwise' ? 'active' : ''}`}
+                                                                onClick={() => setMatrixViewMode('pairwise')}
+                                                                title="View all pairwise algorithmic comparison decisions"
+                                                            >
+                                                                <svg className="matrix-toggle-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                                                </svg>
+                                                                <span className="matrix-toggle-label">Pairwise Decisions</span>
+                                                                <span className="matrix-toggle-badge">
+                                                                    {pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0} Pairs
+                                                                </span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className={`matrix-toggle-btn ${matrixViewMode === 'students' ? 'active' : ''}`}
+                                                                onClick={() => setMatrixViewMode('students')}
+                                                                title="View unique student cohort risk proportions"
+                                                            >
+                                                                <svg className="matrix-toggle-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                                </svg>
+                                                                <span className="matrix-toggle-label">Student Cohort</span>
+                                                                <span className="matrix-toggle-badge">
+                                                                    {classDistribution.total} Submissions
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Mathematical Relationship Reconciliation Banner */}
+                                                <div className="matrix-reconciliation-banner">
+                                                    <div className="reconciliation-item">
+                                                        <span className="recon-label">COHORT SCALE</span>
+                                                        <span className="recon-val">{classDistribution.total} Submissions</span>
+                                                    </div>
+                                                    <div className="recon-arrow">
+                                                        <span>&rarr; N(N-1)/2 &rarr;</span>
+                                                    </div>
+                                                    <div className="reconciliation-item">
+                                                        <span className="recon-label">PAIRWISE DECISIONS</span>
+                                                        <span className="recon-val text-blue">{pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0} Comparative Pairs</span>
+                                                    </div>
+                                                    <div className="recon-divider"></div>
+                                                    <div className="reconciliation-explainer">
+                                                        {matrixViewMode === 'pairwise' ? (
+                                                            <span>
+                                                                <strong>Pairwise View:</strong> Plagiarism is fundamentally a relationship between two code files (A &harr; B). 
+                                                                {pairwiseEvaluation.is_benchmark
+                                                                    ? ` Matches evaluate_metrics.py benchmark validation against official ground truth (${pairwiseEvaluation.ground_truth_positives || 'known'} positives vs ${pairwiseEvaluation.ground_truth_negatives || 'honest'} negatives).`
+                                                                    : ` Evaluates every one of the ${pairwiseEvaluation.total_pairs.toLocaleString()} submission combinations across the class.`}
+                                                            </span>
+                                                        ) : (
+                                                            <span>
+                                                                <strong>Student Cohort View:</strong> Aggregates risk by student identity. An individual student is counted once under their highest detected similarity risk level.
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* VIEW 1: PAIRWISE BENCHMARK & COMPARISON MATRIX */}
+                                                {matrixViewMode === 'pairwise' && (
+                                                    <>
+                                                        {pairwiseEvaluation.is_benchmark ? (
+                                                            <div className="benchmark-evaluation-view">
+                                                                {/* Section 3 Per-Topic Breakdown Table (Matches evaluate_metrics.py) */}
+                                                                <div className="benchmark-section-box">
+                                                                    <div className="benchmark-section-header">
+                                                                        <span className="section-kicker">SECTION 3: PER-TOPIC BENCHMARK BREAKDOWN</span>
+                                                                        <span className="section-meta">Ground-Truth Reference: <code>ground_truth.json</code></span>
+                                                                    </div>
+                                                                    <div className="table-responsive-wrapper">
+                                                                        <table className="falsicode-table-hud benchmark-table-topic">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                     <th className="col-topic">Topic</th>
+                                                                                     <th className="col-metric">Pairs</th>
+                                                                                     <th className="col-metric matrix-col-tp">TP <span className="matrix-col-hint">Caught</span></th>
+                                                                                     <th className="col-metric matrix-col-tn">TN <span className="matrix-col-hint">Safe</span></th>
+                                                                                     <th className="col-metric matrix-col-fp">FP <span className="matrix-col-hint">False Alarm</span></th>
+                                                                                     <th className="col-metric matrix-col-fn">FN <span className="matrix-col-hint">Missed</span></th>
+                                                                                     <th className="col-metric">FPR</th>
+                                                                                     <th className="col-metric">Acc</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr className="highlight-benchmark-row">
+                                                                                     <td className="col-topic"><code>{pairwiseEvaluation.topic}</code></td>
+                                                                                     <td className="col-metric font-mono"><strong>{pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0}</strong></td>
+                                                                                     <td className="col-metric font-mono"><span className="matrix-val matrix-tp">{pairwiseEvaluation.tp}</span></td>
+                                                                                     <td className="col-metric font-mono"><span className="matrix-val matrix-tn">{pairwiseEvaluation.tn}</span></td>
+                                                                                     <td className="col-metric font-mono"><span className="matrix-val matrix-fp">{pairwiseEvaluation.fp}</span></td>
+                                                                                     <td className="col-metric font-mono"><span className="matrix-val matrix-fn">{pairwiseEvaluation.fn}</span></td>
+                                                                                     <td className="col-metric font-mono"><strong>{Number(pairwiseEvaluation.fpr || 0).toFixed(1)}%</strong></td>
+                                                                                     <td className="col-metric font-mono"><strong className="text-green">{Number(pairwiseEvaluation.accuracy || 0).toFixed(1)}%</strong></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Section 2 Multi-Class Plagiarism Taxonomy Breakdown */}
+                                                                <div className="benchmark-section-box" style={{ marginTop: 18 }}>
+                                                                    <div className="benchmark-section-header">
+                                                                        <span className="section-kicker">SECTION 2: PLAGIARISM TAXONOMY BREAKDOWN (TYPE 1 / 2 / 3)</span>
+                                                                        <span className="section-meta">Precision, Recall &amp; F1 per Clone Type</span>
+                                                                    </div>
+                                                                    <div className="table-responsive-wrapper">
+                                                                        <table className="falsicode-table-hud detection-matrix-table">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                     <th>Plagiarism Class</th>
+                                                                                     <th className="matrix-col-tp">TP <span className="matrix-col-hint">True Pos</span></th>
+                                                                                     <th className="matrix-col-fp">FP <span className="matrix-col-hint">False Pos</span></th>
+                                                                                     <th className="matrix-col-tn">TN <span className="matrix-col-hint">True Neg</span></th>
+                                                                                     <th className="matrix-col-fn">FN <span className="matrix-col-hint">False Neg</span></th>
+                                                                                     <th>Precision</th>
+                                                                                     <th>Recall</th>
+                                                                                     <th>F1-Score</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {(pairwiseEvaluation.taxonomy || []).map((row, idx) => (
+                                                                                     <tr key={idx}>
+                                                                                         <td>
+                                                                                             <div className="matrix-type-cell">
+                                                                                                 <span className={`legend-dot dot-type${idx + 1}`} style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                                                 <div>
+                                                                                                     <strong>{row.type}</strong>
+                                                                                                     <span className="matrix-type-hint">
+                                                                                                         {row.shortType === 'Type 1' ? 'Verbatim / whitespace clones' : row.shortType === 'Type 2' ? 'Renamed identifiers & variables' : 'Reordered logic & structural rewrites'}
+                                                                                                     </span>
+                                                                                                 </div>
+                                                                                             </div>
+                                                                                         </td>
+                                                                                         <td><span className="matrix-val matrix-tp">{row.tp}</span></td>
+                                                                                         <td><span className="matrix-val matrix-fp">{row.fp}</span></td>
+                                                                                         <td><span className="matrix-val matrix-tn">{row.tn}</span></td>
+                                                                                         <td><span className="matrix-val matrix-fn">{row.fn}</span></td>
+                                                                                         <td><strong>{row.precision}%</strong></td>
+                                                                                         <td><strong>{row.recall}%</strong></td>
+                                                                                         <td><strong className="text-blue">{row.f1}%</strong></td>
+                                                                                     </tr>
+                                                                                ))}
+                                                                                <tr className="matrix-totals-row">
+                                                                                     <td>
+                                                                                         <div className="matrix-type-cell">
+                                                                                             <span className="legend-dot dot-type1" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                                             <div>
+                                                                                                 <strong>Binary Plagiarism (All Pairs)</strong>
+                                                                                                 <span className="matrix-type-hint">Total Cheating vs Honest Code Decisions</span>
+                                                                                            </div>
+                                                                                         </div>
+                                                                                     </td>
+                                                                                     <td><span className="matrix-val matrix-tp">{pairwiseEvaluation.tp}</span></td>
+                                                                                     <td><span className="matrix-val matrix-fp">{pairwiseEvaluation.fp}</span></td>
+                                                                                     <td><span className="matrix-val matrix-tn">{pairwiseEvaluation.tn}</span></td>
+                                                                                     <td><span className="matrix-val matrix-fn">{pairwiseEvaluation.fn}</span></td>
+                                                                                     <td><strong>{pairwiseEvaluation.precision}%</strong></td>
+                                                                                     <td><strong>{pairwiseEvaluation.recall}%</strong></td>
+                                                                                     <td><strong className="text-green">{pairwiseEvaluation.f1}%</strong></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+
+                                                                <p className="matrix-footnote">
+                                                                    <strong>Official Benchmark Alignment:</strong> These statistical metrics directly reproduce the results of the <code>evaluate_metrics.py</code> benchmark tool against the <code>{pairwiseEvaluation.topic}</code> dataset ({pairwiseEvaluation.total_pairs} pairs).
+                                                                </p>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="table-responsive-wrapper">
+                                                                <table className="falsicode-table-hud detection-matrix-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                             <th>Comparative Plagiarism Type</th>
+                                                                             <th className="matrix-col-tp">Flagged Pairs <span className="matrix-col-hint">Score &ge; 25%</span></th>
+                                                                             <th className="matrix-col-tn">Safe Pairs <span className="matrix-col-hint">Clean &lt; 25%</span></th>
+                                                                             <th>Total Screened Pairs</th>
+                                                                             <th>Pair Detection Rate</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {(pairwiseEvaluation.taxonomy || []).map((row, idx) => (
+                                                                             <tr key={idx}>
+                                                                                 <td>
+                                                                                     <div className="matrix-type-cell">
+                                                                                         <span className={`legend-dot dot-type${idx + 1}`} style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                                         <div>
+                                                                                             <strong>{row.type}</strong>
+                                                                                         </div>
+                                                                                     </div>
+                                                                                 </td>
+                                                                                 <td><span className="matrix-val matrix-tp">{row.flagged}</span></td>
+                                                                                 <td><span className="matrix-val matrix-tn">{row.safe}</span></td>
+                                                                                 <td><strong>{pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0}</strong></td>
+                                                                                 <td>
+                                                                                     <div className="matrix-rate-wrap">
+                                                                                         <div className="matrix-rate-bar">
+                                                                                             <div className={`matrix-rate-fill fill-type${idx + 1}`} style={{ width: `${row.rate}%` }}></div>
+                                                                                         </div>
+                                                                                         <strong>{row.rate}%</strong>
+                                                                                     </div>
+                                                                                 </td>
+                                                                             </tr>
+                                                                        ))}
+                                                                        <tr className="matrix-totals-row">
+                                                                             <td>
+                                                                                 <div className="matrix-type-cell">
+                                                                                     <span className="legend-dot dot-type1" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                                     <div>
+                                                                                         <strong>All Flagged Pairs Combined</strong>
+                                                                                         <span className="matrix-type-hint">Across all {pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0} comparative combinations</span>
+                                                                                     </div>
+                                                                                 </div>
+                                                                             </td>
+                                                                             <td><span className="matrix-val matrix-tp">{pairwiseEvaluation.flagged_pairs}</span></td>
+                                                                             <td><span className="matrix-val matrix-tn">{pairwiseEvaluation.safe_pairs}</span></td>
+                                                                             <td><strong>{pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0}</strong></td>
+                                                                             <td>
+                                                                                 <div className="matrix-rate-wrap">
+                                                                                     <div className="matrix-rate-bar">
+                                                                                         <div className="matrix-rate-fill fill-total" style={{ width: `${pairwiseEvaluation.flag_rate}%` }}></div>
+                                                                                     </div>
+                                                                                     <strong>{pairwiseEvaluation.flag_rate}%</strong>
+                                                                                 </div>
+                                                                             </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <p className="matrix-footnote">
+                                                                    <strong>Note:</strong> In a class of {classDistribution.total} students, the system systematically screens all {pairwiseEvaluation.total_pairs ? pairwiseEvaluation.total_pairs.toLocaleString() : 0} pairwise combinations (N*(N-1)/2). Ground-truth benchmark statistics (TP/FP/TN/FN/Accuracy) are enabled when testing controlled benchmark datasets.
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+
+                                                {/* VIEW 2: STUDENT COHORT RISK BREAKDOWN */}
+                                                {matrixViewMode === 'students' && (
+                                                    <div className="table-responsive-wrapper">
+                                                        <table className="falsicode-table-hud detection-matrix-table">
+                                                            <thead>
+                                                                <tr>
+                                                                     <th>Primary Plagiarism Severity</th>
+                                                                     <th className="matrix-col-tp">Flagged Students <span className="matrix-col-hint">Triggered Similarity</span></th>
+                                                                     <th className="matrix-col-tn">Clean Students <span className="matrix-col-hint">Not In This Category</span></th>
+                                                                     <th>Total Cohort</th>
+                                                                     <th>Student Risk Proportion</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {/* Type 1 Row */}
+                                                                <tr>
+                                                                     <td>
+                                                                         <div className="matrix-type-cell">
+                                                                             <span className="legend-dot dot-type1" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                             <div>
+                                                                                 <strong>Type 1: Exact Copy</strong>
+                                                                                 <span className="matrix-type-hint">Verbatim / whitespace clones</span>
+                                                                             </div>
+                                                                         </div>
+                                                                     </td>
+                                                                     <td><span className="matrix-val matrix-tp">{classDistribution.type1Count}</span></td>
+                                                                     <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type1Count}</span></td>
+                                                                     <td><strong>{classDistribution.total}</strong></td>
+                                                                     <td>
+                                                                         <div className="matrix-rate-wrap">
+                                                                             <div className="matrix-rate-bar">
+                                                                                 <div className="matrix-rate-fill fill-type1" style={{ width: `${classDistribution.type1Pct}%` }}></div>
+                                                                             </div>
+                                                                             <strong>{classDistribution.type1Pct}%</strong>
+                                                                         </div>
+                                                                     </td>
+                                                                </tr>
+
+                                                                {/* Type 2 Row */}
+                                                                <tr>
+                                                                     <td>
+                                                                         <div className="matrix-type-cell">
+                                                                             <span className="legend-dot dot-type2" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                             <div>
+                                                                                 <strong>Type 2: Renamed</strong>
+                                                                                 <span className="matrix-type-hint">Renamed identifiers &amp; variables</span>
+                                                                             </div>
+                                                                         </div>
+                                                                     </td>
+                                                                     <td><span className="matrix-val matrix-tp">{classDistribution.type2Count}</span></td>
+                                                                     <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type2Count}</span></td>
+                                                                     <td><strong>{classDistribution.total}</strong></td>
+                                                                     <td>
+                                                                         <div className="matrix-rate-wrap">
+                                                                             <div className="matrix-rate-bar">
+                                                                                 <div className="matrix-rate-fill fill-type2" style={{ width: `${classDistribution.type2Pct}%` }}></div>
+                                                                             </div>
+                                                                             <strong>{classDistribution.type2Pct}%</strong>
+                                                                         </div>
+                                                                     </td>
+                                                                </tr>
+
+                                                                {/* Type 3 Row */}
+                                                                <tr>
+                                                                     <td>
+                                                                         <div className="matrix-type-cell">
+                                                                             <span className="legend-dot dot-type3" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                             <div>
+                                                                                 <strong>Type 3: Structural</strong>
+                                                                                 <span className="matrix-type-hint">Reordered logic &amp; structural rewrites</span>
+                                                                             </div>
+                                                                         </div>
+                                                                     </td>
+                                                                     <td><span className="matrix-val matrix-tp">{classDistribution.type3Count}</span></td>
+                                                                     <td><span className="matrix-val matrix-tn">{classDistribution.total - classDistribution.type3Count}</span></td>
+                                                                     <td><strong>{classDistribution.total}</strong></td>
+                                                                     <td>
+                                                                         <div className="matrix-rate-wrap">
+                                                                             <div className="matrix-rate-bar">
+                                                                                 <div className="matrix-rate-fill fill-type3" style={{ width: `${classDistribution.type3Pct}%` }}></div>
+                                                                             </div>
+                                                                             <strong>{classDistribution.type3Pct}%</strong>
+                                                                         </div>
+                                                                     </td>
+                                                                </tr>
+
+                                                                {/* Totals Row */}
+                                                                <tr className="matrix-totals-row">
+                                                                     <td>
+                                                                         <div className="matrix-type-cell">
+                                                                             <span className="legend-dot dot-type1" style={{ display: 'inline-block', marginRight: 8 }}></span>
+                                                                             <div>
+                                                                                 <strong>All Flagged Students Combined</strong>
+                                                                                 <span className="matrix-type-hint">Students involved in &ge;1 suspicious pair match</span>
+                                                                             </div>
+                                                                         </div>
+                                                                     </td>
+                                                                     <td><span className="matrix-val matrix-tp">{classDistribution.plagiarizedTotal}</span></td>
+                                                                     <td><span className="matrix-val matrix-tn">{classDistribution.safeCount}</span></td>
+                                                                     <td><strong>{classDistribution.total}</strong></td>
+                                                                     <td>
+                                                                         <div className="matrix-rate-wrap">
+                                                                             <div className="matrix-rate-bar">
+                                                                                 <div className="matrix-rate-fill fill-total" style={{ width: `${classDistribution.plagiarizedPct}%` }}></div>
+                                                                             </div>
+                                                                             <strong>{classDistribution.plagiarizedPct}%</strong>
+                                                                         </div>
+                                                                     </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <p className="matrix-footnote">
+                                                            <strong>Student Impact Note:</strong> Counts unique student submissions whose highest-risk pairwise comparison triggered a Medium or High alert. In this cohort of {classDistribution.total} students, {classDistribution.plagiarizedTotal} student(s) ({classDistribution.plagiarizedPct}%) are involved in at least one suspicious pair, while {classDistribution.safeCount} student(s) ({classDistribution.cleanPct}%) submitted completely independent code.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                         </div>
                                     ) : (
                                         <div className="empty-search-box report-empty">
@@ -1335,7 +1811,7 @@ const InstructorSubmissionsAuditView = () => {
                                     <div>
                                         <h3 className="feedback-modal-title">Instructor Remarks & Feedback</h3>
                                         <p className="feedback-modal-sub">
-                                            Student: <strong>{feedbackModalSub.student_name}</strong> • File: <code className="feedback-sub-code">{feedbackModalSub.filename}</code>
+                                            Student: <strong>{feedbackModalSub.student_name}</strong> â€¢ File: <code className="feedback-sub-code">{feedbackModalSub.filename}</code>
                                         </p>
                                     </div>
                                 </div>
@@ -1345,7 +1821,7 @@ const InstructorSubmissionsAuditView = () => {
                                     onClick={() => setFeedbackModalSub(null)}
                                     aria-label="Close"
                                 >
-                                    ✕
+                                    âœ•
                                 </button>
                             </div>
 
@@ -1417,7 +1893,7 @@ const InstructorSubmissionsAuditView = () => {
                     </div>
                 )}
 
-                {/* 🌟 COMPARATIVE CODE ANALYSIS MODAL */}
+                {/* ðŸŒŸ COMPARATIVE CODE ANALYSIS MODAL */}
                 <CodeComparisonModal
                     isOpen={!!selectedComparisonPair}
                     onClose={() => setSelectedComparisonPair(null)}

@@ -2161,21 +2161,10 @@ html[data-theme='light'] .distribution-progress-track {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
-.distribution-segment.seg-type1 {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.distribution-segment.seg-type2 {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
-
-.distribution-segment.seg-type3 {
-    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
-}
-
-.distribution-segment.seg-safe {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
+.distribution-segment.seg-type1 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+.distribution-segment.seg-type2 { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+.distribution-segment.seg-type3 { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+.distribution-segment.seg-safe  { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
 
 /* 4-Column Legend Cards */
 .distribution-legend-grid {
@@ -2221,9 +2210,9 @@ html[data-theme='light'] .legend-card {
 }
 
 .legend-dot.dot-type1 { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
-.legend-dot.dot-type2 { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.6); }
-.legend-dot.dot-type3 { background: #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
-.legend-dot.dot-safe { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+.legend-dot.dot-type2 { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.6); }
+.legend-dot.dot-type3 { background: #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.6); }
+.legend-dot.dot-safe  { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
 
 .legend-body {
     display: flex;

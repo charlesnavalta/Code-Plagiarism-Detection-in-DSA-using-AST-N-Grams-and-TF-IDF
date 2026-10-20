@@ -15,14 +15,17 @@ from .metrics import (
     get_dynamic_df_bounds,
     compute_containment_score,
     calculate_adaptive_thresholds,
-    _get_raw_value
+    _get_raw_value,
+    RAW_IDENTITY_TYPE1_THRESHOLD,
+    ORDER_SIMILARITY_THRESHOLD,
+    STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD
 )
 from .classifier import (
     get_raw_identity_signature,
     get_ordered_shared_sequence,
     get_structural_skeleton,
     structural_divergence,
-    detect_renamed_line_pairs,
+    classify_pair_lines,
     classify_plagiarism_type
 )
 from .xai import (
@@ -165,41 +168,55 @@ def compare_all_files(file_data: list[dict], ngram_bounds: tuple[int, int]) -> l
                 skeleton_j = get_structural_skeleton(tokens_j)
                 struct_divergence_score = structural_divergence(skeleton_i, skeleton_j)
 
+                # =========================================================================
+                # PHASE 5.5: SAFE-ZONE ESCALATION
+                # TF-IDF cosine can under-score short/tiny files even when the forensic
+                # signals (raw_identity_score, order_similarity_score, N-gram coverage)
+                # clearly indicate genuine Type 1 or Type 2 plagiarism.
+                # All metrics used here are already computed above — no new heavy work.
+                # =========================================================================
+                if status == "Low" and (lines_i or lines_j):
+                    total_unique_lines_i = len(set(t[1] for t in tokens_i if t[1] > 0))
+                    if total_unique_lines_i > 0:
+                        meaningful_i = len([ln for ln in lines_i if ln > 0])
+                        coverage = meaningful_i / total_unique_lines_i
+                        # Guard: only escalate when AST structure is also near-identical.
+                        # If struct_divergence is high, the files are genuinely different
+                        # (e.g. compound-assign vs separate variable) — trust TF-IDF's "Safe".
+                        if (coverage >= 0.50
+                                and struct_divergence_score <= STRUCTURAL_DIVERGENCE_TYPE3_THRESHOLD):
+                            # Type 1 pattern: near-identical variable names / literals
+                            if raw_identity_score >= RAW_IDENTITY_TYPE1_THRESHOLD:
+                                status = "Medium"
+                            # Type 2 pattern: same structure + same order, just renamed
+                            elif (raw_identity_score >= 40.0
+                                  and order_similarity_score >= ORDER_SIMILARITY_THRESHOLD):
+                                status = "Medium"
+
                 plagiarism_type = "Safe: Original Code"
                 formatted_lines_i = []
                 formatted_lines_j = []
-                renamed_lines_i = []
-                renamed_lines_j = []
 
                 if status in ("High", "Medium"):
                     plagiarism_type = classify_plagiarism_type(
                         status, raw_identity_score, order_similarity_score, struct_divergence_score
                     )
 
-                    # Format match numeric type for frontend
-                    match_type_num = 1
-                    if "Type 2" in plagiarism_type:
-                        match_type_num = 2
-                    elif "Type 3" in plagiarism_type:
-                        match_type_num = 3
-
-                    # PHASE 5b: Mixed-attack line detection
-                    if "Type 3" in plagiarism_type and lines_i and lines_j:
-                        renamed_lines_i, renamed_lines_j = detect_renamed_line_pairs(
-                            tokens_i, tokens_j, set(lines_i), set(lines_j)
-                        )
-
-                    renamed_set_i = set(renamed_lines_i)
-                    renamed_set_j = set(renamed_lines_j)
-
-                    formatted_lines_i = [
-                        {"line": ln, "type": 2 if ln in renamed_set_i else match_type_num}
-                        for ln in lines_i if ln > 0
-                    ]
-                    formatted_lines_j = [
-                        {"line": ln, "type": 2 if ln in renamed_set_j else match_type_num}
-                        for ln in lines_j if ln > 0
-                    ]
+                # =========================================================================
+                # PHASE 5b: PER-LINE FORENSIC CLASSIFICATION (ALL pair types)
+                # classify_pair_lines() matches each flagged line individually and assigns
+                # its own type (1 = verbatim, 2 = renamed, 3 = reordered/modified).
+                # For Safe pairs, Type 3 line results are suppressed — Type 3 highlights
+                # are only meaningful when the overall pair is already flagged.
+                # =========================================================================
+                if lines_i and lines_j:
+                    formatted_lines_i, formatted_lines_j = classify_pair_lines(
+                        tokens_i, tokens_j, lines_i, lines_j
+                    )
+                    if status == "Low":
+                        # Safe pairs: only show Type 1 / Type 2 line evidence
+                        formatted_lines_i = [e for e in formatted_lines_i if e["type"] in (1, 2)]
+                        formatted_lines_j = [e for e in formatted_lines_j if e["type"] in (1, 2)]
 
                 # =========================================================================
                 # PHASE 6: XAI FORENSIC PATTERNS
@@ -223,7 +240,7 @@ def compare_all_files(file_data: list[dict], ngram_bounds: tuple[int, int]) -> l
                     "raw_identity_score": raw_identity_score,
                     "order_similarity_score": order_similarity_score,
                     "struct_divergence_score": struct_divergence_score,
-                    "renamed_line_count": len(renamed_lines_i),
+                    "renamed_line_count": len([e for e in formatted_lines_i if e["type"] == 2]),
                     "lines1": formatted_lines_i,
                     "lines2": formatted_lines_j,
                     "ast_xai_1": top_shared_patterns,

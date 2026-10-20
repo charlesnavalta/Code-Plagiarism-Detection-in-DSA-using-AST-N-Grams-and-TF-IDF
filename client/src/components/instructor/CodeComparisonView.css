@@ -69,45 +69,163 @@ html[data-theme='light'] .pair-select-dropdown {
     color: #0f172a;
 }
 
+.comparison-action-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .btn-sync-toggle {
     height: 38px;
-    padding: 0 14px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border-glass);
-    border-radius: 10px;
-    color: var(--text-dim);
+    padding: 0 12px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.1));
+    border-radius: 11px;
+    color: var(--text-dim, #94a3b8);
     font-size: 0.82rem;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
+    gap: 8px;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    box-sizing: border-box;
 }
 
 .btn-sync-toggle:hover {
-    color: var(--text-main);
+    color: var(--text-main, #ffffff);
     background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-sync-toggle:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .btn-sync-toggle.active {
-    background: rgba(59, 130, 246, 0.15);
-    border-color: rgba(59, 130, 246, 0.35);
-    color: #93c5fd;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border-color: rgba(59, 130, 246, 0.55);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.sync-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim, #94a3b8);
+    transition: all 0.25s ease;
+}
+
+.btn-sync-toggle.active .sync-icon-wrap {
+    color: #60a5fa;
+    transform: rotate(180deg);
+}
+
+.sync-text-wrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+.sync-text-mobile {
+    display: none;
+}
+.sync-text-desktop {
+    display: inline;
+}
+
+/* Pill status indicator (ON / OFF) */
+.sync-pill-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.sync-pill-indicator.on {
+    background: rgba(16, 185, 129, 0.16);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.sync-pill-indicator.off {
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+}
+
+.sync-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.sync-pill-indicator.on .sync-dot {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+}
+
+.sync-pill-indicator.off .sync-dot {
+    background: #64748b;
+}
+
+.btn-label-desktop {
+    display: inline;
+}
+.btn-label-mobile {
+    display: none;
 }
 
 [data-theme='light'] .btn-sync-toggle,
 html[data-theme='light'] .btn-sync-toggle {
     background: #ffffff;
     border-color: #cbd5e1;
-    color: #64748b;
+    color: #475569;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .btn-sync-toggle:hover,
+html[data-theme='light'] .btn-sync-toggle:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
 }
 
 [data-theme='light'] .btn-sync-toggle.active,
 html[data-theme='light'] .btn-sync-toggle.active {
     background: #eff6ff;
-    border-color: #bfdbfe;
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+}
+
+[data-theme='light'] .btn-sync-toggle.active .sync-icon-wrap,
+html[data-theme='light'] .btn-sync-toggle.active .sync-icon-wrap {
     color: #2563eb;
+}
+
+[data-theme='light'] .sync-pill-indicator.on,
+html[data-theme='light'] .sync-pill-indicator.on {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #059669;
+}
+
+[data-theme='light'] .sync-pill-indicator.off,
+html[data-theme='light'] .sync-pill-indicator.off {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #64748b;
 }
 
 .btn-back-link { 
@@ -388,8 +506,8 @@ html[data-theme='light'] .mixed-attack-legend { color: #64748b; }
     flex-shrink: 0;
 }
 
+.swatch-type2 { background-color: #f97316; }
 .swatch-type3 { background-color: #eab308; }
-.swatch-type2 { background-color: #ea580c; }
 
 .legend-divider {
     color: var(--text-dim);
@@ -894,6 +1012,26 @@ html[data-theme='light'] .ast-token-chip-unique .token-step {
     .split-screen-container { gap: 16px; min-height: 400px; }
     .pane-content-scroll { height: 400px; }
     .classification-summary-bar { flex-direction: column; align-items: stretch; }
+
+    .comparison-header-flex {
+        gap: 12px;
+    }
+
+    .comparison-header-right {
+        gap: 10px;
+    }
+
+    .comparison-action-buttons {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-sync-toggle {
+        height: 38px;
+        padding: 0 12px;
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -918,16 +1056,58 @@ html[data-theme='light'] .ast-token-chip-unique .token-step {
         display: grid; 
         grid-template-columns: 1fr 1fr; 
         width: 100%; 
-        height: 36px;
+        height: 38px;
     }
     .toggle-btn { text-align: center; font-size: 0.78rem; padding: 0 8px; }
     
-    .pdf-export-wrapper { width: 100%; }
+    /* Modern Side-by-Side Action Row on Mobile */
+    .comparison-action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .btn-sync-toggle {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 38px;
+        justify-content: center;
+        padding: 0 10px;
+        font-size: 0.78rem;
+        gap: 6px;
+    }
+
+    .sync-text-desktop {
+        display: none;
+    }
+    .sync-text-mobile {
+        display: inline;
+    }
+
+    .sync-pill-indicator {
+        padding: 2px 5px;
+        font-size: 0.62rem;
+    }
+
+    .pdf-export-wrapper { 
+        flex: 1.3 1 0;
+        min-width: 0;
+    }
+
     .btn-export-pdf { 
         width: 100%; 
         justify-content: center; 
-        font-size: 0.82rem; 
-        height: 36px;
+        font-size: 0.78rem; 
+        height: 38px;
+        padding: 0 10px;
+    }
+
+    .btn-label-desktop {
+        display: none !important;
+    }
+    .btn-label-mobile {
+        display: inline !important;
     }
 
     /* Streamlined Summary Bar on Mobile (iPhone 13) */
